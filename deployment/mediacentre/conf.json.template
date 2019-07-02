@@ -1,18 +1,29 @@
-    {
-      "name": "fr.openent~mediacentre~0.1-SNAPSHOT",
-      "config": {
-        "main" : "fr.openent.mediacentre.Mediacentre",
-        "port" : 8064,
-        "app-name" : "Mediacentre",
-    	"app-address" : "/mediacentre",
-    	"app-icon" : "Mediacentre-large",
-        "host": "${host}",
-        "ssl" : $ssl,
-        "auto-redeploy": false,
-        "userbook-host": "${host}",
-        "integration-mode" : "HTTP",
-        "app-registry.port" : 8012,
-        "mode" : "${mode}",
-        "entcore.port" : 8009
-      }
+{
+  "name": "fr.openent~mediacentre~2.0-SNAPSHOT",
+  "config": {
+    "main" : "fr.openent.mediacentre.Mediacentre",
+    "port" : 8064,
+    "app-name" : "Mediacentre",
+    "app-address" : "/mediacentre",
+    "app-icon" : "Mediacentre-large",
+    "host": "${host}",
+    "ssl" : $ssl,
+    "auto-redeploy": false,
+    "userbook-host": "${host}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "${mode}",
+    "entcore.port" : 8009,
+    "sources": {
+        "fr.openent.mediacentre.source.GAR": true,
+        "fr.openent.mediacentre.source.MOODLE": false,
+        "fr.openent.mediacentre.source.PMB": false
+    },
+    "wsPort": 3000,
+    "elasticsearch": true,
+    "elasticsearchConfig" : {
+        "server-uri": "${elasticServerURI}",
+        "index": "${elasticIndexName}"
     }
+  }
+}
