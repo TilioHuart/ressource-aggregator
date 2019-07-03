@@ -1,5 +1,6 @@
 package fr.openent.mediacentre.controller;
 
+import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
@@ -32,7 +33,9 @@ public class MediacentreController extends ControllerHelper {
     @ApiDoc("Render mediacentre view")
     @SecuredAction("mediacentre.view")
     public void view(HttpServerRequest request) {
-        renderView(request);
+        JsonObject params = new JsonObject()
+                .put("wsPort", Mediacentre.wsPort);
+        renderView(request, params);
     }
 
     @Get("/gar")
