@@ -15,6 +15,7 @@ import java.util.List;
 public class Mediacentre extends BaseServer {
 
     public static int wsPort;
+    public static final String VIEW_RIGHT = "mediacentre.view";
 
     @Override
 	public void start() throws Exception {

@@ -7,15 +7,14 @@ import fr.wseduc.rs.Get;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.Either;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.user.UserUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
@@ -31,10 +30,16 @@ public class MediacentreController extends ControllerHelper {
 
     @Get("")
     @ApiDoc("Render mediacentre view")
-    @SecuredAction("mediacentre.view")
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void view(HttpServerRequest request) {
+        JsonArray sourceList = new JsonArray();
+        for (Source source : this.sources) {
+            sourceList.add(source.getClass().getName());
+        }
+
         JsonObject params = new JsonObject()
-                .put("wsPort", Mediacentre.wsPort);
+                .put("wsPort", Mediacentre.wsPort)
+                .put("sources", sourceList);
         renderView(request, params);
     }
 
@@ -50,22 +55,6 @@ public class MediacentreController extends ControllerHelper {
             eb.send("openent.gar", action, handlerToAsyncHandler(event -> {
                 renderJson(request, event.body().getJsonArray("message"));
             }));
-        });
-    }
-
-    @Get("/resources")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
-    public void getResources(HttpServerRequest request) {
-        List<Future> futures = new ArrayList<>();
-        request.response().setChunked(true);
-        request.response().putHeader("content-type", "application/json");
-        UserUtils.getUserInfos(eb, request, user -> {
-            for (Source source : sources) {
-                Future future = Future.future();
-                futures.add(future);
-                source.search(new JsonObject(), user, sourceHandler(request, future));
-            }
-            CompositeFuture.all(futures).setHandler(handler -> request.response().setStatusCode(200).end());
         });
     }
 

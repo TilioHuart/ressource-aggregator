@@ -1,14 +1,22 @@
 {
   "compilerOptions": {
     "target": "es5",
+    "strict": true,
     "module": "commonjs",
     "declaration": false,
     "moduleResolution": "node",
     "sourceMap": true,
     "noImplicitAny": false,
-    "lib": ["es2015", "dom"]
+    "noImplicitThis": false,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   },
   "exclude": [
-    "build", "node_modules"
+    "build",
+    "node_modules"
   ]
 }

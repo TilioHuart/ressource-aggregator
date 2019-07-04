@@ -1,0 +1,37 @@
+<div ng-controller="SearchController as vm" class="search">
+    <div class="horizontal-spacing row vertical-spacing">
+        <a class="right-magnet cancel button" href="#/">
+            <i18n>mediacentre.search.cancel</i18n>
+        </a>
+    </div>
+    <div class="horizontal-spacing row vertical-spacing filter-line">
+        <div class="cell">
+            <div class="vertical-spacing-twice horizontal-spacing"
+                 ng-if="vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0">
+                <i18n>mediacentre.search.filter</i18n>
+                :
+            </div>
+            <div class="row">
+                <multi-combo class="horizontal-spacing"
+                             ng-repeat="filter in vm.filteredFields"
+                             ng-if="vm.filters.initial[filter].length > 0"
+                             title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
+                             combo-model="vm.filters.initial[filter]"
+                             search-on="name"
+                             order-by="name"
+                             filtered-model="vm.filters.filtered[filter]">
+                </multi-combo>
+            </div>
+        </div>
+        <div class="right-magnet loaders" ng-if="vm.getSourcesLength()">
+            <div ng-repeat="(key, val) in vm.loaders" class="[[ vm.formatClassName(key) ]] source-loader">
+                <img ng-src="[[ '/mediacentre/public/img/' + key + '.png' ]]" alt="[[ key ]]"/>
+                <loader active="val"></loader>
+            </div>
+        </div>
+    </div>
+    <div class="grid">
+        <resource-card ng-repeat="resource in vm.displayedResources track by $index"
+                       ng-model="resource"></resource-card>
+    </div>
+</div>

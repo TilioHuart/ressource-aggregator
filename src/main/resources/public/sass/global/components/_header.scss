@@ -1,0 +1,58 @@
+$header-height: 165px;
+
+.header {
+  height: $header-height;
+  background-color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &:before, &:after {
+    height: 100%;
+    width: 100%;
+    display: block;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    position: absolute;
+    z-index: 0;
+  }
+
+  &:before {
+    content: ' ';
+    background-image: url('/mediacentre/public/img/header-left.svg');
+    background-position: 10% bottom;
+    background-size: auto 80%;
+  }
+
+  &:after {
+    content: ' ';
+    background-image: url('/mediacentre/public/img/header-right.svg');
+    background-position: 90% -5px;
+    background-size: auto 125%;
+  }
+
+  h1 {
+    margin: 5px auto auto 15px;
+    font-size: 26px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .search-block {
+    z-index: 1;
+
+    > input[type="text"].search {
+      border: solid 2px $mediacentre-red;
+      height: 40px;
+      line-height: 40px;
+      font-size: 16px;
+      border-radius: 40px;
+      padding: 10px;
+      box-sizing: border-box;
+      margin: 5px 0;
+      background-color: $white;
+    }
+  }
+}

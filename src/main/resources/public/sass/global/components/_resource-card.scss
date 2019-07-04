@@ -1,0 +1,116 @@
+resource-card {
+  background-color: #FFF;
+  border-radius: 10px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, .2);
+
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    height: 12.5rem;
+
+    .image {
+      flex: 5;
+      position: relative;
+
+      .crop {
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+
+
+      .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+
+        > img {
+          width: 100%;
+          height: 100%;
+          transform: scale(1.15);
+        }
+      }
+    }
+
+    .data {
+      flex: 7;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+
+      .title {
+        font-weight: bold;
+        font-size: 15px;
+      }
+
+      .types {
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+
+      .resource-footer {
+        align-items: flex-end;
+        font-size: 14px;
+        margin: auto 0 0 0;
+        line-height: 12px;
+
+        .cell > div {
+          padding: 0 5px 0 10px;
+          line-height: 16px;
+
+          &:before {
+            position: absolute;
+            left: -10px;
+            font-size: 16px;
+          }
+        }
+
+        .add-to-favorite {
+          color: $mediacentre-light-grey;
+
+          &::before {
+            @include fonticon();
+            content: '\e9d9';
+          }
+        }
+
+        .copy-clipboard {
+          color: $mediacentre-red;
+
+          &::before {
+            @include fonticon();
+            content: '\e84d';
+          }
+
+          .text-button {
+            position: relative;
+          }
+
+          .clipboard-tooltip {
+            position: absolute;
+            background-color: rgba(75, 75, 75, 1);
+            border-radius: 4px;
+            bottom: -35px;
+            left: 50%;
+            width: 60px;
+            margin-left: -30px;
+            line-height: 30px;
+            text-align: center;
+            color: $white;
+            opacity: 0;
+            transition: opacity 0.3s;
+
+            &.show {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}

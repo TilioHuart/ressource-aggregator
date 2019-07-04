@@ -26,9 +26,13 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.ts$/,
-                loader: 'ts-loader'
+                test: /\.(ts|js)$/,
+                loader: 'ts-loader',
+                include: [
+                    path.resolve(__dirname, 'src/main/resources/public/ts'),
+                    path.resolve(__dirname, 'node_modules/clipboard/src')
+                ]
             }
         ]
     }
-}
+};

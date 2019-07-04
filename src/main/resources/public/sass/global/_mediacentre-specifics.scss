@@ -1,0 +1,63 @@
+$mediacentre-red: #f53b57;
+$mediacentre-light-grey: #d6d6d6;
+$mediacentre-gar: #3b1d8f;
+$mediacentre-moodle: #ff8500;
+$mediacentre-pmb: #43b0a2;
+
+body.mediacentre-v2 {
+  @import 'components/index';
+
+  section.main {
+    top: 64px !important;
+    padding: 0 !important;
+  }
+
+  .forbidden {
+    cursor: not-allowed;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+
+  multi-combo {
+    display: inline-block;
+    min-width: 250px;
+
+    .multi-combo-root-panel > ul {
+      padding: 5px;
+
+      > li {
+
+        &::before {
+          width: 15px;
+          height: 15px;
+          color: #fff;
+          border-radius: 2px;
+          background-color: $mediacentre-light-grey;
+          content: "✓";
+          padding: 2px 5px;
+          font-size: 10px;
+          margin-right: 5px;
+        }
+
+        &.selected {
+          color: $mediacentre-red;
+
+          &::before {
+            background-color: $mediacentre-red;
+          }
+        }
+      }
+    }
+  }
+
+  a.button.cancel, button.cancel {
+    color: $mediacentre-red;
+
+    &:hover {
+      background: $mediacentre-red;
+      color: $white;
+    }
+  }
+}

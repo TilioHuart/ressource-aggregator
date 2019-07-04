@@ -11,13 +11,22 @@ public interface Source {
     boolean harvest = false;
 
     /**
-     * Search for resources.
+     * Plain text search
      *
-     * @param query   search query
-     * @param user    user that search
+     * @param query   String query
+     * @param user    Current user
      * @param handler Function handler returning data
      */
-    void search(JsonObject query, UserInfos user, Handler<Either<String, JsonObject>> handler);
+    void plainTextSearch(String query, UserInfos user, Handler<Either<String, JsonObject>> handler);
+
+    /**
+     * Advanced search
+     *
+     * @param query   Object query
+     * @param user    Current user
+     * @param handler Function handler returning data
+     */
+    void advancedSearch(JsonObject query, UserInfos user, Handler<Either<String, JsonObject>> handler);
 
     /**
      * Format resource

@@ -1,3 +1,18 @@
 {
-  "mediacentre.title": "Mediacentre"
+  "mediacentre.title": "Médiacentre",
+  "mediacentre.resource.search": "Rechercher une ressource",
+  "mediacentre.edited.by": "édité par",
+  "mediacentre.copy.link": "Copier le lien",
+  "mediacentre.add.to.favorite": "Ajouter aux favoris",
+  "mediacentre.copied": "Copié!",
+  "mediacentre.socket.error": "Une erreur est survenue. Merci de contacter le support.",
+  "mediacentre.socket.closed": "La connexion avec le mediacentre a été perdue. Merci de réessayer ultérieurement.",
+  "mediacentre.search.cancel": "Annuler la recherche",
+  "mediacentre.search.filter": "Filtrer la recherche par",
+  "mediacentre.search.filter.document_types": "Type de ressource",
+  "mediacentre.search.filter.levels": "Niveau",
+  "mediacentre.combo.deselectAll": "Tout déselectionner",
+  "mediacentre.combo.options": "Options",
+  "mediacentre.combo.searchPlaceholder": "Rechercher",
+  "mediacentre.combo.selectAll": "Tout sélectionner"
 }
