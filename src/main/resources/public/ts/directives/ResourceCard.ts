@@ -13,11 +13,11 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
         template: `
             <div class="flex">
                 <div class="image" ng-click="open()">
-                    <div class="crop" data-resource-id="[[::ngModel._id]]">
-                        <img ng-src="[[::ngModel.image]]" alt="[[::ngModel.image]]">
+                    <div class="crop" data-resource-id="[[ngModel._id]]">
+                        <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
                     </div>
                     <div class="background">
-                        <img ng-src="[[::background]]" alt="[[::background]]" />
+                        <img ng-src="[[background]]" alt="[[background]]" />
                     </div>
                 </div>
                 <div class="data">
@@ -26,11 +26,11 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
                         <div>
                             <em class="metadata">
                                 <i18n>mediacentre.edited.by</i18n>
-                                <span ng-repeat="editor in ngModel.editors">[[::editor]] </span>
+                                <span ng-repeat="editor in ngModel.editors">[[editor]] </span>
                             </em>
                         </div>
                         <div class="types">
-                            <span ng-repeat="type in ngModel.document_types">[[::type]] </span>
+                            <span ng-repeat="type in ngModel.document_types">[[type]] </span>
                         </div>
                     </div>
                     <div class="resource-footer">
@@ -40,7 +40,7 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
                             </div>                        
                         </div>
                         <div class="cell six">
-                            <div class="copy-clipboard clipboard resource-[[::ngModel.hash]] pointer" data-clipboard-text="[[::ngModel.link]]">
+                            <div class="copy-clipboard clipboard resource-[[ngModel.hash]] pointer" data-clipboard-text="[[ngModel.link]]">
                                 <span class="text-button">
                                     <i18n>mediacentre.copy.link</i18n>
                                     <span class="clipboard-tooltip" ng-class="{show: tooltip.show}">

@@ -2,8 +2,6 @@ import {idiom, ng, template, toasts} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 
-declare const window: any;
-
 export interface Scope extends IRootScopeService {
 	ws: Socket;
 	loaders: any;
@@ -17,7 +15,7 @@ export interface ViewModel {
 		text: string
 	};
 
-	simpleSearch(): void;
+	plainTextSearch(): void;
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
@@ -34,11 +32,11 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			throw event;
 		};
 
-		vm.simpleSearch = function () {
+		vm.plainTextSearch = function () {
 			if (vm.search.text.trim() === '') return;
 			$location.path('/search/simple');
-			$scope.ws.send(new Frame('search', {state: 'simple', query: vm.search.text}));
-			$scope.$broadcast('search', {state: 'simple', query: vm.search.text});
+			$scope.ws.send(new Frame('search', 'PLAIN_TEXT', {query: vm.search.text}));
+			$scope.$broadcast('search', {state: 'PLAIN_TEXT', data: {query: vm.search.text}});
 		};
 
 		route({

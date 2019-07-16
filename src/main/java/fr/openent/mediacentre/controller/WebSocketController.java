@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.enums.SearchState;
 import fr.openent.mediacentre.helper.WorkflowHelper;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
@@ -54,7 +55,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                     JsonObject message = new JsonObject(frame.textData());
                     switch (message.getString("event")) {
                         case "search": {
-                            search(message.getJsonObject("data"), userInfos, ws);
+                            search(message.getString("state"), message.getJsonObject("data"), userInfos, ws);
                             break;
                         }
                         default:
@@ -72,10 +73,10 @@ public class WebSocketController implements Handler<ServerWebSocket> {
      * @param data Frame message
      * @param ws   WebSocket
      */
-    private void search(JsonObject data, UserInfos user, ServerWebSocket ws) {
+    private void search(String state, JsonObject data, UserInfos user, ServerWebSocket ws) {
         Handler<Either<String, JsonObject>> handler = event -> {
             if (event.isLeft()) {
-                log.error("[WebSockerController@search] Failed to retrieve source ressources.", event.left().getValue());
+                log.error("[WebSockerController@search] Failed to retrieve source resources.", event.left().getValue());
             } else {
                 JsonObject frame = new JsonObject()
                         .put("event", "search_Result")
@@ -84,7 +85,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                 ws.writeTextMessage(frame.encode());
             }
         };
-        if ("simple".equals(data.getString("state"))) {
+        if (SearchState.PLAIN_TEXT.toString().equals(state)) {
             String query = data.getString("query");
             for (Source source : sources) {
                 source.plainTextSearch(query, user, handler);
