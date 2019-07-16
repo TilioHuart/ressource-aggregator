@@ -26,7 +26,8 @@
         <div class="right-magnet loaders" ng-if="vm.getSourcesLength()">
             <div ng-repeat="(key, val) in vm.loaders" class="[[ vm.formatClassName(key) ]] source-loader">
                 <img ng-src="[[ '/mediacentre/public/img/' + key + '.png' ]]" alt="[[ key ]]"/>
-                <loader active="val"></loader>
+                <loader active="val" ng-if="val"></loader>
+                <i class="validated-status source-check" ng-show="!val"></i>
             </div>
         </div>
     </div>

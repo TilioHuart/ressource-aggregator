@@ -6,7 +6,6 @@
   flex-wrap: nowrap;
   display: flex;
   opacity: 0;
-  margin: 0 10px;
 
   &.active {
     opacity: 1;
@@ -22,6 +21,11 @@
 .loaders {
   display: flex;
 
+  .loader, .source-check {
+    width: 40px;
+    text-align: center;
+  }
+
   .source-loader {
     display: flex;
     justify-content: center;
@@ -33,16 +37,34 @@
     height: 35px;
   }
 
-  .fr-openent-mediacentre-source-GAR .loader-bubble {
-    background: $mediacentre-gar;
+  .fr-openent-mediacentre-source-GAR {
+    .loader-bubble {
+      background: $mediacentre-gar;
+    }
+
+    .source-check {
+      color: $mediacentre-gar;
+    }
   }
 
-  .fr-openent-mediacentre-source-Moodle .loader-bubble {
-    background: $mediacentre-moodle;
+  .fr-openent-mediacentre-source-Moodle {
+    .loader-bubble {
+      background: $mediacentre-moodle;
+    }
+
+    .source-check {
+      color: $mediacentre-moodle;
+    }
   }
 
-  .fr-openent-mediacentre-source-PMB .loader-bubble {
-    background: $mediacentre-pmb;
+  .fr-openent-mediacentre-source-PMB {
+    .loader-bubble {
+      background: $mediacentre-pmb;
+    }
+
+    .source-check {
+      color: $mediacentre-pmb;
+    }
   }
 }
 
