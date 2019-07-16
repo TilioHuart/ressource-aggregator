@@ -15,8 +15,8 @@ routes.define(function($routeProvider){
 		.when('/', {
 			action: 'home'
 		})
-		.when('/search/simple', {
-			action: 'searchSimple'
+		.when('/search/plain_text', {
+			action: 'searchPlainText'
 		})
 		.when('/search/advanced', {
 			action: 'searchAdvanced'

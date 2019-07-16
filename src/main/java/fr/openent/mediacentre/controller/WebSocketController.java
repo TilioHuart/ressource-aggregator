@@ -90,6 +90,12 @@ public class WebSocketController implements Handler<ServerWebSocket> {
             for (Source source : sources) {
                 source.plainTextSearch(query, user, handler);
             }
+        } else if (SearchState.ADVANCED.toString().equals(state)) {
+            for (Source source : sources) {
+                source.advancedSearch(data, user, handler);
+            }
+        } else {
+            ws.writeTextMessage(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());
         }
     }
 

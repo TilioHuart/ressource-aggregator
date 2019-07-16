@@ -1,0 +1,18 @@
+section.lightbox {
+  > div.content {
+    padding: 0;
+
+    .lightbox-title {
+      padding: 10px;
+      background-color: $primary;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      color: $white;
+      font-size: 20px;
+    }
+
+    .close-lightbox {
+      color: $white;
+    }
+  }
+}

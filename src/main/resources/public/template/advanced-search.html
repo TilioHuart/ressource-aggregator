@@ -1,0 +1,33 @@
+<div class="lightbox-title">
+    <i18n>mediacentre.source.search.advanced</i18n>
+</div>
+<form class="advanced-search-form">
+    <div class="ten">
+        <div class="row-flex vertical-spacing-four" ng-repeat="field in mc.search.advanced.fields">
+            <span class="two" ng-if="!field.comparator">&nbsp;</span>
+            <div class="two centered-text" ng-if="field.comparator">
+                <select ng-model="mc.search.advanced.values[field.name].comparator">
+                    <option value="$or">
+                        [[ idiom.translate('mediacentre.or') ]]
+                    </option>
+                    <option value="$and">
+                        [[ idiom.translate('mediacentre.and') ]]
+                    </option>
+                </select>
+            </div>
+            <span class="two">[[ idiom.translate('mediacentre.advanced.name.' + field.name) ]]:</span>
+            <input class="eight"
+                   type="text"
+                   ng-enter="mc.advancedSearch()"
+                   ng-model="mc.search.advanced.values[field.name].value"
+                   i18n-placeholder="[[ 'mediacentre.advanced.placeholder.' + field.name ]]">
+        </div>
+        <div class="advanced-search-background">&nbsp;</div>
+    </div>
+    <div class="right-magnet vertical-spacing-four">
+        <button class="cancel" ng-click="mc.closeAdvancedSearch()">
+            <i18n>cancel</i18n>
+        </button>
+        <input type="submit" ng-click="mc.advancedSearch()" i18n-value="mediacentre.search">
+    </div>
+</form>

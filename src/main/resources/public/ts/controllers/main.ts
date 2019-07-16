@@ -1,4 +1,4 @@
-import {idiom, ng, template, toasts} from 'entcore';
+import {idiom, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 
@@ -8,43 +8,109 @@ export interface Scope extends IRootScopeService {
 	resources: Resource[];
 	idiom: any;
 	safeApply(): void;
+
+	mc: MainController;
 }
 
-export interface ViewModel {
+export interface MainController {
 	search: {
-		text: string
+		plain_text: {
+			text: string
+		},
+		advanced: {
+			show: boolean,
+			fields: Array<{ name: string, comparator: boolean }>,
+			values: object
+		}
 	};
 
 	plainTextSearch(): void;
+
+	advancedSearch(): void;
+
+	initField(field: { name: string, comparator: boolean }): void;
+
+	openAdvancedSearch(): void;
+
+	closeAdvancedSearch(): void;
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
 	function ($scope: Scope, route, $location: ILocationService) {
-		const vm: ViewModel = this;
-		vm.search = {
-			text: ''
+		const mc: MainController = this;
+		mc.search = {
+			plain_text: {
+				text: ''
+			},
+			advanced: {
+				show: false,
+				fields: [
+					{name: 'title', comparator: false},
+					{name: 'authors', comparator: true},
+					{name: 'editors', comparator: true},
+					{name: 'disciplines', comparator: true},
+					{name: 'levels', comparator: true}
+				],
+				values: {}
+			}
 		};
 		$scope.idiom = idiom;
 		$scope.ws = new Socket();
 		$scope.ws.onopen = (event) => console.info(`WebSocket opened on ${$scope.ws.host}`, event);
-		$scope.ws.onerror = function (event) {
-			toasts.warning('mediacentre.socket.error');
-			throw event;
+
+		const startResearch = function (state: string, data: any) {
+			$location.path(`/search/${state.toLowerCase()}`);
+			$scope.ws.send(new Frame('search', state, data));
+			$scope.$broadcast('search', {state, data});
 		};
 
-		vm.plainTextSearch = function () {
-			if (vm.search.text.trim() === '') return;
-			$location.path('/search/simple');
-			$scope.ws.send(new Frame('search', 'PLAIN_TEXT', {query: vm.search.text}));
-			$scope.$broadcast('search', {state: 'PLAIN_TEXT', data: {query: vm.search.text}});
+		mc.plainTextSearch = function () {
+			if (mc.search.plain_text.text.trim() === '') return;
+			startResearch('PLAIN_TEXT', {query: mc.search.plain_text.text});
+		};
+
+		mc.advancedSearch = function () {
+			const {values} = mc.search.advanced;
+			let data = {};
+			mc.search.advanced.fields.forEach((field) => {
+				let t = {};
+				if (values[field.name].value.trim() !== '') {
+					t[field.name] = values[field.name];
+				}
+				data = {
+					...data,
+					...t
+				}
+			});
+			if (Object.keys(data).length === 0) return;
+			startResearch('ADVANCED', data);
+			mc.search.advanced.show = false;
+		};
+
+		mc.initField = function ({name, comparator}) {
+			mc.search.advanced.values[name] = {
+				value: '',
+				...comparator ? {comparator: '$or'} : {}
+			}
+		};
+
+		mc.openAdvancedSearch = function () {
+			mc.search.advanced.fields.forEach((field) => mc.initField(field));
+			mc.search.plain_text.text = '';
+			mc.search.advanced.show = true;
+		};
+
+		mc.closeAdvancedSearch = function () {
+			mc.search.advanced.show = false;
+			mc.search.advanced.values = {};
 		};
 
 		route({
 			home: () => {
-				vm.search = {...vm.search, text: ''};
+				mc.search = {...mc.search, plain_text: {text: ''}};
 				template.open('main', 'home');
 			},
-			searchSimple: () => template.open('main', 'search'),
+			searchPlainText: () => template.open('main', 'search'),
 			searchAdvanced: () => template.open('main', 'search')
 		});
 

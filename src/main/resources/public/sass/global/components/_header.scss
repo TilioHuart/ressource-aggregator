@@ -32,6 +32,18 @@ $header-height: 165px;
     background-size: auto 125%;
   }
 
+  .advanced-search-link {
+    margin-left: 10px;
+  }
+
+  i.advanced-search {
+    @include fonticon();
+
+    &::before {
+      content: '\e932';
+    }
+  }
+
   h1 {
     margin: 5px auto auto 15px;
     font-size: 26px;

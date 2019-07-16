@@ -1,10 +1,12 @@
 {
   "mediacentre.title": "Médiacentre",
   "mediacentre.resource.search": "Rechercher une ressource",
+  "mediacentre.source.search.advanced": "Recherche avancée",
   "mediacentre.edited.by": "édité par",
   "mediacentre.copy.link": "Copier le lien",
   "mediacentre.add.to.favorite": "Ajouter aux favoris",
   "mediacentre.copied": "Copié!",
+  "mediacentre.search": "Rechercher",
   "mediacentre.socket.error": "Une erreur est survenue. Merci de contacter le support.",
   "mediacentre.socket.closed": "La connexion avec le mediacentre a été perdue. Merci de réessayer ultérieurement.",
   "mediacentre.search.cancel": "Annuler la recherche",
@@ -16,5 +18,17 @@
   "mediacentre.combo.searchPlaceholder": "Rechercher",
   "mediacentre.combo.selectAll": "Tout sélectionner",
   "mediacentre.no-result.alt": "Pas de résultats",
-  "mediacentre.no-result": "Nous sommes désolés. Il n'y a aucun résultat pour cette recherche"
+  "mediacentre.no-result": "Nous sommes désolés. Il n'y a aucun résultat pour cette recherche",
+  "mediacentre.and": "et",
+  "mediacentre.or": "ou",
+  "mediacentre.advanced.placeholder.title": "Recherche un titre",
+  "mediacentre.advanced.placeholder.authors": "Recherche un auteur",
+  "mediacentre.advanced.placeholder.editors": "Recherche un éditeur",
+  "mediacentre.advanced.placeholder.disciplines": "Recherche une discipline. Exemple: Maths, mathématique, mathématiques...",
+  "mediacentre.advanced.placeholder.levels": "Recherche un ou plusieurs niveaux. Exemple: 1, 1e, 1STMG...",
+  "mediacentre.advanced.name.title": "Titre",
+  "mediacentre.advanced.name.authors": "Auteur",
+  "mediacentre.advanced.name.editors": "Editeur",
+  "mediacentre.advanced.name.disciplines": "Discipline",
+  "mediacentre.advanced.name.levels": "Niveaux"
 }

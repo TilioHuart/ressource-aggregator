@@ -4,9 +4,15 @@
     </h1>
     <div class="search-block six">
         <input type="text"
-               ng-enter="vm.plainTextSearch()"
-               ng-model="vm.search.text"
+               ng-enter="mc.plainTextSearch()"
+               ng-model="mc.search.plain_text.text"
                i18n-placeholder="mediacentre.resource.search"
                class="search twelve"/>
+        <a class="advanced-search-link"
+           ng-click="mc.openAdvancedSearch()"
+           aria-label="[[ idiom.translate('mediacentre.source.search.advanced') ]]">
+            <i class="advanced-search"></i>
+            <i18n>mediacentre.source.search.advanced</i18n>
+        </a>
     </div>
 </div>

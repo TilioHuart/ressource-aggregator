@@ -1,19 +1,30 @@
 <div ng-controller="SearchController as vm" class="search">
-    <div class="horizontal-spacing row vertical-spacing">
+    <div class="horizontal-spacing row vertical-spacing advanced-search-filters">
+        <div class="cell" ng-if="vm.getAdvancedSearchField().length > 0 && !vm.emptyAdvancedSearch()">
+            <h2>
+                <i18n>mediacentre.source.search.advanced</i18n>
+            </h2>
+            <div class="advanced-search-fields">
+                <div class="cell field" ng-repeat="field in vm.getAdvancedSearchField()">
+                    <span ng-if="mc.search.advanced.values[field].value.trim() !== ''">
+                        <strong>[[ idiom.translate('mediacentre.advanced.name.' + field) ]]</strong> : [[ mc.search.advanced.values[field].value ]]
+                    </span>
+                </div>
+            </div>
+        </div>
         <a class="right-magnet cancel button" href="#/">
             <i18n>mediacentre.search.cancel</i18n>
         </a>
     </div>
-    <div class="horizontal-spacing row vertical-spacing filter-line">
+    <div class="horizontal-spacing row vertical-spacing filter-line search-filters">
         <div class="cell">
-            <div class="vertical-spacing-twice horizontal-spacing"
+            <div class="vertical-spacing-twice"
                  ng-if="vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0">
                 <i18n>mediacentre.search.filter</i18n>
                 :
             </div>
             <div class="row">
-                <multi-combo class="horizontal-spacing"
-                             ng-repeat="filter in vm.filteredFields"
+                <multi-combo ng-repeat="filter in vm.filteredFields"
                              ng-if="vm.filters.initial[filter].length > 0"
                              title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
                              combo-model="vm.filters.initial[filter]"

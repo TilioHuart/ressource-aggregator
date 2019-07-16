@@ -1,7 +1,9 @@
 package fr.openent.mediacentre.source;
 
+import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.wseduc.webutils.Either;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -46,9 +48,7 @@ public class GAR implements Source {
         }));
     }
 
-    @Override
-    public void plainTextSearch(String query, UserInfos user, Handler<Either<String, JsonObject>> handler) {
-        List<Future> futures = new ArrayList<>();
+    private void getStructuresData(UserInfos user, List<Future> futures, Handler<AsyncResult<CompositeFuture>> handler) {
         List<String> structures = user.getStructures();
         for (String structure : structures) {
             Future<JsonArray> future = Future.future();
@@ -56,7 +56,13 @@ public class GAR implements Source {
             getData(user.getUserId(), structure, FutureHelper.handlerJsonArray(future));
         }
 
-        CompositeFuture.all(futures).setHandler(event -> {
+        CompositeFuture.all(futures).setHandler(handler);
+    }
+
+    @Override
+    public void plainTextSearch(String query, UserInfos user, Handler<Either<String, JsonObject>> handler) {
+        List<Future> futures = new ArrayList<>();
+        getStructuresData(user, futures, event -> {
             if (event.failed()) {
                 log.error("[GarSource@plainTextSearch] Failed to retrieve GAR resources.", event.cause());
                 handler.handle(new Either.Left<>(event.cause().toString()));
@@ -107,6 +113,10 @@ public class GAR implements Source {
         });
     }
 
+    private Integer getOccurrenceCount(String query, Object value) {
+        return value instanceof JsonArray ? getOccurrenceCount(query, (JsonArray) value) : getOccurrenceCount(query, (String) value);
+    }
+
     private Integer getOccurrenceCount(String query, JsonArray values) {
         Integer count = 0;
         for (int i = 0; i < values.size(); i++) {
@@ -127,9 +137,119 @@ public class GAR implements Source {
         return count;
     }
 
+    private boolean match(String query, Object value) {
+        return value instanceof JsonArray ? match(query, (JsonArray) value) : match(query, value);
+    }
+
+    private boolean match(String query, String value) {
+        Pattern regexp = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = regexp.matcher(value);
+
+        return matcher.find();
+    }
+
+    private boolean match(String query, JsonArray values) {
+        boolean matches = true;
+        for (int i = 0; i < values.size(); i++) {
+            matches = matches && match(query, values.getString(i));
+        }
+
+        return matches;
+    }
+
     @Override
     public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<String, JsonObject>> handler) {
+        List<String> fields = Arrays.asList("title", "authors", "editors", "disciplines", "levels");
+        List<Future> futures = new ArrayList<>();
+        getStructuresData(user, futures, event -> {
+            if (event.failed()) {
+                log.error("[GarSource@advancedSearch] Failed to retrieve GAR resources.", event.cause());
+                handler.handle(new Either.Left<>(event.cause().toString()));
+                return;
+            }
 
+            JsonArray resources = new JsonArray();
+            for (Future future : futures) {
+                resources.addAll((JsonArray) future.result());
+            }
+
+            HashMap<String, Boolean> ids = new HashMap<>();
+            SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
+            JsonArray matches = new JsonArray();
+            JsonObject searchFields = splitFields(fields, query);
+            for (int i = 0; i < resources.size(); i++) {
+                JsonObject resource = resources.getJsonObject(i);
+                if (ids.containsKey(resource.getString("_id"))) {
+                    continue;
+                }
+
+                ids.put(resource.getString("_id"), true);
+                int count = 0;
+                boolean match = true;
+                List<Comparator> andList = Arrays.asList(Comparator.NONE, Comparator.AND);
+                for (Comparator comp : andList) {
+                    if (searchFields.containsKey(comp.toString())) {
+                        JsonObject values = searchFields.getJsonObject(comp.toString());
+                        Iterator<String> keys = values.fieldNames().iterator();
+                        while (keys.hasNext()) {
+                            String next = keys.next();
+                            String searchedValue = queryPattern(values.getString(next));
+                            Integer occ = getOccurrenceCount(searchedValue, resource.getValue(next));
+                            count += occ;
+                            match = match && (occ > 0);
+                        }
+                    }
+                }
+
+                if (searchFields.containsKey(Comparator.OR.toString())) {
+                    JsonObject values = searchFields.getJsonObject(Comparator.OR.toString());
+                    Iterator<String> keys = values.fieldNames().iterator();
+                    while (keys.hasNext()) {
+                        String next = keys.next();
+                        String searchedValue = queryPattern(values.getString(next));
+                        Integer occ = getOccurrenceCount(searchedValue, resource.getValue(next));
+                        count += occ;
+                        match = match || (occ > 0);
+                    }
+                }
+
+                if (count > 0 && match) {
+                    if (!sortedMap.containsKey(count)) {
+                        sortedMap.put(count, new JsonArray());
+                    }
+                    sortedMap.get(count).add(resource);
+                }
+            }
+
+            List<Integer> keys = new ArrayList<>(sortedMap.keySet());
+            Collections.reverse(keys);
+
+            for (Integer key : keys) {
+                matches.addAll(sortedMap.get(key));
+            }
+
+            JsonObject response = new JsonObject()
+                    .put("source", GAR.class.getName())
+                    .put("resources", matches);
+            handler.handle(new Either.Right<>(response));
+        });
+    }
+
+    private String queryPattern(String value) {
+        return value.replaceAll(",\\s?|;\\s?", "|");
+    }
+
+    private JsonObject splitFields(List<String> fields, JsonObject query) {
+        JsonObject split = new JsonObject();
+        for (String field : fields) {
+            if (!query.containsKey(field)) continue;
+            JsonObject objectField = query.getJsonObject(field);
+            String comparator = objectField.containsKey("comparator") ? objectField.getString("comparator") : "none";
+            if (!split.containsKey(comparator)) split.put(comparator, new JsonObject());
+            split.getJsonObject(comparator).put(field, objectField.getString("value"));
+        }
+
+        return split;
     }
 
     @Override
@@ -139,7 +259,7 @@ public class GAR implements Source {
                 .put("editors", new JsonArray().add(resource.getString("nomEditeur")))
                 .put("authors", new JsonArray())
                 .put("image", resource.getString("urlVignette"))
-                .put("disciplines", new JsonArray())
+                .put("disciplines", getNames("domaineEnseignement", resource))
                 .put("levels", getNames("niveauEducatif", resource))
                 .put("document_types", getNames("typologieDocument", resource))
                 .put("link", resource.getString("urlAccesRessource"))
@@ -179,6 +299,7 @@ public class GAR implements Source {
 
     @Override
     public void harvest() {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override

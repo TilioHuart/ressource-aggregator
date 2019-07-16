@@ -29,15 +29,20 @@ interface ViewModel {
     filter(item: Resource);
 
     isLoading(): boolean;
+
+    getAdvancedSearchField(): string[];
+
+    emptyAdvancedSearch(): boolean;
 }
 
-interface EventReponses {
+interface EventResponses {
     search_Result(frame: Frame): void;
 }
 
 export const searchController = ng.controller('SearchController', ['$scope', '$location',
     function ($scope: Scope, $location: ILocationService) {
-        if (($scope.$parent as any).vm.search.text.trim().length === 0) {
+        if ($scope.mc.search.plain_text.text.trim().length === 0
+            && Object.keys($scope.mc.search.advanced.values).length === 0) {
             $location.path('/');
         }
         const vm: ViewModel = this;
@@ -106,7 +111,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             });
         }
 
-        const eventResponses: EventReponses = {
+        const eventResponses: EventResponses = {
             search_Result: function (frame) {
                 vm.resources = [...vm.resources, ...frame.data.resources];
                 frame.data.resources.forEach(addFilters);
@@ -131,5 +136,18 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
                 }
             });
             return count > 0;
+        };
+
+        vm.getAdvancedSearchField = function () {
+            return Object.keys($scope.mc.search.advanced.values);
+        };
+
+        vm.emptyAdvancedSearch = function () {
+            let empty = true;
+            Object.keys($scope.mc.search.advanced.values).forEach((field: string) => {
+                empty = empty && ($scope.mc.search.advanced.values[field].value.trim().length === 0)
+            });
+
+            return empty;
         }
     }]);
