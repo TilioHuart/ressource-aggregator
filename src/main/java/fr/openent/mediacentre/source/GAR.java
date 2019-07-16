@@ -118,7 +118,7 @@ public class GAR implements Source {
 
     private Integer getOccurrenceCount(String query, String value) {
         Integer count = 0;
-        Pattern regexp = Pattern.compile(query);
+        Pattern regexp = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
         Matcher matcher = regexp.matcher(value);
         while (matcher.find()) {
             count++;
