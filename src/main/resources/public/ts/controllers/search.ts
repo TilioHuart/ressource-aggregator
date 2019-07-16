@@ -27,6 +27,8 @@ interface ViewModel {
     formatClassName(className: string): string;
 
     filter(item: Resource);
+
+    isLoading(): boolean;
 }
 
 interface EventReponses {
@@ -119,4 +121,15 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
         };
 
         vm.formatClassName = (className) => className.replace(new RegExp("\\.", 'g'), '-');
+
+        vm.isLoading = function () {
+            let count = 0;
+            let loaders = Object.keys(vm.loaders);
+            loaders.forEach((loader: string) => {
+                if (vm.loaders[loader]) {
+                    count++;
+                }
+            });
+            return count > 0;
+        }
     }]);

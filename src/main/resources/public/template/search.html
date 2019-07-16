@@ -30,8 +30,16 @@
             </div>
         </div>
     </div>
-    <div class="grid">
+    <div class="grid" ng-show="vm.resources.length > 0">
         <resource-card ng-repeat="resource in vm.displayedResources track by $index"
                        ng-model="resource"></resource-card>
+    </div>
+    <div class="no-result eight centered" ng-show="!vm.isLoading() && vm.resources.length === 0">
+        <div class="six">
+            <img src="/mediacentre/public/img/no-result.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
+        </div>
+        <div class="six">
+            <i18n>mediacentre.no-result</i18n>
+        </div>
     </div>
 </div>

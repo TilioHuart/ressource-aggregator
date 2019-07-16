@@ -14,5 +14,7 @@
   "mediacentre.combo.deselectAll": "Tout déselectionner",
   "mediacentre.combo.options": "Options",
   "mediacentre.combo.searchPlaceholder": "Rechercher",
-  "mediacentre.combo.selectAll": "Tout sélectionner"
+  "mediacentre.combo.selectAll": "Tout sélectionner",
+  "mediacentre.no-result.alt": "Pas de résultats",
+  "mediacentre.no-result": "Nous sommes désolés. Il n'y a aucun résultat pour cette recherche"
 }
