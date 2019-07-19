@@ -31,5 +31,6 @@
   "mediacentre.advanced.name.authors": "Auteur",
   "mediacentre.advanced.name.editors": "Editeur",
   "mediacentre.advanced.name.disciplines": "Discipline",
-  "mediacentre.advanced.name.levels": "Niveaux"
+  "mediacentre.advanced.name.levels": "Niveaux",
+  "mediacentre.advanced.textbooks.mine": "Mes manuels"
 }

@@ -3,6 +3,9 @@ package fr.openent.mediacentre.controller;
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.enums.SearchState;
 import fr.openent.mediacentre.helper.WorkflowHelper;
+import fr.openent.mediacentre.service.TextBookService;
+import fr.openent.mediacentre.service.impl.DefaultTextBookService;
+import fr.openent.mediacentre.source.GAR;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.request.CookieHelper;
@@ -26,6 +29,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
     private final EventBus eb;
     private final List<Source> sources;
     private final Logger log = LoggerFactory.getLogger(WebSocketController.class);
+    private TextBookService textBookService = new DefaultTextBookService();
 
     public WebSocketController(EventBus eb, List<Source> sources) {
         this.eb = eb;
@@ -53,9 +57,15 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                         return;
                     }
                     JsonObject message = new JsonObject(frame.textData());
+                    String state = message.getString("state");
+                    JsonObject data = message.getJsonObject("data", new JsonObject());
                     switch (message.getString("event")) {
                         case "search": {
-                            search(message.getString("state"), message.getJsonObject("data"), userInfos, ws);
+                            search(state, data, userInfos, ws);
+                            break;
+                        }
+                        case "textbooks": {
+                            textBooks(state, userInfos, ws);
                             break;
                         }
                         default:
@@ -70,6 +80,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
     /**
      * Execute sources search
      *
+     * @param state State request
      * @param data Frame message
      * @param ws   WebSocket
      */
@@ -80,6 +91,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
             } else {
                 JsonObject frame = new JsonObject()
                         .put("event", "search_Result")
+                        .put("state", state)
                         .put("status", "ok")
                         .put("data", event.right().getValue());
                 ws.writeTextMessage(frame.encode());
@@ -96,6 +108,81 @@ public class WebSocketController implements Handler<ServerWebSocket> {
             }
         } else {
             ws.writeTextMessage(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());
+        }
+    }
+
+    /**
+     * Text book management
+     *
+     * @param state State request
+     * @param user  Current user
+     * @param ws    WebSocket server
+     */
+    private void textBooks(String state, UserInfos user, ServerWebSocket ws) {
+        if ("get".equals(state)) {
+            textBookService.get(user.getUserId(), event -> {
+                if (event.isLeft()) {
+                    log.error("[textBook@get] Failed to retrieve user textbooks", event.left());
+                    ws.writeTextMessage(new JsonObject().put("error", "Field to retrieve textbooks").put("status", "ko").encode());
+                    return;
+                }
+
+                JsonArray textBooks = event.right().getValue();
+                if (textBooks.isEmpty()) {
+                    initUserTextBooks(user, ws);
+                    JsonObject frame = new JsonObject()
+                            .put("event", "textbooks_Result")
+                            .put("state", "initialization")
+                            .put("status", "ok")
+                            .put("data", new JsonObject());
+                    ws.writeTextMessage(frame.encode());
+                } else {
+                    JsonObject frame = new JsonObject()
+                            .put("event", "textbooks_Result")
+                            .put("state", state)
+                            .put("status", "ok")
+                            .put("data", new JsonObject().put("textbooks", event.right().getValue()));
+                    ws.writeTextMessage(frame.encode());
+                }
+            });
+        } else {
+            ws.writeTextMessage(new JsonObject().put("error", "Unknown textbook action").put("status", "ko").encode());
+        }
+    }
+
+    /**
+     * Init user textbooks
+     *
+     * @param user Current user
+     * @param ws   WebSocketServer used to send response
+     */
+    private void initUserTextBooks(UserInfos user, ServerWebSocket ws) {
+        for (Source source : sources) {
+            if (source instanceof GAR) {
+                ((GAR) source).initTextBooks(user, event -> {
+                    if (event.isLeft()) {
+                        log.error("[WebSocketController] Failed to retrieve GAR textbooks", event.left().getValue());
+                        ws.writeTextMessage(new JsonObject().put("error", "Failed to retrieve GAR textbooks").put("status", "ko").encode());
+                        return;
+                    }
+
+                    JsonArray textbooks = event.right().getValue();
+                    textBookService.insert(user.getUserId(), textbooks, either -> {
+                        if (either.isLeft()) {
+                            log.error("[WebSocketController] Failed to insert user textbooks", either.left().getValue());
+                            ws.writeTextMessage(new JsonObject().put("error", "Failed to insert GAR textbooks").put("status", "ko").encode());
+                            return;
+                        }
+
+                        JsonObject frame = new JsonObject()
+                                .put("event", "textbooks_Result")
+                                .put("state", "get")
+                                .put("status", "ok")
+                                .put("data", new JsonObject().put("textbooks", textbooks));
+                        ws.writeTextMessage(frame.encode());
+                    });
+                });
+            }
         }
     }
 

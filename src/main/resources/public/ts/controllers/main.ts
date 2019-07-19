@@ -5,7 +5,6 @@ import {Frame, Resource, Socket} from '../model';
 export interface Scope extends IRootScopeService {
 	ws: Socket;
 	loaders: any;
-	resources: Resource[];
 	idiom: any;
 	safeApply(): void;
 
@@ -13,6 +12,7 @@ export interface Scope extends IRootScopeService {
 }
 
 export interface MainController {
+	textbooks: Resource[];
 	search: {
 		plain_text: {
 			text: string
@@ -38,6 +38,7 @@ export interface MainController {
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
 	function ($scope: Scope, route, $location: ILocationService) {
 		const mc: MainController = this;
+		mc.textbooks = [];
 		mc.search = {
 			plain_text: {
 				text: ''
@@ -56,7 +57,9 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		};
 		$scope.idiom = idiom;
 		$scope.ws = new Socket();
-		$scope.ws.onopen = (event) => console.info(`WebSocket opened on ${$scope.ws.host}`, event);
+		$scope.ws.onopen = (event) => {
+			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
+		};
 
 		const startResearch = function (state: string, data: any) {
 			$location.path(`/search/${state.toLowerCase()}`);

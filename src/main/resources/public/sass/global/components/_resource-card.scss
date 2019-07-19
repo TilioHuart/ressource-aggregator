@@ -9,6 +9,41 @@ resource-card {
     align-items: center;
     flex-direction: row;
     height: 12.5rem;
+    padding: 5px 10px;
+
+    .source {
+      width: auto;
+      height: 30px;
+    }
+
+    &.textbook {
+      height: 9rem;
+
+      .data {
+        .resource-information {
+          .title {
+            color: $mediacentre-red;
+            font-size: 20px;
+          }
+        }
+
+        .resource-footer .cell > div:before {
+          font-size: 24px !important;
+        }
+      }
+
+
+      .resource-footer {
+        .cell > div {
+          padding: 0 5px 0 0 !important;
+
+          &:before {
+            position: relative !important;
+            left: unset !important;
+          }
+        }
+      }
+    }
 
     .image {
       flex: 5;

@@ -19,6 +19,9 @@
         "fr.openent.mediacentre.source.MOODLE": false,
         "fr.openent.mediacentre.source.PMB": false
     },
+    "textbook_typology": [
+        "MAN"
+    ]
     "wsPort": 3000,
     "elasticsearch": true,
     "elasticsearchConfig" : {

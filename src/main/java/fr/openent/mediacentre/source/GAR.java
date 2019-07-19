@@ -3,7 +3,7 @@ package fr.openent.mediacentre.source;
 import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.service.FavoriteService;
-import fr.openent.mediacentre.service.Impl.DefaultFavoriteService;
+import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
@@ -23,16 +23,19 @@ import java.util.regex.Pattern;
 import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 
 public class GAR implements Source {
-
     private static String GAR_ADDRESS = "openent.gar";
-    private FavoriteService favoriteService;
+    private FavoriteService favoriteService = new DefaultFavoriteService();
     private final Logger log = LoggerFactory.getLogger(GAR.class);
     private EventBus eb;
+    private JsonObject config;
 
-    public GAR() {
-        this.favoriteService = new DefaultFavoriteService();
-    }
-
+    /**
+     * Retrieve and format user GAR resources
+     *
+     * @param userId      User that needs to retrieve GAR resources
+     * @param structureId Structure identifier
+     * @param handler     Function handler returning data
+     */
     private void getData(String userId, String structureId, Handler<Either<String, JsonArray>> handler) {
 
         Future<JsonArray> getResourcesFuture = Future.future();
@@ -62,9 +65,16 @@ public class GAR implements Source {
         });
 
         getResources(userId, structureId, FutureHelper.handlerJsonArray(getResourcesFuture));
-        this.favoriteService.get(GAR.class.getName(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+        favoriteService.get(GAR.class.getName(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
     }
 
+    /**
+     * Get GAR resources
+     *
+     * @param userId      User that needs to retrieve resources
+     * @param structureId User structure identifier
+     * @param handler     Function handler returning data
+     */
     private void getResources(String userId, String structureId, Handler<Either<String, JsonArray>> handler) {
         JsonObject action = new JsonObject()
                 .put("action", "getResources")
@@ -72,16 +82,23 @@ public class GAR implements Source {
                 .put("user", userId);
 
         eb.send(GAR_ADDRESS, action, handlerToAsyncHandler(event -> {
-            if (!"ok" .equals(event.body().getString("status"))) {
+            if (!"ok".equals(event.body().getString("status"))) {
                 log.error("[Gar@search] Failed to retrieve gar resources", event.body().getString("message"));
                 handler.handle(new Either.Left<>(event.body().getString("message")));
                 return;
             }
+
             handler.handle(new Either.Right<>(event.body().getJsonArray("message")));
         }));
     }
 
-
+    /**
+     * Retrieve all structures GAR resources
+     *
+     * @param user    User that needs resources
+     * @param futures Future list
+     * @param handler Function handler returning data
+     */
     private void getStructuresData(UserInfos user, List<Future> futures, Handler<AsyncResult<CompositeFuture>> handler) {
         List<String> structures = user.getStructures();
         for (String structure : structures) {
@@ -171,26 +188,6 @@ public class GAR implements Source {
         return count;
     }
 
-    private boolean match(String query, Object value) {
-        return value instanceof JsonArray ? match(query, (JsonArray) value) : match(query, value);
-    }
-
-    private boolean match(String query, String value) {
-        Pattern regexp = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = regexp.matcher(value);
-
-        return matcher.find();
-    }
-
-    private boolean match(String query, JsonArray values) {
-        boolean matches = true;
-        for (int i = 0; i < values.size(); i++) {
-            matches = matches && match(query, values.getString(i));
-        }
-
-        return matches;
-    }
-
     @Override
     public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<String, JsonObject>> handler) {
         List<String> fields = Arrays.asList("title", "authors", "editors", "disciplines", "levels");
@@ -273,6 +270,16 @@ public class GAR implements Source {
         return value.replaceAll(",\\s?|;\\s?", "|");
     }
 
+    private String queryPattern(JsonArray values) {
+        StringBuilder pattern = new StringBuilder();
+        for (int i = 0; i < values.size(); i++) {
+            pattern.append(queryPattern(values.getString(i)))
+                    .append("|");
+        }
+
+        return pattern.toString().substring(0, pattern.toString().length() - 1);
+    }
+
     private JsonObject splitFields(List<String> fields, JsonObject query) {
         JsonObject split = new JsonObject();
         for (String field : fields) {
@@ -340,5 +347,49 @@ public class GAR implements Source {
     @Override
     public void setEventBus(EventBus eb) {
         this.eb = eb;
+    }
+
+    @Override
+    public void setConfig(JsonObject config) {
+        this.config = config;
+    }
+
+    public void initTextBooks(UserInfos user, Handler<Either<String, JsonArray>> handler) {
+        List<Future> futures = new ArrayList<>();
+        List<String> structures = user.getStructures();
+        for (String structure : structures) {
+            Future<JsonArray> future = Future.future();
+            futures.add(future);
+            getResources(user.getUserId(), structure, FutureHelper.handlerJsonArray(future));
+        }
+
+        String pattern = queryPattern(config.getJsonArray("textbook_typology", new JsonArray()));
+        Pattern regexp = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+
+        CompositeFuture.all(futures).setHandler(event -> {
+            if (event.failed()) {
+                log.error("[Gar@initTextBooks] Failed to retrieve GAR resources", event.cause());
+                handler.handle(new Either.Left<>(event.cause().toString()));
+            }
+
+            JsonArray textBooks = new JsonArray();
+            JsonArray resources = new JsonArray();
+            List<String> list = new ArrayList<>();
+            for (Future future : futures) {
+                resources.addAll((JsonArray) future.result());
+            }
+
+            for (int i = 0; i < resources.size(); i++) {
+                JsonObject resource = resources.getJsonObject(i);
+                JsonObject type = resource.getJsonObject("typePresentation");
+                Matcher matcher = regexp.matcher(type.getString("code"));
+                if (matcher.find() && !list.contains(resource.getString("idRessource"))) {
+                    list.add(resource.getString("idRessource"));
+                    textBooks.add(format(resource));
+                }
+            }
+
+            handler.handle(new Either.Right<>(textBooks));
+        });
     }
 }

@@ -4,6 +4,7 @@ $mediacentre-light-grey: #d6d6d6;
 $mediacentre-gar: #3b1d8f;
 $mediacentre-moodle: #ff8500;
 $mediacentre-pmb: #43b0a2;
+$mediacentre-grey: #232323;
 
 body.mediacentre-v2 {
   @import 'components/index';
@@ -59,6 +60,15 @@ body.mediacentre-v2 {
     &:hover {
       background: $mediacentre-red;
       color: $white;
+    }
+  }
+
+  .textbooks {
+    h2 {
+      color: $mediacentre-grey;
+      font-size: 24px;
+      text-transform: uppercase;
+      font-weight: bold;
     }
   }
 }

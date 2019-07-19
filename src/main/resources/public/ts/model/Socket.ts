@@ -5,6 +5,7 @@ declare const window: any;
 
 export interface Socket {
     host: string;
+    connected: boolean;
 
     send(frame: Frame): void;
 }
@@ -13,6 +14,7 @@ export class Socket {
     private _ws: WebSocket;
 
     constructor() {
+        this.connected = false;
         this.host = `${(window.location.protocol === 'https:' ? 'wss' : 'ws')}://${location.hostname}:${window.wsPort}`;
         this._ws = new WebSocket(this.host);
         this._ws.onclose = function (event: CloseEvent) {
@@ -39,7 +41,10 @@ export class Socket {
     }
 
     set onopen(fn) {
-        this._ws.onopen = fn;
+        this._ws.onopen = (message: Event) => {
+            this.connected = true;
+            fn(message);
+        };
     }
 
     set onerror(fn) {

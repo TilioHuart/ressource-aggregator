@@ -1,4 +1,4 @@
-package fr.openent.mediacentre.service.Impl;
+package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.wseduc.mongodb.MongoDb;

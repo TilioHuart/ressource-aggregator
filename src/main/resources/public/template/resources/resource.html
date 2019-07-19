@@ -1,0 +1,48 @@
+<div class="image" ng-click="open()">
+    <div class="crop" data-resource-id="[[ngModel.id]]">
+        <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
+    </div>
+    <div class="background">
+        <img ng-src="[[background]]" alt="[[background]]"/>
+    </div>
+</div>
+<div class="data">
+    <div class="resource-information">
+        <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
+        <div>
+            <em class="metadata">
+                <i18n>mediacentre.edited.by</i18n>
+                <span ng-repeat="editor in ngModel.editors">[[editor]] </span>
+            </em>
+        </div>
+        <div class="types">
+            <span ng-repeat="type in ngModel.document_types">[[type]] </span>
+        </div>
+    </div>
+    <div class="resource-footer">
+        <div class="cell six">
+
+            <!-- Add favorite-->
+            <div ng-if="!ngModel.favorite" class="add-to-favorite" data-ng-click="addFavorite()">
+                <span class="text-button"><i18n>mediacentre.add.to.favorite</i18n></span>
+            </div>
+
+            <!--Remove favorite-->
+            <div ng-if="ngModel.favorite" class="remove-to-favorite" data-ng-click="removeFavorite()">
+                <span class="text-button"><i18n>mediacentre.remove.to.favorite</i18n></span>
+            </div>
+
+        </div>
+        <div class="cell six">
+            <div class="copy-clipboard clipboard resource-[[ngModel.hash]] pointer"
+                 data-clipboard-text="[[ngModel.link]]">
+                <span class="text-button">
+                    <i18n>mediacentre.copy.link</i18n>
+                    <span class="clipboard-tooltip" ng-class="{show: tooltip.show}">
+                        <i18n>mediacentre.copied</i18n>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

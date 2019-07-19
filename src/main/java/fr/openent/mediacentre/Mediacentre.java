@@ -33,6 +33,7 @@ public class Mediacentre extends BaseServer {
             if (configSources.getBoolean(sourceName)) {
                 Source source = (Source) Class.forName(sourceName).newInstance();
                 source.setEventBus(eb);
+                source.setConfig(config);
                 sources.add(source);
             }
         }

@@ -1,7 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.service.FavoriteService;
-import fr.openent.mediacentre.service.Impl.DefaultFavoriteService;
+import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Delete;
 import fr.wseduc.rs.Post;

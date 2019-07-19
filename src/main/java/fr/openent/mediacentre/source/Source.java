@@ -47,4 +47,11 @@ public interface Source {
      * @param eb event bus
      */
     void setEventBus(EventBus eb);
+
+    /**
+     * Set module configuration
+     *
+     * @param config Module configuration
+     */
+    void setConfig(JsonObject config);
 }
