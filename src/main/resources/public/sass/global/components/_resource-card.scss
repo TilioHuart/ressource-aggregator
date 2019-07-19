@@ -72,10 +72,22 @@ resource-card {
 
         .add-to-favorite {
           color: $mediacentre-light-grey;
+          cursor: pointer;
 
           &::before {
             @include fonticon();
             content: '\e9d9';
+          }
+        }
+
+        .remove-to-favorite {
+          color: $mediacentre-light-grey;
+          cursor: pointer;
+
+          &::before {
+            @include fonticon();
+            content: '\e9d9';
+            color: $mediacentre-yellow-star;
           }
         }
 

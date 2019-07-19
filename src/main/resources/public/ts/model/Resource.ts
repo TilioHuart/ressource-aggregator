@@ -1,13 +1,17 @@
 export interface Resource {
-    _id: string;
-    title: string;
     authors: string[];
-    editors: string[];
-    image: string;
+    date: number;
     disciplines: string[];
-    levels: string[];
+    displayTitle: string;
     document_types: string[];
+    editors: string[];
+    hash: number;
+    id: string;
+    favorite?: boolean;
+    image: string;
+    levels: string[];
     link: string;
-    date: number; //timestamp
     plain_text: string;
+    source: string;
+    title: string;
 }
