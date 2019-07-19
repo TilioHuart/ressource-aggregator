@@ -1,5 +1,6 @@
 package fr.openent.mediacentre;
 
+import fr.openent.mediacentre.controller.FavoriteController;
 import fr.openent.mediacentre.controller.MediacentreController;
 import fr.openent.mediacentre.controller.WebSocketController;
 import fr.openent.mediacentre.source.Source;
@@ -37,6 +38,7 @@ public class Mediacentre extends BaseServer {
         }
 
         addController(new MediacentreController(sources));
+        addController(new FavoriteController());
 
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
         HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);

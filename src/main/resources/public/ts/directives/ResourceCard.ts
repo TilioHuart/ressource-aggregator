@@ -2,10 +2,12 @@ import {$, ng} from 'entcore';
 import {hashCode} from '../utils';
 
 import * as Clipboard from 'clipboard';
+import {FavoriteService} from "../services";
 
 declare const window: Window;
 
-export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
+export const ResourceCard = ng.directive('resourceCard',
+    ['$timeout', 'FavoriteService', function ($timeout, FavoriteService: FavoriteService) {
     return {
         scope: {
             ngModel: '='
@@ -13,7 +15,7 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
         template: `
             <div class="flex">
                 <div class="image" ng-click="open()">
-                    <div class="crop" data-resource-id="[[ngModel._id]]">
+                    <div class="crop" data-resource-id="[[ngModel.id]]">
                         <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
                     </div>
                     <div class="background">
@@ -35,9 +37,17 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
                     </div>
                     <div class="resource-footer">
                         <div class="cell six">
-                            <div class="add-to-favorite forbidden">
-                               <span class="text-button"><i18n>mediacentre.add.to.favorite</i18n></span>
-                            </div>                        
+                       
+                            <!-- Add favorite-->
+                            <div ng-if="!ngModel.favorite" class="add-to-favorite" data-ng-click="addFavorite()">
+                              <span class="text-button"><i18n>mediacentre.add.to.favorite</i18n></span>
+                            </div>
+                                  
+                             <!--Remove favorite-->
+                             <div ng-if="ngModel.favorite" class="remove-to-favorite" data-ng-click="removeFavorite()">
+                               <span class="text-button"><i18n>mediacentre.remove.to.favorite</i18n></span>
+                             </div>   
+                                             
                         </div>
                         <div class="cell six">
                             <div class="copy-clipboard clipboard resource-[[ngModel.hash]] pointer" data-clipboard-text="[[ngModel.link]]">
@@ -57,7 +67,7 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
             let random = Math.floor(Math.random() * 3) + 1;
             $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;
             $scope.ngModel.displayTitle = $scope.ngModel.title;
-            $scope.ngModel.hash = hashCode($scope.ngModel._id);
+            $scope.ngModel.hash = hashCode($scope.ngModel.id);
             $scope.tooltip = {
                 show: false
             };
@@ -98,6 +108,13 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
                         image.style['max-width'] = 'unset';
                     };
                     i.src = image.src;
+                };
+
+                $scope.safeApply = () =>{
+                    let phase = $scope.$root.$$phase;
+                    if (phase !== '$apply' && phase !== '$digest') {
+                        $scope.$apply();
+                    }
                 };
 
                 $timeout(() => {
@@ -151,6 +168,23 @@ export const ResourceCard = ng.directive('resourceCard', function ($timeout) {
             $scope.open = function () {
                 window.open($scope.ngModel.link);
             };
+
+            $scope.addFavorite = async function() {
+                delete $scope.ngModel.favorite;
+                let response = await FavoriteService.create($scope.ngModel);
+                if (response.status === 200) {
+                    $scope.ngModel.favorite = true;
+                }
+                $scope.safeApply();
+            };
+
+            $scope.removeFavorite = async function() {
+                let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
+                if (response.status === 200) {
+                    $scope.ngModel.favorite = false;
+                }
+                $scope.safeApply();
+            };
         }
     }
-});
+}]);

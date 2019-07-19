@@ -2,6 +2,8 @@ package fr.openent.mediacentre.source;
 
 import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.helper.FutureHelper;
+import fr.openent.mediacentre.service.FavoriteService;
+import fr.openent.mediacentre.service.Impl.DefaultFavoriteService;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
@@ -21,11 +23,49 @@ import java.util.regex.Pattern;
 import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 
 public class GAR implements Source {
+
     private static String GAR_ADDRESS = "openent.gar";
+    private FavoriteService favoriteService;
     private final Logger log = LoggerFactory.getLogger(GAR.class);
     private EventBus eb;
 
+    public GAR() {
+        this.favoriteService = new DefaultFavoriteService();
+    }
+
     private void getData(String userId, String structureId, Handler<Either<String, JsonArray>> handler) {
+
+        Future<JsonArray> getResourcesFuture = Future.future();
+        Future<JsonArray> getFavoritesResourcesFuture = Future.future();
+
+        CompositeFuture.all(getResourcesFuture, getFavoritesResourcesFuture).setHandler(event -> {
+            if (event.failed()) {
+                handler.handle(new Either.Left<>(event.cause().toString()));
+            } else {
+                JsonArray formattedResources = new JsonArray();
+
+                for (int i = 0; i < getResourcesFuture.result().size(); i++) {
+                    formattedResources.add(format(getResourcesFuture.result().getJsonObject(i)));
+                }
+
+                /* Assign favorite to true if resources match with mongoDb's resources */
+                for (int i = 0; i < formattedResources.size(); i++) {
+                    for (int j = 0; j < getFavoritesResourcesFuture.result().size(); j++) {
+                        if (formattedResources.getJsonObject(i).getString("id")
+                                .equals(getFavoritesResourcesFuture.result().getJsonObject(j).getString("id"))) {
+                            formattedResources.getJsonObject(i).put("favorite", true);
+                        }
+                    }
+                }
+                handler.handle(new Either.Right<>(formattedResources));
+            }
+        });
+
+        getResources(userId, structureId, FutureHelper.handlerJsonArray(getResourcesFuture));
+        this.favoriteService.get(GAR.class.getName(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+    }
+
+    private void getResources(String userId, String structureId, Handler<Either<String, JsonArray>> handler) {
         JsonObject action = new JsonObject()
                 .put("action", "getResources")
                 .put("structure", structureId)
@@ -37,16 +77,10 @@ public class GAR implements Source {
                 handler.handle(new Either.Left<>(event.body().getString("message")));
                 return;
             }
-
-            JsonArray garResources = event.body().getJsonArray("message");
-            JsonArray formattedResources = new JsonArray();
-            for (int i = 0; i < garResources.size(); i++) {
-                formattedResources.add(format(garResources.getJsonObject(i)));
-            }
-
-            handler.handle(new Either.Right<>(formattedResources));
+            handler.handle(new Either.Right<>(event.body().getJsonArray("message")));
         }));
     }
+
 
     private void getStructuresData(UserInfos user, List<Future> futures, Handler<AsyncResult<CompositeFuture>> handler) {
         List<String> structures = user.getStructures();
@@ -78,10 +112,10 @@ public class GAR implements Source {
 
             for (int i = 0; i < resources.size(); i++) {
                 JsonObject resource = resources.getJsonObject(i);
-                if (ids.containsKey(resource.getString("_id"))) {
+                if (ids.containsKey(resource.getString("id"))) {
                     continue;
                 }
-                ids.put(resource.getString("_id"), true);
+                ids.put(resource.getString("id"), true);
                 Integer count = 0;
                 count += getOccurrenceCount(query, resource.getString("title"));
                 count += getOccurrenceCount(query, resource.getString("plain_text"));
@@ -179,11 +213,11 @@ public class GAR implements Source {
             JsonObject searchFields = splitFields(fields, query);
             for (int i = 0; i < resources.size(); i++) {
                 JsonObject resource = resources.getJsonObject(i);
-                if (ids.containsKey(resource.getString("_id"))) {
+                if (ids.containsKey(resource.getString("id"))) {
                     continue;
                 }
 
-                ids.put(resource.getString("_id"), true);
+                ids.put(resource.getString("id"), true);
                 int count = 0;
                 boolean match = true;
                 List<Comparator> andList = Arrays.asList(Comparator.NONE, Comparator.AND);
@@ -265,7 +299,8 @@ public class GAR implements Source {
                 .put("link", resource.getString("urlAccesRessource"))
                 .put("source", GAR.class.getName())
                 .put("plain_text", createPlainText(resource))
-                .put("_id", resource.getString("idRessource"))
+                .put("id", resource.getString("idRessource"))
+                .put("favorite", false)
                 .put("date", System.currentTimeMillis());
     }
 
