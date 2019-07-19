@@ -20,7 +20,7 @@
             <div ng-if="ngModel.favorite" class="remove-to-favorite" data-ng-click="removeFavorite()">&nbsp;</div>
         </div>
         <div class="cell horizontal-spacing">
-            <div class="copy-clipboard clipboard resource-[[ngModel.hash]] pointer"
+            <div class="copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
                  data-clipboard-text="[[ngModel.link]]">
                 <span class="text-button">
                     <span class="clipboard-tooltip" ng-class="{show: tooltip.show}">

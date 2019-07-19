@@ -1,0 +1,38 @@
+<div class="favorite">
+    <div class="image" ng-click="open()">
+        <div class="crop" data-resource-id="[[ngModel.id]]">
+            <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
+        </div>
+        <div class="background">
+            <img ng-src="[[background]]" alt="[[background]]"/>
+        </div>
+    </div>
+
+
+    <div class="data">
+        <div class="resource-information">
+            <div class="title pointer" data-ng-click="open()">[[ngModel.displayTitle]]</div>
+            <div>
+                <em class="metadata">
+                    <span ng-repeat="editor in ngModel.editors">[[editor]] </span>
+                </em>
+            </div>
+            <div class="types">
+                <span ng-repeat="type in ngModel.document_types">[[type]] </span>
+            </div>
+            <div class="resource-footer">
+                    <!--Remove favorite-->
+                    <div class="remove-to-favorite" data-ng-click="removeFavorite()">&nbsp;</div>
+
+                    <div class="copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
+                         data-clipboard-text="[[ngModel.link]]">
+                        <span class="text-button">
+                            <span class="clipboard-tooltip" ng-class="{show: tooltip.show}">
+                                <i18n>mediacentre.copied</i18n>
+                            </span>
+                        </span>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -31,6 +31,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
                     const flex = element.find('.flex');
                     const crop = element.find('.crop');
+                    const data = element.find('.data');
                     const image: HTMLImageElement = crop.children()[0];
 
                     const cropImage = () => {
@@ -61,6 +62,9 @@ export const ResourceCard = ng.directive('resourceCard',
                             crop.css('width', newWidth);
                             crop.css('overflow', 'hidden');
                             image.style['max-width'] = 'unset';
+                            if ($scope.type === "favorite") {
+                                data.css('width', newWidth);
+                            }
                         };
                         i.src = image.src;
                     };
@@ -92,7 +96,7 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $timeout(() => {
                     clampTitle();
-                    const clipboardSelector = `.clipboard.resource-${$scope.ngModel.hash}`;
+                    const clipboardSelector = `.clipboard.${$scope.type}-resource-${$scope.ngModel.hash}`;
                     const clipboardElement = element.find(clipboardSelector);
                     new Clipboard(clipboardSelector)
                         .on('success', () => {
@@ -130,6 +134,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 let response = await FavoriteService.create($scope.ngModel);
                 if (response.status === 200) {
                     $scope.ngModel.favorite = true;
+                    $scope.$emit('addFavorite', $scope.ngModel);
                 }
                 $scope.safeApply();
             };
@@ -138,6 +143,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
                 if (response.status === 200) {
                     $scope.ngModel.favorite = false;
+                    $scope.$emit('deleteFavorite', $scope.ngModel.id);
                 }
                 $scope.safeApply();
             };

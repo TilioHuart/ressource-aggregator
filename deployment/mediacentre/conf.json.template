@@ -21,7 +21,7 @@
     },
     "textbook_typology": [
         "MAN"
-    ]
+    ],
     "wsPort": 3000,
     "elasticsearch": true,
     "elasticsearchConfig" : {

@@ -113,6 +113,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				mc.search = {...mc.search, plain_text: {text: ''}};
 				template.open('main', 'home');
 			},
+			favorite: () => template.open('main', 'favorite'),
 			searchPlainText: () => template.open('main', 'search'),
 			searchAdvanced: () => template.open('main', 'search')
 		});

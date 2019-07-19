@@ -1,0 +1,32 @@
+<div ng-controller="FavoriteController as vm" class="favorite">
+
+    <!--Filter-->
+    <div class="horizontal-spacing row vertical-spacing filter-line search-filters">
+        <div class="cell">
+            <div class="vertical-spacing-twice"
+                 ng-if="vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0">
+                <i18n>mediacentre.search.filter</i18n>
+                :
+            </div>
+            <div class="row">
+                <multi-combo ng-repeat="filter in vm.filteredFields"
+                             ng-if="vm.filters.initial[filter].length > 0"
+                             title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
+                             combo-model="vm.filters.initial[filter]"
+                             search-on="name"
+                             order-by="name"
+                             filtered-model="vm.filters.filtered[filter]">
+                </multi-combo>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="favorites-grid">
+        <resource-card ng-repeat="resource in vm.favorites track by $index"
+                       type="favorite"
+                       class="favoriteCard"
+                       ng-model="resource">
+        </resource-card>
+    </div>
+</div>

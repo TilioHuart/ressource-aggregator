@@ -1,17 +1,56 @@
 <div ng-controller="HomeController as vm" class="home">
+
+    <!--Textbooks-->
     <div class="textbooks horizontal-spacing row vertical-spacing">
         <h2>
             <i18n>mediacentre.advanced.textbooks.mine</i18n>
         </h2>
+
+        <!--Content-->
         <div class="textbooks-grid" ng-show="vm.textbooks.length > 0">
-            <resource-card ng-repeat="resource in vm.textbooks track by $index"
-                           type="textbook"
-                           ng-model="resource"></resource-card>
+            <resource-card
+                    ng-repeat="resource in vm.textbooks track by $index"
+                    type="textbook"
+                    ng-model="resource">
+            </resource-card>
         </div>
+
+        <!-- Empty state -->
         <div class="centered eleven textbooks-empty" ng-show="vm.textbooks.length === 0">
             <img src="/mediacentre/public/img/empty-textbooks.svg"/>
             <div class="horizontal-margin-four">
                 <i18n>mediacentre.textbooks.empty</i18n>
+            </div>
+        </div>
+    </div>
+
+    <!--Favorite-->
+    <div class="favorites horizontal-spacing row vertical-spacing">
+        <h2>
+            <i18n>mediacentre.my.favorite</i18n>
+        </h2>
+
+        <!--Content-->
+        <div class="favorites-flex" ng-show="vm.favorites.length > 0">
+            <div class="favorites-flex-card">
+                <resource-card ng-repeat="resource in vm.favorites track by $index"
+                               ng-if="$index > data.length - 6"
+                               type="favorite"
+                               class="favoriteCard"
+                               ng-model="resource">
+                </resource-card>
+            </div>
+            <span class="favorites-flex-plus" data-ng-click="vm.seeMyFavorite()">
+                <i18n>mediacentre.see.more</i18n>
+            </span>
+        </div>
+
+        <!-- Empty state -->
+        <div class="favorites-emptyState" ng-show="vm.favorites.length <= 0">
+            <img src="/mediacentre/public/img/favoris-emptyState.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
+            <div class="favorites-emptyState-flex">
+                <span><i18n>mediacentre.favorite.empty.first</i18n></span>
+                <span><i18n>mediacentre.favorite.empty.second</i18n></span>
             </div>
         </div>
     </div>

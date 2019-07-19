@@ -1,6 +1,8 @@
 package fr.openent.mediacentre.source;
 
+import fr.openent.mediacentre.controller.WebSocketController;
 import fr.openent.mediacentre.enums.Comparator;
+import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
@@ -25,6 +27,8 @@ import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 public class GAR implements Source {
     private static String GAR_ADDRESS = "openent.gar";
     private FavoriteService favoriteService = new DefaultFavoriteService();
+    private FavoriteHelper favoriteHelper = new FavoriteHelper();
+
     private final Logger log = LoggerFactory.getLogger(GAR.class);
     private EventBus eb;
     private JsonObject config;
@@ -52,14 +56,7 @@ public class GAR implements Source {
                 }
 
                 /* Assign favorite to true if resources match with mongoDb's resources */
-                for (int i = 0; i < formattedResources.size(); i++) {
-                    for (int j = 0; j < getFavoritesResourcesFuture.result().size(); j++) {
-                        if (formattedResources.getJsonObject(i).getString("id")
-                                .equals(getFavoritesResourcesFuture.result().getJsonObject(j).getString("id"))) {
-                            formattedResources.getJsonObject(i).put("favorite", true);
-                        }
-                    }
-                }
+                favoriteHelper.matchFavorite(getFavoritesResourcesFuture, formattedResources);
                 handler.handle(new Either.Right<>(formattedResources));
             }
         });

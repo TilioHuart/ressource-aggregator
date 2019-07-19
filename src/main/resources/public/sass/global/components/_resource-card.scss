@@ -45,6 +45,21 @@ resource-card {
       }
     }
 
+    &.favorite {
+      padding-top: 2rem;
+      .data {
+        padding-top: 1rem;
+        .title {
+          color: $mediacentre-red;
+        }
+        .resource-footer {
+          display: flex;
+          padding-top: 10px;
+          font-size: 14px;
+        }
+      }
+    }
+
     .image {
       flex: 5;
       position: relative;
@@ -158,6 +173,28 @@ resource-card {
           }
         }
       }
+    }
+  }
+}
+
+.favoriteCard {
+  background-color: unset;
+  border-radius: unset;
+  box-shadow: unset;
+  .remove-to-favorite {
+    color: $mediacentre-light-grey;
+    cursor: pointer;
+
+    &::before {
+      @include fonticon();
+      content: '\e9d9';
+      font-size: 24px;
+      color: $mediacentre-yellow-star;
+    }
+  }
+  .copy-clipboard {
+    &::before {
+      font-size: 24px;
     }
   }
 }

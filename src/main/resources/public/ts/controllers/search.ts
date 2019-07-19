@@ -2,6 +2,7 @@ import {ng} from 'entcore';
 import {Scope} from './main'
 import {Filter, Frame, Resource} from "../model";
 import {ILocationService} from "angular";
+import {addFilters} from "../utils";
 
 declare let window: any;
 
@@ -96,25 +97,10 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             if (event in eventResponses) eventResponses[event](new Frame(event, state, data));
         };
 
-        function addFilters(resource: Resource) {
-            vm.filteredFields.forEach((filterName) => {
-                (resource[filterName] as Array<string>).forEach((filterValue) => {
-                    if (!vm.filters.initial[filterName].find((el: Filter) => el.name === filterValue)) {
-                        vm.filters.initial[filterName].push({
-                            name: filterValue,
-                            toString: function () {
-                                return this.name
-                            }
-                        });
-                    }
-                });
-            });
-        }
-
         const eventResponses: EventResponses = {
             search_Result: function (frame) {
                 vm.resources = [...vm.resources, ...frame.data.resources];
-                frame.data.resources.forEach(addFilters);
+                frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
                 filter();
                 vm.loaders[frame.data.source] = false;
                 $scope.safeApply();

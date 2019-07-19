@@ -20,6 +20,9 @@ routes.define(function($routeProvider){
 		.when('/', {
 			action: 'home'
 		})
+		.when('/favorite', {
+			action: 'favorite'
+		})
 		.when('/search/plain_text', {
 			action: 'searchPlainText'
 		})

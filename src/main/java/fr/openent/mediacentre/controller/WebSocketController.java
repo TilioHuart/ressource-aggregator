@@ -2,13 +2,19 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.enums.SearchState;
+import fr.openent.mediacentre.helper.FavoriteHelper;
+import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.helper.WorkflowHelper;
 import fr.openent.mediacentre.service.TextBookService;
+import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultTextBookService;
 import fr.openent.mediacentre.source.GAR;
+import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.request.CookieHelper;
+import io.vertx.core.CompositeFuture;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.ServerWebSocket;
@@ -29,7 +35,10 @@ public class WebSocketController implements Handler<ServerWebSocket> {
     private final EventBus eb;
     private final List<Source> sources;
     private final Logger log = LoggerFactory.getLogger(WebSocketController.class);
+    private FavoriteService favoriteService = new DefaultFavoriteService();
     private TextBookService textBookService = new DefaultTextBookService();
+    private FavoriteHelper favoriteHelper = new FavoriteHelper();
+
 
     public WebSocketController(EventBus eb, List<Source> sources) {
         this.eb = eb;
@@ -64,6 +73,10 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                             search(state, data, userInfos, ws);
                             break;
                         }
+                        case "favorites": {
+                            favorites(state, ws);
+                            break;
+                        }
                         case "textbooks": {
                             textBooks(state, userInfos, ws);
                             break;
@@ -75,6 +88,36 @@ public class WebSocketController implements Handler<ServerWebSocket> {
             });
             ws.resume();
         });
+    }
+
+    private void favorites(String state, ServerWebSocket ws) {
+        if ("get".equals(state)) {
+            favoriteService.get(GAR.class.getName(), event -> {
+                if (event.isLeft()) {
+                    log.error("[favorite@get] Failed to retrieve favorite", event.left());
+                    ws.writeTextMessage(new JsonObject().put("error", "Fail to retrieve favorite").put("status", "ko").encode());
+                    return;
+                }
+                JsonArray favorites = event.right().getValue();
+                if (favorites.isEmpty()) {
+                    JsonObject frame = new JsonObject()
+                            .put("event", "favorites_Result")
+                            .put("state", "initialization")
+                            .put("status", "ok")
+                            .put("data", new JsonObject());
+                    ws.writeTextMessage(frame.encode());
+                } else {
+                    JsonObject frame = new JsonObject()
+                            .put("event", "favorites_Result")
+                            .put("state", state)
+                            .put("status", "ok")
+                            .put("data", event.right().getValue());
+                    ws.writeTextMessage(frame.encode());
+                }
+            });
+        } else {
+            ws.writeTextMessage(new JsonObject().put("error", "Unknown favorite action").put("status", "ko").encode());
+        }
     }
 
     /**
@@ -120,14 +163,24 @@ public class WebSocketController implements Handler<ServerWebSocket> {
      */
     private void textBooks(String state, UserInfos user, ServerWebSocket ws) {
         if ("get".equals(state)) {
-            textBookService.get(user.getUserId(), event -> {
-                if (event.isLeft()) {
-                    log.error("[textBook@get] Failed to retrieve user textbooks", event.left());
+
+            Future<JsonArray> getTextBookFuture = Future.future();
+            Future<JsonArray> getFavoritesResourcesFuture = Future.future();
+
+            favoriteService.get(GAR.class.getName(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+            textBookService.get(user.getUserId(),  FutureHelper.handlerJsonArray(getTextBookFuture));
+
+            CompositeFuture.all(getTextBookFuture, getFavoritesResourcesFuture).setHandler(event -> {
+                if (event.failed()) {
+                    log.error("[textBook@get] Failed to retrieve user textbooks", event.cause().toString());
                     ws.writeTextMessage(new JsonObject().put("error", "Field to retrieve textbooks").put("status", "ko").encode());
                     return;
                 }
 
-                JsonArray textBooks = event.right().getValue();
+                JsonArray textBooks = getTextBookFuture.result();
+                favoriteHelper.matchFavorite(getFavoritesResourcesFuture, textBooks);
+
+
                 if (textBooks.isEmpty()) {
                     initUserTextBooks(user, ws);
                     JsonObject frame = new JsonObject()
@@ -141,7 +194,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                             .put("event", "textbooks_Result")
                             .put("state", state)
                             .put("status", "ok")
-                            .put("data", new JsonObject().put("textbooks", event.right().getValue()));
+                            .put("data", new JsonObject().put("textbooks", textBooks));
                     ws.writeTextMessage(frame.encode());
                 }
             });
