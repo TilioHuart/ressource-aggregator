@@ -71,4 +71,16 @@ body.mediacentre-v2 {
       font-weight: bold;
     }
   }
+
+  .textbooks-empty {
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+    font-size: 20px;
+    color: $mediacentre-grey;
+
+    img {
+      height: 200px;
+    }
+  }
 }

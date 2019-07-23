@@ -8,5 +8,11 @@
                            type="textbook"
                            ng-model="resource"></resource-card>
         </div>
+        <div class="centered eleven textbooks-empty" ng-show="vm.textbooks.length === 0">
+            <img src="/mediacentre/public/img/empty-textbooks.svg"/>
+            <div class="horizontal-margin-four">
+                <i18n>mediacentre.textbooks.empty</i18n>
+            </div>
+        </div>
     </div>
 </div>
