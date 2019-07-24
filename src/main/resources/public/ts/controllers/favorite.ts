@@ -72,8 +72,8 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
 
     const eventResponses: EventResponses = {
         favorites_Result: function (frame) {
+            vm.resources = [...vm.resources, ...frame.data];
             vm.favorites = frame.data;
-            console.log("favorite: ", vm.favorites);
             frame.data.forEach((resource)=> addFilters(vm.filteredFields, vm.filters.initial, resource));
             filter();
             $scope.safeApply();

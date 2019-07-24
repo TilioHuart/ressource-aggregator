@@ -34,7 +34,7 @@
         <div class="favorites-flex" ng-show="vm.favorites.length > 0">
             <div class="favorites-flex-card">
                 <resource-card ng-repeat="resource in vm.favorites track by $index"
-                               ng-if="$index > data.length - 6"
+                               ng-if="$index > vm.favorites.length - 6"
                                type="favorite"
                                class="favoriteCard"
                                ng-model="resource">

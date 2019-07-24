@@ -23,7 +23,7 @@
 
     <!-- Cards -->
     <div class="favorites-grid">
-        <resource-card ng-repeat="resource in vm.favorites track by $index"
+        <resource-card ng-repeat="resource in vm.displayedResources track by $index"
                        type="favorite"
                        class="favoriteCard"
                        ng-model="resource">
