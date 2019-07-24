@@ -15,7 +15,8 @@ export class Socket {
 
     constructor() {
         this.connected = false;
-        this.host = `${(window.location.protocol === 'https:' ? 'wss' : 'ws')}://${location.hostname}:${window.wsPort}`;
+        const endpoint = `${window.mode === 'dev' ? '' : '/mediacentre/ws'}`;
+        this.host = `${(window.location.protocol === 'https:' ? 'wss' : 'ws')}://${location.hostname}:${window.wsPort}${endpoint}`;
         this._ws = new WebSocket(this.host);
         this._ws.onclose = function (event: CloseEvent) {
             toasts.warning('mediacentre.socket.closed');

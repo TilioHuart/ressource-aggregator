@@ -20,10 +20,12 @@ import static org.entcore.common.http.response.DefaultResponseHandler.arrayRespo
 public class MediacentreController extends ControllerHelper {
 
     private List<Source> sources;
+    private JsonObject config;
 
-    public MediacentreController(List<Source> sources) {
+    public MediacentreController(List<Source> sources, JsonObject config) {
         super();
         this.sources = sources;
+        this.config = config;
     }
 
     @Get("")
@@ -36,7 +38,8 @@ public class MediacentreController extends ControllerHelper {
         }
 
         JsonObject params = new JsonObject()
-                .put("wsPort", Mediacentre.wsPort)
+                .put("wsPort", "dev".equals(config.getString("mode")) ? Mediacentre.wsPort : "")
+                .put("mode", config.getString("mode"))
                 .put("sources", sourceList);
         renderView(request, params);
     }
