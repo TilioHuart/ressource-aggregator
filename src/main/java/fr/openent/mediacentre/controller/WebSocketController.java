@@ -5,11 +5,11 @@ import fr.openent.mediacentre.enums.SearchState;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.helper.WorkflowHelper;
+import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.TextBookService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultTextBookService;
 import fr.openent.mediacentre.source.GAR;
-import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.request.CookieHelper;
@@ -220,6 +220,15 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                     }
 
                     JsonArray textbooks = event.right().getValue();
+                    if (textbooks.isEmpty()) {
+                        JsonObject frame = new JsonObject()
+                                .put("event", "textbooks_Result")
+                                .put("state", "get")
+                                .put("status", "ok")
+                                .put("data", new JsonObject().put("textbooks", textbooks));
+                        ws.writeTextMessage(frame.encode());
+                        return;
+                    }
                     textBookService.insert(user.getUserId(), textbooks, either -> {
                         if (either.isLeft()) {
                             log.error("[WebSocketController] Failed to insert user textbooks", either.left().getValue());
