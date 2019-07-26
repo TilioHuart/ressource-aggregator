@@ -34,6 +34,10 @@ $header-height: 165px;
 
   .advanced-search-link {
     margin-left: 10px;
+
+    &:hover {
+      color: $mediacentre-red !important;
+    }
   }
 
   i.advanced-search {
@@ -50,6 +54,7 @@ $header-height: 165px;
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 1;
   }
 
   .search-block {

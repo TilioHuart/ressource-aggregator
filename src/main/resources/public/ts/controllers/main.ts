@@ -33,6 +33,8 @@ export interface MainController {
 	openAdvancedSearch(): void;
 
 	closeAdvancedSearch(): void;
+
+	goHome(): void;
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
@@ -98,19 +100,23 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		};
 
 		mc.openAdvancedSearch = function () {
-			mc.search.advanced.fields.forEach((field) => mc.initField(field));
 			mc.search.plain_text.text = '';
 			mc.search.advanced.show = true;
 		};
 
 		mc.closeAdvancedSearch = function () {
 			mc.search.advanced.show = false;
-			mc.search.advanced.values = {};
+		};
+
+		mc.goHome = function () {
+			$location.path('/')
 		};
 
 		route({
 			home: () => {
 				mc.search = {...mc.search, plain_text: {text: ''}};
+				mc.search.advanced.values = {};
+				mc.search.advanced.fields.forEach((field) => mc.initField(field));
 				template.open('main', 'home');
 			},
 			favorite: () => template.open('main', 'favorite'),

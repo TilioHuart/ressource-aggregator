@@ -1,4 +1,5 @@
 $mediacentre-red: #f53b57;
+$mediacentre-dar-red: #c4374c;
 $mediacentre-yellow-star: rgb(254, 198, 61);
 $mediacentre-light-grey: #d6d6d6;
 $mediacentre-gar: #3b1d8f;
@@ -66,7 +67,7 @@ body.mediacentre-v2 {
   .textbooks, .favorites {
     h2 {
       color: $mediacentre-grey;
-      font-size: 24px;
+      font-size: 20px !important;
       text-transform: uppercase;
       font-weight: bold;
     }
@@ -117,11 +118,21 @@ body.mediacentre-v2 {
     justify-content: flex-start;
     align-items: center;
     display: flex;
-    font-size: 20px;
+    font-size: 16px;
     color: $mediacentre-grey;
 
     img {
       height: 200px;
+    }
+  }
+
+  multi-combo {
+    .multi-combo-panel-opts button {
+      background-color: $mediacentre-red;
+
+      &:hover {
+        background-color: $mediacentre-dar-red;
+      }
     }
   }
 }

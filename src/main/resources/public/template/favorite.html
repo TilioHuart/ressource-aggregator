@@ -22,11 +22,21 @@
     </div>
 
     <!-- Cards -->
-    <div class="favorites-grid">
+    <div class="favorites-grid" ng-show="vm.displayedResources.length > 0">
         <resource-card ng-repeat="resource in vm.displayedResources track by $index"
                        type="favorite"
                        class="favoriteCard"
                        ng-model="resource">
         </resource-card>
+    </div>
+
+    <!-- Empty state -->
+    <div class="favorites-emptyState" ng-show="vm.displayedResources.length === 0">
+        <img src="/mediacentre/public/img/favoris-emptyState.svg"
+             alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
+        <div class="favorites-emptyState-flex">
+            <span><i18n>mediacentre.favorite.empty.first</i18n></span>
+            <span><i18n>mediacentre.favorite.empty.second</i18n></span>
+        </div>
     </div>
 </div>

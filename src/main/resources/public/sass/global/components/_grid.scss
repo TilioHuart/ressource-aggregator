@@ -18,8 +18,25 @@
 .textbooks-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 9rem;
   grid-column-gap: 3rem;
   grid-row-gap: 1.5rem;
   padding: 1rem;
+}
+
+@media (max-width: 1600px) {
+  .textbooks-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 1350px) {
+  .textbooks-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 950px) {
+  .textbooks-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }

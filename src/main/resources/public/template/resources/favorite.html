@@ -1,28 +1,33 @@
-<div class="favorite">
-    <div class="image" ng-click="open()">
-        <div class="crop" data-resource-id="[[ngModel.id]]">
-            <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
+<div class="resource-card">
+    <div>
+        <div class="image" ng-click="open()">
+            <div class="crop" data-resource-id="[[ngModel.id]]">
+                <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
+            </div>
+            <div class="background">
+                <img ng-src="[[background]]" alt="[[background]]"/>
+            </div>
+            <div class="source-image">
+                <img ng-src="[[ '/mediacentre/public/img/' + ngModel.source + '.png' ]]"/>
+            </div>
         </div>
-        <div class="background">
-            <img ng-src="[[background]]" alt="[[background]]"/>
-        </div>
-    </div>
 
 
-    <div class="data">
-        <div class="resource-information">
-            <div class="title pointer" data-ng-click="open()">[[ngModel.displayTitle]]</div>
-            <div>
-                <em class="metadata">
-                    <span ng-repeat="editor in ngModel.editors">[[editor]] </span>
-                </em>
-            </div>
-            <div class="types">
-                <span ng-repeat="type in ngModel.document_types">[[type]] </span>
-            </div>
-            <div class="resource-footer">
+        <div class="data">
+            <div class="resource-information">
+                <div class="title pointer" data-ng-click="open()">[[ngModel.displayTitle]]</div>
+                <div>
+                    <em class="metadata">
+                        <span ng-repeat="editor in ngModel.editors">[[editor]] </span>
+                    </em>
+                </div>
+                <div class="types">
+                    <span ng-repeat="type in ngModel.document_types">[[type]] </span>
+                </div>
+                <div class="resource-footer">
                     <!--Remove favorite-->
-                    <div class="remove-to-favorite" data-ng-click="removeFavorite()">&nbsp;</div>
+                    <div class="remove-to-favorite" data-ng-click="removeFavorite()">&nbsp;
+                    </div>
 
                     <div class="copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
                          data-clipboard-text="[[ngModel.link]]">
@@ -32,6 +37,19 @@
                             </span>
                         </span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="resource-loader" ng-show="show.loader">
+    <div>
+        <div class="image horizontal-margin" ng-click="open()">
+            <img src="/mediacentre/public/img/empty-textbooks.svg"/>
+        </div>
+        <div class="data">
+            <div class="resource-information">
+                <i18n>mediacentre.resource.loading</i18n>
             </div>
         </div>
     </div>

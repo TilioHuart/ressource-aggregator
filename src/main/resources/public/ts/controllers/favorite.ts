@@ -1,4 +1,4 @@
-import {idiom as lang, ng} from 'entcore';
+import {ng} from 'entcore';
 import {Scope} from './main'
 import {Filter, Frame, Resource} from '../model';
 import {addFilters} from '../utils';
@@ -27,7 +27,7 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
     vm.filteredFields = [ 'document_types', 'source', 'levels'];
 
     $scope.$on('deleteFavorite', function(event, id) {
-        vm.favorites = vm.favorites.filter(el => el.id !== id);
+        vm.displayedResources = vm.favorites.filter(el => el.id !== id);
     });
 
     const initFavorite = function () {

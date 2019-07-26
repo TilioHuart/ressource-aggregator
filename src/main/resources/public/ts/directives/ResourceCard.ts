@@ -14,7 +14,7 @@ export const ResourceCard = ng.directive('resourceCard',
             type: '@?'
         },
         template: `
-            <div ng-include="getTemplate()" class="flex [[type]]"></div>
+            <div ng-include="getTemplate()" class="flex [[type]]" ng-class="{loading: show.loader}"></div>
         `,
         link: function ($scope, element) {
             $scope.type = $scope.type || 'resource';
@@ -23,15 +23,16 @@ export const ResourceCard = ng.directive('resourceCard',
             $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;
             $scope.ngModel.displayTitle = $scope.ngModel.title;
             $scope.ngModel.hash = hashCode($scope.ngModel.id);
-            $scope.tooltip = {
-                show: false
+            $scope.show = {
+                toolip: false,
+                loader: true
             };
 
             $scope.$on("$includeContentLoaded", function () {
                 if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
                     const flex = element.find('.flex');
-                    const crop = element.find('.crop');
-                    const data = element.find('.data');
+                    const crop = element.find('.resource-card .crop');
+                    const data = element.find('.resource-card .data');
                     const image: HTMLImageElement = crop.children()[0];
 
                     const cropImage = () => {
@@ -65,6 +66,9 @@ export const ResourceCard = ng.directive('resourceCard',
                             if ($scope.type === "favorite") {
                                 data.css('width', newWidth);
                             }
+                            clampTitle();
+                            $scope.show.loader = false;
+                            $scope.safeApply();
                         };
                         i.src = image.src;
                     };
@@ -95,20 +99,23 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $timeout(() => {
-                    clampTitle();
+                    if ('fr.openent.mediacentre.source.GAR' !== $scope.ngModel.source) {
+                        clampTitle();
+                        $scope.show.loader = false;
+                    }
                     const clipboardSelector = `.clipboard.${$scope.type}-resource-${$scope.ngModel.hash}`;
                     const clipboardElement = element.find(clipboardSelector);
                     new Clipboard(clipboardSelector)
                         .on('success', () => {
-                            $scope.tooltip.show = true;
+                            $scope.show.tooltip = true;
                             $scope.$apply();
                             clipboardElement.on('mouseleave', () => {
-                                $scope.tooltip.show = false;
+                                $scope.show.tooltip = false;
                                 $scope.$apply();
                             });
                         })
                         .on('error', console.error);
-
+                    $scope.safeApply();
                 });
             });
 
