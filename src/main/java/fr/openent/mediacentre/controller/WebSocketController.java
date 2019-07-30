@@ -65,6 +65,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                         ws.writeTextMessage(new JsonObject().put("error", "Unauthorized").put("status", "ko").encode());
                         return;
                     }
+                    if (!frame.isText()) return;
                     JsonObject message = new JsonObject(frame.textData());
                     String state = message.getString("state");
                     JsonObject data = message.getJsonObject("data", new JsonObject());
@@ -86,6 +87,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                     }
                 });
             });
+            ws.closeHandler(event -> log.info("Closed WebSocket"));
             ws.resume();
         });
     }
