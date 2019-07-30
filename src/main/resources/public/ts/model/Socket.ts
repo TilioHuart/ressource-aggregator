@@ -6,6 +6,12 @@ declare const window: any;
 export interface Socket {
     host: string;
     connected: boolean;
+    callbacks: {
+        onmessage: any;
+        onerror: any;
+        onclose: any;
+        onopen: any;
+    }
 
     send(frame: Frame): void;
 }
@@ -16,6 +22,12 @@ export class Socket {
     constructor() {
         this.connected = false;
         this._ws = null;
+        this.callbacks = {
+            onmessage: null,
+            onerror: null,
+            onclose: null,
+            onopen: null,
+        };
         this._init();
     }
 
@@ -28,6 +40,25 @@ export class Socket {
             this._init();
             throw event;
         };
+        this._ws.onmessage = (message: MessageEvent) => {
+            let {data} = message;
+            data = JSON.parse(data);
+            if ("ko" === data.status) {
+                toasts.warning('mediacentre.socket.error');
+                throw data.error;
+            }
+
+            this.callbacks.onmessage(message);
+        };
+        this._ws.onopen = (message: Event) => {
+            this.connected = true;
+            this.callbacks.onopen(message);
+        };
+        this._ws.onerror = (event: Event) => {
+            this.callbacks.onerror(event);
+            toasts.warning('mediacentre.socket.error');
+            throw event;
+        };
     }
 
     send(frame) {
@@ -36,32 +67,16 @@ export class Socket {
 
     set onmessage(fn) {
         if (this._ws === null) return;
-        this._ws.onmessage = function (message: MessageEvent) {
-            let {data} = message;
-            data = JSON.parse(data);
-            if ("ko" === data.status) {
-                toasts.warning('mediacentre.socket.error');
-                throw data.error;
-            }
-
-            fn(message);
-        }
+        this.callbacks.onmessage = fn;
     }
 
     set onopen(fn) {
         if (this._ws === null) return;
-        this._ws.onopen = (message: Event) => {
-            this.connected = true;
-            fn(message);
-        };
+        this.callbacks.onopen = fn;
     }
 
     set onerror(fn) {
         if (this._ws === null) return;
-        this._ws.onerror = function (event: Event) {
-            fn(event);
-            toasts.warning('mediacentre.socket.error');
-            throw event;
-        };
+        this.callbacks.onerror = fn;
     }
 }

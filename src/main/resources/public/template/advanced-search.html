@@ -2,8 +2,8 @@
     <i18n>mediacentre.source.search.advanced</i18n>
 </div>
 <form class="advanced-search-form">
-    <div class="ten">
-        <div class="row-flex vertical-spacing-four" ng-repeat="field in mc.search.advanced.fields">
+    <div class="ten twelve-mobile">
+        <div class="row-flex vertical-spacing-four twelve-mobile" ng-repeat="field in mc.search.advanced.fields">
             <span class="two" ng-if="!field.comparator">&nbsp;</span>
             <div class="two centered-text" ng-if="field.comparator">
                 <select ng-model="mc.search.advanced.values[field.name].comparator">

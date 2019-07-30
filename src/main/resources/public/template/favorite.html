@@ -8,13 +8,14 @@
                 <i18n>mediacentre.search.filter</i18n>
                 :
             </div>
-            <div class="row">
+            <div class="row cell">
                 <multi-combo ng-repeat="filter in vm.filteredFields"
                              ng-if="vm.filters.initial[filter].length > 0"
                              title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
                              combo-model="vm.filters.initial[filter]"
                              search-on="name"
                              order-by="name"
+                             class="twelve-mobile"
                              filtered-model="vm.filters.filtered[filter]">
                 </multi-combo>
             </div>

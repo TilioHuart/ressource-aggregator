@@ -24,7 +24,7 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
     const vm: ViewModel = this;
 
     vm.favorites = [];
-    vm.filteredFields = [ 'document_types', 'source', 'levels'];
+    vm.filteredFields = [ 'document_types', 'levels'];
 
     $scope.$on('deleteFavorite', function(event, id) {
         vm.displayedResources = vm.favorites.filter(el => el.id !== id);

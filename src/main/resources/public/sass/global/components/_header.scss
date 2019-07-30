@@ -32,6 +32,12 @@ $header-height: 165px;
     background-size: auto 125%;
   }
 
+  @media (max-width: $small-tablette) {
+    &:before {
+      background-image: none !important;
+    }
+  }
+
   .advanced-search-link {
     margin-left: 10px;
 
@@ -48,14 +54,27 @@ $header-height: 165px;
     }
   }
 
-  h1 {
+  .mediacentre-title {
     margin: 5px auto auto 15px;
-    font-size: 26px;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+
+    img {
+      height: 40px;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin: 0;
+    }
   }
+
 
   .search-block {
     z-index: 1;

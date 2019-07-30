@@ -1,8 +1,14 @@
 <div class="header">
-    <h1 ng-click="mc.goHome()">
-        <i18n>mediacentre.title</i18n>
-    </h1>
-    <div class="search-block six">
+    <div class="row mediacentre-title">
+        <img ng-click="mc.goHome()"
+             src="/mediacentre/public/img/logo-mediacentre.svg"
+             alt="Logo"
+             class="cell">
+        <h1 ng-click="mc.goHome()" class="cell">
+            <span class="horizontal-spacing"><i18n>mediacentre.title</i18n></span>
+        </h1>
+    </div>
+    <div class="search-block six eleven-mobile">
         <input type="text"
                ng-enter="mc.plainTextSearch()"
                ng-model="mc.search.plain_text.text"

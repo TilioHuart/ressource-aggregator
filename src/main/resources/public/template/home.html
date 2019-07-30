@@ -26,9 +26,14 @@
 
     <!--Favorite-->
     <div class="favorites horizontal-spacing row vertical-spacing">
-        <h2>
-            <i18n>mediacentre.my.favorite</i18n>
-        </h2>
+        <div class="row">
+            <h2 class="cell">
+                <i18n>mediacentre.my.favorite</i18n>
+            </h2>
+            <span class="favorites-flex-plus right-magnet" data-ng-click="vm.seeMyFavorite()">
+                <i18n>mediacentre.see.more</i18n>
+            </span>
+        </div>
 
         <!--Content-->
         <div class="favorites-flex" ng-show="vm.favorites.length > 0">
@@ -40,7 +45,7 @@
                                ng-model="resource">
                 </resource-card>
             </div>
-            <span class="favorites-flex-plus" data-ng-click="vm.seeMyFavorite()">
+            <span class="favorites-flex-plus zero-mobile" data-ng-click="vm.seeMyFavorite()">
                 <i18n>mediacentre.see.more</i18n>
             </span>
         </div>

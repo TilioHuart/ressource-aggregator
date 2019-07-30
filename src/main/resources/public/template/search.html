@@ -1,6 +1,6 @@
 <div ng-controller="SearchController as vm" class="search">
     <div class="horizontal-spacing row vertical-spacing advanced-search-filters">
-        <div class="cell" ng-if="vm.getAdvancedSearchField().length > 0 && !vm.emptyAdvancedSearch()">
+        <div class="cell zero-mobile" ng-if="vm.getAdvancedSearchField().length > 0 && !vm.emptyAdvancedSearch()">
             <h2>
                 <i18n>mediacentre.source.search.advanced</i18n>
             </h2>
@@ -17,7 +17,7 @@
         </a>
     </div>
     <div class="horizontal-spacing row vertical-spacing filter-line search-filters">
-        <div class="cell">
+        <div class="cell twelve-mobile">
             <div class="vertical-spacing-twice"
                  ng-if="vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0">
                 <i18n>mediacentre.search.filter</i18n>
@@ -28,6 +28,7 @@
                              ng-if="vm.filters.initial[filter].length > 0"
                              title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
                              combo-model="vm.filters.initial[filter]"
+                             class="twelve-mobile"
                              search-on="name"
                              order-by="name"
                              filtered-model="vm.filters.filtered[filter]">

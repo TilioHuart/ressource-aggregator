@@ -5,7 +5,7 @@
     "port" : 8064,
     "app-name" : "Mediacentre",
     "app-address" : "/mediacentre",
-    "app-icon" : "Mediacentre-large",
+    "app-icon" : "${host}/mediacentre/public/img/logo-mediacentre.svg",
     "host": "${host}",
     "ssl" : $ssl,
     "auto-redeploy": false,
