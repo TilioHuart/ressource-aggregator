@@ -4,8 +4,8 @@
 <form class="advanced-search-form">
     <div class="ten twelve-mobile">
         <div class="row-flex vertical-spacing-four twelve-mobile" ng-repeat="field in mc.search.advanced.fields">
-            <span class="two" ng-if="!field.comparator">&nbsp;</span>
-            <div class="two centered-text" ng-if="field.comparator">
+            <span class="two twelve-mobile" ng-if="!field.comparator">&nbsp;</span>
+            <div class="two centered-text twelve-mobile" ng-if="field.comparator">
                 <select ng-model="mc.search.advanced.values[field.name].comparator">
                     <option value="$or">
                         [[ idiom.translate('mediacentre.or') ]]
@@ -15,8 +15,8 @@
                     </option>
                 </select>
             </div>
-            <span class="two">[[ idiom.translate('mediacentre.advanced.name.' + field.name) ]]:</span>
-            <input class="eight"
+            <span class="two three-mobile">[[ idiom.translate('mediacentre.advanced.name.' + field.name) ]]:</span>
+            <input class="eight nine-mobile"
                    type="text"
                    ng-enter="mc.advancedSearch()"
                    ng-model="mc.search.advanced.values[field.name].value"

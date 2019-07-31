@@ -10,6 +10,16 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+
+    @media (max-width: $tablette) {
+      justify-content: flex-start;
+    }
+
+    .centered-text {
+      @media (max-width: $tablette) {
+        text-align: left !important;
+      }
+    }
   }
 
   select {
