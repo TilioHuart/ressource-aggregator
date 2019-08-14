@@ -1,6 +1,5 @@
 package fr.openent.mediacentre.source;
 
-import fr.openent.mediacentre.controller.WebSocketController;
 import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
@@ -367,6 +366,7 @@ public class GAR implements Source {
             if (event.failed()) {
                 log.error("[Gar@initTextBooks] Failed to retrieve GAR resources", event.cause());
                 handler.handle(new Either.Left<>(event.cause().toString()));
+                return;
             }
 
             JsonArray textBooks = new JsonArray();
