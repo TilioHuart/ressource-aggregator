@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 
 public class GAR implements Source {
-    private static String GAR_ADDRESS = "openent.gar";
+    private static String GAR_ADDRESS = "openent.mediacentre";
     private FavoriteService favoriteService = new DefaultFavoriteService();
     private FavoriteHelper favoriteHelper = new FavoriteHelper();
 
