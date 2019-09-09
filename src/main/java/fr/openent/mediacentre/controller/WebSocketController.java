@@ -50,6 +50,10 @@ public class WebSocketController implements Handler<ServerWebSocket> {
         ws.pause();
         String sessionId = CookieHelper.getInstance().getSigned(SESSION_ID, ws);
         UserUtils.getSession(eb, sessionId, user -> {
+            if (user == null) {
+                ws.reject(401);
+                return;
+            }
             UserInfos userInfos = new UserInfos();
             userInfos.setAuthorizedActions(getUserActions(user));
             userInfos.setUserId(user.getString("userId"));
