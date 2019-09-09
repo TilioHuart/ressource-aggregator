@@ -31,8 +31,8 @@ public class DefaultFavoriteService implements FavoriteService {
     }
 
     @Override
-    public void get(String source, Handler<Either<String, JsonArray>> handler) {
-        JsonObject matcher = new JsonObject().put("source", source);
+    public void get(String source, String userId, Handler<Either<String, JsonArray>> handler) {
+        JsonObject matcher = new JsonObject().put("source", source).put("user", userId);
         MongoDb.getInstance().find(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResults(message)));
     }
 

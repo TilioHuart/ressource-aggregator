@@ -61,7 +61,7 @@ public class GAR implements Source {
         });
 
         getResources(userId, structureId, FutureHelper.handlerJsonArray(getResourcesFuture));
-        favoriteService.get(GAR.class.getName(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+        favoriteService.get(GAR.class.getName(), userId, FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
     }
 
     /**

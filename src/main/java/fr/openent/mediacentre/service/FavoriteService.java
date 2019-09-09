@@ -17,9 +17,10 @@ public interface FavoriteService {
     /**
      * Get resource with favorite
      * @param source    source parameter
+     * @param userId    User identifier
      * @param handler   function handler returning da
      */
-    void get(String source, Handler<Either<String, JsonArray>> handler);
+    void get(String source, String userId, Handler<Either<String, JsonArray>> handler);
 
     /**
      * Delete favorite

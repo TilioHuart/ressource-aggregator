@@ -75,7 +75,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                             break;
                         }
                         case "favorites": {
-                            favorites(state, ws);
+                            favorites(state, userInfos, ws);
                             break;
                         }
                         case "textbooks": {
@@ -92,9 +92,9 @@ public class WebSocketController implements Handler<ServerWebSocket> {
         });
     }
 
-    private void favorites(String state, ServerWebSocket ws) {
+    private void favorites(String state, UserInfos user, ServerWebSocket ws) {
         if ("get".equals(state)) {
-            favoriteService.get(GAR.class.getName(), event -> {
+            favoriteService.get(GAR.class.getName(), user.getUserId(), event -> {
                 if (event.isLeft()) {
                     log.error("[favorite@get] Failed to retrieve favorite", event.left());
                     ws.writeTextMessage(new JsonObject().put("error", "Fail to retrieve favorite").put("status", "ko").encode());
@@ -169,7 +169,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
             Future<JsonArray> getTextBookFuture = Future.future();
             Future<JsonArray> getFavoritesResourcesFuture = Future.future();
 
-            favoriteService.get(GAR.class.getName(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+            favoriteService.get(GAR.class.getName(), user.getUserId(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
             textBookService.get(user.getUserId(),  FutureHelper.handlerJsonArray(getTextBookFuture));
 
             CompositeFuture.all(getTextBookFuture, getFavoritesResourcesFuture).setHandler(event -> {
