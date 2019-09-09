@@ -39,7 +39,7 @@ public class Mediacentre extends BaseServer {
         }
 
         addController(new MediacentreController(sources, config));
-        addController(new FavoriteController());
+        addController(new FavoriteController(eb));
 
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
         HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);

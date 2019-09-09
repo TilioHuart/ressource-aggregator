@@ -8,16 +8,20 @@ import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.request.RequestUtils;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.response.DefaultResponseHandler;
+import org.entcore.common.user.UserUtils;
 
 public class FavoriteController extends ControllerHelper {
 
+    private EventBus eb;
     private FavoriteService favoriteService;
 
-    public FavoriteController() {
+    public FavoriteController(EventBus eb) {
         super();
+        this.eb = eb;
         this.favoriteService = new DefaultFavoriteService();
     }
 
@@ -25,9 +29,10 @@ public class FavoriteController extends ControllerHelper {
     @ApiDoc("Create favorites")
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void createFavorites(final HttpServerRequest request) {
-        RequestUtils.bodyToJson(request, favorite -> {
+        UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
+            favorite.put("user", user.getUserId());
             favoriteService.create(favorite, DefaultResponseHandler.defaultResponseHandler(request));
-        });
+        }));
     }
 
     @Delete("/favorites")
