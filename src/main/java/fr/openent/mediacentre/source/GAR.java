@@ -46,7 +46,7 @@ public class GAR implements Source {
 
         CompositeFuture.all(getResourcesFuture, getFavoritesResourcesFuture).setHandler(event -> {
             if (event.failed()) {
-                handler.handle(new Either.Left<>(event.cause().toString()));
+                handler.handle(new Either.Left<>(event.cause().getMessage()));
             } else {
                 JsonArray formattedResources = new JsonArray();
 
@@ -107,12 +107,12 @@ public class GAR implements Source {
     }
 
     @Override
-    public void plainTextSearch(String query, UserInfos user, Handler<Either<String, JsonObject>> handler) {
+    public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
         List<Future> futures = new ArrayList<>();
         getStructuresData(user, futures, event -> {
             if (event.failed()) {
                 log.error("[GarSource@plainTextSearch] Failed to retrieve GAR resources.", event.cause());
-                handler.handle(new Either.Left<>(event.cause().toString()));
+                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] " + event.cause().getMessage())));
                 return;
             }
 
@@ -185,13 +185,13 @@ public class GAR implements Source {
     }
 
     @Override
-    public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<String, JsonObject>> handler) {
+    public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
         List<String> fields = Arrays.asList("title", "authors", "editors", "disciplines", "levels");
         List<Future> futures = new ArrayList<>();
         getStructuresData(user, futures, event -> {
             if (event.failed()) {
                 log.error("[GarSource@advancedSearch] Failed to retrieve GAR resources.", event.cause());
-                handler.handle(new Either.Left<>(event.cause().toString()));
+                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] " + event.cause().getMessage())));
                 return;
             }
 

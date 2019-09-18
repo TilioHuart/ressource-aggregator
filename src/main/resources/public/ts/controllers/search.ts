@@ -90,8 +90,10 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
         });
 
         $scope.ws.onmessage = (message) => {
-            const {event, state, data, status} = JSON.parse(message.data);
+            const {event, state, data, status, error} = JSON.parse(message.data);
             if ("ok" !== status) {
+                vm.loaders[error.source] = false;
+                $scope.safeApply();
                 throw JSON.parse(message.data).error;
             }
             if (event in eventResponses) eventResponses[event](new Frame(event, state, data));

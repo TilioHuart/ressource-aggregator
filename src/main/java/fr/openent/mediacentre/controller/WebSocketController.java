@@ -134,9 +134,10 @@ public class WebSocketController implements Handler<ServerWebSocket> {
      * @param ws   WebSocket
      */
     private void search(String state, JsonObject data, UserInfos user, ServerWebSocket ws) {
-        Handler<Either<String, JsonObject>> handler = event -> {
+        Handler<Either<JsonObject, JsonObject>> handler = event -> {
             if (event.isLeft()) {
                 log.error("[WebSockerController@search] Failed to retrieve source resources.", event.left().getValue());
+                ws.writeTextMessage(new JsonObject().put("error", event.left().getValue()).put("status", "ko").encode());
             } else {
                 JsonObject frame = new JsonObject()
                         .put("event", "search_Result")

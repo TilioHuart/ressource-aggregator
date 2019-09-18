@@ -1,4 +1,4 @@
-import {toasts} from 'entcore';
+import {idiom as lang, toasts} from 'entcore';
 import {Frame} from './index';
 
 declare const window: any;
@@ -43,8 +43,8 @@ export class Socket {
             let {data} = message;
             data = JSON.parse(data);
             if ("ko" === data.status) {
-                toasts.warning('mediacentre.socket.error');
-                throw data.error;
+                const message = `${lang.translate('mediacentre.socket.error')} : ${data.error.message}`;
+                toasts.warning(message);
             }
 
             if ('onmessage' in this.callbacks && this.callbacks.onmessage !== undefined) {
