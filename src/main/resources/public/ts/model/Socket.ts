@@ -36,9 +36,8 @@ export class Socket {
         this.host = `${(window.location.protocol === 'https:' ? 'wss' : 'ws')}://${location.hostname}:${window.wsPort}${endpoint}`;
         this._ws = new WebSocket(this.host);
         this._ws.onclose = (event: CloseEvent) => {
-            toasts.warning('mediacentre.socket.closed');
-            this._init();
-            throw event;
+            setTimeout(() => toasts.info('mediacentre.socket.network.reconnect.in-progress'), 12000);
+            setTimeout(this._init, 15000);
         };
         this._ws.onmessage = (message: MessageEvent) => {
             let {data} = message;
@@ -48,16 +47,21 @@ export class Socket {
                 throw data.error;
             }
 
-            this.callbacks.onmessage(message);
+            if ('onmessage' in this.callbacks && this.callbacks.onmessage !== undefined) {
+                this.callbacks.onmessage(message);
+            }
         };
         this._ws.onopen = (message: Event) => {
             this.connected = true;
-            this.callbacks.onopen(message);
+            if ('onopen' in this.callbacks && this.callbacks.onopen !== undefined) {
+                this.callbacks.onopen(message);
+            }
         };
         this._ws.onerror = (event: Event) => {
-            this.callbacks.onerror(event);
-            toasts.warning('mediacentre.socket.error');
-            throw event;
+            toasts.warning('mediacentre.socket.network.error');
+            if ('onerror' in this.callbacks && this.callbacks.onerror !== undefined) {
+                this.callbacks.onerror(event);
+            }
         };
     }
 
