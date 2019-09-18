@@ -12,7 +12,7 @@
   "mediacentre.copied": "Copié!",
   "mediacentre.see.more": "Voir plus",
   "mediacentre.search": "Rechercher",
-  "mediacentre.socket.error": "Une erreur est survenue. Merci de contacter le support.",
+  "mediacentre.socket.error": "Une erreur est survenue. Merci de contacter votre administrateur.",
   "mediacentre.socket.closed": "La connexion avec le mediacentre a été perdue. Nous tentons de vous reconnecter.",
   "mediacentre.search.cancel": "Annuler la recherche",
   "mediacentre.search.filter": "Filtrer la recherche par",
