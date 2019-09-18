@@ -42,5 +42,6 @@
   "mediacentre.advanced.textbooks.mine": "Mes manuels",
   "mediacentre.textbooks.empty": "Nous recherchons vos manuels scolaires",
   "fr.openent.mediacentre.source.GAR": "Gar",
-  "mediacentre.resource.loading": "Votre ressource va s'afficher dans quelques instants..."
+  "mediacentre.resource.loading": "Votre ressource va s'afficher dans quelques instants...",
+  "mediacentre.textbooks.refresh": "Actualiser"
 }

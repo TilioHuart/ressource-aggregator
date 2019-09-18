@@ -28,4 +28,9 @@ public class DefaultTextBookService implements TextBookService {
 
         MongoDb.getInstance().insert(TEXTBOOK_COLLECTION, textbooks, MongoDbResult.validResultHandler(handler));
     }
+
+    @Override
+    public void delete(String userId, Handler<Either<String, JsonObject>> handler) {
+        MongoDb.getInstance().delete(TEXTBOOK_COLLECTION, new JsonObject().put("user", userId), MongoDbResult.validResultHandler(handler));
+    }
 }

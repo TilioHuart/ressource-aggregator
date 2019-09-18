@@ -10,6 +10,14 @@ $mediacentre-grey: #232323;
 body.mediacentre-v2 {
   @import 'components/index';
 
+  i.refresh {
+    @include fonticon();
+
+    &::before {
+      content: "\e874";
+    }
+  }
+
   section.main {
     top: 64px !important;
     padding: 0 !important;

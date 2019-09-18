@@ -23,4 +23,12 @@ public interface TextBookService {
      * @param handler   Function handler returning data
      */
     void insert(String userId, JsonArray textbooks, Handler<Either<String, JsonObject>> handler);
+
+    /**
+     * Drop all user textbooks
+     *
+     * @param userId  User identifier we drop textbooks
+     * @param handler Function handler returning data
+     */
+    void delete(String userId, Handler<Either<String, JsonObject>> handler);
 }

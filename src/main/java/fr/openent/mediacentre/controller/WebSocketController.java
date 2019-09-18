@@ -169,45 +169,67 @@ public class WebSocketController implements Handler<ServerWebSocket> {
      * @param ws    WebSocket server
      */
     private void textBooks(String state, UserInfos user, ServerWebSocket ws) {
-        if ("get".equals(state)) {
-
-            Future<JsonArray> getTextBookFuture = Future.future();
-            Future<JsonArray> getFavoritesResourcesFuture = Future.future();
-
-            favoriteService.get(GAR.class.getName(), user.getUserId(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
-            textBookService.get(user.getUserId(),  FutureHelper.handlerJsonArray(getTextBookFuture));
-
-            CompositeFuture.all(getTextBookFuture, getFavoritesResourcesFuture).setHandler(event -> {
-                if (event.failed()) {
-                    log.error("[textBook@get] Failed to retrieve user textbooks", event.cause().toString());
-                    ws.writeTextMessage(new JsonObject().put("error", "Field to retrieve textbooks").put("status", "ko").encode());
-                    return;
-                }
-
-                JsonArray textBooks = getTextBookFuture.result();
-                favoriteHelper.matchFavorite(getFavoritesResourcesFuture, textBooks);
-
-
-                if (textBooks.isEmpty()) {
-                    initUserTextBooks(user, ws);
-                    JsonObject frame = new JsonObject()
-                            .put("event", "textbooks_Result")
-                            .put("state", "initialization")
-                            .put("status", "ok")
-                            .put("data", new JsonObject());
-                    ws.writeTextMessage(frame.encode());
-                } else {
-                    JsonObject frame = new JsonObject()
-                            .put("event", "textbooks_Result")
-                            .put("state", state)
-                            .put("status", "ok")
-                            .put("data", new JsonObject().put("textbooks", textBooks));
-                    ws.writeTextMessage(frame.encode());
-                }
-            });
-        } else {
-            ws.writeTextMessage(new JsonObject().put("error", "Unknown textbook action").put("status", "ko").encode());
+        switch (state) {
+            case "get": {
+                getTextbooks(state, user, ws);
+            }
+            break;
+            case "refresh": {
+                refreshTextBooks(state, user, ws);
+            }
+            break;
+            default:
+                ws.writeTextMessage(new JsonObject().put("error", "Unknown textbook action").put("status", "ko").encode());
         }
+    }
+
+    private void refreshTextBooks(String state, UserInfos user, ServerWebSocket ws) {
+        textBookService.delete(user.getUserId(), event -> {
+            if (event.isLeft()) {
+                log.error("[WebSocketController@refreshTextBooks] Failed to delete user textbooks");
+                ws.writeTextMessage(new JsonObject().put("error", "Failed to delete user textbooks").put("status", "ko").encode());
+                return;
+            }
+
+            getTextbooks(state, user, ws);
+        });
+    }
+
+    private void getTextbooks(String state, UserInfos user, ServerWebSocket ws) {
+        Future<JsonArray> getTextBookFuture = Future.future();
+        Future<JsonArray> getFavoritesResourcesFuture = Future.future();
+
+        favoriteService.get(GAR.class.getName(), user.getUserId(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+        textBookService.get(user.getUserId(), FutureHelper.handlerJsonArray(getTextBookFuture));
+
+        CompositeFuture.all(getTextBookFuture, getFavoritesResourcesFuture).setHandler(event -> {
+            if (event.failed()) {
+                log.error("[textBook@get] Failed to retrieve user textbooks", event.cause().toString());
+                ws.writeTextMessage(new JsonObject().put("error", "Field to retrieve textbooks").put("status", "ko").encode());
+                return;
+            }
+
+            JsonArray textBooks = getTextBookFuture.result();
+            favoriteHelper.matchFavorite(getFavoritesResourcesFuture, textBooks);
+
+
+            if (textBooks.isEmpty()) {
+                initUserTextBooks(user, ws);
+                JsonObject frame = new JsonObject()
+                        .put("event", "textbooks_Result")
+                        .put("state", "initialization")
+                        .put("status", "ok")
+                        .put("data", new JsonObject());
+                ws.writeTextMessage(frame.encode());
+            } else {
+                JsonObject frame = new JsonObject()
+                        .put("event", "textbooks_Result")
+                        .put("state", state)
+                        .put("status", "ok")
+                        .put("data", new JsonObject().put("textbooks", textBooks));
+                ws.writeTextMessage(frame.encode());
+            }
+        });
     }
 
     /**
