@@ -103,24 +103,26 @@ public class GAR implements Source {
             getData(user.getUserId(), structure, FutureHelper.handlerJsonArray(future));
         }
 
-        CompositeFuture.all(futures).setHandler(handler);
+        CompositeFuture.join(futures).setHandler(handler);
     }
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
         List<Future> futures = new ArrayList<>();
         getStructuresData(user, futures, event -> {
-            if (event.failed()) {
-                log.error("[GarSource@plainTextSearch] Failed to retrieve GAR resources.", event.cause());
-                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] " + event.cause().getMessage())));
-                return;
-            }
-
             JsonArray resources = new JsonArray();
             HashMap<String, Boolean> ids = new HashMap<>();
             SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
             for (Future future : futures) {
-                resources.addAll((JsonArray) future.result());
+                if (future.succeeded()) {
+                    resources.addAll((JsonArray) future.result());
+                }
+            }
+
+            if (resources.isEmpty()) {
+                log.error("[GarSource@plainTextSearch] Failed to retrieve GAR resources.", event.cause());
+                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] " + event.cause().getMessage())));
+                return;
             }
 
             for (int i = 0; i < resources.size(); i++) {
@@ -189,15 +191,17 @@ public class GAR implements Source {
         List<String> fields = Arrays.asList("title", "authors", "editors", "disciplines", "levels");
         List<Future> futures = new ArrayList<>();
         getStructuresData(user, futures, event -> {
-            if (event.failed()) {
+            JsonArray resources = new JsonArray();
+            for (Future future : futures) {
+                if (future.succeeded()) {
+                    resources.addAll((JsonArray) future.result());
+                }
+            }
+
+            if (resources.isEmpty()) {
                 log.error("[GarSource@advancedSearch] Failed to retrieve GAR resources.", event.cause());
                 handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] " + event.cause().getMessage())));
                 return;
-            }
-
-            JsonArray resources = new JsonArray();
-            for (Future future : futures) {
-                resources.addAll((JsonArray) future.result());
             }
 
             HashMap<String, Boolean> ids = new HashMap<>();
@@ -362,18 +366,20 @@ public class GAR implements Source {
         String pattern = queryPattern(config.getJsonArray("textbook_typology", new JsonArray()));
         Pattern regexp = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
 
-        CompositeFuture.all(futures).setHandler(event -> {
-            if (event.failed()) {
-                log.error("[Gar@initTextBooks] Failed to retrieve GAR resources", event.cause());
-                handler.handle(new Either.Left<>(event.cause().toString()));
-                return;
-            }
-
+        CompositeFuture.join(futures).setHandler(event -> {
             JsonArray textBooks = new JsonArray();
             JsonArray resources = new JsonArray();
             List<String> list = new ArrayList<>();
             for (Future future : futures) {
-                resources.addAll((JsonArray) future.result());
+                if (future.succeeded()) {
+                    resources.addAll((JsonArray) future.result());
+                }
+            }
+
+            if (resources.isEmpty()) {
+                log.error("[Gar@initTextBooks] Failed to retrieve GAR resources", event.cause());
+                handler.handle(new Either.Left<>(event.cause().toString()));
+                return;
             }
 
             for (int i = 0; i < resources.size(); i++) {
