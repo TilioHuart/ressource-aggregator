@@ -16,20 +16,17 @@
         <div class="resource-footer">
             <div class="cell">
                 <!-- Add favorite-->
-                <div ng-if="!ngModel.favorite" class="add-to-favorite" data-ng-click="addFavorite()">&nbsp;
+                <div ng-if="!ngModel.favorite" class="add-to-favorite" data-ng-click="addFavorite()"
+                     tooltip="<i18n>mediacentre.add.to.favorite</i18n>">
                 </div>
                 <!--Remove favorite-->
-                <div ng-if="ngModel.favorite" class="remove-to-favorite" data-ng-click="removeFavorite()">&nbsp;
+                <div ng-if="ngModel.favorite" class="remove-to-favorite" data-ng-click="removeFavorite()"
+                     tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">&nbsp
                 </div>
             </div>
-            <div class="cell horizontal-spacing">
+            <div class="cell">
                 <div class="copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
-                     data-clipboard-text="[[ngModel.link]]">
-                <span class="text-button">
-                    <span class="clipboard-tooltip" ng-class="{show: show.tooltip}">
-                        <i18n>mediacentre.copied</i18n>
-                    </span>
-                </span>
+                     data-clipboard-text="[[ngModel.link]]" tooltip="<i18n>mediacentre.copy.link</i18n>">
                 </div>
             </div>
             <img class="right-magnet source" ng-src="[[ '/mediacentre/public/img/' + ngModel.source + '.png' ]]"

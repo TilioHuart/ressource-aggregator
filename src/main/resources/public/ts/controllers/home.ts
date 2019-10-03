@@ -8,15 +8,19 @@ interface ViewModel {
     resources: Resource[];
     favorites: Resource[];
     textbooks: Resource[];
+    displayedResources: Resource[];
 
     seeMyFavorite(): void;
 
     refreshTextBooks(): void;
+
+    seeMyExternalResource(): void;
 }
 
 interface EventResponses {
     favorites_Result(frame: Frame): void;
     textbooks_Result(frame: Frame): void;
+    search_Result(frame: Frame): void;
 }
 
 
@@ -26,6 +30,7 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
 
         vm.favorites = [];
         vm.textbooks = [];
+        vm.displayedResources = [];
 
         $scope.$on('deleteFavorite', function (event, id) {
             vm.favorites = vm.favorites.filter(el => el.id !== id);
@@ -56,6 +61,10 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                     vm.favorites = frame.data;
                 }
                 $scope.safeApply();
+            },
+            search_Result: function (frame) {
+                vm.displayedResources = frame.data.resources;
+                $scope.safeApply();
             }
         };
 
@@ -69,9 +78,15 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
             $scope.ws.send(new Frame('textbooks', 'refresh', {}));
         };
 
+        vm.seeMyExternalResource = (): void => {
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', {"query":".*"}));
+            $location.path(`/search/plain_text`);
+        };
+
         function initHomePage() {
             $scope.ws.send(new Frame('textbooks', 'get', {}));
             $scope.ws.send(new Frame('favorites', 'get', {}));
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', {"query":".*"}));
         }
 
         if ($scope.ws.connected) {

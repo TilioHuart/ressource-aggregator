@@ -178,6 +178,7 @@ resource-card {
           &::before {
             @include fonticon();
             content: '\e9d9';
+            font-size: 24px;
           }
         }
 
@@ -188,6 +189,7 @@ resource-card {
           &::before {
             @include fonticon();
             content: '\e9d9';
+            font-size: 24px;
             color: $mediacentre-yellow-star;
           }
         }
@@ -198,6 +200,7 @@ resource-card {
           &::before {
             @include fonticon();
             content: '\e84d';
+            font-size: 24px;
           }
 
           .text-button {

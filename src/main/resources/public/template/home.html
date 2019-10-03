@@ -1,5 +1,60 @@
 <div ng-controller="HomeController as vm" class="home">
 
+    <!--External resources-->
+    <div class="favorites horizontal-spacing row vertical-spacing">
+        <div class="row">
+            <h2 class="cell">
+                <i18n>mediacentre.my.external.resources</i18n>
+            </h2>
+        </div>
+
+        <!--Content-->
+        <div class="favorites-flex" ng-show="vm.displayedResources.length > 0">
+            <div class="favorites-flex-card">
+                <resource-card ng-repeat="resource in vm.displayedResources track by $index"
+                               ng-if="$index > vm.displayedResources.length - 6"
+                               ng-model="resource">
+                </resource-card>
+            </div>
+            <span class="favorites-flex-plus zero-mobile" data-ng-click="vm.seeMyExternalResource()">
+                <i18n>mediacentre.see.more</i18n>
+            </span>
+        </div>
+    </div>
+
+    <!--Favorite-->
+    <div class="favorites horizontal-spacing row vertical-spacing">
+        <div class="row">
+            <h2 class="cell">
+                <i18n>mediacentre.my.favorite</i18n>
+            </h2>
+        </div>
+
+        <!--Content-->
+        <div class="favorites-flex" ng-show="vm.favorites.length > 0">
+            <div class="favorites-flex-card">
+                <resource-card ng-repeat="resource in vm.favorites track by $index"
+                               ng-if="$index > vm.favorites.length - 6"
+                               type="favorite"
+                               class="favoriteCard"
+                               ng-model="resource">
+                </resource-card>
+            </div>
+            <span class="favorites-flex-plus zero-mobile" data-ng-click="vm.seeMyFavorite()">
+                <i18n>mediacentre.see.more</i18n>
+            </span>
+        </div>
+
+        <!-- Empty state -->
+        <div class="favorites-emptyState" ng-show="vm.favorites.length === 0">
+            <img src="/mediacentre/public/img/favoris-emptyState.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
+            <div class="favorites-emptyState-flex">
+                <span><i18n>mediacentre.favorite.empty.first</i18n></span>
+                <span><i18n>mediacentre.favorite.empty.second</i18n></span>
+            </div>
+        </div>
+    </div>
+
     <!--Textbooks-->
     <div class="textbooks horizontal-spacing row vertical-spacing">
         <h2>
@@ -30,39 +85,5 @@
         </div>
     </div>
 
-    <!--Favorite-->
-    <div class="favorites horizontal-spacing row vertical-spacing">
-        <div class="row">
-            <h2 class="cell">
-                <i18n>mediacentre.my.favorite</i18n>
-            </h2>
-            <span class="favorites-flex-plus right-magnet" data-ng-click="vm.seeMyFavorite()">
-                <i18n>mediacentre.see.more</i18n>
-            </span>
-        </div>
-
-        <!--Content-->
-        <div class="favorites-flex" ng-show="vm.favorites.length > 0">
-            <div class="favorites-flex-card">
-                <resource-card ng-repeat="resource in vm.favorites track by $index"
-                               ng-if="$index > vm.favorites.length - 6"
-                               type="favorite"
-                               class="favoriteCard"
-                               ng-model="resource">
-                </resource-card>
-            </div>
-            <span class="favorites-flex-plus zero-mobile" data-ng-click="vm.seeMyFavorite()">
-                <i18n>mediacentre.see.more</i18n>
-            </span>
-        </div>
-
-        <!-- Empty state -->
-        <div class="favorites-emptyState" ng-show="vm.favorites.length === 0">
-            <img src="/mediacentre/public/img/favoris-emptyState.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
-            <div class="favorites-emptyState-flex">
-                <span><i18n>mediacentre.favorite.empty.first</i18n></span>
-                <span><i18n>mediacentre.favorite.empty.second</i18n></span>
-            </div>
-        </div>
     </div>
 </div>

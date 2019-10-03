@@ -26,16 +26,12 @@
                 </div>
                 <div class="resource-footer">
                     <!--Remove favorite-->
-                    <div class="remove-to-favorite" data-ng-click="removeFavorite()">&nbsp;
+                    <div class="remove-to-favorite" data-ng-click="removeFavorite()"
+                         tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">&nbsp;
                     </div>
 
                     <div class="copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
-                         data-clipboard-text="[[ngModel.link]]">
-                        <span class="text-button">
-                            <span class="clipboard-tooltip" ng-class="{show: tooltip.show}">
-                                <i18n>mediacentre.copied</i18n>
-                            </span>
-                        </span>
+                         data-clipboard-text="[[ngModel.link]]" tooltip="<i18n>mediacentre.copy.link</i18n>">
                     </div>
                 </div>
             </div>
