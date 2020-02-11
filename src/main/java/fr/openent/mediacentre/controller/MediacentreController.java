@@ -7,13 +7,18 @@ import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
+import org.entcore.common.events.EventStore;
+import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.user.UserUtils;
+import org.vertx.java.core.http.RouteMatcher;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.entcore.common.http.response.DefaultResponseHandler.arrayResponseHandler;
 
@@ -27,7 +32,16 @@ public class MediacentreController extends ControllerHelper {
         this.sources = sources;
         this.config = config;
     }
+    private EventStore eventStore;
+    private enum MediacentreEvent { ACCESS }
 
+
+    @Override
+    public void init(Vertx vertx, JsonObject config, RouteMatcher rm,
+                     Map<String, fr.wseduc.webutils.security.SecuredAction> securedActions) {
+        super.init(vertx, config, rm, securedActions);
+        eventStore = EventStoreFactory.getFactory().getEventStore(Mediacentre.class.getSimpleName());
+    }
     @Get("")
     @ApiDoc("Render mediacentre view")
     @SecuredAction(Mediacentre.VIEW_RIGHT)
@@ -42,6 +56,8 @@ public class MediacentreController extends ControllerHelper {
                 .put("mode", config.getString("mode"))
                 .put("sources", sourceList);
         renderView(request, params);
+        eventStore.createAndStoreEvent(MediacentreEvent.ACCESS.name(), request);
+
     }
 
     @Get("/textbooks")
