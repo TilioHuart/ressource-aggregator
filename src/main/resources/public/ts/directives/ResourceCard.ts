@@ -1,4 +1,4 @@
-import {ng} from 'entcore';
+import {idiom, ng, toasts} from 'entcore';
 import {hashCode} from '../utils';
 
 import * as Clipboard from 'clipboard';
@@ -40,6 +40,7 @@ export const ResourceCard = ng.directive('resourceCard',
                         const i = new Image();
                         i.onload = () => {
                             const LABEL_WIDTH = 55;
+                            // const LABEL_WIDTH = 60;
                             const imageDefaultW = i.width;
                             const wRatio = i.width / i.height;
                             const imgW = image.width;
@@ -98,10 +99,21 @@ export const ResourceCard = ng.directive('resourceCard',
                     }
                 };
 
+                const addColoredBar = function () {
+                    const colors = ["#F53B57", "#FEC63D", "#3B1D8F"]; // red, yellow, blue
+                    const parent = element.find(`#color-${$scope.ngModel.id}`).parent();
+                    parent.css("border-radius","inherit");
+                    parent.css("padding-left", "10px");
+                    parent.css("background-color", colors[random-1]);
+                };
+
                 $timeout(() => {
                     if ('fr.openent.mediacentre.source.GAR' !== $scope.ngModel.source) {
                         clampTitle();
                         $scope.show.loader = false;
+                    }
+                    if ($scope.type === "search-result") {
+                        addColoredBar();
                     }
                     const clipboardSelector = `.clipboard.${$scope.type}-resource-${$scope.ngModel.hash}`;
                     const clipboardElement = element.find(clipboardSelector);
@@ -157,7 +169,12 @@ export const ResourceCard = ng.directive('resourceCard',
 
             $scope.getTemplate = function () {
                 return `/mediacentre/public/template/resources/${$scope.type}.html`;
-            }
+            };
+
+            $scope.duplicate = async function () {
+                toasts.confirm(idiom.translate('mediacentre.duplicate.toaster'));
+                $scope.safeApply();
+            };
         }
     }
 }]);

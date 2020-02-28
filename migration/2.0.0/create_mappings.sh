@@ -5,25 +5,25 @@ curl -X PUT "http://localhost:9200/mediacentre" -H 'Content-Type: application/js
         "resources": {
             "properties": {
                 "title": {
+                    "type": "text"
+                },
+                "authors": {
                     "type": "keyword"
                 },
-                "author": {
-                    "type": "keyword"
-                },
-                "editor": {
+                "editorss": {
                     "type": "keyword"
                 },
                 "image": {
                     "type": "keyword",
                     "index": false
                 },
-                "discipline": {
+                "disciplines": {
                     "type": "keyword"
                 },
-                "level": {
+                "levels": {
                     "type": "keyword"
                 },
-                "document_type": {
+                "document_types": {
                     "type": "keyword"
                 },
                 "link": {
@@ -34,12 +34,11 @@ curl -X PUT "http://localhost:9200/mediacentre" -H 'Content-Type: application/js
                     "type": "keyword"
                 },
                 "id": {
-                    "type": "keyword",
-                    "index": false
+                    "type": "keyword"
                 },
                 "date": {
                     "type": "date",
-                    "format": "epoch_millis",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
                     "index": false
                 },
                 "user": {

@@ -1,0 +1,142 @@
+<div class="search-card" id="color-[[ngModel.id]]">
+    <img class="right-magnet source"
+         ng-src="[[ '/mediacentre/public/img/' + ngModel.source + '.png' ]]"
+         alt="[[ ngModel.source ]]"/>
+    <input type="checkbox" id="description-[[ngModel.id]]">
+
+    <div class="resource-card search-card-container">
+        <div class="image" ng-click="open()">
+            <div class="crop" data-resource-id="[[ngModel.id]]">
+                <img ng-src="[[ngModel.image]]"
+                     onerror="this.src='./mediacentre/public/img/empty-textbooks.svg';"
+                     alt="[[ngModel.image]]">
+<!--                <img ng-src="/mediacentre/public/img/empty-textbooks.svg" alt="img">-->
+            </div>
+            <div class="background">
+    <!--            <img ng-src="[[background]]" alt="[[background]]"/>-->
+            </div>
+        </div>
+        <div class="data">
+            <div class="resource-information">
+                <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
+                <div>
+                    <em class="metadata">
+                        <i18n>mediacentre.edited.by</i18n>
+                        <span ng-repeat-start="editor in ngModel.editors">[[editor]]</span>
+                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    </em>
+                </div>
+                <div class="types">
+                    <resource-type ng-repeat-start="type in ngModel.document_types"
+                                   ng-if="$index > ngModel.document_types.length - 4">[[type]]
+                    </resource-type>
+                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                </div>
+            </div>
+            <div class="resource-footer">
+                <!--Description hider-->
+                <label class="description-hider" for="description-[[ngModel.id]]">
+                    <i18n>mediacentre.description.button</i18n>
+                </label>
+                <div class="external-links">
+                    <!--Add favorite-->
+                    <div ng-if="!ngModel.favorite"
+                         class="cell add-to-favorite"
+                         data-ng-click="addFavorite()"
+                         tooltip="<i18n>mediacentre.add.to.favorite</i18n>">
+                        <i18n>mediacentre.add.to.favorite</i18n>
+                    </div>
+                    <!--Remove favorite-->
+                    <div ng-if="ngModel.favorite"
+                         class="cell remove-to-favorite"
+                         data-ng-click="removeFavorite()"
+                         tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">
+                        <i18n>mediacentre.remove.to.favorite</i18n>
+                    </div>
+                    <!--Copy link-->
+                    <div ng-if="ngModel.source == 'fr.openent.mediacentre.source.GAR'"
+                         class="cell copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
+                         data-clipboard-text="[[ngModel.link]]"
+                         tooltip="<i18n>mediacentre.copy.link</i18n>">
+                        <i18n>mediacentre.copy.link</i18n>
+                    </div>
+                    <!--Duplicate link-->
+                    <div ng-if="ngModel.source == 'fr.openent.mediacentre.source.Moodle'"
+                         class="cell duplicate-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
+                         data-clipboard-text="[[ngModel.link]]"
+                         tooltip="<i18n>mediacentre.duplicate.link</i18n>"
+                         data-ng-click="duplicate()">
+                        <i18n>mediacentre.duplicate.link</i18n>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="description">
+        <!--Description of the resource-->
+        <div class="description-text">
+            <div class="title"><i18n>mediacentre.description.title.description</i18n></div>
+            <!--Display text if it exists-->
+            <div ng-if="ngModel.description.length > 0">[[ngModel.description]]</div>
+            <!--Display disclaimer if it doesn't exist-->
+            <div ng-if="!ngModel.description.length > 0"><i18n>mediacentre.description.undefined</i18n></div>
+        </div>
+        <!--Details of the resource-->
+        <div class="description-details">
+            <div class="title"><i18n>mediacentre.description.title.details</i18n></div>
+            <div ng-if="ngModel.authors.length > 0" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-author subtitle">mediacentre.description.name.authors</i18n>
+                    <span class="content" ng-repeat-start="author in ngModel.authors">[[author]]</span>
+                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                </div>
+            </div>
+            <div ng-if="ngModel.editors.length > 0" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-editor subtitle">mediacentre.description.name.editors</i18n>
+                    <span class="content" ng-repeat-start="editor in ngModel.editors">[[editor]]</span>
+                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                </div>
+            </div>
+            <div ng-if="ngModel.date.length > 0" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-date subtitle">mediacentre.description.name.date</i18n>
+                    <span class="content">[[ngModel.date]]</span>
+                </div>
+            </div>
+            <div ng-if="ngModel.disciplines.length > 0" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-discipline subtitle">mediacentre.description.name.disciplines</i18n>
+                    <span class="content" ng-repeat-start="discipline in ngModel.disciplines">[[discipline]]</span>
+                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                </div>
+            </div>
+            <div ng-if="ngModel.levels.length > 0" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-level subtitle">mediacentre.description.name.levels</i18n>
+                    <span class="content" ng-repeat-start="level in ngModel.levels">[[level]]</span>
+                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                </div>
+            </div>
+            <div ng-if="ngModel.keywords.length > 0" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-keyword subtitle">mediacentre.description.name.keywords</i18n>
+                    <span class="content" ng-repeat-start="keyword in ngModel.keywords">[[keyword]]</span>
+                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="resource-loader" ng-show="show.loader">
+    <div class="image horizontal-margin" ng-click="open()">
+        <img src="/mediacentre/public/img/empty-textbooks.svg"/>
+    </div>
+    <div class="data">
+        <div class="resource-information">
+            <i18n>mediacentre.resource.loading</i18n>
+        </div>
+    </div>
+</div>

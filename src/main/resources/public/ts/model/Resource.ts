@@ -1,6 +1,7 @@
 export interface Resource {
     authors: string[];
     date: number;
+    description: string;
     disciplines: string[];
     displayTitle: string;
     document_types: string[];
@@ -14,4 +15,5 @@ export interface Resource {
     plain_text: string;
     source: string;
     title: string;
+    keywords: string[];
 }

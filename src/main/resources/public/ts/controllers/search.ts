@@ -34,6 +34,11 @@ interface ViewModel {
     getAdvancedSearchField(): string[];
 
     emptyAdvancedSearch(): boolean;
+
+    //
+
+    columns: number[];
+    testbooks: Resource[];
 }
 
 interface EventResponses {
@@ -74,6 +79,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
                 });
                 if (match) {
                     vm.displayedResources.push(resource);
+                    // console.log(resource);
                 }
             });
 
@@ -101,13 +107,38 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
 
         const eventResponses: EventResponses = {
             search_Result: function (frame) {
-                vm.resources = [...vm.resources, ...frame.data.resources];
-                frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
+                if (frame.data.source == "fr.openent.mediacentre.source.Moodle") {
+                    for (let i = 0; i < frame.data.hits.length; i++) {
+                        let resource = frame.data.hits[i]._source;
+                        resource.date = formateDate(resource.date);
+                        vm.resources.push(resource);
+                        addFilters(vm.filteredFields, vm.filters.initial, resource);
+                    }
+                }
+                else {
+                    vm.resources = [...vm.resources, ...frame.data.resources];
+                    frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
+                }
                 filter();
                 vm.loaders[frame.data.source] = false;
                 $scope.safeApply();
             }
         };
+
+        const formateDate = function (date:string) : string {
+            let testDate = new Date(date);
+            let dd = testDate.getDate();
+            let mm = testDate.getMonth() + 1;
+            let yyyy = testDate.getFullYear();
+            let formatedDate = "";
+
+            if (dd < 10) { formatedDate += '0'; }
+            formatedDate += dd + '/';
+            if (mm < 10) { formatedDate += '0'; }
+            formatedDate += mm + '/' + yyyy;
+
+            return formatedDate;
+        }
 
         vm.getSourcesLength = function () {
             return Object.keys(vm.loaders).length;
@@ -138,4 +169,42 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
 
             return empty;
         }
+
+        //
+
+        const nbColumns = 2;
+        vm.columns = [];
+        function calculColumns() {
+            for (let i = 0; i < nbColumns; i++) {
+                vm.columns.push(i);
+            }
+            // @ts-ignore
+            // document.querySelector("body.mediacentre-v2.search-grid").style.cssText = "$mediacentre-nbColumns: 2;";
+        }
+        calculColumns();
+        // vm.testbooks = [];
+        // function fillTestbooks() {
+        //     for (let i = 0; i < 10; i++) {
+        //         vm.testbooks.push(new class implements Resource {
+        //                 authors= ["M. Martin"];
+        //                 date= 16042020;
+        //                 description= "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque posuere, turpis vitae hendrerit fermentum, turpis tellus varius velit, et varius ipsum risus nec nunc. Pellentesque commodo, nisi dictum finibus hendrerit, leo nisl pulvinar sapien, non sagittis lectus velit eget magna. Nam pulvinar consequat ipsum, sit amet sagittis enim mattis eget. Nulla at ultricies lorem, in vestibulum diam. Cras elementum urna non lectus aliquam eleifend. Curabitur vel tellus a velit consequat tincidunt ac ac sapien. Proin commodo libero ut tortor semper, vel auctor sapien congue. Praesent porttitor consequat erat ut cursus. Ut non lobortis odio, id rutrum arcu. Sed semper lacinia lacus, eu vestibulum massa mattis eu.";
+        //                 disciplines= ["Histoire-Géographie", "EMC"];
+        //                 displayTitle= "Enseigner le numérique";
+        //                 document_types= [];
+        //                 editors= ["A. Thomas"];
+        //                 favorite= false;
+        //                 hash= 0;
+        //                 id= i.toString();
+        //                 image= "string";
+        //                 levels= ["Tous niveaux"];
+        //                 link= "string";
+        //                 plain_text= "string";
+        //                 source= "fr.openent.mediacentre.source.Moodle";
+        //                 title= "Enseigner le nuémrique";
+        //             }
+        //         );
+        //     }
+        // }
+        // fillTestbooks();
     }]);

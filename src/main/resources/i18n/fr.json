@@ -4,6 +4,7 @@
   "mediacentre.source.search.advanced": "Recherche avancée",
   "mediacentre.edited.by": "édité par",
   "mediacentre.copy.link": "Copier le lien",
+  "mediacentre.duplicate.link": "Dupliquer",
   "mediacentre.add.to.favorite": "Ajouter aux favoris",
   "mediacentre.favorite.empty.first": "Vous n'avez pas encore sélectionné de favoris.",
   "mediacentre.favorite.empty.second": "Pour ajouter une ressource à vos favoris, cliquez sur l'étoile dans la carte de votre ressource préférée.",
@@ -43,6 +44,18 @@
   "mediacentre.advanced.textbooks.mine": "Mes manuels",
   "mediacentre.textbooks.empty": "Nous recherchons vos manuels scolaires",
   "fr.openent.mediacentre.source.GAR": "Gar",
+  "fr.openent.mediacentre.source.Moodle": "Moodle",
   "mediacentre.resource.loading": "Votre ressource va s'afficher dans quelques instants...",
-  "mediacentre.textbooks.refresh": "Actualiser"
+  "mediacentre.textbooks.refresh": "Actualiser",
+  "mediacentre.description.button": "Fiche descriptive",
+  "mediacentre.description.title.description": "Description",
+  "mediacentre.description.title.details": "Détails",
+  "mediacentre.description.name.authors": "Auteur",
+  "mediacentre.description.name.editors": "Editeur",
+  "mediacentre.description.name.date": "Date",
+  "mediacentre.description.name.disciplines": "Discipline",
+  "mediacentre.description.name.levels": "Niveau",
+  "mediacentre.description.name.keywords": "Mots-clés",
+  "mediacentre.description.undefined": "L'auteur n'a pas fourni de description pour cette ressource.",
+  "mediacentre.duplicate.toaster": "Votre cours a bien été dupliqué dans le module Moodle"
 }

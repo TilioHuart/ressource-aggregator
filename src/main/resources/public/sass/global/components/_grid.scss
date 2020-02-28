@@ -7,6 +7,22 @@
   align-items: flex-start;
 }
 
+.search-grid {
+  $mediacentre-nbColumns: 2;
+  display: grid;
+  //grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat($mediacentre-nbColumns, 1fr);
+  grid-column-gap: 3rem;
+  grid-row-gap: 1.5rem;
+  padding: 1rem;
+  align-items: flex-start;
+
+  .search-column {
+    display: grid;
+    grid-gap: 1.5rem;
+  }
+}
+
 .favorites-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -18,7 +34,7 @@
 
 .textbooks-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: 1.5rem;
   grid-row-gap: 1.5rem;
   padding: 1rem;
@@ -53,7 +69,7 @@
 }
 
 @media (max-width: $tablette) {
-  .textbooks-grid, .grid {
+  .textbooks-grid, .grid, .search-grid {
     grid-template-columns: 1fr;
   }
 

@@ -16,7 +16,7 @@
     "entcore.port" : 8009,
     "sources": {
         "fr.openent.mediacentre.source.GAR": true,
-        "fr.openent.mediacentre.source.MOODLE": false,
+        "fr.openent.mediacentre.source.Moodle": true,
         "fr.openent.mediacentre.source.PMB": false
     },
     "textbook_typology": [

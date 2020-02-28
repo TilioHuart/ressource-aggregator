@@ -43,9 +43,14 @@
             </div>
         </div>
     </div>
-    <div class="grid" ng-show="vm.resources.length > 0">
-        <resource-card ng-repeat="resource in vm.displayedResources track by $index"
-                       ng-model="resource"></resource-card>
+    <div class="search-grid" ng-show="vm.resources.length > 0">
+        <div class="search-column" ng-repeat="column in vm.columns">
+            <resource-card ng-repeat="resource in vm.displayedResources track by $index"
+                           ng-if="$index%(vm.columns.length)==column"
+                           type="search-result"
+                           ng-model="resource">
+            </resource-card>
+        </div>
     </div>
     <div class="no-result eight centered" ng-show="!vm.isLoading() && vm.resources.length === 0">
         <div class="six">
