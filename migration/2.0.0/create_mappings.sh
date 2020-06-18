@@ -10,7 +10,7 @@ curl -X PUT "http://localhost:9200/mediacentre" -H 'Content-Type: application/js
                 "authors": {
                     "type": "keyword"
                 },
-                "editorss": {
+                "editors": {
                     "type": "keyword"
                 },
                 "image": {

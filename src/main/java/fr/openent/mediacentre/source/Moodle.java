@@ -118,11 +118,11 @@ public class Moodle implements Source {
                 .put("document_types", resource.getJsonArray("document_types"))
                 .put("editors", resource.getJsonArray("editors"))
                 .put("favorite", resource.getBoolean("favorite"))
-                .put("id", resource.getString("id")) 
+                .put("id", resource.getInteger("id").toString())
                 .put("image", resource.getString("image")) 
                 .put("levels", resource.getJsonArray("levels"))
                 .put("link", resource.getString("link")) 
-                .put("plain_text", resource.getString("plain_text")) 
+                .put("plain_text", resource.getJsonArray("key_words"))
                 .put("source", resource.getString("source")) 
                 .put("title", resource.getString("title"));
     }
@@ -146,7 +146,7 @@ public class Moodle implements Source {
     }
 
     public void create(Message<JsonObject> event) {
-        es.create(TYPE_NAME, format(event.body()), Integer.parseInt(event.body().getString("id")), response -> {
+        es.create(TYPE_NAME, format(event.body()), event.body().getInteger("id"), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);
