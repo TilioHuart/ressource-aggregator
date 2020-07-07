@@ -1,4 +1,4 @@
-<div ng-controller="SearchController as vm" class="search">
+<div ng-controller="SearchController as vm" class="search" bottom-scroll="mc.limitTo = mc.limitTo + mc.pageSize">
     <div class="horizontal-spacing row vertical-spacing advanced-search-filters">
         <div class="cell" ng-if="vm.getAdvancedSearchField().length > 0 && !vm.emptyAdvancedSearch()">
             <h2>
@@ -45,7 +45,7 @@
     </div>
     <div class="search-grid" ng-show="vm.resources.length > 0">
         <div class="search-column" ng-repeat="column in vm.columns">
-            <resource-card ng-repeat="resource in vm.displayedResources track by $index"
+            <resource-card ng-repeat="resource in vm.displayedResources | limitTo:mc.limitTo track by $index"
                            ng-if="$index%(vm.columns.length)==column"
                            type="search-result"
                            ng-model="resource">

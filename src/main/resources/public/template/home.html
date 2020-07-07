@@ -9,10 +9,9 @@
         </div>
 
         <!--Content-->
-        <div class="favorites-flex" ng-show="vm.displayedResources.length > 0">
+        <div class="favorites-flex" ng-show="vm.externalResources.length > 0">
             <div class="favorites-flex-card">
-                <resource-card ng-repeat="resource in vm.displayedResources track by $index"
-                               ng-if="$index > vm.displayedResources.length - 6"
+                <resource-card ng-repeat="resource in vm.externalResources track by $index"
                                ng-model="resource">
                 </resource-card>
             </div>

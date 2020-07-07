@@ -27,6 +27,7 @@ import org.entcore.common.user.UserUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fr.wseduc.webutils.request.filter.UserAuthFilter.SESSION_ID;
 
@@ -72,10 +73,11 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                     if (!frame.isText()) return;
                     JsonObject message = new JsonObject(frame.textData());
                     String state = message.getString("state");
+                    JsonArray sources = message.getJsonArray("sources");
                     JsonObject data = message.getJsonObject("data", new JsonObject());
                     switch (message.getString("event")) {
                         case "search": {
-                            search(state, data, userInfos, ws);
+                            search(state, sources, data, userInfos, ws);
                             break;
                         }
                         case "favorites": {
@@ -98,7 +100,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
 
     private void favorites(String state, UserInfos user, ServerWebSocket ws) {
         if ("get".equals(state)) {
-            favoriteService.get(GAR.class.getName(), user.getUserId(), event -> {
+            favoriteService.get(null, user.getUserId(), event -> {
                 if (event.isLeft()) {
                     log.error("[favorite@get] Failed to retrieve favorite", event.left());
                     ws.writeTextMessage(new JsonObject().put("error", "Fail to retrieve favorite").put("status", "ko").encode());
@@ -129,11 +131,12 @@ public class WebSocketController implements Handler<ServerWebSocket> {
     /**
      * Execute sources search
      *
-     * @param state State request
-     * @param data Frame message
-     * @param ws   WebSocket
+     * @param state           State request
+     * @param expectedSources Source to search. Execute on those sources.
+     * @param data            Frame message
+     * @param ws              WebSocket
      */
-    private void search(String state, JsonObject data, UserInfos user, ServerWebSocket ws) {
+    private void search(String state, JsonArray expectedSources, JsonObject data, UserInfos user, ServerWebSocket ws) {
         Handler<Either<JsonObject, JsonObject>> handler = event -> {
             if (event.isLeft()) {
                 log.error("[WebSockerController@search] Failed to retrieve source resources.", event.left().getValue());
@@ -147,14 +150,21 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                 ws.writeTextMessage(frame.encode());
             }
         };
+
+        if (expectedSources.isEmpty()) {
+            // If expected sources is empty. Search in all sources
+            expectedSources = new JsonArray(sources.stream().map(source -> source.getClass().getName()).collect(Collectors.toList()));
+        }
+
         if (SearchState.PLAIN_TEXT.toString().equals(state)) {
             String query = data.getString("query");
             for (Source source : sources) {
-                source.plainTextSearch(query, user, handler);
+                if (expectedSources.contains(source.getClass().getName())) source.plainTextSearch(query, user, handler);
             }
         } else if (SearchState.ADVANCED.toString().equals(state)) {
             for (Source source : sources) {
-                source.advancedSearch(data, user, handler);
+                if (expectedSources.contains(source.getClass().getName()))
+                    source.advancedSearch(data.copy(), user, handler);
             }
         } else {
             ws.writeTextMessage(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());

@@ -1,10 +1,10 @@
 package fr.openent.mediacentre.source;
 
+import fr.openent.mediacentre.helper.ElasticSearchHelper;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -16,94 +16,18 @@ public class Moodle implements Source {
     private final Logger log = LoggerFactory.getLogger(Moodle.class);
 
     private final ElasticSearch es = ElasticSearch.getInstance();
-    private final String TYPE_NAME = "resources";
-    public Moodle() {
+   public Moodle() {
         super();
     }
 
     @Override
-    public void plainTextSearch(String search, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        JsonObject request = new JsonObject();
-        JsonObject multi_match = new JsonObject();
-        JsonArray fields = new JsonArray();
-        JsonObject query = new JsonObject();
-        fields.add("title")
-                .add("authors")
-                .add("editors")
-                .add("disciplines")
-                .add("levels");
-        multi_match.put("query", search)
-                .put("fields", fields);
-        query.put("multi_match", multi_match);
-        request.put("from", 0)
-                .put("size", 10000)
-                .put("query", query);
-        es.search(TYPE_NAME, request, response -> {
-            if (response.failed()) {
-                log.error("Error search the text : " + search);
-                handler.handle(new Either.Left<>(response.result()));
-            }
-            else {
-                JsonObject finalResponse = new JsonObject()
-                        .put("source", Moodle.class.getName())
-                        .put("hits", response.result().getJsonObject("hits").getJsonArray("hits"));
-                handler.handle(new Either.Right<>(finalResponse));
-            }
-        });
+    public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
+        ElasticSearchHelper.plainTextSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, handler));
     }
 
     @Override
-    public void advancedSearch(JsonObject search, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        JsonObject bool = new JsonObject();
-        JsonArray must = new JsonArray();
-        JsonArray should = new JsonArray();
-        JsonObject query = new JsonObject();
-
-        if (search.getJsonObject("title") != null)
-            must.add(new JsonObject().put("term", new JsonObject().put("title", search.getJsonObject("title").getValue("value"))));
-
-        if (search.getJsonObject("authors") != null)
-            if (search.getJsonObject("authors").getString("comparator").equals("$and"))
-                must.add(new JsonObject().put("term", new JsonObject().put("author", search.getJsonObject("authors").getValue("value"))));
-            else
-                should.add(new JsonObject().put("term", new JsonObject().put("author", search.getJsonObject("authors").getValue("value"))));
-
-        if (search.getJsonObject("editors") != null)
-            if (search.getJsonObject("editors").getString("comparator").equals("$and"))
-                must.add(new JsonObject().put("term", new JsonObject().put("editor", search.getJsonObject("editors").getValue("value"))));
-            else
-                should.add(new JsonObject().put("term", new JsonObject().put("editor", search.getJsonObject("editors").getValue("value"))));
-
-        if (search.getJsonObject("disciplines") != null)
-            if (search.getJsonObject("disciplines").getString("comparator").equals("$and"))
-                must.add(new JsonObject().put("term", new JsonObject().put("discipline", search.getJsonObject("disciplines").getValue("value"))));
-            else
-                should.add(new JsonObject().put("term", new JsonObject().put("discipline", search.getJsonObject("disciplines").getValue("value"))));
-
-        if (search.getJsonObject("levels") != null)
-            if (search.getJsonObject("levels").getString("comparator").equals("$and"))
-                must.add(new JsonObject().put("term", new JsonObject().put("level", search.getJsonObject("levels").getValue("value"))));
-            else
-                should.add(new JsonObject().put("term", new JsonObject().put("level", search.getJsonObject("levels").getValue("value"))));
-
-        bool.put("must", must)
-                .put("should", should);
-
-        query.put("from", 0)
-                .put("size", 10000)
-                .put("query", new JsonObject().put("bool", bool));
-        es.search(TYPE_NAME, query, response -> {
-            if (response.failed()) {
-                log.error("Error search the text : " + search);
-                handler.handle(new Either.Left<>(response.result()));
-            }
-            else if (response.succeeded()) {
-                JsonObject finalResponse = new JsonObject()
-                        .put("source", Moodle.class.getName())
-                        .put("hits", response.result().getJsonObject("hits").getJsonArray("hits"));
-                handler.handle(new Either.Right<>(finalResponse));
-            }
-        });
+    public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
+        ElasticSearchHelper.advancedSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, handler));
     }
 
     @Override
@@ -143,7 +67,7 @@ public class Moodle implements Source {
     }
 
     public void create(Message<JsonObject> event) {
-        es.create(TYPE_NAME, format(event.body()), event.body().getInteger("id"), response -> {
+        es.create(RESOURCE_TYPE_NAME, format(event.body()), event.body().getInteger("id"), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);
@@ -154,7 +78,7 @@ public class Moodle implements Source {
     }
 
     public void update(Message<JsonObject> event) {
-        es.update(TYPE_NAME, event.body().getJsonObject("query"), event.body().getInteger("id"), response -> {
+        es.update(RESOURCE_TYPE_NAME, event.body().getJsonObject("query"), event.body().getInteger("id"), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);
@@ -165,7 +89,7 @@ public class Moodle implements Source {
     }
 
     public void delete(Message<JsonObject> event) {
-        es.delete(TYPE_NAME, event.body(), response -> {
+        es.delete(RESOURCE_TYPE_NAME, event.body(), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);

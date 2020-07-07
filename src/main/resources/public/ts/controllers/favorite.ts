@@ -67,7 +67,7 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
         if ("ok" !== status) {
             throw data.error;
         }
-        if (event in eventResponses) eventResponses[event](new Frame(event, state, data));
+        if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
     };
 
     const eventResponses: EventResponses = {
@@ -81,7 +81,7 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
     };
 
     function initFavoritePage() {
-        $scope.ws.send(new Frame('favorites', 'get', {}));
+        $scope.ws.send(new Frame('favorites', 'get', [], {}));
     }
 
     if ($scope.ws.connected) {

@@ -19,7 +19,9 @@ interface ViewModel {
 
 interface EventResponses {
     favorites_Result(frame: Frame): void;
+
     textbooks_Result(frame: Frame): void;
+
     search_Result(frame: Frame): void;
 }
 
@@ -46,7 +48,7 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
             if ("ok" !== status) {
                 throw data.error;
             }
-            if (event in eventResponses) eventResponses[event](new Frame(event, state, data));
+            if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
         };
 
         const eventResponses: EventResponses = {
@@ -75,18 +77,18 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
         vm.refreshTextBooks = (): void => {
             vm.textbooks = [];
             $scope.safeApply();
-            $scope.ws.send(new Frame('textbooks', 'refresh', {}));
+            $scope.ws.send(new Frame('textbooks', 'refresh', [], {}));
         };
 
         vm.seeMyExternalResource = (): void => {
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', {"query":".*"}));
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', [], {"query": ".*"}));
             $location.path(`/search/plain_text`);
         };
 
         function initHomePage() {
-            $scope.ws.send(new Frame('textbooks', 'get', {}));
-            $scope.ws.send(new Frame('favorites', 'get', {}));
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', {"query":".*"}));
+            $scope.ws.send(new Frame('textbooks', 'get', [], {}));
+            $scope.ws.send(new Frame('favorites', 'get', [], {}));
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
         }
 
         if ($scope.ws.connected) {

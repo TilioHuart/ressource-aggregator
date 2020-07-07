@@ -2,10 +2,13 @@ import {idiom, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 
+declare const window: any;
+
 export interface Scope extends IRootScopeService {
 	ws: Socket;
 	loaders: any;
 	idiom: any;
+
 	safeApply(): void;
 
 	mc: MainController;
@@ -13,12 +16,15 @@ export interface Scope extends IRootScopeService {
 
 export interface MainController {
 	textbooks: Resource[];
+	pageSize: number;
+	limitTo: number;
 	search: {
 		plain_text: {
 			text: string
 		},
 		advanced: {
 			show: boolean,
+			sources: any
 			fields: Array<{ name: string, comparator: boolean }>,
 			values: object
 		}
@@ -41,12 +47,15 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 	function ($scope: Scope, route, $location: ILocationService) {
 		const mc: MainController = this;
 		mc.textbooks = [];
+		mc.pageSize = 10;
+		mc.limitTo = mc.pageSize;
 		mc.search = {
 			plain_text: {
 				text: ''
 			},
 			advanced: {
 				show: false,
+				sources: {},
 				fields: [
 					{name: 'title', comparator: false},
 					{name: 'authors', comparator: true},
@@ -63,15 +72,16 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
 		};
 
-		const startResearch = function (state: string, data: any) {
+		const startResearch = function (state: string, sources: string[], data: any) {
+			mc.limitTo = mc.pageSize;
 			$location.path(`/search/${state.toLowerCase()}`);
-			$scope.ws.send(new Frame('search', state, data));
+			$scope.ws.send(new Frame('search', state, sources, data));
 			$scope.$broadcast('search', {state, data});
 		};
 
 		mc.plainTextSearch = function () {
 			if (mc.search.plain_text.text.trim() === '') return;
-			startResearch('PLAIN_TEXT', {query: mc.search.plain_text.text});
+			startResearch('PLAIN_TEXT', [], {query: mc.search.plain_text.text});
 		};
 
 		mc.advancedSearch = function () {
@@ -88,7 +98,11 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				}
 			});
 			if (Object.keys(data).length === 0) return;
-			startResearch('ADVANCED', data);
+			let sources: string[] = [];
+			Object.keys(mc.search.advanced.sources).forEach(key => {
+				if (mc.search.advanced.sources[key]) sources.push(key);
+			})
+			startResearch('ADVANCED', sources, data);
 			mc.search.advanced.show = false;
 		};
 
@@ -102,6 +116,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		mc.openAdvancedSearch = function () {
 			mc.search.plain_text.text = '';
 			mc.search.advanced.show = true;
+			window.sources.forEach(source => mc.search.advanced.sources[source] = true);
 		};
 
 		mc.closeAdvancedSearch = function () {

@@ -4,12 +4,15 @@ import fr.openent.mediacentre.controller.FavoriteController;
 import fr.openent.mediacentre.controller.MediacentreController;
 import fr.openent.mediacentre.controller.WebSocketController;
 import fr.openent.mediacentre.source.Source;
+import fr.openent.mediacentre.tasks.AmassTask;
+import fr.wseduc.cron.CronTrigger;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.http.BaseServer;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +47,14 @@ public class Mediacentre extends BaseServer {
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
         HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);
         log.info("Websocket server listening on port " + server.actualPort());
+
+        try {
+            AmassTask amassTask = new AmassTask(sources);
+            new CronTrigger(vertx, config.getString("amass-cron", "0 1 * * * ? *")).schedule(amassTask);
+        } catch (ParseException e) {
+            log.fatal("Unable to parse amass cron expression");
+            throw e;
+        }
     }
 
 }

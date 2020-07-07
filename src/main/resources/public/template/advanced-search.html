@@ -22,6 +22,19 @@
                    ng-model="mc.search.advanced.values[field.name].value"
                    i18n-placeholder="[[ 'mediacentre.advanced.placeholder.' + field.name ]]">
         </div>
+        <div class="row-flex vertical-spacing-four twelve-mobile loaders">
+            <span class="two twelve-mobile">&nbsp;</span>
+            <span class="two three-mobile"><i18n>mediacentre.advances.name.sources</i18n>:</span>
+            <div class="eight nine-mobile flex-row">
+                <div ng-repeat="(key, val) in mc.search.advanced.sources" class="align-center flex-row">
+                    <img ng-src="[[ '/mediacentre/public/img/' + key + '.png' ]]" alt="[[ key ]]"/>
+                    <label class="checkbox horizontal-margin">
+                        <input type="checkbox" ng-model="mc.search.advanced.sources[key]"/>
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
         <div class="advanced-search-background">&nbsp;</div>
     </div>
     <div class="right-magnet vertical-spacing-four">

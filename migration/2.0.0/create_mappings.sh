@@ -1,30 +1,52 @@
 #!/bin/bash
 curl -X PUT "http://localhost:9200/mediacentre" -H 'Content-Type: application/json' -d'
 {
+    "index": {
+      "blocks": {
+        "read_only_allow_delete": "false"
+      }
+    },
+    "settings": {
+      "analysis": {
+        "normalizer": {
+          "lower_normalizer": {
+            "type": "custom",
+            "char_filter": [],
+            "filter": ["lowercase", "asciifolding"]
+          }
+        }
+      }
+    },
     "mappings": {
         "resources": {
             "properties": {
                 "title": {
-                    "type": "text"
+                    "type": "keyword",
+                    "normalizer": "lower_normalizer"
                 },
                 "authors": {
-                    "type": "keyword"
+                    "type": "keyword",
+                    "normalizer": "lower_normalizer"
                 },
                 "editors": {
-                    "type": "keyword"
+                    "type": "keyword",
+                    "normalizer": "lower_normalizer"
                 },
                 "image": {
                     "type": "keyword",
                     "index": false
                 },
                 "disciplines": {
-                    "type": "keyword"
+                    "type": "keyword",
+                    "normalizer": "lower_normalizer"
                 },
                 "levels": {
-                    "type": "keyword"
+                    "type": "keyword",
+                    "normalizer": "lower_normalizer"
                 },
                 "document_types": {
-                    "type": "keyword"
+                    "type": "keyword",
+                    "normalizer": "lower_normalizer"
                 },
                 "link": {
                     "type": "keyword",
@@ -44,6 +66,13 @@ curl -X PUT "http://localhost:9200/mediacentre" -H 'Content-Type: application/js
                 "user": {
                     "type": "keyword",
                     "index": false
+                },
+                "structure": {
+                  "type": "keyword"
+                },
+                "description": {
+                  "type": "keyword",
+                  "normalizer": "lower_normalizer"
                 }
             }
         }
