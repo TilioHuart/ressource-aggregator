@@ -7,9 +7,6 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.user.UserInfos;
 
 public interface Source {
-    // Boolean defining if the source needs to be harvested. By default false.
-    boolean harvest = false;
-
     /**
      * Plain text search
      *
@@ -37,9 +34,9 @@ public interface Source {
     JsonObject format(JsonObject resource);
 
     /**
-     * Harvest resources.
+     * Amass resources.
      */
-    void harvest();
+    void amass();
 
     /**
      * Set EventBus

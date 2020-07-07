@@ -15,8 +15,6 @@ public class Moodle implements Source {
 
     private final Logger log = LoggerFactory.getLogger(Moodle.class);
 
-    private EventBus eb;
-    private JsonObject config;
     private final ElasticSearch es = ElasticSearch.getInstance();
     private final String TYPE_NAME = "resources";
     public Moodle() {
@@ -128,13 +126,12 @@ public class Moodle implements Source {
     }
 
     @Override
-    public void harvest() {
-
+    public void amass() {
+        log.info("Moodle source does not need amass");
     }
 
     @Override
     public void setEventBus(EventBus eb) {
-        eb = eb;
         eb.consumer("fr.openent.mediacentre.source.Moodle|create", this::create);
         eb.consumer("fr.openent.mediacentre.source.Moodle|update", this::update);
         eb.consumer("fr.openent.mediacentre.source.Moodle|delete", this::delete);
@@ -142,7 +139,7 @@ public class Moodle implements Source {
 
     @Override
     public void setConfig(JsonObject config) {
-
+        log.info("setConfig not implemented in Moodle source");
     }
 
     public void create(Message<JsonObject> event) {

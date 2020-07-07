@@ -340,8 +340,8 @@ public class GAR implements Source {
     }
 
     @Override
-    public void harvest() {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public void amass() {
+        log.info("GAR source does not need amass");
     }
 
     @Override
