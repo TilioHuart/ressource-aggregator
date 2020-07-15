@@ -27,7 +27,7 @@ public class Moodle implements Source {
 
         JsonObject action = new JsonObject()
                 .put("label", String.format("%s.action.duplicate", Moodle.class.getName()))
-                .put("url", String.format("/moodle/courses/%s/duplication", resource.getString("id")))
+                .put("url", String.format("/moodle/course/duplicate/BP/%s", resource.getString("id")))
                 .put("method", HttpMethod.POST)
                 .put("message", message);
 
