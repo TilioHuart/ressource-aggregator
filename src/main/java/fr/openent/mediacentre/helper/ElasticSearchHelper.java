@@ -15,6 +15,7 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.elasticsearch.ElasticSearch;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ElasticSearchHelper {
@@ -231,14 +232,21 @@ public class ElasticSearchHelper {
         return new JsonObject().put("terms", terms);
     }
 
-    public static Handler<AsyncResult<JsonArray>> searchHandler(Class<?> source, Handler<Either<JsonObject, JsonObject>> handler) {
+    public static Handler<AsyncResult<JsonArray>> searchHandler(Class<?> source, Function<JsonObject, JsonObject> actionProvider, Handler<Either<JsonObject, JsonObject>> handler) {
         return ar -> {
             if (ar.failed())
                 handler.handle(new Either.Left<>(new JsonObject().put("source", PMB.class.getName()).put("error", "[PMB] " + ar.cause().getMessage())));
             else {
+                List<JsonObject> resources = ((List<JsonObject>) ar.result().getList());
+                if (Objects.nonNull(actionProvider)) {
+                    resources = resources
+                            .stream()
+                            .map(actionProvider)
+                            .collect(Collectors.toList());
+                }
                 JsonObject response = new JsonObject()
                         .put("source", source.getName())
-                        .put("resources", ar.result());
+                        .put("resources", new JsonArray(resources));
                 handler.handle(new Either.Right<>(response));
             }
         };

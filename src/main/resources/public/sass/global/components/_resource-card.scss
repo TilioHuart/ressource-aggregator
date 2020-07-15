@@ -194,14 +194,14 @@ resource-card {
           }
         }
 
-        .copy-clipboard {
-          color: $mediacentre-red;
+        .copy-clipboard::before {
+          @include fonticon();
+          content: '\e84d';
+          font-size: 24px;
+        }
 
-          &::before {
-            @include fonticon();
-            content: '\e84d';
-            font-size: 24px;
-          }
+        .copy-clipboard, .action {
+          color: $mediacentre-red;
 
           .text-button {
             position: relative;
@@ -353,14 +353,14 @@ resource-card {
               }
             }
 
-            .copy-clipboard {
-              color: $mediacentre-red;
+            .copy-clipboard::before {
+              @include fonticon();
+              content: '\e84d';
+              font-size: 16px;
+            }
 
-              &::before {
-                @include fonticon();
-                content: '\e84d';
-                font-size: 16px;
-              }
+            .copy-clipboard, .action {
+              color: $mediacentre-red;
 
               .text-button {
                 position: relative;

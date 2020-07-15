@@ -5,29 +5,47 @@ import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.entcore.common.elasticsearch.ElasticSearch;
 import org.entcore.common.user.UserInfos;
 
+import java.util.function.UnaryOperator;
+
 public class Moodle implements Source {
 
     private final Logger log = LoggerFactory.getLogger(Moodle.class);
 
     private final ElasticSearch es = ElasticSearch.getInstance();
-   public Moodle() {
+
+    private final UnaryOperator<JsonObject> actionProvider = resource -> {
+        JsonObject message = new JsonObject()
+                .put("success", String.format("%s.action.duplicate.success", Moodle.class.getName()))
+                .put("error", String.format("%s.action.duplicate.error", Moodle.class.getName()));
+
+        JsonObject action = new JsonObject()
+                .put("label", String.format("%s.action.duplicate", Moodle.class.getName()))
+                .put("url", String.format("/moodle/courses/%s/duplication", resource.getString("id")))
+                .put("method", HttpMethod.POST)
+                .put("message", message);
+
+        return resource.put("action", action);
+    };
+
+    public Moodle() {
         super();
     }
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.plainTextSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, handler));
+        ElasticSearchHelper.plainTextSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, actionProvider, handler));
     }
 
     @Override
     public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.advancedSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, handler));
+        ElasticSearchHelper.advancedSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, actionProvider, handler));
     }
 
     @Override

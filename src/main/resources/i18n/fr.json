@@ -59,5 +59,8 @@
   "mediacentre.description.name.levels": "Niveau",
   "mediacentre.description.name.keywords": "Mots-clés",
   "mediacentre.description.undefined": "L'auteur n'a pas fourni de description pour cette ressource.",
-  "mediacentre.duplicate.toaster": "Votre cours a bien été dupliqué dans le module Moodle"
+  "mediacentre.duplicate.toaster": "Votre cours a bien été dupliqué dans le module Moodle",
+  "fr.openent.mediacentre.source.Moodle.action.duplicate": "Dupliquer",
+  "fr.openent.mediacentre.source.Moodle.action.duplicate.success": "La duplication est en course et sera effective sous peu.",
+  "fr.openent.mediacentre.source.Moodle.action.duplicate.error": "Une erreur est survenue lors de la duplication du cours"
 }

@@ -54,19 +54,17 @@
                         <i18n>mediacentre.remove.to.favorite</i18n>
                     </div>
                     <!--Copy link-->
-                    <div ng-if="ngModel.source == 'fr.openent.mediacentre.source.GAR'"
+                    <div ng-if="!ngModel.action"
                          class="cell copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
                          data-clipboard-text="[[ngModel.link]]"
                          tooltip="<i18n>mediacentre.copy.link</i18n>">
                         <i18n>mediacentre.copy.link</i18n>
                     </div>
-                    <!--Duplicate link-->
-                    <div ng-if="ngModel.source == 'fr.openent.mediacentre.source.Moodle'"
-                         class="cell duplicate-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
-                         data-clipboard-text="[[ngModel.link]]"
-                         tooltip="<i18n>mediacentre.duplicate.link</i18n>"
-                         data-ng-click="duplicate()">
-                        <i18n>mediacentre.duplicate.link</i18n>
+                    <div ng-if="ngModel.action"
+                         ng-click="action()"
+                         class="cell [[type]]-resource-[[ngModel.hash]] action pointer">
+                        <i ng-if="ngModel.action.icon" class="[[ngModel.action.icon]]">&nbsp;</i>
+                        [[idiom.translate(ngModel.action.label)]]
                     </div>
                 </div>
             </div>
