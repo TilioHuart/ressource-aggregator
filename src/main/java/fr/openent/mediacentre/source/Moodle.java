@@ -113,8 +113,7 @@ public class Moodle implements Source {
                 event.reply(error);
             } else {
                 event.reply((new JsonObject()).put("status", "ok")
-                        .put("result", response.result())
-                        .put("ids", event.body().getJsonObject("query").getJsonObject("bool").getJsonArray("should")));
+                        .put("result", response.result()));
             }
         });
     }
