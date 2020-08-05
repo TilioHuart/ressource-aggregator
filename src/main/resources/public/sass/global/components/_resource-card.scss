@@ -119,6 +119,10 @@ resource-card {
         margin: 0 auto;
         position: relative;
         z-index: 1;
+
+        > img {
+          max-height: 10rem;
+        }
       }
 
 
@@ -202,6 +206,17 @@ resource-card {
 
         .copy-clipboard, .action {
           color: $mediacentre-red;
+
+          i.Dupliquer {
+            background-image: url(/mediacentre/public/img/icons/content_copy.svg);
+            width: 47px;
+            height: 47px;
+            transform: scale(0.35);
+            position: absolute;
+            left: -16px;
+            top: -14px;
+            filter: invert(38%) sepia(34%) saturate(6329%) hue-rotate(329deg) brightness(97%) contrast(98%);
+          }
 
           .text-button {
             position: relative;

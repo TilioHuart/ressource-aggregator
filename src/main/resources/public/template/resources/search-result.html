@@ -63,7 +63,7 @@
                     <div ng-if="ngModel.action"
                          ng-click="action()"
                          class="cell [[type]]-resource-[[ngModel.hash]] action pointer">
-                        <i ng-if="ngModel.action.icon" class="[[ngModel.action.icon]]">&nbsp;</i>
+                        <i class="[[idiom.translate(ngModel.action.label)]]">&nbsp;</i>
                         [[idiom.translate(ngModel.action.label)]]
                     </div>
                 </div>
