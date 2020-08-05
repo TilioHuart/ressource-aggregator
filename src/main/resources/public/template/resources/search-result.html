@@ -117,10 +117,10 @@
                     <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                 </div>
             </div>
-            <div ng-if="ngModel.keywords.length > 0" class="detail">
+            <div ng-if="ngModel.plain_text.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-keyword subtitle">mediacentre.description.name.keywords</i18n>
-                    <span class="content" ng-repeat-start="keyword in ngModel.keywords">[[plain_text]]</span>
+                    <span class="content" ng-repeat-start="keyword in ngModel.plain_text">[[keyword]]</span>
                     <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                 </div>
             </div>
