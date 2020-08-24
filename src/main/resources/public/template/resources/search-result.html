@@ -124,6 +124,12 @@
                     <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                 </div>
             </div>
+            <div ng-if="ngModel.id.length > 0 && 'fr.openent.mediacentre.source.GAR' === ngModel.source" class="detail">
+                <div class="detail-container">
+                    <i18n class="icon-ark subtitle">support.identifiant</i18n>
+                    <span class="content">[[ngModel.id]]</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

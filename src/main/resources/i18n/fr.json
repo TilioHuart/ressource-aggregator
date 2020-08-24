@@ -62,5 +62,6 @@
   "mediacentre.duplicate.toaster": "Votre cours a bien été dupliqué dans le module Moodle",
   "fr.openent.mediacentre.source.Moodle.action.duplicate": "Dupliquer",
   "fr.openent.mediacentre.source.Moodle.action.duplicate.success": "La duplication est en course et sera effective sous peu.",
-  "fr.openent.mediacentre.source.Moodle.action.duplicate.error": "Une erreur est survenue lors de la duplication du cours"
+  "fr.openent.mediacentre.source.Moodle.action.duplicate.error": "Une erreur est survenue lors de la duplication du cours",
+  "support.identifiant": "Identifiant support"
 }
