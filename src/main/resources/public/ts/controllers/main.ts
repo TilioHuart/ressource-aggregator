@@ -15,6 +15,7 @@ export interface Scope extends IRootScopeService {
 }
 
 export interface MainController {
+
 	textbooks: Resource[];
 	pageSize: number;
 	limitTo: number;
@@ -29,6 +30,10 @@ export interface MainController {
 			values: object
 		}
 	};
+	columns: number[];
+	screenWidthLimit: number;
+
+	infiniteScroll(): void;
 
 	plainTextSearch(): void;
 
@@ -71,12 +76,17 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.ws.onopen = (event) => {
 			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
 		};
+		mc.screenWidthLimit = 600;
 
 		const startResearch = function (state: string, sources: string[], data: any) {
 			mc.limitTo = mc.pageSize;
 			$location.path(`/search/${state.toLowerCase()}`);
 			$scope.ws.send(new Frame('search', state, sources, data));
 			$scope.$broadcast('search', {state, data});
+		};
+
+		mc.infiniteScroll = function () {
+			mc.limitTo += mc.pageSize;
 		};
 
 		mc.plainTextSearch = function () {
@@ -101,7 +111,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			let sources: string[] = [];
 			Object.keys(mc.search.advanced.sources).forEach(key => {
 				if (mc.search.advanced.sources[key]) sources.push(key);
-			})
+			});
 			startResearch('ADVANCED', sources, data);
 			mc.search.advanced.show = false;
 		};
@@ -144,5 +154,5 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			if (phase !== '$apply' && phase !== '$digest') {
 				$scope.$apply();
 			}
-		}
+		};
 	}]);

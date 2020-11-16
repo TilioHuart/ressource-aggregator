@@ -12,14 +12,8 @@
             <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
             <div>
                 <em class="metadata">
-                    <i18n>mediacentre.edited.by</i18n>
                     <span ng-repeat="editor in ngModel.editors"> [[editor]] </span>
                 </em>
-            </div>
-            <div class="types">
-                <resource-type ng-repeat="type in ngModel.document_types"
-                               ng-if="$index > ngModel.document_types.length - 4"> [[type]]
-                </resource-type>
             </div>
         </div>
         <div class="resource-footer">

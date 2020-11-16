@@ -1,7 +1,7 @@
 <div ng-controller="HomeController as vm" class="home">
 
     <!--External resources-->
-    <div class="favorites horizontal-spacing row vertical-spacing">
+    <div class="external horizontal-spacing row vertical-spacing">
         <div class="row">
             <h2 class="cell">
                 <i18n>mediacentre.my.external.resources</i18n>
@@ -9,16 +9,19 @@
         </div>
 
         <!--Content-->
-        <div class="favorites-flex" ng-show="vm.displayedResources.length > 0">
-            <div class="favorites-flex-card">
+        <div class="external-flex" ng-show="vm.displayedResources.length > 0">
+            <div class="external-flex-card">
                 <resource-card ng-repeat="resource in vm.displayedResources track by $index"
+                               ng-if="$index > vm.displayedResources.length - 1 - vm.resourceLimit"
                                ng-model="resource">
                 </resource-card>
             </div>
-            <span class="favorites-flex-plus zero-mobile" data-ng-click="vm.seeMyExternalResource()">
-                <i18n>mediacentre.see.more</i18n>
-            </span>
         </div>
+    </div>
+    <div class="seeMore" data-ng-click="vm.seeMyExternalResource()">
+        <span>
+            <i18n>mediacentre.see.more</i18n>
+        </span>
     </div>
 
     <!--Favorite-->
@@ -30,18 +33,12 @@
         </div>
 
         <!--Content-->
-        <div class="favorites-flex" ng-show="vm.favorites.length > 0">
-            <div class="favorites-flex-card">
-                <resource-card ng-repeat="resource in vm.favorites track by $index"
-                               ng-if="$index > vm.favorites.length - 6"
-                               type="favorite"
-                               class="favoriteCard"
-                               ng-model="resource">
-                </resource-card>
-            </div>
-            <span class="favorites-flex-plus zero-mobile" data-ng-click="vm.seeMyFavorite()">
-                <i18n>mediacentre.see.more</i18n>
-            </span>
+        <div class="favorites-grid" ng-show="vm.favorites.length > 0">
+            <resource-card ng-repeat="resource in vm.favorites track by $index"
+                           ng-if="$index > (vm.favorites.length - 1 - vm.favoriteLimit)"
+                           type="completeCard"
+                           ng-model="resource">
+            </resource-card>
         </div>
 
         <!-- Empty state -->
@@ -52,6 +49,11 @@
                 <span><i18n>mediacentre.favorite.empty.second</i18n></span>
             </div>
         </div>
+    </div>
+    <div class="seeMore" data-ng-click="vm.seeMyFavorite()">
+        <span>
+            <i18n>mediacentre.see.more</i18n>
+        </span>
     </div>
 
     <!--Textbooks-->
@@ -76,13 +78,11 @@
         </div>
 
         <!-- Empty state -->
-        <div class="centered eleven textbooks-empty" ng-show="vm.textbooks.length === 0">
-            <img src="/mediacentre/public/img/empty-textbooks.svg"/>
+        <div class="centered eleven textbooks-empty" ng-show="!vm.textbooks || vm.textbooks.length === 0">
+            <img src="/mediacentre/public/img/empty-textbooks.svg" alt="empty-textbooks"/>
             <div class="horizontal-margin-four">
                 <i18n>mediacentre.textbooks.empty</i18n>
             </div>
         </div>
-    </div>
-
     </div>
 </div>

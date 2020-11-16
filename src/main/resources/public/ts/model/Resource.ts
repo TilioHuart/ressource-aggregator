@@ -12,8 +12,8 @@ export interface Resource {
     image: string;
     levels: string[];
     link: string;
-    plain_text: string;
+    plain_text: string[];
     source: string;
     title: string;
-    keywords: string[];
+    action: object;
 }
