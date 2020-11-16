@@ -1,32 +1,39 @@
-<div ng-controller="FavoriteController as vm" class="favorite">
-
-    <!--Filter-->
-    <div class="horizontal-spacing row vertical-spacing filter-line search-filters">
-        <div class="cell">
-            <div class="vertical-spacing-twice"
-                 ng-if="vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0">
-                <i18n>mediacentre.search.filter</i18n>
-                :
-            </div>
-            <div class="row cell">
-                <multi-combo ng-repeat="filter in vm.filteredFields"
-                             ng-if="vm.filters.initial[filter].length > 0"
-                             title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
-                             combo-model="vm.filters.initial[filter]"
-                             search-on="name"
-                             order-by="name"
-                             class="twelve-mobile"
-                             filtered-model="vm.filters.filtered[filter]">
-                </multi-combo>
+<div ng-controller="FavoriteController as vm" class="favorite horizontal-spacing">
+    <div class="search-header">
+        <div class="flex-left">
+            <div class = "search-filters vertical-spacing-twice">
+                <div class="vertical-spacing-twice"
+                     ng-if="(vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0) && !vm.displayFilter"
+                     ng-click = "vm.showFilter()">
+                    <i class="seeFilter"></i> <span><i18n>mediacentre.search.filter.mobile</i18n></span>
+                </div>
+                <div class="row filter-line" ng-show="vm.displayFilter">
+                    <div class="cell twelve-mobile">
+                        <div class="vertical-spacing-twice"
+                             ng-if="(vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0) && vm.displayFilter"
+                             ng-click="vm.mobile && vm.showFilter()">
+                            <i18n>mediacentre.search.filter</i18n> :
+                        </div>
+                        <div class="row">
+                            <multi-combo ng-repeat="filter in vm.filteredFields"
+                                         ng-if="vm.filters.initial[filter].length > 0"
+                                         title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
+                                         combo-model="vm.filters.initial[filter]"
+                                         search-on="name"
+                                         order-by="name"
+                                         filtered-model="vm.filters.filtered[filter]">
+                            </multi-combo>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Cards -->
     <div class="favorites-grid" ng-show="vm.displayedResources.length > 0">
-        <resource-card ng-repeat="resource in vm.displayedResources track by $index"
-                       type="favorite"
-                       class="favoriteCard"
+        <resource-card ng-repeat="resource in vm.displayedResources | limitTo:mc.limitTo track by $index"
+                       type="completeCard"
                        ng-model="resource">
         </resource-card>
     </div>
@@ -40,4 +47,5 @@
             <span><i18n>mediacentre.favorite.empty.second</i18n></span>
         </div>
     </div>
+    <infinite-scroll scrolled="mc.infiniteScroll()"></infinite-scroll>
 </div>

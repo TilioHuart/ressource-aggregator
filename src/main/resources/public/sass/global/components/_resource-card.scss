@@ -2,13 +2,18 @@ resource-card {
   background-color: $mediacentre-white;
   border-radius: 10px;
   box-shadow: 0 5px 5px rgba(0, 0, 0, .2);
+  margin-bottom: 10px;
 
+  @media (max-width: $small-tablette) {
+    width: calc(100vw - 20px);
+  }
+  
   .flex {
     position: relative;
     height: 100%;
 
     &.resource .resource-card {
-      height: 200px;
+      height: 150px;
     }
 
     .resource-card {
@@ -33,7 +38,12 @@ resource-card {
       height: 9rem;
 
       .data {
+        @media (max-width: $small-tablette) {
+          width: 80%;
+        }
+
         .resource-information {
+
           .title {
             color: $mediacentre-red;
             font-size: 18px !important;
@@ -112,16 +122,18 @@ resource-card {
     }
 
     .image {
-      flex: 5;
+      flex: 3;
       position: relative;
 
       .crop {
         margin: 0 auto;
         position: relative;
         z-index: 1;
+        overflow: hidden;
 
         > img {
           max-height: 10rem;
+          max-width: 125%;
         }
       }
 
@@ -147,15 +159,33 @@ resource-card {
       height: 80%;
       display: flex;
       flex-direction: column;
+      padding: 10px;
 
       .title {
+        color: $mediacentre-red;
         font-weight: bold;
-        font-size: 15px;
+        font-size: 18px;
+
+        @media (max-width: $small-tablette) {
+          font-size: 14px ! important;
+        }
       }
 
       .types {
         text-transform: uppercase;
         font-size: 12px;
+        white-space: nowrap;      /*keep text on one line */
+        overflow: hidden;         /*prevent text from being shown outside the border */
+        text-overflow: ellipsis;  /*cut off text with an ellipsis*/
+/*        @supports (-webkit-line-clamp: 2) {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: initial;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          // n'est pas prix en compte : à fix
+          -webkit-box-orient: vertical;
+        }*/
       }
 
       .resource-footer {
@@ -245,7 +275,7 @@ resource-card {
     }
   }
 
-  .flex .search-card {
+  .flex .complete-card {
     width:100%;
     overflow: hidden;
     padding: 0;
@@ -255,20 +285,22 @@ resource-card {
     background-color: white;
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
+    max-width: calc(100vw - 30px);
 
     input {
       position: absolute;
       opacity: 0;
       z-index: -1;
+      display: none;
     }
 
     input:checked {
       ~ .description {
-        max-height: calc(2 * (10rem + 1.5rem + (2 *  5px)) - (2 * 0.5rem)); // 2*(cards+gaps+paddings) - description-margin
+        max-height: calc(2 * (10rem + 1.5rem + (2 *  5px) + 10px) - (2 * 0.5rem)); // 2*(cards+gaps+paddings+margin_bottom) - description-margin
         margin: 0.5rem 2rem;
       }
 
-      ~ .search-card-container .data .resource-footer .description-hider::after {
+      ~ .complete-card-container .data .resource-footer .description-hider::after {
         transform: rotate(90deg);
       }
     }
@@ -300,6 +332,14 @@ resource-card {
         justify-content: space-between;
         padding-left: 10px;
 
+        .resource-information {
+          @media (max-width: $small-tablette) {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+
         .resource-footer {
           display: flex;
           align-items: flex-end;
@@ -311,6 +351,10 @@ resource-card {
             color: $mediacentre-red;
             cursor: pointer;
             line-height: 23px;
+
+            @media (max-width: $small-tablette) {
+              display: none;
+            }
 
             &::before {
               @include fonticon();
@@ -333,6 +377,10 @@ resource-card {
             display: flex;
             align-items: center;
             line-height: 23px;
+
+            @media (max-width: $small-tablette) {
+              line-height: 15px;
+            }
 
             .cell {
               display: flex;
@@ -446,6 +494,10 @@ resource-card {
       font-size: 12px;
       margin: 0rem 2rem;
 
+      @media (max-width: $small-tablette) {
+        display: none;
+      }
+
       &-text, &-details {
         padding-bottom: 1.5rem;
       }
@@ -528,14 +580,26 @@ resource-card {
         }
 
         .content {
-          font-weight: bold;
-          font-size: 12px;
-          white-space: nowrap;
+          display: flex;
+          flex-wrap: wrap;
+          max-width: 500px;
+
+          &-item {
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+          }
+
+          &-bold {
+            font-weight: bold;
+            font-size: 12px;
+          }
         }
       }
     }
   }
 }
+
 
 .favoriteCard {
   background-color: unset;

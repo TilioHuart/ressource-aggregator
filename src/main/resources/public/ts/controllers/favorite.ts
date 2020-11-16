@@ -8,11 +8,14 @@ interface ViewModel {
     resources: Resource[];
     favorites: Resource[];
     displayedResources: Resource[];
+    displayFilter: boolean;
     filters: {
         initial: {  source: Filter[], document_types: Filter[], levels: Filter[] }
         filtered: {  source: Filter[], document_types: Filter[], levels: Filter[] }
     };
     filteredFields: string[];
+
+    showFilter() : void;
 }
 
 interface EventResponses {
@@ -25,6 +28,7 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
 
     vm.favorites = [];
     vm.filteredFields = [ 'document_types', 'levels'];
+    vm.displayFilter = screen.width >= $scope.mc.screenWidthLimit;
 
     $scope.$on('deleteFavorite', function(event, id) {
         vm.displayedResources = vm.favorites.filter(el => el.id !== id);
@@ -88,5 +92,9 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
         initFavoritePage();
     } else {
         $scope.ws.onopen = initFavoritePage;
+    }
+
+    vm.showFilter = function () {
+        vm.displayFilter = !vm.displayFilter;
     }
 }]);

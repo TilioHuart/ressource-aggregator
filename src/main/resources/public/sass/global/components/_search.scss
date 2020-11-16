@@ -42,6 +42,13 @@
     background-position-x: 120%;
     z-index: -1;
     opacity: 0.75;
+    // background image visibility responsive
+    @media (max-width: $tablette) {
+      background-position-x: 180%;
+    }
+    @media (max-width: $small-tablette) {
+      background-position-x: -60%;
+    }
   }
 }
 
@@ -51,8 +58,64 @@
   }
 }
 
-.search-filters {
-  multi-combo {
-    padding-right: 10px;
+.search {
+  margin-right: 0px !important;
+
+  &-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 10px 20px 10px;
+    align-items: flex-start;
+
+    @media (max-width: $small-tablette) {
+      flex-direction: column-reverse;
+    }
+
+    .flex {
+      display: flex;
+      flex-direction: column;
+
+      &-left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      &-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        width: 100%;
+        justify-content: center;
+
+        @media (max-width: $small-tablette) {
+          flex-direction: row-reverse;
+          align-items: flex-start;
+          padding-top: 10px;
+        }
+      }
+    }
+  }
+
+  &-filters {
+    white-space: nowrap;
+
+    @media (max-width: $small-tablette) {
+      background: $white;
+      border-radius: 10px;
+      padding-top: 5px;
+      text-align: center;
+      width: calc(100vw - 40px);
+      white-space: normal;
+    }
+    multi-combo {
+      padding-right: 10px;
+    }
+    .filter-line {
+      @media (max-width: $small-tablette) {
+        padding: 0 10px;
+      }
+    }
   }
 }

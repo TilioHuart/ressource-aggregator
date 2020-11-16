@@ -71,15 +71,16 @@ body.mediacentre-v2 {
   }
 
   a.button.cancel, button.cancel {
-    color: $mediacentre-red;
+    background: $mediacentre-red;
+    color: $white;
 
     &:hover {
-      background: $mediacentre-red;
-      color: $white;
+      color: $mediacentre-red;
+      background: $white;
     }
   }
 
-  .textbooks, .favorites {
+  .textbooks, .favorites, .external {
     > .row {
       margin-bottom: 2rem;
     }
@@ -110,7 +111,7 @@ body.mediacentre-v2 {
       display: flex;
       &-card {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+/*        grid-template-columns: 1fr 1fr 1fr 1fr;*/
         grid-column-gap: 3rem;
         align-items: flex-start;
         flex: 9;
@@ -170,6 +171,38 @@ body.mediacentre-v2 {
       &:hover {
         background-color: $mediacentre-dar-red;
       }
+    }
+  }
+
+  .seeMore {
+      color: red;
+      text-align: right;
+      text-decoration: underline;
+      margin-right: 15px;
+  }
+
+  .seeFilter {
+    font-size: 16px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 5%;
+
+    &::before {
+      @include fonticon();
+      content: url(/mediacentre/public/img/icons/filter-variant.svg);
+      display: inline-block;
+      transform: scale(1.3);
+      vertical-align: top;
+      margin-right: 5px;
+
+    }
+  }
+
+  .horizontal-margin-four {
+    margin-left: 40px;
+    margin-right: 40px;
+    @media (max-width: $small-tablette) {
+      margin-left: 20px;
     }
   }
 }

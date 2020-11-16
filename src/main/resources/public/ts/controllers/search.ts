@@ -13,6 +13,9 @@ function initSources(value: boolean) {
 }
 
 interface ViewModel {
+    width: number;
+    mobile: boolean;
+    displayFilter: boolean;
     loaders: any;
     resources: Resource[];
     displayedResources: Resource[];
@@ -35,8 +38,7 @@ interface ViewModel {
 
     emptyAdvancedSearch(): boolean;
 
-    columns: number[];
-    testbooks: Resource[];
+    showFilter(): void;
 }
 
 interface EventResponses {
@@ -50,7 +52,8 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             $location.path('/');
         }
         const vm: ViewModel = this;
-
+        vm.mobile = screen.width < $scope.mc.screenWidthLimit;
+        vm.displayFilter = !vm.mobile;
         vm.filteredFields = ['document_types', 'levels'];
 
         const initSearch = function () {
@@ -78,7 +81,6 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
                 });
                 if (match) {
                     vm.displayedResources.push(resource);
-                    // console.log(resource);
                 }
             });
 
@@ -127,7 +129,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             formatedDate += mm + '/' + yyyy;
 
             return formatedDate;
-        }
+        };
 
         vm.getSourcesLength = function () {
             return Object.keys(vm.loaders).length;
@@ -157,15 +159,9 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             });
 
             return empty;
-        }
+        };
 
-        const nbColumns = 2;
-        vm.columns = [];
-        function calculColumns() {
-            for (let i = 0; i < nbColumns; i++) {
-                vm.columns.push(i);
-            }
+        vm.showFilter = function () {
+            vm.displayFilter = !vm.displayFilter;
         }
-
-        calculColumns();
     }]);

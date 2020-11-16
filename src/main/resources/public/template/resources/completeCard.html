@@ -1,14 +1,14 @@
-<div class="search-card" id="color-[[ngModel.id]]">
+<div class="complete-card" id="color-[[ngModel.hash]]">
     <img class="right-magnet source"
          ng-src="[[ '/mediacentre/public/img/' + ngModel.source + '.png' ]]"
          alt="[[ ngModel.source ]]"/>
-    <input type="checkbox" id="description-[[ngModel.id]]">
+    <input type="checkbox" id="description-[[ngModel.hash]]">
 
-    <div class="resource-card search-card-container">
-        <div class="image" ng-click="open()">
+    <div class="resource-card complete-card-container">
+        <div class="image three" ng-click="open()">
             <div class="crop" data-resource-id="[[ngModel.id]]">
                 <img ng-src="[[ngModel.image]]"
-                     onerror="this.src='./mediacentre/public/img/empty-textbooks.svg';"
+                     onerror="this.src='./mediacentre/public/img/empty-textbooks.svg'; this.style.maxWidth='100%';"
                      alt="[[ngModel.image]]">
 <!--                <img ng-src="/mediacentre/public/img/empty-textbooks.svg" alt="img">-->
             </div>
@@ -16,26 +16,24 @@
     <!--            <img ng-src="[[background]]" alt="[[background]]"/>-->
             </div>
         </div>
-        <div class="data">
+        <div class="data nine">
             <div class="resource-information">
                 <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
                 <div>
                     <em class="metadata">
                         <i18n>mediacentre.edited.by</i18n>
-                        <span ng-repeat-start="editor in ngModel.editors">[[editor]]</span>
+                        <span ng-repeat-start="editor in ngModel.editors | limitTo:3 track by $index">[[editor]]</span>
                         <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                     </em>
                 </div>
                 <div class="types">
-                    <resource-type ng-repeat-start="type in ngModel.document_types"
-                                   ng-if="$index > ngModel.document_types.length - 4">[[type]]
-                    </resource-type>
+                    <resource-type ng-repeat-start="type in ngModel.document_types | limitTo:3 track by $index">[[type]]</resource-type>
                     <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                 </div>
             </div>
             <div class="resource-footer">
                 <!--Description hider-->
-                <label class="description-hider" for="description-[[ngModel.id]]">
+                <label class="description-hider" for="description-[[ngModel.hash]]">
                     <i18n>mediacentre.description.button</i18n>
                 </label>
                 <div class="external-links">
@@ -86,48 +84,58 @@
             <div ng-if="ngModel.authors.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-author subtitle">mediacentre.description.name.authors</i18n>
-                    <span class="content" ng-repeat-start="author in ngModel.authors">[[author]]</span>
-                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    <div class="content">
+                        <span class="content-item" ng-repeat-start="author in ngModel.authors track by $index">[[author]]</span>
+                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    </div>
                 </div>
             </div>
             <div ng-if="ngModel.editors.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-editor subtitle">mediacentre.description.name.editors</i18n>
-                    <span class="content" ng-repeat-start="editor in ngModel.editors">[[editor]]</span>
-                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    <div class="content">
+                        <span class="content-item" ng-repeat-start="editor in ngModel.editors track by $index">[[editor]]</span>
+                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    </div>
                 </div>
             </div>
             <div ng-if="ngModel.date.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-date subtitle">mediacentre.description.name.date</i18n>
-                    <span class="content">[[ngModel.date]]</span>
+                    <div class="content"><span class="content-item">[[ngModel.date]]</span></div>
                 </div>
             </div>
             <div ng-if="ngModel.disciplines.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-discipline subtitle">mediacentre.description.name.disciplines</i18n>
-                    <span class="content" ng-repeat-start="discipline in ngModel.disciplines">[[discipline]]</span>
-                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    <div class="content">
+                        <span class="content-item" ng-repeat-start="discipline in ngModel.disciplines track by $index">[[discipline]]</span>
+                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    </div>
                 </div>
             </div>
             <div ng-if="ngModel.levels.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-level subtitle">mediacentre.description.name.levels</i18n>
-                    <span class="content" ng-repeat-start="level in ngModel.levels">[[level]]</span>
-                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    <div class="content">
+                        <span class="content-item" ng-repeat-start="level in ngModel.levels track by $index">[[level]]</span>
+                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    </div>
                 </div>
             </div>
             <div ng-if="ngModel.plain_text.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-keyword subtitle">mediacentre.description.name.keywords</i18n>
-                    <span class="content" ng-repeat-start="keyword in ngModel.plain_text">[[keyword]]</span>
-                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    <div class="content">
+                        <span class="content-bold" ng-repeat-start="keyword in ngModel.plain_text track by $index">[[keyword]]</span>
+                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    </div>
                 </div>
             </div>
             <div ng-if="ngModel.id.length > 0 && 'fr.openent.mediacentre.source.GAR' === ngModel.source" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-ark subtitle">support.identifiant</i18n>
-                    <span class="content">[[ngModel.id]]</span>
+                    <span class="content-bold">[[ngModel.id]]</span>
                 </div>
             </div>
         </div>
@@ -136,7 +144,7 @@
 
 <div class="resource-loader" ng-show="show.loader">
     <div class="image horizontal-margin" ng-click="open()">
-        <img src="/mediacentre/public/img/empty-textbooks.svg"/>
+        <img src="/mediacentre/public/img/empty-textbooks.svg" alt="empty-textbooks" style="max-width: 50%"/>
     </div>
     <div class="data">
         <div class="resource-information">

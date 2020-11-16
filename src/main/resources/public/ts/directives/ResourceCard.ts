@@ -33,113 +33,82 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.$on("$includeContentLoaded", function () {
                     if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
-                        const flex = element.find('.flex');
                         const crop = element.find('.resource-card .crop');
-                        const data = element.find('.resource-card .data');
                         const image: HTMLImageElement = crop.children()[0];
 
                         const cropImage = () => {
                             //Get default image size
                             const i = new Image();
                             i.onload = () => {
-                                const LABEL_WIDTH = 55;
-                                // const LABEL_WIDTH = 60;
-                                const imageDefaultW = i.width;
-                                const wRatio = i.width / i.height;
-                                const imgW = image.width;
-
-                                // Crop image
-                                let labelPercent = ((100 / imageDefaultW) * LABEL_WIDTH) + 1;
-                                let cropSize = ((imgW / 100) * labelPercent);
-                                let newWidth = imgW - cropSize;
-
-                                if (newWidth * wRatio > flex.height()) {
-                                    //If image is bigger than flex container, resize to max height to 75%
-                                let newHeight = flex.height() * ($scope.type === 'textbook' ? 0.85 : 0.75);
-                                newWidth = newHeight * wRatio;
-                                cropSize = ((newWidth) / 100 * labelPercent);
-                                newWidth = newWidth - cropSize;
-                                image.style.width = `${newWidth + cropSize}px`;
-                                image.style.height = `${newHeight}px`;
-                            } else {
-                                image.style.width = `${imgW}px`;
-                            }
-                            crop.css('width', newWidth);
-                            crop.css('overflow', 'hidden');
-                            image.style['max-width'] = 'unset';
-                            if ($scope.type === "favorite") {
-                                data.css('width', newWidth);
-                            }
-                            clampTitle();
-                            $scope.show.loader = false;
-                            $scope.safeApply();
+                                crop.css('max-width', `${image.width * 0.6}px`);
+                                $scope.show.loader = false;
+                                $scope.safeApply();
+                            };
+                            i.src = image.src;
                         };
-                        i.src = image.src;
+
+                        $timeout(() => {
+                            if (image && !image.complete) {
+                                $(image).on('load', cropImage);
+                            } else {
+                                cropImage();
+                            }
+                        }, 2000);
+                    }
+
+                    // Clamp text after 2 rows if number of rows is greeter than 2
+                    const clampTitle = function () {
+                        const title = element.find('.title');
+                        const lineHeight = parseInt(title.css('line-height'));
+                        let titleH = title.height();
+                        let titleNumberLine = Math.ceil(titleH / lineHeight);
+                        if (titleNumberLine > 2) {
+                            while (title.outerHeight() > (2 * lineHeight)) {
+                                title.text(function (index, text) {
+                                    return text.replace(/\W*\s(\S)*$/, '...');
+                                });
+                            }
+                        }
+                    };
+
+                    const addColoredBar = function () {
+                        const colors = ["#F53B57", "#FEC63D", "#3B1D8F"]; // red, yellow, blue
+                        const parent = element.find(`#color-${$scope.ngModel.hash}`).parent();
+                        parent.css("border-radius","inherit");
+                        parent.css("padding-left", "10px");
+                        parent.css("background-color", colors[random-1]);
                     };
 
                     $timeout(() => {
-                        if (image && !image.complete) {
-                            $(image).on('load', cropImage);
-                        } else {
-                            cropImage();
+                        if ('fr.openent.mediacentre.source.GAR' !== $scope.ngModel.source) {
+                            clampTitle();
+                            $scope.show.loader = false;
                         }
-                    });
-                }
-
-                // Clamp text after 2 rows if number of rows is greeter than 2
-                const clampTitle = function () {
-                    const title = element.find('.title');
-                    const lineHeight = parseInt(title.css('line-height'));
-                    let titleH = title.height();
-                    let titleNumberLine = Math.ceil(titleH / lineHeight);
-                    if (titleNumberLine > 2) {
-                        while (title.outerHeight() > (2 * lineHeight)) {
-                            // $scope.ngModel.displayTitle = `${text.substring(0, ((Math.floor(text.length / titleNumberLine) * 2) - 3))}...`;
-                            title.text(function (index, text) {
-                                return text.replace(/\W*\s(\S)*$/, '...');
-                            });
+                        if ($scope.type === "completeCard") {
+                            addColoredBar();
                         }
-                    }
-                };
-
-                const addColoredBar = function () {
-                    const colors = ["#F53B57", "#FEC63D", "#3B1D8F"]; // red, yellow, blue
-                    const parent = element.find(`#color-${$scope.ngModel.id}`).parent();
-                    parent.css("border-radius","inherit");
-                    parent.css("padding-left", "10px");
-                    parent.css("background-color", colors[random-1]);
-                };
-
-                $timeout(() => {
-                    if ('fr.openent.mediacentre.source.GAR' !== $scope.ngModel.source) {
-                        clampTitle();
-                        $scope.show.loader = false;
-                    }
-                    if ($scope.type === "search-result") {
-                        addColoredBar();
-                    }
-                    const clipboardSelector = `.clipboard.${$scope.type}-resource-${$scope.ngModel.hash}`;
-                    const clipboardElement = element.find(clipboardSelector);
-                    new Clipboard(clipboardSelector)
-                        .on('success', () => {
-                            $scope.show.tooltip = true;
-                            $scope.$apply();
-                            clipboardElement.on('mouseleave', () => {
-                                $scope.show.tooltip = false;
+                        const clipboardSelector = `.clipboard.${$scope.type}-resource-${$scope.ngModel.hash}`;
+                        const clipboardElement = element.find(clipboardSelector);
+                        new Clipboard(clipboardSelector)
+                            .on('success', () => {
+                                $scope.show.tooltip = true;
                                 $scope.$apply();
-                            });
-                        })
-                        .on('error', console.error);
-                    $scope.safeApply();
+                                clipboardElement.on('mouseleave', () => {
+                                    $scope.show.tooltip = false;
+                                    $scope.$apply();
+                                });
+                            })
+                            .on('error', console.error);
+                        $scope.safeApply();
+                    });
                 });
-            });
 
-            $scope.safeApply = () => {
-                let phase = $scope.$root.$$phase;
-                if (phase !== '$apply' && phase !== '$digest') {
-                    $scope.$apply();
-                }
-            };
+                $scope.safeApply = () => {
+                    let phase = $scope.$root.$$phase;
+                    if (phase !== '$apply' && phase !== '$digest') {
+                        $scope.$apply();
+                    }
+                };
 
                 $scope.$on('$destroy', function () {
                     if (clipboard) {
@@ -189,5 +158,5 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 }
             }
-    }
-}]);
+        }
+    }]);
