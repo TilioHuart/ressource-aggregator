@@ -10,16 +10,12 @@
                 <img ng-src="[[ngModel.image]]"
                      onerror="this.src='./mediacentre/public/img/empty-textbooks.svg'; this.style.maxWidth='100%';"
                      alt="[[ngModel.image]]">
-<!--                <img ng-src="/mediacentre/public/img/empty-textbooks.svg" alt="img">-->
-            </div>
-            <div class="background">
-    <!--            <img ng-src="[[background]]" alt="[[background]]"/>-->
             </div>
         </div>
         <div class="data nine">
             <div class="resource-information">
                 <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
-                <div>
+                <div class="subtitle">
                     <em class="metadata">
                         <i18n>mediacentre.edited.by</i18n>
                         <span ng-repeat-start="editor in ngModel.editors | limitTo:3 track by $index">[[editor]]</span>
@@ -127,8 +123,13 @@
                 <div class="detail-container">
                     <i18n class="icon-keyword subtitle">mediacentre.description.name.keywords</i18n>
                     <div class="content">
+                        <div ng-if="'fr.openent.mediacentre.source.Moodle' === ngModel.source">
                         <span class="content-bold" ng-repeat-start="keyword in ngModel.plain_text track by $index">[[keyword]]</span>
                         <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        </div>
+                        <div ng-if="'fr.openent.mediacentre.source.GAR' === ngModel.source">
+                            <span class="content-bold">[[ngModel.plain_text]]</span>
+                        </div>
                     </div>
                 </div>
             </div>

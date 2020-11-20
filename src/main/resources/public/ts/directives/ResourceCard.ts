@@ -52,6 +52,7 @@ export const ResourceCard = ng.directive('resourceCard',
                                 $(image).on('load', cropImage);
                             } else {
                                 cropImage();
+                                clampTitle();
                             }
                         }, 2000);
                     }

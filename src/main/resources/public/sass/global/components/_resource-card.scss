@@ -3,10 +3,6 @@ resource-card {
   border-radius: 10px;
   box-shadow: 0 5px 5px rgba(0, 0, 0, .2);
   margin-bottom: 10px;
-
-  @media (max-width: $small-tablette) {
-    width: calc(100vw - 20px);
-  }
   
   .flex {
     position: relative;
@@ -332,7 +328,7 @@ resource-card {
         justify-content: space-between;
         padding-left: 10px;
 
-        .resource-information {
+        .resource-information > .subtitle {
           @media (max-width: $small-tablette) {
             white-space: nowrap;
             text-overflow: ellipsis;

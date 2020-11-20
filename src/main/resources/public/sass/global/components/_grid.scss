@@ -9,7 +9,7 @@
 
 .search-grid, .favorites-grid {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-column-gap: 3rem;
   grid-row-gap: 1.5rem;
   align-items: flex-start;

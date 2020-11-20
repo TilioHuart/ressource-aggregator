@@ -49,14 +49,9 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
         });
 
         $scope.ws.onmessage = (message) => {
-            const {event, state, data, status, error} = JSON.parse(message.data);
+            const {event, state, data, status} = JSON.parse(message.data);
             if ("ok" !== status) {
-                if(data && data.error)
-                    throw data.error;
-                else if(error && error.message)
-                    throw error.message;
-                else
-                    throw new Error(message.data.toString());
+                throw data.error;
             }
             if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
         };
