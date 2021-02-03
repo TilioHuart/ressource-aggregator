@@ -36,9 +36,9 @@ public class WebSocketController implements Handler<ServerWebSocket> {
     private final EventBus eb;
     private final List<Source> sources;
     private final Logger log = LoggerFactory.getLogger(WebSocketController.class);
-    private FavoriteService favoriteService = new DefaultFavoriteService();
-    private TextBookService textBookService = new DefaultTextBookService();
-    private FavoriteHelper favoriteHelper = new FavoriteHelper();
+    private final FavoriteService favoriteService = new DefaultFavoriteService();
+    private final TextBookService textBookService = new DefaultTextBookService();
+    private final FavoriteHelper favoriteHelper = new FavoriteHelper();
 
 
     public WebSocketController(EventBus eb, List<Source> sources) {

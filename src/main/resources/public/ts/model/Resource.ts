@@ -16,4 +16,7 @@ export interface Resource {
     source: string;
     title: string;
     action: object;
+    structure_name: string;
+    structure_uai: string;
+    display_structure_name?: boolean;
 }

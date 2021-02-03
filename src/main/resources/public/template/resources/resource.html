@@ -14,6 +14,11 @@
                 <em class="metadata">
                     <span ng-repeat="editor in ngModel.editors"> [[editor]] </span>
                 </em>
+                <div ng-if="ngModel.display_structure_name">
+                    <em class="metadata">
+                        <span>[[ngModel.structure_name]]</span>
+                    </em>
+                </div>
             </div>
         </div>
         <div class="resource-footer">

@@ -24,9 +24,8 @@ import java.util.regex.Pattern;
 import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 
 public class GAR implements Source {
-    private static String GAR_ADDRESS = "openent.mediacentre";
-    private FavoriteService favoriteService = new DefaultFavoriteService();
-    private FavoriteHelper favoriteHelper = new FavoriteHelper();
+    private final FavoriteService favoriteService = new DefaultFavoriteService();
+    private final FavoriteHelper favoriteHelper = new FavoriteHelper();
 
     private final Logger log = LoggerFactory.getLogger(GAR.class);
     private EventBus eb;
@@ -77,6 +76,7 @@ public class GAR implements Source {
                 .put("structure", structureId)
                 .put("user", userId);
 
+        String GAR_ADDRESS = "openent.mediacentre";
         eb.send(GAR_ADDRESS, action, handlerToAsyncHandler(event -> {
             if (!"ok".equals(event.body().getString("status"))) {
                 log.error("[Gar@search] Failed to retrieve gar resources", event.body().getString("message"));
@@ -111,8 +111,6 @@ public class GAR implements Source {
         List<Future> futures = new ArrayList<>();
         getStructuresData(user, futures, event -> {
             JsonArray resources = new JsonArray();
-            HashMap<String, Boolean> ids = new HashMap<>();
-            SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
             for (Future future : futures) {
                 if (future.succeeded()) {
                     resources.addAll((JsonArray) future.result());
@@ -125,12 +123,12 @@ public class GAR implements Source {
                 return;
             }
 
+            HashMap<String, String> ids = new HashMap<>();
+            List<String> duplicateIds = new ArrayList<>();
+            SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
             for (int i = 0; i < resources.size(); i++) {
                 JsonObject resource = resources.getJsonObject(i);
-                if (ids.containsKey(resource.getString("id"))) {
-                    continue;
-                }
-                ids.put(resource.getString("id"), true);
+                if (checkDuplicateId(resources, ids, duplicateIds, resource)) continue;
                 Integer count = 0;
                 count += getOccurrenceCount(query, resource.getString("title"));
                 count += getOccurrenceCount(query, resource.getString("plain_text"));
@@ -204,26 +202,21 @@ public class GAR implements Source {
                 return;
             }
 
-            HashMap<String, Boolean> ids = new HashMap<>();
-            SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
             JsonArray matches = new JsonArray();
             JsonObject searchFields = splitFields(fields, query);
+            HashMap<String, String> ids = new HashMap<>();
+            List<String> duplicateIds = new ArrayList<>();
+            SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
             for (int i = 0; i < resources.size(); i++) {
                 JsonObject resource = resources.getJsonObject(i);
-                if (ids.containsKey(resource.getString("id"))) {
-                    continue;
-                }
-
-                ids.put(resource.getString("id"), true);
+                if (checkDuplicateId(resources, ids, duplicateIds, resource)) continue;
                 int count = 0;
                 boolean match = true;
                 List<Comparator> andList = Arrays.asList(Comparator.NONE, Comparator.AND);
                 for (Comparator comp : andList) {
                     if (searchFields.containsKey(comp.toString())) {
                         JsonObject values = searchFields.getJsonObject(comp.toString());
-                        Iterator<String> keys = values.fieldNames().iterator();
-                        while (keys.hasNext()) {
-                            String next = keys.next();
+                        for (String next : values.fieldNames()) {
                             String searchedValue = queryPattern(values.getString(next));
                             Integer occ = getOccurrenceCount(searchedValue, resource.getValue(next));
                             count += occ;
@@ -234,9 +227,7 @@ public class GAR implements Source {
 
                 if (searchFields.containsKey(Comparator.OR.toString())) {
                     JsonObject values = searchFields.getJsonObject(Comparator.OR.toString());
-                    Iterator<String> keys = values.fieldNames().iterator();
-                    while (keys.hasNext()) {
-                        String next = keys.next();
+                    for (String next : values.fieldNames()) {
                         String searchedValue = queryPattern(values.getString(next));
                         Integer occ = getOccurrenceCount(searchedValue, resource.getValue(next));
                         count += occ;
@@ -266,6 +257,25 @@ public class GAR implements Source {
         });
     }
 
+    private boolean checkDuplicateId(JsonArray resources, HashMap<String, String> ids, List<String> duplicateIds, JsonObject resource) {
+        String ressourceId = resource.getString("id");
+        if (ids.containsKey(ressourceId)) {
+            if (ids.get(ressourceId).equals(resource.getString("structure_uai"))) {
+                return true;
+            } else if (!duplicateIds.contains(ressourceId)) {
+                for (int j = 0; j < resources.size(); j++) {
+                    JsonObject resource2 = resources.getJsonObject(j);
+                    if (ressourceId.equals(resource2.getString("id"))) {
+                        resource2.put("display_structure_name", true);
+                    }
+                }
+                duplicateIds.add(ressourceId);
+            }
+        }
+        ids.put(ressourceId, resource.getString("structure_uai"));
+        return false;
+    }
+
     private String queryPattern(String value) {
         return value.replaceAll(",\\s?|;\\s?", "|");
     }
@@ -277,7 +287,7 @@ public class GAR implements Source {
                     .append("|");
         }
 
-        return pattern.toString().substring(0, pattern.toString().length() - 1);
+        return pattern.substring(0, pattern.toString().length() - 1);
     }
 
     private JsonObject splitFields(List<String> fields, JsonObject query) {
@@ -308,7 +318,9 @@ public class GAR implements Source {
                 .put("plain_text", createPlainText(resource))
                 .put("id", resource.getString("idRessource"))
                 .put("favorite", false)
-                .put("date", System.currentTimeMillis());
+                .put("date", System.currentTimeMillis())
+                .put("structure_name",resource.getString("structure_name"))
+                .put("structure_uai",resource.getString("structure_uai"));
     }
 
     private String createPlainText(JsonObject resource) {

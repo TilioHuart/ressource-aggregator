@@ -21,6 +21,11 @@
                         <span ng-repeat-start="editor in ngModel.editors | limitTo:3 track by $index">[[editor]]</span>
                         <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                     </em>
+                    <div ng-if="ngModel.display_structure_name">
+                        <em class="metadata">
+                            <span>[[ngModel.structure_name]]</span>
+                        </em>
+                    </div>
                 </div>
                 <div class="types">
                     <resource-type ng-repeat-start="type in ngModel.document_types | limitTo:3 track by $index">[[type]]</resource-type>
