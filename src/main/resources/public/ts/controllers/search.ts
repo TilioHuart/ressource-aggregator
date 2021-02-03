@@ -115,22 +115,6 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
                 $scope.safeApply();
             }
         };
-
-        const formateDate = function (date:string) : string {
-            let testDate = new Date(date);
-            let dd = testDate.getDate();
-            let mm = testDate.getMonth() + 1;
-            let yyyy = testDate.getFullYear();
-            let formatedDate = "";
-
-            if (dd < 10) { formatedDate += '0'; }
-            formatedDate += dd + '/';
-            if (mm < 10) { formatedDate += '0'; }
-            formatedDate += mm + '/' + yyyy;
-
-            return formatedDate;
-        };
-
         vm.getSourcesLength = function () {
             return Object.keys(vm.loaders).length;
         };

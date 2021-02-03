@@ -19,4 +19,5 @@ export interface Resource {
     structure_name: string;
     structure_uai: string;
     display_structure_name?: boolean;
+    _id?: string;
 }

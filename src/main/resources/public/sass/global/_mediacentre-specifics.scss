@@ -175,10 +175,11 @@ body.mediacentre-v2 {
   }
 
   .seeMore {
-      color: red;
-      text-align: right;
-      text-decoration: underline;
-      margin-right: 15px;
+    color: red;
+    text-decoration: underline;
+    margin-left: 15px;
+    padding-top: 10px;
+    line-height: 30px;
   }
 
   .seeFilter {

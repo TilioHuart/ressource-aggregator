@@ -13,7 +13,7 @@ import io.vertx.core.logging.LoggerFactory;
 public class DefaultFavoriteService implements FavoriteService {
 
     private final Logger log = LoggerFactory.getLogger(DefaultFavoriteService.class);
-    private String TOKEN_COLLECTION = "mediacentre.favorite";
+    private final String TOKEN_COLLECTION = "mediacentre.favorite";
 
     @Override
     public void create(JsonObject favoritesBody, Handler<Either<String, JsonObject>> handler) {

@@ -6,22 +6,22 @@
             <h2 class="cell">
                 <i18n>mediacentre.my.external.resources</i18n>
             </h2>
+            <div class="seeMore cell" data-ng-click="vm.seeMyExternalResource()">
+                <span>
+                    <i18n>mediacentre.see.more</i18n>
+                </span>
+            </div>
         </div>
 
         <!--Content-->
         <div class="external-flex" ng-show="vm.displayedResources.length > 0">
             <div class="external-flex-card">
-                <resource-card ng-repeat="resource in vm.displayedResources track by $index"
+                <resource-card ng-repeat="resource in vm.displayedResources | orderBy:'title' track by $index"
                                ng-if="$index > vm.displayedResources.length - 1 - vm.resourceLimit"
                                ng-model="resource">
                 </resource-card>
             </div>
         </div>
-    </div>
-    <div class="seeMore" data-ng-click="vm.seeMyExternalResource()">
-        <span>
-            <i18n>mediacentre.see.more</i18n>
-        </span>
     </div>
 
     <!--Favorite-->
@@ -30,11 +30,16 @@
             <h2 class="cell">
                 <i18n>mediacentre.my.favorite</i18n>
             </h2>
+            <div class="seeMore cell" data-ng-click="vm.seeMyFavorite()">
+                <span>
+                    <i18n>mediacentre.see.more</i18n>
+                </span>
+            </div>
         </div>
 
         <!--Content-->
         <div class="favorites-grid" ng-show="vm.favorites.length > 0">
-            <resource-card ng-repeat="resource in vm.favorites track by $index"
+            <resource-card ng-repeat="resource in vm.favorites | orderBy:'title' track by $index"
                            ng-if="$index > (vm.favorites.length - 1 - vm.favoriteLimit)"
                            type="completeCard"
                            ng-model="resource">
@@ -49,11 +54,6 @@
                 <span><i18n>mediacentre.favorite.empty.second</i18n></span>
             </div>
         </div>
-    </div>
-    <div class="seeMore" data-ng-click="vm.seeMyFavorite()">
-        <span>
-            <i18n>mediacentre.see.more</i18n>
-        </span>
     </div>
 
     <!--Textbooks-->
@@ -71,7 +71,7 @@
         <!--Content-->
         <div class="textbooks-grid" ng-show="vm.textbooks.length > 0">
             <resource-card
-                    ng-repeat="resource in vm.textbooks track by $index"
+                    ng-repeat="resource in vm.textbooks | orderBy:'title' track by $index"
                     type="textbook"
                     ng-model="resource">
             </resource-card>

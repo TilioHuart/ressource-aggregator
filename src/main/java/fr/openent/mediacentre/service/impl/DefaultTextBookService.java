@@ -9,7 +9,7 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.mongodb.MongoDbResult;
 
 public class DefaultTextBookService implements TextBookService {
-    private String TEXTBOOK_COLLECTION = "mediacentre.textbooks";
+    private final String TEXTBOOK_COLLECTION = "mediacentre.textbooks";
 
     @Override
     public void get(String userId, Handler<Either<String, JsonArray>> handler) {

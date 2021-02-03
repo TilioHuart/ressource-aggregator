@@ -36,7 +36,7 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
         vm.textbooks = [];
         vm.displayedResources = [];
         vm.mobile = screen.width < $scope.mc.screenWidthLimit;
-        vm.resourceLimit = vm.mobile ? 4 : 8;
+        vm.resourceLimit = vm.mobile ? 6 : 12;
         vm.favoriteLimit = vm.mobile ? 2 : 4;
 
         $scope.$on('deleteFavorite', function (event, id) {
@@ -86,7 +86,7 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
         };
 
         vm.seeMyExternalResource = (): void => {
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', [], {"query": ".*"}));
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
             $location.path(`/search/plain_text`);
         };
 
