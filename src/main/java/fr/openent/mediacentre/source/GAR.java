@@ -74,7 +74,8 @@ public class GAR implements Source {
         JsonObject action = new JsonObject()
                 .put("action", "getResources")
                 .put("structure", structureId)
-                .put("user", userId);
+                .put("user", userId)
+                .put("hostname", config.getString("host").split("//")[1]);
 
         String GAR_ADDRESS = "openent.mediacentre";
         eb.send(GAR_ADDRESS, action, handlerToAsyncHandler(event -> {
