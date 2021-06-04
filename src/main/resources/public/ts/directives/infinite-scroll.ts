@@ -1,8 +1,5 @@
 import {ng} from 'entcore';
-
-export enum INFINITE_SCROLL_EVENTER {
-    UPDATE = 'infinite-scroll:update'
-}
+import {INFINITE_SCROLL_EVENTER} from "../core/enum/infinite-scroll-eventer";
 
 /**
  * Nav sub menu component
