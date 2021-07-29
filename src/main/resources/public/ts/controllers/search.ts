@@ -21,8 +21,8 @@ interface ViewModel {
     displayedResources: Resource[];
     sources: any;
     filters: {
-        initial: { document_types: Filter[], levels: Filter[] }
-        filtered: { document_types: Filter[], levels: Filter[] }
+        initial: { document_types: Filter[], levels: Filter[], source: Filter[] }
+        filtered: { document_types: Filter[], levels: Filter[], source: Filter[] }
     };
     filteredFields: string[];
 
@@ -54,7 +54,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
         const vm: ViewModel = this;
         vm.mobile = screen.width < $scope.mc.screenWidthLimit;
         vm.displayFilter = !vm.mobile;
-        vm.filteredFields = ['document_types', 'levels'];
+        vm.filteredFields = ['document_types', 'levels', 'source'];
 
         const initSearch = function () {
             vm.loaders = initSources(true);
@@ -62,8 +62,8 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             vm.displayedResources = [];
             vm.resources = [];
             vm.filters = {
-                initial: {document_types: [], levels: []},
-                filtered: {document_types: [], levels: []}
+                initial: {document_types: [], levels: [], source: []},
+                filtered: {document_types: [], levels: [], source: []}
             };
         };
 
@@ -109,8 +109,10 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
         const eventResponses: EventResponses = {
             search_Result: function (frame) {
                 vm.resources = [...vm.resources, ...frame.data.resources];
+                vm.resources = vm.resources.sort((a, b) => a.title.localeCompare(b.title));
                 frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
                 filter();
+                frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
                 vm.loaders[frame.data.source] = false;
                 $scope.safeApply();
             }
