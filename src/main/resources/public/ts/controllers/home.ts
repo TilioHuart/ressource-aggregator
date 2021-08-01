@@ -66,6 +66,9 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                     vm.favorites = []
                 } else {
                     vm.favorites = frame.data;
+                    vm.favorites.map((favorite) => {
+                        favorite.favorite = true;
+                    });
                 }
                 $scope.safeApply();
             },

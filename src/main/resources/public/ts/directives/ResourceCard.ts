@@ -23,7 +23,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 $scope.type = $scope.type || 'resource';
                 let clipboard;
                 let random = Math.floor(Math.random() * 3) + 1;
-                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;
+/*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
                 $scope.ngModel.displayTitle = $scope.ngModel.title;
                 $scope.ngModel.hash = hashCode($scope.ngModel.id);
                 $scope.show = {
@@ -132,7 +132,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
-                    let response = await FavoriteService.delete($scope.ngModel._id, $scope.ngModel.source);
+                    let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
                     if (response.status === 200) {
                         $scope.ngModel.favorite = false;
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);
