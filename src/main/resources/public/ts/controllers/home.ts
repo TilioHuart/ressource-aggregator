@@ -89,14 +89,14 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
         };
 
         vm.seeMyExternalResource = (): void => {
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', [], {"query": ".*"}));
             $location.path(`/search/plain_text`);
         };
 
         function initHomePage() {
             $scope.ws.send(new Frame('textbooks', 'get', [], {}));
             $scope.ws.send(new Frame('favorites', 'get', [], {}));
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
+            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', [], {"query": ".*"}));
         }
 
         if ($scope.ws.connected) {
