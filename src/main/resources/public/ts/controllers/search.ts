@@ -89,6 +89,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
 
         $scope.$watch(() => vm.filters.filtered.document_types.length, filter);
         $scope.$watch(() => vm.filters.filtered.levels.length, filter);
+        $scope.$watch(() => vm.filters.filtered.source.length, filter);
 
 
         $scope.$on('search', function () {
