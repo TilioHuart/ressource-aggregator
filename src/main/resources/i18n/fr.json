@@ -14,7 +14,7 @@
   "mediacentre.copied": "Copié!",
   "mediacentre.see.more": "Afficher tout",
   "mediacentre.search": "Rechercher",
-  "mediacentre.socket.error": "Une erreur est survenue. Merci de contacter votre administrateur",
+  "mediacentre.socket.error": "Aucune ressource affectée, veuillez contacter votre gestionnaire.",
   "mediacentre.socket.network.error": "Nous n'arrivons pas à établir la connexion avec le serveur. Il s'agit peut-être d'un problème avec votre réseau. Merci de vous rapprocher de votre administrateur.",
   "mediacentre.socket.network.reconnect.in-progress": "Tentative de reconnexion...",
   "mediacentre.socket.closed": "La connexion avec le mediacentre a été perdue. Nous tentons de vous reconnecter.",
@@ -64,5 +64,14 @@
   "fr.openent.mediacentre.source.Moodle.action.duplicate": "Dupliquer",
   "fr.openent.mediacentre.source.Moodle.action.duplicate.success": "La duplication est en course et sera effective sous peu.",
   "fr.openent.mediacentre.source.Moodle.action.duplicate.error": "Une erreur est survenue lors de la duplication du cours",
-  "support.identifiant": "Identifiant support"
+  "support.identifiant": "Identifiant support",
+  "mediacentre.signets.folders": "Mes dossiers",
+  "mediacentre.signets.mine": "Mes signets",
+  "mediacentre.signets.shared": "Signets partagés avec moi",
+  "mediacentre.signets.sent": "Signets envoyés",
+  "mediacentre.signets.archived": "Corbeille",
+  "mediacentre.signets.empty": "Désolé, vous n'avez aucun signet ...",
+  "mediacentre.signet.create.button": "Créer un signet",
+  "mediacentre.filter": "Filtre",
+  "mediacentre.modified": "Modifié le "
 }

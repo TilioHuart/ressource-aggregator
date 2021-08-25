@@ -1,8 +1,6 @@
 package fr.openent.mediacentre;
 
-import fr.openent.mediacentre.controller.FavoriteController;
-import fr.openent.mediacentre.controller.MediacentreController;
-import fr.openent.mediacentre.controller.WebSocketController;
+import fr.openent.mediacentre.controller.*;
 import fr.openent.mediacentre.source.Source;
 import fr.openent.mediacentre.tasks.AmassTask;
 import fr.wseduc.cron.CronTrigger;
@@ -20,6 +18,17 @@ public class Mediacentre extends BaseServer {
 
     public static int wsPort;
     public static final String VIEW_RIGHT = "mediacentre.view";
+    public static String mediacentreSchema;
+    public static String SIGNET_SHARES_TABLE;
+    public static String SIGNET_TABLE;
+
+    public static final String CONTRIB_RESOURCE_RIGHT = "mediacentre.contrib";
+    public static final String MANAGER_RESOURCE_RIGHT = "mediacentre.manager";
+    public static final String RESPONDER_RESOURCE_RIGHT = "mediacentre.comment";
+
+    public static final String CONTRIB_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-SignetController|initContribResourceRight";
+    public static final String MANAGER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-SignetController|initManagerResourceRight";
+    public static final String RESPONDER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-SignetController|initResponderResourceRight";
 
     @Override
 	public void start() throws Exception {
@@ -27,6 +36,9 @@ public class Mediacentre extends BaseServer {
 
         EventBus eb = getEventBus(vertx);
         wsPort = config.getInteger("wsPort", 3000);
+        mediacentreSchema = config.getString("db-schema");
+        SIGNET_SHARES_TABLE = mediacentreSchema + ".signet_shares";
+        SIGNET_TABLE = mediacentreSchema + ".signet";
 
         /* Add All sources based on module configuration */
         List<Source> sources = new ArrayList<>();
@@ -43,7 +55,8 @@ public class Mediacentre extends BaseServer {
 
         addController(new MediacentreController(sources, config));
         addController(new FavoriteController(eb));
-
+        addController(new PublishedController(eb));
+        addController(new SignetController(eb));
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
         HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);
         log.info("Websocket server listening on port " + server.actualPort());

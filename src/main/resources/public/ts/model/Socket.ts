@@ -43,7 +43,7 @@ export class Socket {
             let {data} = message;
             data = JSON.parse(data);
             if ("ko" === data.status) {
-                const message = `${lang.translate('mediacentre.socket.error')} ${' : ' + (data.error.message || data.error || '')}`;
+                const message = lang.translate('mediacentre.socket.error');
                 toasts.warning(message);
             }
 

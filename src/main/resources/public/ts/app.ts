@@ -23,6 +23,9 @@ routes.define(function($routeProvider){
 		.when('/favorite', {
 			action: 'favorite'
 		})
+		.when('/signet', {
+			action: 'signet'
+		})
 		.when('/search/plain_text', {
 			action: 'searchPlainText'
 		})

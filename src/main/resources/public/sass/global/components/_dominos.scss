@@ -1,0 +1,84 @@
+// Dominos
+
+.dominos {
+  justify-content: flex-start;
+
+  .item {
+    width: calc(90%/3);
+    background: white;
+
+    &.response {
+      width: calc(90%/4);
+    }
+
+    &.selected { background: blue-transparent }
+
+    .domino {
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+
+      .picture {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        &.empty { background: blue; }
+      }
+
+      .data {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        &-text {
+          padding: 10px;
+
+          .title {
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .owner {
+            font-size: 13px;
+            color: blue;
+          }
+
+          .date {
+            font-size: 12px;
+            font-style: italic;
+            color: gray;
+          }
+        }
+
+        &-bottom {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          font-size: 12px;
+          padding: 10px;
+
+          .icons {
+            display: flex;
+            height: 100%;
+
+            i .selected { color: darkgray; }
+          }
+        }
+
+        &-status {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          font-size: 14px;
+          font-weight: bold;
+          padding: 10px;
+        }
+      }
+    }
+  }
+}
+

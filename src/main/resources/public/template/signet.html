@@ -1,0 +1,94 @@
+<div style="margin-top:20px" class="row" ng-controller="SignetController as vm">
+<!--
+    <h4 class="zero-desktop"><input class="search_nav" type="text" ng-model="vm.searchInput" placeholder="Rechercher"></h4>
+-->
+
+    <!--Navigation menu-->
+    <section class="cell three zero-mobile" style="padding-left: 20px; padding-top: 20px">
+        <input type="text" ng-model="vm.searchInput" class="search_nav" placeholder="Rechercher">
+        <nav class="vertical row">
+            <ul>
+                <li><a ng-click="vm.openFolder('mine')" ng-class="{selected : vm.folder === 'mine'}">
+                    <i18n>mediacentre.signets.mine</i18n>
+                </a></li>
+                <li><a ng-click="vm.openFolder('shared')" ng-class="{selected : vm.folder === 'shared'}">
+                    <i18n>mediacentre.signets.shared</i18n>
+                </a></li>
+                <li><a ng-click="vm.openFolder('archived')" ng-class="{selected : vm.folder === 'archived'}">
+                    <i18n>mediacentre.signets.archived</i18n>
+                </a></li>
+            </ul>
+        </nav>
+    </section>
+
+    <div id="mySidenavForms" class="sideNavMyForms zero-desktop ellipsis">
+        <nav class="vertical row">
+            <ul>
+                <li><a ng-click="vm.openFolder('mine')" ng-class="{selected : vm.folder === 'mine'}">
+                    <i18n>mediacentre.signets.mine</i18n>
+                </a></li>
+                <li><a ng-click="vm.openFolder('shared')" ng-class="{selected : vm.folder === 'shared'}">
+                    <i18n>mediacentre.signets.shared</i18n>
+                </a></li>
+                <li><a ng-click="vm.openFolder('archived')" ng-class="{selected : vm.folder === 'archived'}">
+                    <i18n>mediacentre.signets.archived</i18n>
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <section style = "padding-top: 20px" class="cell six twelve-mobile">
+
+        <div ng-include="'mediacentre/public/template/components/filters.html'"></div>
+
+        <!--Dominos display-->
+        <div class="dominos" ng-if="!vm.signets.all.empty()">
+            <div ng-repeat="signet in vm.signets.all | limitTo:vm.limitTo"
+                 ng-if="!vm.signets.all.empty() && signet.displayed"
+                 ng-click="signet.selected = !signet.selected"
+                 class="item" ng-class="{'selected' : signet.selected}">
+                <div class="domino">
+                    <div class="four picture" ng-class="{'empty': !signet.imageurl}">
+                        <img ng-src="[[(signet.imageurl) || '/mediacentre/public/img/empty-image.png']]"/>
+                    </div>
+                    <div class="eight">
+                        <div class="data">
+                            <div class="data-text">
+                                <div class="title" title="[[signet.title]]">[[signet.fullname]]</div>
+                                <div class="owner">[[signet.author]]</div>
+                                <div class="date"><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_creation)]]</div>
+                            </div>
+                            <div class="data-bottom">
+                                <div class="icons">
+                                    <i class="send md-icon" ng-if="signet.sent && !signet.archived" title="[[vm.getTitle('sent')]]"></i>
+                                    <i class="share md-icon" ng-if="signet.collab" title="[[vm.getTitle('shared')]]"></i>
+                                    <i class="bell md-icon" ng-if="signet.reminded" title="[[vm.getTitle('reminded')]]"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="error" ng-if="vm.signets.all.empty()">
+            <img src="/mediacentre/public/img/onboarding.svg"/>
+            <i18n>mediacentre.signets.empty</i18n>
+        </div>
+    </section>
+
+    <section class="cell three zero-mobile" style="padding-right: 20px">
+        <div class="main-button">
+            <button class="cell" ng-click="mc.openCreateSignetPopUp()"><i18n>mediacentre.signet.create.button</i18n></button>
+        </div>
+    </section>
+
+    <infinite-scroll scrolled="vm.infiniteScroll()" loading-mode="true"></infinite-scroll>
+
+    <lightbox show="display.lightbox.signet" on-close="mc.onCloseSignetPopUp()">
+        <container template="lightboxContainer"></container>
+    </lightbox>
+<!--
+    <div ng-include="'mediacentre/public/template/components/toaster.html'"></div>
+-->
+</div>

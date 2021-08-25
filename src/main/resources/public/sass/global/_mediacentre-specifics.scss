@@ -206,4 +206,119 @@ body.mediacentre-v2 {
       margin-left: 20px;
     }
   }
+
+  // Forms-list
+
+  .folder-info {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+  }
+
+  .table {
+    table-layout: fixed;
+    margin: 10px;
+  }
+
+  .toaster-right { float: right; }
+
+  i.dropbtn {
+    color: black;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+  }
+
+  nav.vertical[side-nav].slide {
+    width: 160px;
+    padding: 0px 10px;
+    overflow: unset;
+  }
+
+  nav.vertical[side-nav] {
+    background-color: #F0F0F0;
+    border-radius: 2px;
+    border-left: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.26);
+  }
+
+  nav.vertical ul li a {
+    padding-left: 20px;
+  }
+
+  .heightNavBar{
+    height: 80px !important;
+  }
+
+  .sideNavMyForms {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #F0F0F0;
+    overflow-x: hidden;
+    transition: 0.5s;
+    top: 52px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.26);
+    border-radius: 3px;
+  }
+
+  .sideNavMyForms .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    cursor:pointer;
+  }
+
+  .text-font{
+    font-weight: bolder;
+  }
+
+  .titleSideNav{
+    padding-left: 25px;
+  }
+
+  .tabs header {
+    margin-right: 0;
+  }
+
+  .ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .filter-forms {
+    width: 97%;
+    .drop-down-block, .drop-down-block .drop-down-label {
+      margin-bottom: 0;
+    }
+
+    .checkbox {
+      background-color: lightgray;
+      margin-right: 0;
+    }
+
+    label.chip.checkbox.selected {
+      background-color: $accent;
+    }
+
+    i.arrow {
+      margin-top: 0;
+    }
+
+    i.arrow:before {
+      font-size: 14px;
+    }
+  }
+
+  .main-button {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+  }
 }

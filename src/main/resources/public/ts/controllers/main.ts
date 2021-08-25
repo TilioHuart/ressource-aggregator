@@ -1,16 +1,18 @@
-import {idiom, ng, template} from 'entcore';
+import {idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
+import {Signet} from "../model/Signet";
 
 declare const window: any;
 
 export interface Scope extends IRootScopeService {
+    displayDate (dateToFormat: Date): string;
+    display: { lightbox: { signet: boolean; }; };
 	ws: Socket;
 	loaders: any;
 	idiom: any;
-
+	signet: Signet;
 	safeApply(): void;
-
 	mc: MainController;
 }
 
@@ -46,6 +48,13 @@ export interface MainController {
 	closeAdvancedSearch(): void;
 
 	goHome(): void;
+
+	goSignet(): void;
+
+	openCreateSignetPopUp(): void;
+
+	onCloseSignetPopUp(): void;
+
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
@@ -77,6 +86,10 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
 		};
 		mc.screenWidthLimit = 600;
+		$scope.signet = new Signet();
+		$scope.display = {
+			lightbox: {signet: false}
+		};
 
 		const startResearch = function (state: string, sources: string[], data: any) {
 			mc.limitTo = mc.pageSize;
@@ -92,6 +105,10 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		mc.plainTextSearch = function () {
 			if (mc.search.plain_text.text.trim() === '') return;
 			startResearch('PLAIN_TEXT', [], {query: mc.search.plain_text.text});
+		};
+
+		mc.goSignet = (): void => {
+			$location.path(`/signet/`);
 		};
 
 		mc.advancedSearch = function () {
@@ -137,6 +154,22 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			$location.path('/')
 		};
 
+		/**
+		 * Open creation course lightbox
+		 */
+		mc.openCreateSignetPopUp = function () {
+			$scope.signet = new Signet();
+			$scope.display.lightbox.signet = true;
+			template.open('lightboxContainer', 'signets/lightbox/createSignetPopUp');
+			$scope.safeApply();
+		};
+
+		mc.onCloseSignetPopUp = function () {
+			$scope.display.lightbox.signet = false;
+			template.close('lightboxContainer');
+			$scope.safeApply();
+		}
+
 		route({
 			home: () => {
 				mc.search = {...mc.search, plain_text: {text: ''}};
@@ -145,6 +178,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				template.open('main', 'home');
 			},
 			favorite: () => template.open('main', 'favorite'),
+			signet: () => template.open('main', 'signet'),
 			searchPlainText: () => template.open('main', 'search'),
 			searchAdvanced: () => template.open('main', 'search')
 		});
@@ -155,4 +189,9 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				$scope.$apply();
 			}
 		};
+
+		$scope.displayDate = (dateToFormat: Date) : string => {
+			return new Date(dateToFormat).toLocaleString([], {day: '2-digit', month: '2-digit', year:'numeric'});
+		};
+
 	}]);
