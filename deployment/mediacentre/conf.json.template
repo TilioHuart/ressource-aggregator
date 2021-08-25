@@ -8,6 +8,8 @@
     "app-icon" : "${host}/mediacentre/public/img/logo-mediacentre.svg",
     "host": "${host}",
     "ssl" : $ssl,
+    "sql" : true,
+    "db-schema" : "mediacentre",
     "auto-redeploy": false,
     "userbook-host": "${host}",
     "integration-mode" : "HTTP",
