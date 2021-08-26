@@ -25,7 +25,7 @@
     </div>
 
     <!--Favorite-->
-    <div class="favorites horizontal-spacing row vertical-spacing">
+    <div ng-show="vm.favorites.length > 0" class="favorites horizontal-spacing row vertical-spacing">
         <div class="row">
             <h2 class="cell">
                 <i18n>mediacentre.my.favorite</i18n>
@@ -45,19 +45,10 @@
                            ng-model="resource">
             </resource-card>
         </div>
-
-        <!-- Empty state -->
-        <div class="favorites-emptyState" ng-show="vm.favorites.length === 0">
-            <img src="/mediacentre/public/img/favoris-emptyState.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
-            <div class="favorites-emptyState-flex">
-                <span><i18n>mediacentre.favorite.empty.first</i18n></span>
-                <span><i18n>mediacentre.favorite.empty.second</i18n></span>
-            </div>
-        </div>
     </div>
 
     <!--Textbooks-->
-    <div class="textbooks horizontal-spacing row vertical-spacing">
+    <div class="textbooks horizontal-spacing row vertical-spacing" ng-show="vm.textbooks.length > 0">
         <h2>
             <i18n>mediacentre.advanced.textbooks.mine</i18n>
             <div class="cell right-magnet card horizontal-spacing"
@@ -75,14 +66,6 @@
                     type="textbook"
                     ng-model="resource">
             </resource-card>
-        </div>
-
-        <!-- Empty state -->
-        <div class="centered eleven textbooks-empty" ng-show="!vm.textbooks || vm.textbooks.length === 0">
-            <img src="/mediacentre/public/img/empty-textbooks.svg" alt="empty-textbooks"/>
-            <div class="horizontal-margin-four">
-                <i18n>mediacentre.textbooks.empty</i18n>
-            </div>
         </div>
     </div>
 </div>
