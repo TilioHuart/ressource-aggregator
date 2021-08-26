@@ -8,7 +8,7 @@ CREATE TABLE mediacentre.scripts (
 );
 
 CREATE TABLE mediacentre.signet (
-    id integer NOT NULL,
+    id bigserial NOT NULL,
     discipline_label character varying[],
     level_label character varying[],
     key_words character varying[],
