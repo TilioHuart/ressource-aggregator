@@ -18,8 +18,10 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
-        String query = "SELECT * FROM " + Mediacentre.SIGNET_TABLE +
-                " WHERE owner_id = ? ORDER BY fullname;";
+        String query = "SELECT id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
+                "title, imageurl, owner_name, owner_id, url, date_creation, date_modification" +
+                " FROM " + Mediacentre.SIGNET_TABLE +
+                " WHERE owner_id = ? ORDER BY title;";
         JsonArray params = new JsonArray().add(user.getUserId());
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
@@ -27,7 +29,7 @@ public class DefaultSignetService implements SignetService {
     @Override
     public void listSentForms(UserInfos user, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT * FROM " + Mediacentre.SIGNET_TABLE +
-                " ORDER BY fullname;";
+                " ORDER BY title;";
         JsonArray params = new JsonArray().add(user.getUserId()).add(true);
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
@@ -63,15 +65,16 @@ public class DefaultSignetService implements SignetService {
             }
         }
 
-        String query = "INSERT INTO " + Mediacentre.SIGNET_TABLE + " (discipline_label, level_label, key_words, fullname, " +
+        String query = "INSERT INTO " + Mediacentre.SIGNET_TABLE + " (id, discipline_label, level_label, key_words, title, " +
                 "imageurl, owner_name, owner_id, url, date_creation, date_modification) " +
-                "VALUES (" + Sql.arrayPrepared(disciplineArray) + " ," + Sql.arrayPrepared(levelArray) + " ," + Sql.arrayPrepared(plainTextArray) + ", ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
+                "VALUES (?, " + Sql.arrayPrepared(disciplineArray) + " ," + Sql.arrayPrepared(levelArray) + " ," + Sql.arrayPrepared(plainTextArray) + ", ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
         JsonArray params = new JsonArray()
+                .add(signet.getString("id"))
                 .addAll(disciplineArray)
                 .addAll(levelArray)
                 .addAll(plainTextArray)
                 .add(signet.getString("title", ""))
-                .add(signet.getString("picture", ""))
+                .add(signet.getString("image", ""))
                 .add(user.getLastName() + " " + user.getFirstName())
                 .add(user.getUserId())
                 .add(signet.getString("url"))

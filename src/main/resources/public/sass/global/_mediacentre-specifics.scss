@@ -321,4 +321,27 @@ body.mediacentre-v2 {
     justify-content: flex-end;
     align-items: baseline;
   }
+
+  .add-to-favorite {
+    color: $mediacentre-light-grey;
+    cursor: pointer;
+
+    &::before {
+      @include fonticon();
+      content: '\e9d9';
+      font-size: 24px;
+    }
+  }
+
+  .remove-to-favorite {
+    color: $mediacentre-light-grey;
+    cursor: pointer;
+
+    &::before {
+      @include fonticon();
+      content: '\e9d9';
+      font-size: 24px;
+      color: $mediacentre-yellow-star;
+    }
+  }
 }

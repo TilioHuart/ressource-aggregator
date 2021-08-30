@@ -54,8 +54,8 @@
                     <div class="eight">
                         <div class="data">
                             <div class="data-text">
-                                <div class="title" title="[[signet.title]]">[[signet.fullname]]</div>
-                                <div class="owner">[[signet.author]]</div>
+                                <div class="title" title="[[signet.title]]">[[signet.title]]</div>
+                                <div class="owner">[[signet.owner_name]]</div>
                                 <div class="date"><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_creation)]]</div>
                             </div>
                             <div class="data-bottom">
@@ -63,6 +63,14 @@
                                     <i class="send md-icon" ng-if="signet.sent && !signet.archived" title="[[vm.getTitle('sent')]]"></i>
                                     <i class="share md-icon" ng-if="signet.collab" title="[[vm.getTitle('shared')]]"></i>
                                     <i class="bell md-icon" ng-if="signet.reminded" title="[[vm.getTitle('reminded')]]"></i>
+                                    <!--Add favorite-->
+                                    <div ng-if="!signet.favorite" class="cell add-to-favorite" data-ng-click="vm.addFavorite(signet)"
+                                         tooltip="<i18n>mediacentre.add.to.favorite</i18n>">&nbsp;
+                                    </div>
+                                    <!--Remove favorite-->
+                                    <div ng-if="signet.favorite" class="cell remove-to-favorite" data-ng-click="vm.removeFavorite(signet)"
+                                         tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">&nbsp;
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -5,7 +5,7 @@
             <div class="six cell">
                 <div class="twelve cell" ng-class="{ hidder: show.submitWait == true }"></div>
                 <image-select id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
-                              ng-change="getTypeImage()" ng-model="signet.picture"/>
+                              ng-change="getTypeImage()" ng-model="signet.image"/>
             </div>
             <!--        <span style="color:red">
                         <i18n>Veuillez choisir une image</i18n>
@@ -61,7 +61,7 @@
         </div>
     <div class="row">
         <div class="right-magnet">
-            <input type="button" class="cancel" i18n-value="cancel" ng-click="closePopUp()"/>
+            <input type="button" class="cancel" i18n-value="cancel" ng-click="mc.onCloseSignetPopUp()"/>
             <input type="submit" class="button" i18n-value="Valider" ng-click="createSignet()"/>
         </div>
     </div>

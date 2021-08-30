@@ -1,6 +1,7 @@
-import {Selectable, Selection} from "entcore-toolkit";
+import {Mix, Selectable, Selection} from "entcore-toolkit";
 import {http, idiom, notify, Rights, Shareable} from "entcore";
 import {signetService} from "../services/SignetService";
+import {Label, Labels} from "./Label";
 
 export class Signet implements Selectable, Shareable  {
     shared: any;
@@ -13,7 +14,7 @@ export class Signet implements Selectable, Shareable  {
 
     id: number;
     title: string;
-    picture: string;
+    imageurl: string;
     url: string;
     owner_id: string;
     owner_name: string;
@@ -31,13 +32,20 @@ export class Signet implements Selectable, Shareable  {
         type: string;
         compatible: boolean;
     } | undefined;
-    nb_responses: number | undefined;
     status: string | undefined;
+    favorite: boolean | undefined;
+    hash: number;
+    displayTitle: string;
+    image: string;
+    source: string;
+    disciplines: string[];
+    levels: string[];
+    plain_text: string[];
 
     constructor() {
         this.id = 0;
         this.title = "";
-        this.picture = "";
+        this.imageurl = "";
         this.owner_id = "";
         this.owner_name = "";
         this.url = "";
@@ -50,14 +58,21 @@ export class Signet implements Selectable, Shareable  {
         this.anonymous = false;
         this.displayed = true;
         this.selected = false;
+        this.hash = 0;
+        this.displayTitle = "";
+        this.image = "";
+        this.source = "fr.openent.mediacentre.source.Signet",
+        this.disciplines = [],
+        this.levels = [],
+        this.plain_text = []
     }
 
     toJson() : Object {
         return {
             id: this.id,
             title: this.title,
-            picture: this.picture,
-            url: this.url,
+            image: this.image,
+            link: this.url,
             owner_id: this.owner_id,
             owner_name: this.owner_name,
             date_creation: new Date(this.date_creation),
@@ -67,7 +82,13 @@ export class Signet implements Selectable, Shareable  {
             archived: this.archived,
             multiple: this.multiple,
             anonymous: this.anonymous,
-            selected: this.selected
+            selected: this.selected,
+            hash: this.hash,
+            displayTitle: this.displayTitle,
+            source: this.source,
+            disciplines: this.disciplines,
+            levels: this.levels,
+            plain_text: this.plain_text
         }
     }
 
@@ -117,6 +138,33 @@ export class Signets extends Selection<Signet> {
             for (let i = 0; i < data.length; i++) {
                 let tempSignet = new Signet();
                 tempSignet.setFromJson(data[i]);
+                let disciplinesArray: string[] = [];
+                let levelsArray: string[] = [];
+                let textArray: string[] = [];
+                if(!!tempSignet.disciplines) {
+                    tempSignet.disciplines.forEach(function (discipline) {
+                        if(!!discipline[1]) {
+                            disciplinesArray.push(discipline[1]);
+                        }
+                    });
+                    tempSignet.disciplines = disciplinesArray;
+                }
+                if(!!tempSignet.levels) {
+                    tempSignet.levels.forEach(function (level) {
+                        if(!!level[1]) {
+                            levelsArray.push(level[1]);
+                        }
+                    });
+                    tempSignet.levels = levelsArray;
+                }
+                if(!!tempSignet.plain_text) {
+                    tempSignet.plain_text.forEach(function (word) {
+                        if(!!word[1]) {
+                            textArray.push(word[1]);
+                        }
+                    });
+                    tempSignet.plain_text = textArray;
+                }
                 this.all.push(tempSignet);
             }
             await this.setResourceRights();

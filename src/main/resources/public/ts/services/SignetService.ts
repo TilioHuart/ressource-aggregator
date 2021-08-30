@@ -96,7 +96,7 @@ export const signetService: SignetService = {
 
     async getInfoImage(signet: Signet) : Promise<AxiosResponse> {
         try {
-            return await http.get(`/mediacentre/info/image/${signet.picture ? signet.picture.split("/").slice(-1)[0] : null}`);
+            return await http.get(`/mediacentre/info/image/${signet.image ? signet.image.split("/").slice(-1)[0] : null}`);
         } catch (e) {
             notify.error(idiom.translate('mediacentre.error.signetService.image'));
             throw e;

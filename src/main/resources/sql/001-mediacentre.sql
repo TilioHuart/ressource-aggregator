@@ -8,11 +8,11 @@ CREATE TABLE mediacentre.scripts (
 );
 
 CREATE TABLE mediacentre.signet (
-    id bigserial NOT NULL,
+    id character varying NOT NULL,
     discipline_label character varying[],
     level_label character varying[],
     key_words character varying[],
-    fullname character varying,
+    title character varying,
     imageurl character varying,
     owner_name character varying,
     owner_id character varying,

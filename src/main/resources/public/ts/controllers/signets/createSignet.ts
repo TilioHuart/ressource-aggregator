@@ -21,17 +21,16 @@ export const createSignetController = ng.controller('createSignetController', ['
 
 */
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
+                $scope.signet.id = uuidv();
                 await signetService.create($scope.signet)
                     .then(async (): Promise<void> => {
 /*
                         $scope.showToaster();
 */
 /*
-                        await $scope.signets.getCoursesByUser(model.me.userId);
-*/			            $scope.display.lightbox.signet = /*$scope.show.submitWait = */false;
-                        await $scope.vm.signets.sync();;
-                        template.close('lightboxContainer');
-                        $scope.safeApply();
+                        await $scope.signets.getCoursesByUser(model.me.userId); */
+                        await $scope.vm.signets.sync();
+                        $scope.mc.onCloseSignetPopUp();
                     })
                     .catch((): boolean => /*$scope.show.submitWait = */$scope.display.lightbox.signet = false);
             } else
@@ -67,8 +66,6 @@ export const createSignetController = ng.controller('createSignetController', ['
                 $scope.signet.plain_text.all = [];
             }
         };
-
-
 /*        /!**
          * get info image
          *!/
@@ -81,5 +78,10 @@ export const createSignetController = ng.controller('createSignetController', ['
             }
             Utils.safeApply($scope);
         };*/
-
+        function uuidv() {
+            return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
     }]);

@@ -1,7 +1,7 @@
 <div class="complete-card" id="color-[[ngModel.hash]]">
     <img class="right-magnet source"
          ng-src="[[ '/mediacentre/public/img/' + ngModel.source + '.png' ]]"
-         alt="[[ ngModel.source ]]"/>
+         alt="[[ ngModel.source ]]" ng-if="ngModel.source != 'fr.openent.mediacentre.source.Signet' "/>
     <input type="checkbox" id="description-[[ngModel.hash]]">
 
     <div class="resource-card complete-card-container">
@@ -15,7 +15,7 @@
         <div class="data nine">
             <div class="resource-information">
                 <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
-                <div class="subtitle">
+                <div class="subtitle" ng-show="ngModel.type != fr.openent.mediacentre.source.Signet">
                     <em class="metadata">
                         <i18n>mediacentre.edited.by</i18n>
                         <span ng-repeat-start="editor in ngModel.editors | limitTo:3 track by $index">[[editor]]</span>
@@ -72,7 +72,7 @@
 
     <div class="description">
         <!--Description of the resource-->
-        <div class="description-text">
+        <div ng-if="ngModel.source != 'fr.openent.mediacentre.source.Signet'" class="description-text">
             <div class="title"><i18n>mediacentre.description.title.description</i18n></div>
             <!--Display text if it exists-->
             <div ng-if="ngModel.description.length > 0">[[ngModel.description]]</div>
@@ -128,7 +128,7 @@
                 <div class="detail-container">
                     <i18n class="icon-keyword subtitle">mediacentre.description.name.keywords</i18n>
                     <div class="content">
-                        <div ng-if="'fr.openent.mediacentre.source.Moodle' === ngModel.source">
+                        <div ng-if="'ngModel.source === fr.openent.mediacentre.source.Moodle' || ngModel.source === 'fr.openent.mediacentre.source.Signet'">
                         <span class="content-bold" ng-repeat-start="keyword in ngModel.plain_text track by $index">[[keyword]]</span>
                         <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                         </div>

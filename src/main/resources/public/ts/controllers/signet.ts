@@ -1,6 +1,10 @@
 import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
+import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
+import {Mix} from "entcore-toolkit";
+import {Resource} from "../model";
+import {hashCode} from "../utils";
 
 interface ViewModel {
     signets: Signets;
@@ -36,11 +40,13 @@ interface ViewModel {
     deleteSignets() : void;
     doDeleteSignets() : Promise<void>;
     infiniteScroll() : void;
+    addFavorite(signet: Signet) : Promise<void>;
+    removeFavorite(signet: Signet) : Promise<void>;
+
 }
 
-
-export const signetController = ng.controller('SignetController', ['$scope',
-    function ($scope) {
+export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService',
+    function ($scope, FavoriteService: FavoriteService) {
 
         const vm: ViewModel = this;
         vm.signets = new Signets();
@@ -170,12 +176,42 @@ export const signetController = ng.controller('SignetController', ['$scope',
             }
         };
 
+        vm.addFavorite = async function (signet: Signet) {
+            signet.hash = hashCode(signet.id);
+            signet.displayTitle = signet.title;
+            signet.image = signet.imageurl;
+            let signet_fav = <Resource> signet.toJson();
+            delete signet.favorite;
+            let response = await FavoriteService.create(signet_fav);
+            if (response.status === 200) {
+                signet.favorite = true;
+                $scope.$emit('addFavorite', signet);
+            }
+            $scope.safeApply();
+        };
+
+        vm.removeFavorite = async function (signet: Signet) {
+           let signet_fav = <Resource> signet.toJson();
+           let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
+           if (response.status === 200) {
+                signet.favorite = false;
+                $scope.$emit('deleteFavorite', signet.id);
+            }
+            $scope.safeApply();
+        };
+
         // Utils
 
         vm.infiniteScroll = () : void => {
             vm.limitTo += vm.pageSize;
         };
 
+        function uuidv() {
+            return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
 
         init();
     }]);
