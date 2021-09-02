@@ -103,6 +103,8 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
             $scope.ws.send(new Frame('textbooks', 'get', [], {}));
             $scope.ws.send(new Frame('favorites', 'get', [], {}));
             $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
+            $scope.path = $location.url();
+            $scope.safeApply();
         }
 
         if ($scope.ws.connected) {

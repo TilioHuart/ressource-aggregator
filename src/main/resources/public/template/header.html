@@ -9,9 +9,9 @@
         </h1>
     </div>
     <div class="mediacentre-button">
-        <input type="radio" id="item_1" name="box" checked="true" ng-click="mc.goHome()" style=" display: none;">
+        <input type="radio" id="item_1" name="box" ng-click="mc.goHome()" style=" display: none;">
         <label for="item_1" class="label-left">Accueil</label>
-        <input ng-click="mc.goSignet()" type="radio" id="item_2" name="box" style="display: none;">
+        <input ng-click="mc.goSignet()" checked = "path == '/signet'" type="radio" id="item_2" name="box" style="display: none;">
         <label for="item_2" class="label-right">Signets</label>
     </div>
     <div class="search-block six eleven-mobile">

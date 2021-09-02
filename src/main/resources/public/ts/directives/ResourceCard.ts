@@ -25,7 +25,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 let random = Math.floor(Math.random() * 3) + 1;
 /*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
                 $scope.ngModel.displayTitle = $scope.ngModel.title;
-                $scope.ngModel.hash = hashCode($scope.ngModel.id);
+                $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode($scope.ngModel.resource_id) : hashCode($scope.ngModel.id);
                 $scope.show = {
                     toolip: false,
                     loader: true

@@ -8,7 +8,8 @@ CREATE TABLE mediacentre.scripts (
 );
 
 CREATE TABLE mediacentre.signet (
-    id character varying NOT NULL,
+    id serial NOT NULL,
+    resource_id character varying NOT NULL,
     discipline_label character varying[],
     level_label character varying[],
     key_words character varying[],
@@ -19,12 +20,6 @@ CREATE TABLE mediacentre.signet (
     url character varying,
     date_creation timestamp with time zone,
     date_modification timestamp with time zone
-);
-
-CREATE TABLE mediacentre.signet_shares (
-    member_id character varying(36) NOT NULL,
-    resource_id bigint NOT NULL,
-    action character varying NOT NULL
 );
 
 CREATE TABLE mediacentre.disciplines (

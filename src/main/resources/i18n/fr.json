@@ -73,5 +73,11 @@
   "mediacentre.signets.empty": "Désolé, vous n'avez aucun signet ...",
   "mediacentre.signet.create.button": "Créer un signet",
   "mediacentre.filter": "Filtre",
-  "mediacentre.modified": "Modifié le "
+  "mediacentre.modified": "Modifié le ",
+  "mediacentre.share": "Partager",
+  "mediacentre.properties": "Propriétés",
+  "mediacentre.publish": "Publier",
+  "levels" : "Niveaux",
+  "disciplines" : "Disciplines",
+  "keyword": "Mots clés"
 }

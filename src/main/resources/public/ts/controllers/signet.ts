@@ -45,8 +45,8 @@ interface ViewModel {
 
 }
 
-export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService',
-    function ($scope, FavoriteService: FavoriteService) {
+export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService', '$location',
+    function ($scope, FavoriteService: FavoriteService, $location: ILocationService) {
 
         const vm: ViewModel = this;
         vm.signets = new Signets();
@@ -86,6 +86,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             }
 
             vm.loading = false;
+            $scope.path = $location.url();
             $scope.safeApply();
         };
 
@@ -177,10 +178,37 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         };
 
         vm.addFavorite = async function (signet: Signet) {
-            signet.hash = hashCode(signet.id);
+            signet.hash = hashCode(signet.resource_id);
             signet.displayTitle = signet.title;
             signet.image = signet.imageurl;
             let signet_fav = <Resource> signet.toJson();
+            let disciplinesArray:string[] = [];
+            let levelsArray:string[] = [];
+            let plaintextArray:string[] = [];
+            if(!!signet.disciplines) {
+                signet.disciplines.forEach(function (discipline) {
+                    if(!!discipline[1]) {
+                        disciplinesArray.push(discipline[1]);
+                    }
+                });
+            }
+            signet_fav.disciplines = disciplinesArray;
+            if(!!signet.levels) {
+                signet.levels.forEach(function (level) {
+                    if(!!level[1]) {
+                        levelsArray.push(level[1]);
+                    }
+                });
+            }
+            signet_fav.levels = levelsArray;
+            if(!!signet.plain_text) {
+                signet.plain_text.forEach(function (word) {
+                    if(!!word[1]) {
+                        plaintextArray.push(word[1]);
+                    }
+                });
+            }
+            signet_fav.plain_text = plaintextArray
             delete signet.favorite;
             let response = await FavoriteService.create(signet_fav);
             if (response.status === 200) {
@@ -195,7 +223,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
            let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
            if (response.status === 200) {
                 signet.favorite = false;
-                $scope.$emit('deleteFavorite', signet.id);
+                $scope.$emit('deleteFavorite', signet.resource_id);
             }
             $scope.safeApply();
         };

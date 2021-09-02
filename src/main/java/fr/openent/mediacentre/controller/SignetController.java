@@ -72,7 +72,6 @@ public class SignetController extends ControllerHelper {
 
     @Post("/signets")
     @ApiDoc("Create a signet")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void create(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
@@ -89,7 +88,6 @@ public class SignetController extends ControllerHelper {
 
     @Put("/signets/:signetId")
     @ApiDoc("Update a specific signet")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void update(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
@@ -100,7 +98,6 @@ public class SignetController extends ControllerHelper {
 
     @Delete("/signets/:signetId")
     @ApiDoc("Delete a scpecific signet")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void delete(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
@@ -109,7 +106,6 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:signetId/rights")
     @ApiDoc("Get my rights for a specific signet")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void getMyFormRights(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
@@ -130,7 +126,6 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/rights/all")
     @ApiDoc("Get my rights for all the signets")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void getAllMyFormRights(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
@@ -155,7 +150,6 @@ public class SignetController extends ControllerHelper {
     @Override
     @Get("/share/json/:id")
     @ApiDoc("List rights for a given signet")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void shareJson(final HttpServerRequest request) {
         super.shareJson(request, false);
@@ -163,7 +157,6 @@ public class SignetController extends ControllerHelper {
 
     @Put("/share/json/:id")
     @ApiDoc("Add rights for a given signet")
-    
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void shareSubmit(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {

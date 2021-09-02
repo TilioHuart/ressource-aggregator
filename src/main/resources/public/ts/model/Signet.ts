@@ -5,7 +5,7 @@ import {Label, Labels} from "./Label";
 
 export class Signet implements Selectable, Shareable  {
     shared: any;
-    owner!: {
+    owner: {
         userId: string;
         displayName: string;
     };
@@ -38,11 +38,13 @@ export class Signet implements Selectable, Shareable  {
     displayTitle: string;
     image: string;
     source: string;
-    disciplines: string[];
-    levels: string[];
-    plain_text: string[];
+    disciplines: Labels;
+    levels: Labels;
+    plain_text: Labels;
+    resource_id: number;
 
     constructor() {
+        this.owner = {userId: "", displayName: ""},
         this.id = 0;
         this.title = "";
         this.imageurl = "";
@@ -59,17 +61,19 @@ export class Signet implements Selectable, Shareable  {
         this.displayed = true;
         this.selected = false;
         this.hash = 0;
+        this.resource_id = 0;
         this.displayTitle = "";
         this.image = "";
         this.source = "fr.openent.mediacentre.source.Signet",
-        this.disciplines = [],
-        this.levels = [],
-        this.plain_text = []
+        this.disciplines = new Labels(),
+        this.levels = new Labels(),
+        this.plain_text = new Labels()
     }
 
     toJson() : Object {
         return {
             id: this.id,
+            resource_id: this.resource_id,
             title: this.title,
             image: this.image,
             link: this.url,
@@ -138,32 +142,32 @@ export class Signets extends Selection<Signet> {
             for (let i = 0; i < data.length; i++) {
                 let tempSignet = new Signet();
                 tempSignet.setFromJson(data[i]);
-                let disciplinesArray: string[] = [];
-                let levelsArray: string[] = [];
-                let textArray: string[] = [];
+                let disciplinesArray = new Labels();
+                let levelsArray = new Labels();
+                let textArray = new Labels();
                 if(!!tempSignet.disciplines) {
                     tempSignet.disciplines.forEach(function (discipline) {
                         if(!!discipline[1]) {
-                            disciplinesArray.push(discipline[1]);
+                            disciplinesArray.all.push(new Label(undefined, discipline[1]));
                         }
                     });
-                    tempSignet.disciplines = disciplinesArray;
+                    tempSignet.disciplines.all = Mix.castArrayAs(Label, disciplinesArray.all);;
                 }
                 if(!!tempSignet.levels) {
                     tempSignet.levels.forEach(function (level) {
                         if(!!level[1]) {
-                            levelsArray.push(level[1]);
+                            levelsArray.all.push(new Label(undefined, level[1]));
                         }
                     });
-                    tempSignet.levels = levelsArray;
+                    tempSignet.levels.all = Mix.castArrayAs(Label, levelsArray.all);
                 }
                 if(!!tempSignet.plain_text) {
                     tempSignet.plain_text.forEach(function (word) {
                         if(!!word[1]) {
-                            textArray.push(word[1]);
+                            textArray.all.push(new Label(undefined, word[1]));
                         }
                     });
-                    tempSignet.plain_text = textArray;
+                    tempSignet.plain_text.all = Mix.castArrayAs(Label, textArray.all);
                 }
                 this.all.push(tempSignet);
             }

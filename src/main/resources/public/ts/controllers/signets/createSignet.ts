@@ -24,9 +24,7 @@ export const createSignetController = ng.controller('createSignetController', ['
                 $scope.signet.id = uuidv();
                 await signetService.create($scope.signet)
                     .then(async (): Promise<void> => {
-/*
                         $scope.showToaster();
-*/
 /*
                         await $scope.signets.getCoursesByUser(model.me.userId); */
                         await $scope.vm.signets.sync();

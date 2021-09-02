@@ -18,7 +18,7 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
-        String query = "SELECT id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
+        String query = "SELECT id, resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
                 "title, imageurl, owner_name, owner_id, url, date_creation, date_modification" +
                 " FROM " + Mediacentre.SIGNET_TABLE +
                 " WHERE owner_id = ? ORDER BY title;";
@@ -50,12 +50,18 @@ public class DefaultSignetService implements SignetService {
                 levelArray.add((signet.getJsonArray("levels").getJsonObject(i).getString("label")));
             }
         }
+        if(levelArray.isEmpty()) {
+            levelArray.add("");
+        }
 
         JsonArray disciplineArray = new JsonArray();
         if(signet.containsKey("disciplines")) {
             for (int i = 0; i < signet.getJsonArray("disciplines").size(); i++) {
                 disciplineArray.add((signet.getJsonArray("disciplines").getJsonObject(i).getString("label")));
             }
+        }
+        if(disciplineArray.isEmpty()) {
+            disciplineArray.add("");
         }
 
         JsonArray plainTextArray = new JsonArray();
@@ -64,8 +70,11 @@ public class DefaultSignetService implements SignetService {
                 plainTextArray.add((signet.getJsonArray("plain_text").getJsonObject(i).getString("label")));
             }
         }
+        if(plainTextArray.isEmpty()) {
+            plainTextArray.add("");
+        }
 
-        String query = "INSERT INTO " + Mediacentre.SIGNET_TABLE + " (id, discipline_label, level_label, key_words, title, " +
+        String query = "INSERT INTO " + Mediacentre.SIGNET_TABLE + " (resource_id, discipline_label, level_label, key_words, title, " +
                 "imageurl, owner_name, owner_id, url, date_creation, date_modification) " +
                 "VALUES (?, " + Sql.arrayPrepared(disciplineArray) + " ," + Sql.arrayPrepared(levelArray) + " ," + Sql.arrayPrepared(plainTextArray) + ", ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
         JsonArray params = new JsonArray()
