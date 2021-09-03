@@ -132,7 +132,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
-                    let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
+                    let response = await FavoriteService.delete($scope.ngModel._id, $scope.ngModel.source);
                     if (response.status === 200) {
                         $scope.ngModel.favorite = false;
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);

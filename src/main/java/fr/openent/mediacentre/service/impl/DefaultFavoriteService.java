@@ -40,7 +40,7 @@ public class DefaultFavoriteService implements FavoriteService {
     @Override
     public void delete(String favoriteId, String source, Handler<Either<String, JsonObject>> handler) {
         JsonObject matcher = new JsonObject()
-                .put("id", Integer.parseInt(favoriteId))
+                .put("_id", favoriteId)
                 .put("source", source);
         MongoDb.getInstance().delete(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResult(message)));
     }
