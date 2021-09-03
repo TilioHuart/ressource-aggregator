@@ -19,7 +19,7 @@ public class DefaultSignetService implements SignetService {
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT id, resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
-                "title, imageurl, owner_name, owner_id, url, date_creation, date_modification" +
+                "title, imageurl, owner_name, owner_id, url, date_creation, date_modification, favorite" +
                 " FROM " + Mediacentre.SIGNET_TABLE +
                 " WHERE owner_id = ? ORDER BY title;";
         JsonArray params = new JsonArray().add(user.getUserId());
@@ -131,13 +131,12 @@ public class DefaultSignetService implements SignetService {
     @Override
     public void getMyFormRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT action FROM " + Mediacentre.SIGNET_SHARES_TABLE +
-                " WHERE resource_id = ? AND member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?, ?);";
+                " WHERE resource_id = ? AND member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?);";
         JsonArray params = new JsonArray()
                 .add(signetId)
                 .addAll(new fr.wseduc.webutils.collections.JsonArray(groupsAndUserIds))
-                .add(Mediacentre.CONTRIB_RESOURCE_BEHAVIOUR)
-                .add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR)
-                .add(Mediacentre.RESPONDER_RESOURCE_BEHAVIOUR);
+                .add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR)
+                .add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR);
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
 
@@ -147,9 +146,9 @@ public class DefaultSignetService implements SignetService {
                 " WHERE member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?, ?);";
         JsonArray params = new JsonArray()
                 .addAll(new fr.wseduc.webutils.collections.JsonArray(groupsAndUserIds))
-                .add(Mediacentre.CONTRIB_RESOURCE_BEHAVIOUR)
+                .add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR)
                 .add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR)
-                .add(Mediacentre.RESPONDER_RESOURCE_BEHAVIOUR);
+                .add("fr-openent-mediacentre-controllers-SignetController|shareJson");
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
 

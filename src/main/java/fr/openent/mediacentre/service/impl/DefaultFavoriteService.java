@@ -1,5 +1,6 @@
 package fr.openent.mediacentre.service.impl;
 
+import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.webutils.Either;
@@ -9,6 +10,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import org.entcore.common.sql.Sql;
+import org.entcore.common.sql.SqlResult;
 
 public class DefaultFavoriteService implements FavoriteService {
 
@@ -40,8 +43,18 @@ public class DefaultFavoriteService implements FavoriteService {
     @Override
     public void delete(String favoriteId, String source, Handler<Either<String, JsonObject>> handler) {
         JsonObject matcher = new JsonObject()
-                .put("_id", favoriteId)
+                .put("id", Integer.parseInt(favoriteId))
                 .put("source", source);
         MongoDb.getInstance().delete(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResult(message)));
+    }
+
+    @Override
+    public void update(JsonObject favoritesBody, Handler<Either<String, JsonObject>> handler) {
+        String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET favorite = ? " +
+                "WHERE id = ? RETURNING *;";
+        JsonArray params = new JsonArray()
+                .add(!favoritesBody.getBoolean("favorite"))
+                .add(favoritesBody.getInteger("id"));
+        Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
     }
 }

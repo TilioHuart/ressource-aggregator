@@ -18,6 +18,7 @@ CREATE TABLE mediacentre.signet (
     owner_name character varying,
     owner_id character varying,
     url character varying,
+    favorite boolean DEFAULT false,
     date_creation timestamp with time zone,
     date_modification timestamp with time zone
 );

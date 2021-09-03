@@ -16,23 +16,16 @@ export const createSignetController = ng.controller('createSignetController', ['
          */
         $scope.createSignet = async (): Promise<void> => {
             if ($scope.signet.title.length >= 4) {
-/*
-                $scope.show.submitWait = true;
-
-*/
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
                 $scope.signet.id = uuidv();
-                await signetService.create($scope.signet)
-                    .then(async (): Promise<void> => {
-                        $scope.showToaster();
-/*
-                        await $scope.signets.getCoursesByUser(model.me.userId); */
+                await signetService.create($scope.signet).then(async (): Promise<void> => {
                         await $scope.vm.signets.sync();
+                        Utils.safeApply($scope);
                         $scope.mc.onCloseSignetPopUp();
-                    })
-                    .catch((): boolean => /*$scope.show.submitWait = */$scope.display.lightbox.signet = false);
-            } else
+                    });
+            } else {
                 notify.error(i18n.translate("moodle.info.short.title"));
+            }
             await Utils.safeApply($scope);
         };
 

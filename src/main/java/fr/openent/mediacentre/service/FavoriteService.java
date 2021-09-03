@@ -29,4 +29,6 @@ public interface FavoriteService {
      * @param handler   function handler returning da
      */
     void delete(String favorite, String source, Handler<Either<String, JsonObject>> handler);
+
+    void update(JsonObject favorite, Handler<Either<String, JsonObject>> defaultResponseHandler);
 }

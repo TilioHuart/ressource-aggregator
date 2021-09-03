@@ -3,6 +3,7 @@ import http, {AxiosResponse} from 'axios';
 import {Resource} from "../model";
 
 export interface FavoriteService {
+    updateFavorite(bodyResource: Resource): Promise<AxiosResponse>;
     create(bodyResource: Resource): Promise<AxiosResponse>;
     delete(id: string, source: string): Promise<AxiosResponse>;
 }
@@ -14,5 +15,9 @@ export const FavoriteService = ng.service('FavoriteService', (): FavoriteService
 
     delete: async (id: string, source: string): Promise<AxiosResponse> => {
         return await http.delete(`/mediacentre/favorites?id=${id}&source=${source}`);
-    }
+    },
+
+    updateFavorite: async (bodyResource: Resource): Promise<AxiosResponse> => {
+        return await http.post(`/mediacentre/update/favorites`, bodyResource);
+    },
 }));

@@ -48,4 +48,13 @@ public class FavoriteController extends ControllerHelper {
         favoriteService.delete(favoriteId, source, DefaultResponseHandler.defaultResponseHandler(request));
     }
 
+    @Post("/update/favorites")
+    @ApiDoc("Create favorites")
+    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    public void updateFavorites(final HttpServerRequest request) {
+        UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
+            favoriteService.update(favorite, DefaultResponseHandler.defaultResponseHandler(request));
+        }));
+    }
+
 }

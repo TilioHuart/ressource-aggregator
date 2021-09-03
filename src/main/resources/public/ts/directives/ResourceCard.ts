@@ -125,6 +125,7 @@ export const ResourceCard = ng.directive('resourceCard',
                     delete $scope.ngModel.favorite;
                     let response = await FavoriteService.create($scope.ngModel);
                     if (response.status === 200) {
+                        await FavoriteService.updateFavorite($scope.ngModel);
                         $scope.ngModel.favorite = true;
                         $scope.$emit('addFavorite', $scope.ngModel);
                     }
@@ -132,8 +133,9 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
-                    let response = await FavoriteService.delete($scope.ngModel._id, $scope.ngModel.source);
+                    let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
                     if (response.status === 200) {
+                        await FavoriteService.updateFavorite($scope.ngModel);
                         $scope.ngModel.favorite = false;
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);
                     }
