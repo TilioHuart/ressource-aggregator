@@ -460,6 +460,14 @@ public class DefaultModuleSQLRequestService extends SqlCrudService implements mo
     }
 
     @Override
+    public void getPublicSignetData(Integer id, final Handler<Either<String, JsonObject>> handler) {
+        String selectCourse = "SELECT * FROM " + Mediacentre.mediacentreSchema + ".signet " +
+                "WHERE id = ?";
+
+        sql.prepared(selectCourse, new JsonArray().add(id), SqlResult.validUniqueResultHandler(handler));
+    }
+
+    @Override
     public void getLevels(Handler<Either<String, JsonArray>> handler) {
         String query = "Select * From " + Mediacentre.mediacentreSchema + ".levels;";
         sql.prepared(query, new JsonArray(), SqlResult.validResultHandler(handler));

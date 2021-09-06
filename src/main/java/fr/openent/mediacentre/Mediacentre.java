@@ -9,6 +9,8 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.http.BaseServer;
+import org.entcore.common.sql.SqlConf;
+import org.entcore.common.sql.SqlConfs;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -19,16 +21,21 @@ public class Mediacentre extends BaseServer {
     public static int wsPort;
     public static final String VIEW_RIGHT = "mediacentre.view";
     public static String mediacentreSchema;
+    public static JsonObject mediacentreConfig;
     public static String SIGNET_SHARES_TABLE;
     public static String SIGNET_TABLE;
 
-    public static final String CONTRIB_RESOURCE_RIGHT = "mediacentre.contrib";
-    public static final String MANAGER_RESOURCE_RIGHT = "mediacentre.manager";
-    public static final String RESPONDER_RESOURCE_RIGHT = "mediacentre.comment";
+    public static String DIRECTORY_BUS_ADDRESS = "directory";
 
-    public static final String CONTRIB_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-SignetController|initContribResourceRight";
-    public static final String MANAGER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-SignetController|initManagerResourceRight";
-    public static final String RESPONDER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-SignetController|initResponderResourceRight";
+    public static String MEDIACENTRE_CREATE = "fr.openent.mediacentre.source.Signet|create";
+    public static String MEDIACENTRE_DELETE = "fr.openent.mediacentre.source.Signet|delete";
+    public static String MEDIACENTRE_UPDATE = "fr.openent.mediacentre.source.Signet|update";
+
+    public static final String VIEW_RESOURCE_RIGHT = "mediacentre.contrib";
+    public static final String MANAGER_RESOURCE_RIGHT = "mediacentre.manager";
+
+    public static final String VIEW_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-MediacentreController|initViewResourceRight";
+    public static final String MANAGER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-MediacentreController|initManagerResourceRight";
 
     @Override
 	public void start() throws Exception {
@@ -39,6 +46,7 @@ public class Mediacentre extends BaseServer {
         mediacentreSchema = config.getString("db-schema");
         SIGNET_SHARES_TABLE = mediacentreSchema + ".signet_shares";
         SIGNET_TABLE = mediacentreSchema + ".signet";
+        mediacentreConfig = config;
 
         /* Add All sources based on module configuration */
         List<Source> sources = new ArrayList<>();
@@ -52,6 +60,10 @@ public class Mediacentre extends BaseServer {
                 sources.add(source);
             }
         }
+        SqlConf signetConf = SqlConfs.createConf(SignetController.class.getName());
+        signetConf.setSchema("mediacentre");
+        signetConf.setTable("signet");
+        signetConf.setShareTable("signet_shares");
 
         addController(new MediacentreController(sources, config));
         addController(new FavoriteController(eb));

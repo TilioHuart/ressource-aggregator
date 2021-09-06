@@ -7,5 +7,5 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.user.UserInfos;
 
 public interface SignetSharesService {
-    void getSharedWithMe(String formId, UserInfos user, Handler<Either<String, JsonArray>> handler);
+    void getSharedWithMe(String signetId, UserInfos user, Handler<Either<String, JsonArray>> handler);
 }

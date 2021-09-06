@@ -13,6 +13,7 @@ export interface SignetService {
     getMySignetRights(signetId: number) : Promise<AxiosResponse>;
     getAllMySignetRights() : Promise<AxiosResponse>;
     getInfoImage(signet: Signet) : Promise<AxiosResponse>;
+    publish(signet: Signet) : Promise<AxiosResponse>;
 }
 
 export const signetService: SignetService = {
@@ -100,6 +101,15 @@ export const signetService: SignetService = {
         } catch (e) {
             notify.error(idiom.translate('mediacentre.error.signetService.image'));
             throw e;
+        }
+    },
+
+    async publish(signet: Signet) : Promise<AxiosResponse> {
+        try {
+            return await http.post(`/mediacentre/signet/publish`, signet.toJson());
+        } catch (err) {
+            notify.error('mediacentre.signetService.publish.err');
+            throw err;
         }
     }
 };

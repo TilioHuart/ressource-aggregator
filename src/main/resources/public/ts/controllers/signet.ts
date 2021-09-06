@@ -5,6 +5,8 @@ import {signetService} from "../services/SignetService";
 import {Mix} from "entcore-toolkit";
 import {Resource} from "../model";
 import {hashCode} from "../utils";
+import {Label, Labels} from "../model/Label";
+import {ILocationService} from "angular";
 
 interface ViewModel {
     signets: Signets;
@@ -36,6 +38,7 @@ interface ViewModel {
     openSignet(signet: Signet) : void;
     openPropertiesSignet() : void;
     shareSignet() : void;
+    publishSignet(signet: Signet) : void;
     closeShareSignetLightbox() : void;
     deleteSignets() : void;
     doDeleteSignets() : Promise<void>;
@@ -49,6 +52,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
     function ($scope, FavoriteService: FavoriteService, $location: ILocationService) {
 
         const vm: ViewModel = this;
+        $scope.path = $location.url();
+        $scope.safeApply();
         vm.signets = new Signets();
         vm.folder = "mine";
         vm.searchInput = "";
@@ -142,12 +147,17 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.shareSignet = () : void => {
             vm.signets.selected[0].generateShareRights();
-            template.open('lightbox', 'lightbox/signet-sharing');
+            template.open('lightboxContainer', 'signets/lightbox/signet-sharing');
             vm.display.lightbox.sharing = true;
         };
 
+        vm.publishSignet = async (signet: Signet): Promise<void> => {
+            await signetService.publish(signet);
+            $scope.safeApply();
+        };
+
         vm.closeShareSignetLightbox = () : void => {
-            template.close('lightbox');
+            template.close('lightboxContainer');
             vm.display.lightbox.sharing = false;
             window.setTimeout(async function () { await init(); }, 100);
         };

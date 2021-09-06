@@ -19,7 +19,8 @@
     "sources": {
         "fr.openent.mediacentre.source.GAR": true,
         "fr.openent.mediacentre.source.Moodle": true,
-        "fr.openent.mediacentre.source.PMB": true
+        "fr.openent.mediacentre.source.PMB": true,
+        "fr.openent.mediacentre.source.Signet": true
     },
     "textbook_typology": [
         "MAN"

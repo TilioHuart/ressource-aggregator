@@ -2,17 +2,21 @@ import {idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 import {Signet} from "../model/Signet";
+import {signetService} from "../services/SignetService";
 
 declare const window: any;
 
 export interface Scope extends IRootScopeService {
     displayDate (dateToFormat: Date): string;
-    display: { lightbox: { signet: boolean; }; };
+    display: { lightbox: { signet: boolean; properties: boolean }; };
 	ws: Socket;
 	loaders: any;
 	idiom: any;
+	path: any;
 	signet: Signet;
 	safeApply(): void;
+	redirectTo(path: string): void;
+	getSignetWithRights(signetId : number): void;
 	mc: MainController;
 }
 
@@ -55,6 +59,8 @@ export interface MainController {
 
 	onCloseSignetPopUp(): void;
 
+	onCloseSignetPropertiesPopUp(): void;
+
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
@@ -88,8 +94,9 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		mc.screenWidthLimit = 600;
 		$scope.signet = new Signet();
 		$scope.display = {
-			lightbox: {signet: false}
+			lightbox: {signet: false, properties: false}
 		};
+		$scope.path;
 
 		const startResearch = function (state: string, sources: string[], data: any) {
 			mc.limitTo = mc.pageSize;
@@ -170,6 +177,12 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			$scope.safeApply();
 		}
 
+		mc.onCloseSignetPropertiesPopUp = function () {
+			$scope.display.lightbox.properties = false;
+			template.close('lightboxContainer');
+			$scope.safeApply();
+		}
+
 		route({
 			home: () => {
 				mc.search = {...mc.search, plain_text: {text: ''}};
@@ -180,7 +193,18 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			favorite: () => template.open('main', 'favorite'),
 			signet: () => template.open('main', 'signet'),
 			searchPlainText: () => template.open('main', 'search'),
-			searchAdvanced: () => template.open('main', 'search')
+			searchAdvanced: () => template.open('main', 'search'),
+			propSignet: async (params) => {
+				await $scope.getSignetWithRights(params.idSignet);
+				$scope.display.lightbox.properties = true;
+				template.open('lightboxContainer', 'signets/prop-signet');
+/*				if ($scope.canCreate() && $scope.hasShareRightContrib($scope.form)) {
+
+				}*/
+/*				else {
+					$scope.redirectTo('/e403');
+				}*/
+			},
 		});
 
 		$scope.safeApply = function () {
@@ -188,6 +212,18 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			if (phase !== '$apply' && phase !== '$digest') {
 				$scope.$apply();
 			}
+		};
+
+		$scope.redirectTo = (path: string) => {
+			$location.path(path);
+			$scope.safeApply();
+		};
+
+		$scope.getSignetWithRights = async (signetId : number) : Promise<void> => {
+			$scope.signet.setFromJson(await signetService.get(signetId));
+/*
+			$scope.form.myRights = $scope.getDataIf200(await formService.getMyFormRights(formId)).map(right => right.action);
+*/
 		};
 
 		$scope.displayDate = (dateToFormat: Date) : string => {

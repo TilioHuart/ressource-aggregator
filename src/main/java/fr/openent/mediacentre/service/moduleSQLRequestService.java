@@ -210,6 +210,8 @@ public interface moduleSQLRequestService {
      */
     void getDisciplines (Handler<Either<String, JsonArray>> handler);
 
+    void getPublicSignetData(Integer id, Handler<Either<String, JsonObject>> handler);
+
     /**
      * get All Levels
      * @param handler function handler returning data

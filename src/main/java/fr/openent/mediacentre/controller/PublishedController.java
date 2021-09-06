@@ -1,11 +1,16 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.service.impl.DefaultMediacentreEventBus;
 import fr.openent.mediacentre.service.impl.DefaultModuleSQLRequestService;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
+import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
+import fr.wseduc.webutils.Either;
+import fr.wseduc.webutils.request.RequestUtils;
+import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
@@ -14,14 +19,19 @@ import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserUtils;
 
+import static fr.openent.mediacentre.Mediacentre.mediacentreConfig;
 import static fr.wseduc.webutils.http.response.DefaultResponseHandler.arrayResponseHandler;
 
 public class PublishedController extends ControllerHelper {
 
     private final fr.openent.mediacentre.service.moduleSQLRequestService moduleSQLRequestService;
+    private fr.openent.mediacentre.service.mediacentreEventBus mediacentreEventBus;
+
     public PublishedController(EventBus eb) {
         super();
         this.moduleSQLRequestService = new DefaultModuleSQLRequestService(Mediacentre.mediacentreSchema, "signet");
+        this.mediacentreEventBus = new DefaultMediacentreEventBus(eb);
+
     }
 
     @Get("/levels")
@@ -29,7 +39,6 @@ public class PublishedController extends ControllerHelper {
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void getLevels (HttpServerRequest request) {
         moduleSQLRequestService.getLevels(arrayResponseHandler(request));
-
     }
 
 
@@ -40,47 +49,19 @@ public class PublishedController extends ControllerHelper {
         moduleSQLRequestService.getDisciplines(arrayResponseHandler(request));
     }
 
-/*    @Post("/signet/publish")
+    @Post("/signet/publish")
     @ApiDoc("Publish a signet in BP")
     public void publish (HttpServerRequest request) {
-        RequestUtils.bodyToJson(request, pathPrefix + "duplicate", duplicateCourse ->
-                UserUtils.getUserInfos(eb, request, user -> {
-                    duplicateCourse.put("userid", user.getUserId());
-                    duplicateCourse.put("username", user.getFirstName().toUpperCase() + " " + user.getLastName());
-                    duplicateCourse.put("author", duplicateCourse.getJsonArray("authors").getJsonObject(0).getString("firstname").toUpperCase() +
-                            " " + duplicateCourse.getJsonArray("authors").getJsonObject(0).getString("lastname").toUpperCase());
-                    duplicateCourse.put("author_id", duplicateCourse.getJsonArray("authors").getJsonObject(0).getString("entidnumber"));
-                    moduleSQLRequestService.insertPublishedCourseMetadata(duplicateCourse, event -> {
-                        if (event.isRight()) {
-                            JsonObject signetToPublish = new JsonObject();
-                            signetToPublish.put("userId", user.getUserId());
-                            signetToPublish.put("signetid", duplicateCourse.getJsonArray("signetsId").getInteger(0));
-                            signetToPublish.put("folderId", 0);
-                            signetToPublish.put("status", WAITING);
-                            signetToPublish.put("category_id", mediacentreConfig.getInteger("publicBankCategoryId"));
-                            signetToPublish.put("auditeur_id", user.getUserId());
-                            signetToPublish.put("publishFK", event.right().getValue().getInteger("id"));
-
-                            moduleSQLRequestService.insertDuplicateTable(signetToPublish, new Handler<Either<String, JsonObject>>() {
-                                @Override
-                                public void handle(Either<String, JsonObject> event) {
-                                    if (event.isRight()) {
-                                        request.response()
-                                                .setStatusCode(200)
-                                                .end();
-                                    } else {
-                                        handle(new Either.Left<>("Failed to insert in duplicate table"));
-                                    }
-                                }
+        RequestUtils.bodyToJson(request, signet -> {
+                            callMediacentreEventBusForPublish(signet.getInteger("id"), mediacentreEventBus, event -> {
+                                request.response()
+                                        .setStatusCode(200)
+                                        .end();
                             });
-                        } else {
-                            log.error("Failed to insert in publication table");
-                        }
-                    });
-                }));
+    });
     }
 
-    @Post("/metadata/update")
+    /*@Post("/metadata/update")
     @ApiDoc("Update public signet metadata")
     @ResourceFilter(PublicateRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
@@ -133,9 +114,9 @@ public class PublishedController extends ControllerHelper {
                 }
             });
         });
-    }
+    }*/
 
-    static public void callMediacentreEventBusForPublish(JsonArray id, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
+    static public void callMediacentreEventBusForPublish(Integer id, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
                                                          final Handler<Either<String, JsonObject>> handler) {
         eventBus.publishInMediacentre(id, handler);
     }
@@ -153,5 +134,5 @@ public class PublishedController extends ControllerHelper {
     static public void callMediacentreEventBusToUpdate(JsonObject updateCourse, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
                                                        final Handler<Either<String, JsonObject>> handler) {
         eventBus.updateInMediacentre(updateCourse, handler);
-    }*/
+    }
 }

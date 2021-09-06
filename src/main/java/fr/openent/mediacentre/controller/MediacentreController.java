@@ -60,6 +60,14 @@ public class MediacentreController extends ControllerHelper {
 
     }
 
+    @SecuredAction(value = Mediacentre.VIEW_RESOURCE_RIGHT, type = ActionType.RESOURCE)
+    public void initViewResourceRight(final HttpServerRequest request) {
+    }
+
+    @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
+    public void initManagerResourceRight(final HttpServerRequest request) {
+    }
+
     @Get("/textbooks")
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void getGar(HttpServerRequest request) {
