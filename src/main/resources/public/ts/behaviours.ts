@@ -4,10 +4,10 @@ import http from "axios";
 const rights = {
     resources: {
         view: {
-            right: "fr-openent-mediacentre-controllers-MediacentreController|initViewResourceRight"
+            right: "fr-openent-mediacentre-controller-MediacentreController|initViewResourceRight"
         },
         manager: {
-            right: "fr-openent-mediacentre-controllers-MediacentreController|initManagerResourceRight"
+            right: "fr-openent-mediacentre-controller-MediacentreController|initManagerResourceRight"
         }
     }
 };

@@ -141,12 +141,11 @@ public class DefaultSignetService implements SignetService {
     @Override
     public void getAllMyFormRights(List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT resource_id, action FROM " + Mediacentre.SIGNET_SHARES_TABLE +
-                " WHERE member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?, ?);";
+                " WHERE member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?);";
         JsonArray params = new JsonArray()
                 .addAll(new fr.wseduc.webutils.collections.JsonArray(groupsAndUserIds))
                 .add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR)
-                .add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR)
-                .add("fr-openent-mediacentre-controllers-SignetController|shareJson");
+                .add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR);
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
 

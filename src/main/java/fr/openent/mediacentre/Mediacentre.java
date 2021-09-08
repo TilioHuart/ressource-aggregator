@@ -35,7 +35,7 @@ public class Mediacentre extends BaseServer {
     public static String MEDIACENTRE_DELETE = "fr.openent.mediacentre.source.Signet|delete";
     public static String MEDIACENTRE_UPDATE = "fr.openent.mediacentre.source.Signet|update";
 
-    public static final String VIEW_RESOURCE_RIGHT = "mediacentre.view";
+    public static final String VIEW_RESOURCE_RIGHT = "mediacentre.contrib";
     public static final String MANAGER_RESOURCE_RIGHT = "mediacentre.manager";
 
     public static final String VIEW_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controller-MediacentreController|initViewResourceRight";
