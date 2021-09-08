@@ -18,11 +18,19 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
-        String query = "SELECT id, resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
-                "title, imageurl, owner_name, owner_id, url, date_creation, date_modification, favorite" +
-                " FROM " + Mediacentre.SIGNET_TABLE +
-                " WHERE owner_id = ? ORDER BY title;";
-        JsonArray params = new JsonArray().add(user.getUserId());
+        JsonArray params = new JsonArray();
+        String query = "SELECT DISTINCT s.id, s.resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
+                "title, imageurl, s.owner_name, s.owner_id, url, date_creation, date_modification, favorite, collab, archived" +
+                " FROM " + Mediacentre.SIGNET_TABLE + " s" +
+                " LEFT JOIN " + Mediacentre.SIGNET_SHARES_TABLE + " ss ON s.id = ss.resource_id " +
+                " LEFT JOIN " + Mediacentre.MEMBERS_TABLE + " m ON (ss.member_id = m.id AND m.group_id IS NOT NULL) " +
+                " WHERE s.owner_id = ? OR (ss.member_id IN " + Sql.listPrepared(groupsAndUserIds.toArray());
+        for (String groupOrUser : groupsAndUserIds) {
+            params.add(groupOrUser);
+        }
+        query += " AND (ss.action = ? OR ss.action = ?)) ORDER BY s.id desc;";
+        params.add(user.getUserId()).add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR).add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR);
+
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
 
@@ -94,28 +102,18 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void update(String signetId, JsonObject signet, Handler<Either<String, JsonObject>> handler) {
-        String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET title = ?, description = ?, picture = ?, date_modification = ?, " +
-                "date_opening = ?, date_ending = ?, sent = ?, collab = ?, reminded = ?, archived = ?, " +
-                "multiple = CASE (SELECT count > 0 FROM nbResponses) " +
-                "WHEN false THEN ? WHEN true THEN (SELECT multiple FROM " + Mediacentre.SIGNET_TABLE +" WHERE id = ?) END, " +
-                "anonymous = CASE (SELECT count > 0 FROM nbResponses) " +
-                "WHEN false THEN ? WHEN true THEN (SELECT anonymous FROM " + Mediacentre.SIGNET_TABLE +" WHERE id = ?) END " +
+        String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET title = ?, imageurl = ?, url = ?, date_modification = ?, " +
+                "date_creation = ?, collab = ?, archived = ? " +
                 "WHERE id = ? RETURNING *;";
 
         JsonArray params = new JsonArray()
-                .add(signetId)
                 .add(signet.getString("title", ""))
-                .add(signet.getString("description", ""))
-                .add(signet.getString("picture", ""))
+                .add(signet.getString("image", ""))
+                .add(signet.getString("url", ""))
                 .add("NOW()")
-                .add(signet.getString("date_opening", "NOW()"))
-                .add(signet.getString("date_ending", null))
-                .add(signet.getBoolean("sent", false))
+                .add(signet.getString("date_creation", "NOW()"))
                 .add(signet.getBoolean("collab", false))
-                .add(signet.getBoolean("reminded", false))
                 .add(signet.getBoolean("archived", false))
-                .add(signet.getBoolean("multiple", false)).add(signetId)
-                .add(signet.getBoolean("anonymous", false)).add(signetId)
                 .add(signetId);
 
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));

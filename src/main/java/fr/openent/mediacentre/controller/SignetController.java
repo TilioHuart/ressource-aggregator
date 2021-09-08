@@ -19,6 +19,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.entcore.common.controller.ControllerHelper;
+import org.entcore.common.http.filter.ResourceFilter;
+import org.entcore.common.http.filter.sql.ShareAndOwner;
+import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -213,6 +216,7 @@ public class SignetController extends ControllerHelper {
                     idsObjects.add(idUsers);
                     idsObjects.add(idGroups);
                     idsObjects.add(idBookmarks);
+                    updateSignetCollabProp(signetId, user, idsObjects);
                     // Fix bug auto-unsharing
                     signetShareService.getSharedWithMe(signetId, user, event -> {
                         if (event.isRight() && event.right().getValue() != null) {
@@ -244,6 +248,49 @@ public class SignetController extends ControllerHelper {
                     unauthorized(request);
                 }
             });
+        });
+    }
+
+    private void updateSignetCollabProp(String signetId, UserInfos user, List<Map<String, Object>> idsObjects) {
+        signetService.get(signetId, getEvent -> {
+            if (getEvent.isRight()) {
+                JsonObject signet = getEvent.right().getValue();
+                boolean isShared = false;
+                int i = 0;
+                while (!isShared && i < idsObjects.size()) { // Iterate over "users", "groups", "bookmarks"
+                    int j = 0;
+                    Map<String, Object> o = idsObjects.get(i);
+                    List<Object> values = new ArrayList<Object>(o.values());
+
+                    while (!isShared && j < values.size()) { // Iterate over each pair id-actions
+                        List<String> actions = (ArrayList)(values.get(j));
+
+                        int k = 0;
+                        while (!isShared && k < actions.size()) { // Iterate over each action for an id
+                            if (actions.get(k).equals(Mediacentre.VIEW_RESOURCE_BEHAVIOUR) ||
+                                    actions.get(k).equals(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR)) {
+                                isShared = true;
+                            }
+                            k++;
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+
+                if (!isShared && !signet.getString("owner_id").equals(user.getUserId())) {
+                    isShared = true;
+                }
+
+                signet.put("collab", isShared);
+                signetService.update(signetId, signet, updateEvent -> {
+                    if (updateEvent.isLeft()) {
+                        log.error("[Formulaire@updateFormCollabProp] Fail to update signet : " + updateEvent.left().getValue());
+                    }
+                });
+            } else {
+                log.error("[Formulaire@updateFormCollabProp] Fail to get signet : " + getEvent.left().getValue());
+            }
         });
     }
 

@@ -18,6 +18,8 @@ interface ViewModel {
     display: {
         grid: boolean,
         lightbox: {
+            properties: boolean;
+            publishing: boolean;
             sending: boolean,
             sharing: boolean,
             archive: boolean,
@@ -37,9 +39,11 @@ interface ViewModel {
     getTitle(title: string): string;
     openSignet(signet: Signet) : void;
     openPropertiesSignet() : void;
+    openPublishSignet(signet: Signet): void;
     shareSignet() : void;
     publishSignet(signet: Signet) : void;
     closeShareSignetLightbox() : void;
+    closePublishSignetLightbox() : void;
     deleteSignets() : void;
     doDeleteSignets() : Promise<void>;
     infiniteScroll() : void;
@@ -64,9 +68,11 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             grid: true,
             lightbox: {
                 sending: false,
+                properties: false,
                 sharing: false,
                 archive: false,
                 delete: false,
+                publishing: false,
                 reminder: false
             },
             warning: false
@@ -75,7 +81,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         const init = async () : Promise<void> => {
             await vm.signets.sync();
-
             // Check if the folder is ok
             switch (vm.folder) {
                 case "mine":
@@ -141,25 +146,33 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         };
 
         vm.openPropertiesSignet = () : void => {
-            $scope.redirectTo(`/signet/${vm.signets.selected[0].id}/properties`);
-            $scope.safeApply();
+            $scope.signet = vm.signets.selected[0];
+            template.open('lightboxContainer', 'signets/lightbox/prop-signet');
+            vm.display.lightbox.properties = true;
         };
 
-        vm.shareSignet = () : void => {
+        vm.openPublishSignet = (signet: Signet) : void => {
+            $scope.signet = vm.signets.selected[0];
+            template.open('lightboxContainer', 'signets/lightbox/publishSignetPopUp');
+            vm.display.lightbox.publishing = true;
+        };
+
+        vm.shareSignet = (): void => {
             vm.signets.selected[0].generateShareRights();
             template.open('lightboxContainer', 'signets/lightbox/signet-sharing');
             vm.display.lightbox.sharing = true;
         };
 
-        vm.publishSignet = async (signet: Signet): Promise<void> => {
-            await signetService.publish(signet);
-            $scope.safeApply();
-        };
 
         vm.closeShareSignetLightbox = () : void => {
             template.close('lightboxContainer');
             vm.display.lightbox.sharing = false;
             window.setTimeout(async function () { await init(); }, 100);
+        };
+
+        vm.closePublishSignetLightbox = () : void => {
+            template.close('lightboxContainer');
+            vm.display.lightbox.publishing = false;
         };
 
         vm.deleteSignets = () : void => {

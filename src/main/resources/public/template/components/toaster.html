@@ -1,14 +1,14 @@
 <section class="toggle-buttons" ng-if="vm.signets.selected.length > 0">
     <div class="toggle">
         <div class="row" ng-if="!vm.signets.selected[0].archived">
-            <button ng-click="vm.openPropertiesForm()" class="cell" ng-show="vm.signets.selected.length === 1">
+            <button ng-click="vm.openPropertiesSignet()" class="cell" ng-show="vm.signets.selected.length === 1">
                 <i18n>mediacentre.properties</i18n>
             </button>
             <button ng-click="vm.shareSignet()" class="cell"
                     ng-show="vm.signets.selected.length === 1 ">
                 <i18n>mediacentre.share</i18n>
             </button>
-            <button ng-click="vm.publishSignet(vm.signets.selectedElements[0])" class="cell"
+            <button ng-click="vm.openPublishSignet(vm.signets.selectedElements[0])" class="cell"
                     ng-show="vm.signets.selected.length === 1 ">
                 <i18n>mediacentre.publish</i18n>
             </button>

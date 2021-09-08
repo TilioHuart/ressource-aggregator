@@ -79,5 +79,7 @@
   "mediacentre.publish": "Publier",
   "levels" : "Niveaux",
   "disciplines" : "Disciplines",
-  "keyword": "Mots clés"
+  "keyword": "Mots clés",
+  "mediacentre.view": "Visualisation",
+  "mediacentre.manager": "Manager"
 }

@@ -9,6 +9,8 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.http.BaseServer;
+import org.entcore.common.service.impl.SqlCrudService;
+import org.entcore.common.share.impl.SqlShareService;
 import org.entcore.common.sql.SqlConf;
 import org.entcore.common.sql.SqlConfs;
 
@@ -24,6 +26,8 @@ public class Mediacentre extends BaseServer {
     public static JsonObject mediacentreConfig;
     public static String SIGNET_SHARES_TABLE;
     public static String SIGNET_TABLE;
+    public static String MEMBERS_TABLE;
+
 
     public static String DIRECTORY_BUS_ADDRESS = "directory";
 
@@ -31,11 +35,11 @@ public class Mediacentre extends BaseServer {
     public static String MEDIACENTRE_DELETE = "fr.openent.mediacentre.source.Signet|delete";
     public static String MEDIACENTRE_UPDATE = "fr.openent.mediacentre.source.Signet|update";
 
-    public static final String VIEW_RESOURCE_RIGHT = "mediacentre.contrib";
+    public static final String VIEW_RESOURCE_RIGHT = "mediacentre.view";
     public static final String MANAGER_RESOURCE_RIGHT = "mediacentre.manager";
 
-    public static final String VIEW_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-MediacentreController|initViewResourceRight";
-    public static final String MANAGER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controllers-MediacentreController|initManagerResourceRight";
+    public static final String VIEW_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controller-MediacentreController|initViewResourceRight";
+    public static final String MANAGER_RESOURCE_BEHAVIOUR = "fr-openent-mediacentre-controller-MediacentreController|initManagerResourceRight";
 
     @Override
 	public void start() throws Exception {
@@ -46,6 +50,7 @@ public class Mediacentre extends BaseServer {
         mediacentreSchema = config.getString("db-schema");
         SIGNET_SHARES_TABLE = mediacentreSchema + ".signet_shares";
         SIGNET_TABLE = mediacentreSchema + ".signet";
+        MEMBERS_TABLE = mediacentreSchema + ".members";
         mediacentreConfig = config;
 
         /* Add All sources based on module configuration */
@@ -65,10 +70,15 @@ public class Mediacentre extends BaseServer {
         signetConf.setTable("signet");
         signetConf.setShareTable("signet_shares");
 
+        SignetController signetController = new SignetController(eb);
+        signetController.setShareService(new SqlShareService(mediacentreSchema, "signet_shares", eb, securedActions, null));
+        signetController.setCrudService(new SqlCrudService(mediacentreSchema, "signet", "signet_shares"));
+
         addController(new MediacentreController(sources, config));
         addController(new FavoriteController(eb));
         addController(new PublishedController(eb));
-        addController(new SignetController(eb));
+                                                                                                                                                                                                                                                        addController(signetController);
+
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
         HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);
         log.info("Websocket server listening on port " + server.actualPort());

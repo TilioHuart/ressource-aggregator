@@ -96,5 +96,14 @@
     <lightbox show="display.lightbox.signet" on-close="mc.onCloseSignetPopUp()">
         <container template="lightboxContainer"></container>
     </lightbox>
+    <lightbox show="vm.display.lightbox.publishing">
+        <container template="lightboxContainer"></container>
+    </lightbox>
+    <lightbox show="vm.display.lightbox.properties">
+        <container template="lightboxContainer"></container>
+    </lightbox>
+    <div ng-if="vm.display.lightbox.sharing">
+        <container template='lightboxContainer'></container>
+    </div>
     <div ng-include="'mediacentre/public/template/components/toaster.html'"></div>
 </div>

@@ -197,7 +197,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			propSignet: async (params) => {
 				await $scope.getSignetWithRights(params.idSignet);
 				$scope.display.lightbox.properties = true;
-				template.open('lightboxContainer', 'signets/prop-signet');
+				template.open('lightboxContainer', 'signets/lightbox/prop-signet');
 /*				if ($scope.canCreate() && $scope.hasShareRightContrib($scope.form)) {
 
 				}*/
