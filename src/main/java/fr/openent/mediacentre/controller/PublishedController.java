@@ -53,7 +53,7 @@ public class PublishedController extends ControllerHelper {
     @ApiDoc("Publish a signet in BP")
     public void publish (HttpServerRequest request) {
         RequestUtils.bodyToJson(request, signet -> {
-                            callMediacentreEventBusForPublish(signet.getInteger("id"), mediacentreEventBus, event -> {
+                            callMediacentreEventBusForPublish(signet, mediacentreEventBus, event -> {
                                 request.response()
                                         .setStatusCode(200)
                                         .end();
@@ -116,9 +116,9 @@ public class PublishedController extends ControllerHelper {
         });
     }*/
 
-    static public void callMediacentreEventBusForPublish(Integer id, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
+    static public void callMediacentreEventBusForPublish(JsonObject signet, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
                                                          final Handler<Either<String, JsonObject>> handler) {
-        eventBus.publishInMediacentre(id, handler);
+        eventBus.publishInMediacentre(signet, handler);
     }
 
     static public void callMediacentreEventBusToDelete(HttpServerRequest request, fr.openent.mediacentre.service.mediacentreEventBus eventBus,

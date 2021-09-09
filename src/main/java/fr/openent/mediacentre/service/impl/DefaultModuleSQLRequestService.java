@@ -463,7 +463,6 @@ public class DefaultModuleSQLRequestService extends SqlCrudService implements mo
     public void getPublicSignetData(Integer id, final Handler<Either<String, JsonObject>> handler) {
         String selectCourse = "SELECT * FROM " + Mediacentre.mediacentreSchema + ".signet " +
                 "WHERE id = ?";
-
         sql.prepared(selectCourse, new JsonArray().add(id), SqlResult.validUniqueResultHandler(handler));
     }
 

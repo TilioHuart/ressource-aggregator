@@ -40,11 +40,11 @@ public interface mediacentreEventBus {
 
     /**
      * Create resources in Mediacentre
-     * @param id JsonArray with the id to publish
+     * @param signet JsonObject with the id to publish
      * @param handler function handler returning data
      */
 
-    void publishInMediacentre(Integer id, final Handler<Either<String, JsonObject>> handler);
+    void publishInMediacentre(JsonObject signet, final Handler<Either<String, JsonObject>> handler);
 
     /**
      * Delete resources in Mediacentre

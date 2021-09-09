@@ -33,6 +33,8 @@ export const publishSignetController = ng.controller('publishSignetController', 
         $scope.publishSignet = async (): Promise<void> => {
             if ($scope.signet.title.length >= 4) {
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
+                $scope.signet.disciplines = $scope.filterChoice.disciplines;
+                $scope.signet.levels = $scope.filterChoice.levels;
                 await signetService.publish($scope.signet).then(async (): Promise<void> => {
                     await $scope.vm.signets.sync();
                     switch ($scope.vm.folder) {

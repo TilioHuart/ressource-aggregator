@@ -62,45 +62,42 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
     }
 
     @Override
-    public void publishInMediacentre(Integer id, final Handler<Either<String, JsonObject>> handler) {
-        moduleSQLRequestService.getPublicSignetData(id, getData -> {
-            if (getData.isRight()) {
-                JsonObject getDataObject = getData.right().getValue();
+    public void publishInMediacentre(JsonObject signet, final Handler<Either<String, JsonObject>> handler) {
                 log.info("Event Bus launched");
                 JsonObject resource = new JsonObject();
-                JsonArray authors = new JsonArray().add(getDataObject.getString("owner_id"));
-                resource.put("title", getDataObject.getString("title"))
+                JsonArray authors = new JsonArray().add(signet.getString("owner_id"));
+                resource.put("title", signet.getString("title"))
                         .put("authors", authors)
-                        .put("id", getDataObject.getInteger("id"))
-                        .put("image", getDataObject.getString("imageurl"))
+                        .put("id", signet.getInteger("id"))
+                        .put("image", signet.getString("imageurl"))
                         .put("document_types", new JsonArray().add("Parcours Mediacentre"))
-                        .put("link", mediacentreConfig.getString("host") + getDataObject.getString("url"))
+                        .put("link", mediacentreConfig.getString("host") + signet.getString("url"))
                         .put("date", System.currentTimeMillis())
                         .put("favorite", false)
                         .put("source", "fr.openent.mediacentre.source.Signet");
 
-                if (getDataObject.getString("owner_id").equals(getDataObject.getString("owner_id"))) {
+                if (signet.getString("owner_id").equals(signet.getString("owner_id"))) {
                     resource.put("editors", authors);
                 } else {
-                    JsonArray editors = new JsonArray().add(getDataObject.getString("owner_id"));
+                    JsonArray editors = new JsonArray().add(signet.getString("owner_id"));
                     resource.put("editors", editors);
                 }
 
                 JsonArray resourceLevels = new JsonArray();
-                for (int i = 0; getDataObject.getJsonArray("level_label").size() > i; i++) {
-                    resourceLevels.add(getDataObject.getJsonArray("level_label").getJsonArray(i).getString(1));
+                for (int i = 0; signet.getJsonArray("levels").size() > i; i++) {
+                    resourceLevels.add(new JsonObject(signet.getJsonArray("levels").getValue(i).toString()).getString("label"));
                 }
                 resource.put("levels", resourceLevels);
 
                 JsonArray resourceDiscipline = new JsonArray();
-                for (int i = 0; getDataObject.getJsonArray("discipline_label").size() > i; i++) {
-                    resourceDiscipline.add(getDataObject.getJsonArray("discipline_label").getJsonArray(i).getString(1));
+                for (int i = 0; signet.getJsonArray("disciplines").size() > i; i++) {
+                    resourceDiscipline.add(new JsonObject(signet.getJsonArray("disciplines").getValue(i).toString()).getString("label"));
                 }
                 resource.put("disciplines", resourceDiscipline);
 
                 JsonArray resourceKeyword = new JsonArray();
-                for (int i = 0; getDataObject.getJsonArray("key_words").size() > i; i++) {
-                    resourceKeyword.add(getDataObject.getJsonArray("key_words").getJsonArray(i).getString(1));
+                for (int i = 0; signet.getJsonArray("plain_text").size() > i; i++) {
+                    resourceKeyword.add(new JsonObject(signet.getJsonArray("plain_text").getValue(i).toString()).getString("label"));
                 }
                 resource.put("key_words", resourceKeyword);
                 eb.send(Mediacentre.MEDIACENTRE_CREATE, resource, handlerToAsyncHandler(event -> {
@@ -112,11 +109,7 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
                         handler.handle(new Either.Left<>("Failed create public course"));
                     }
                 }));
-            }else {
-                handler.handle(new Either.Left<>("Failed get table SQL publication"));
             }
-        });
-    }
 
     @Override
     public void updateInMediacentre(JsonObject updateCourse, final Handler<Either<String, JsonObject>> handler) {
