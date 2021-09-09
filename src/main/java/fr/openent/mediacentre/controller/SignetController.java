@@ -255,13 +255,22 @@ public class SignetController extends ControllerHelper {
         signetService.get(signetId, getEvent -> {
             if (getEvent.isRight()) {
                 JsonObject signet = getEvent.right().getValue();
+                //Length == 8 when array is empty with "" so we need to remove them
+                if(signet.getJsonArray("disciplines").toString().length() == 8) {
+                    signet.getJsonArray("disciplines").remove(0);
+                }
+                if(signet.getJsonArray("levels").toString().length() == 8) {
+                    signet.getJsonArray("levels").remove(0);
+                }
+                if(signet.getJsonArray("plain_text").toString().length() == 8) {
+                    signet.getJsonArray("plain_text").remove(0);
+                }
                 boolean isShared = false;
                 int i = 0;
                 while (!isShared && i < idsObjects.size()) { // Iterate over "users", "groups", "bookmarks"
                     int j = 0;
                     Map<String, Object> o = idsObjects.get(i);
                     List<Object> values = new ArrayList<Object>(o.values());
-
                     while (!isShared && j < values.size()) { // Iterate over each pair id-actions
                         List<String> actions = (ArrayList)(values.get(j));
 
