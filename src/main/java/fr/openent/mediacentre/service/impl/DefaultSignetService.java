@@ -44,7 +44,8 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void get(String signetId, Handler<Either<String, JsonObject>> handler) {
-        String query = "SELECT * FROM " + Mediacentre.SIGNET_TABLE + " WHERE id = ?;";
+        String query = "SELECT id, resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, "+
+                "title, imageurl as image, owner_name, owner_id, url, date_creation, date_modification, favorite, collab, archived FROM " + Mediacentre.SIGNET_TABLE + " WHERE id = ?;";
         JsonArray params = new JsonArray().add(signetId);
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
     }
@@ -102,9 +103,40 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void update(String signetId, JsonObject signet, Handler<Either<String, JsonObject>> handler) {
+        JsonArray levelArray = new JsonArray();
+        if(signet.containsKey("levels")) {
+            for (int i = 0; i < signet.getJsonArray("levels").size(); i++) {
+                levelArray.add((signet.getJsonArray("levels").getJsonObject(i).getString("label")));
+            }
+        }
+        if(levelArray.isEmpty()) {
+            levelArray.add("");
+        }
+
+        JsonArray disciplineArray = new JsonArray();
+        if(signet.containsKey("disciplines")) {
+            for (int i = 0; i < signet.getJsonArray("disciplines").size(); i++) {
+                disciplineArray.add((signet.getJsonArray("disciplines").getJsonObject(i).getString("label")));
+            }
+        }
+        if(disciplineArray.isEmpty()) {
+            disciplineArray.add("");
+        }
+
+        JsonArray plainTextArray = new JsonArray();
+        if(signet.containsKey("plain_text")) {
+            for (int i = 0; i < signet.getJsonArray("plain_text").size(); i++) {
+                plainTextArray.add((signet.getJsonArray("plain_text").getJsonObject(i).getString("label")));
+            }
+        }
+        if(plainTextArray.isEmpty()) {
+            plainTextArray.add("");
+        }
+
         String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET title = ?, imageurl = ?, url = ?, date_modification = ?, " +
-                "date_creation = ?, collab = ?, archived = ? " +
-                "WHERE id = ? RETURNING *;";
+                "date_creation = ?, collab = ?, archived = ?, discipline_label = " + Sql.arrayPrepared(disciplineArray) + ", " +
+                "level_label = " + Sql.arrayPrepared(levelArray) +", key_words = "+ Sql.arrayPrepared(plainTextArray) +
+                " WHERE id = ? RETURNING *;";
 
         JsonArray params = new JsonArray()
                 .add(signet.getString("title", ""))
@@ -114,6 +146,9 @@ public class DefaultSignetService implements SignetService {
                 .add(signet.getString("date_creation", "NOW()"))
                 .add(signet.getBoolean("collab", false))
                 .add(signet.getBoolean("archived", false))
+                .addAll(disciplineArray)
+                .addAll(levelArray)
+                .addAll(plainTextArray)
                 .add(signetId);
 
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));

@@ -5,10 +5,6 @@ import {signetService} from "../../services/SignetService";
 
 export const createSignetController = ng.controller('createSignetController', ['$scope', '$timeout',
     ($scope) => {
-        $scope.levels = new Labels();
-        $scope.levels.sync("levels");
-        $scope.disciplines = new Labels();
-        $scope.disciplines.sync("disciplines");
         $scope.signet.owner_id = model.me.userId;
 
         /**
@@ -19,7 +15,19 @@ export const createSignetController = ng.controller('createSignetController', ['
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
                 $scope.signet.id = uuidv();
                 await signetService.create($scope.signet).then(async (): Promise<void> => {
-                        await $scope.vm.signets.sync();
+                    await $scope.vm.signets.sync();
+                    switch ($scope.vm.folder) {
+                        case "mine":
+                            $scope.vm.signets.all = $scope.vm.signets.all.filter(signet => !signet.archived && signet.owner_id === model.me.userId);
+                            break;
+                        case "shared":
+                            $scope.vm.signets.all = $scope.vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
+                            break;
+                        case "archived":
+                            $scope.vm.signets.all = $scope.vm.signets.all.filter(signet => signet.archived);
+                            break;
+                        default : $scope.vm.openFolder('mine'); break;
+                    }
                         Utils.safeApply($scope);
                         $scope.mc.onCloseSignetPopUp();
                     });
@@ -27,14 +35,6 @@ export const createSignetController = ng.controller('createSignetController', ['
                 notify.error(i18n.translate("moodle.info.short.title"));
             }
             await Utils.safeApply($scope);
-        };
-
-        $scope.removeLevelFromCourse = (level: Label) => {
-            $scope.signet.levels = _.without($scope.signet.levels, level);
-        };
-
-        $scope.removeDisciplineFromCourse = (discipline: Label) => {
-            $scope.signet.disciplines = _.without($scope.signet.disciplines, discipline);
         };
 
         $scope.addKeyWord = (event) => {
@@ -50,13 +50,7 @@ export const createSignetController = ng.controller('createSignetController', ['
             }
         };
 
-        $scope.removeWordFromCourse = (word: Label) => {
-            $scope.signet.plain_text = _.without($scope.signet.plain_text, word);
-            if($scope.signet.plain_text.length == 0) {
-                $scope.signet.plain_text = new Labels();
-                $scope.signet.plain_text.all = [];
-            }
-        };
+
 /*        /!**
          * get info image
          *!/

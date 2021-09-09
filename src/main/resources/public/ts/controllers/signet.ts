@@ -148,7 +148,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.openPropertiesSignet = () : void => {
             $scope.signet = vm.signets.selected[0];
             template.open('lightboxContainer', 'signets/lightbox/prop-signet');
-            vm.display.lightbox.properties = true;
+            $scope.display.lightbox.properties = true;
         };
 
         vm.openPublishSignet = (signet: Signet) : void => {

@@ -1,12 +1,21 @@
-import {idiom, model, ng, template} from 'entcore';
+import {_, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 import {Signet} from "../model/Signet";
 import {signetService} from "../services/SignetService";
+import {Label, Labels} from "../model/Label";
+import {Utils} from "../utils/Utils";
 
 declare const window: any;
 
 export interface Scope extends IRootScopeService {
+    removeLevelFromCourse(level: Label): void;
+	removeDisciplineFromCourse(discipline: Label): void;
+	removeWordFromCourse(word: Label): void;
+    query: any;
+    addKeyWord(event: any): void;
+    disciplines: Labels;
+    levels: Labels;
     displayDate (dateToFormat: Date): string;
     display: { lightbox: { signet: boolean; properties: boolean }; };
 	ws: Socket;
@@ -97,6 +106,12 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			lightbox: {signet: false, properties: false}
 		};
 		$scope.path;
+		$scope.levels = new Labels();
+		$scope.levels.sync("levels");
+		$scope.disciplines = new Labels();
+		$scope.disciplines.sync("disciplines");
+
+
 
 		const startResearch = function (state: string, sources: string[], data: any) {
 			mc.limitTo = mc.pageSize;
@@ -194,17 +209,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			signet: () => template.open('main', 'signet'),
 			searchPlainText: () => template.open('main', 'search'),
 			searchAdvanced: () => template.open('main', 'search'),
-			propSignet: async (params) => {
-				await $scope.getSignetWithRights(params.idSignet);
-				$scope.display.lightbox.properties = true;
-				template.open('lightboxContainer', 'signets/lightbox/prop-signet');
-/*				if ($scope.canCreate() && $scope.hasShareRightContrib($scope.form)) {
-
-				}*/
-/*				else {
-					$scope.redirectTo('/e403');
-				}*/
-			},
 		});
 
 		$scope.safeApply = function () {
@@ -229,5 +233,22 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.displayDate = (dateToFormat: Date) : string => {
 			return new Date(dateToFormat).toLocaleString([], {day: '2-digit', month: '2-digit', year:'numeric'});
 		};
+
+		$scope.removeLevelFromCourse = (level: Label) => {
+			$scope.signet.levels = _.without($scope.signet.levels, level);
+		};
+
+		$scope.removeDisciplineFromCourse = (discipline: Label) => {
+			$scope.signet.disciplines = _.without($scope.signet.disciplines, discipline);
+		};
+
+		$scope.removeWordFromCourse = (word: Label) => {
+			$scope.signet.plain_text = _.without($scope.signet.plain_text, word);
+			if($scope.signet.plain_text.length == 0) {
+				$scope.signet.plain_text = new Labels();
+				$scope.signet.plain_text.all = [];
+			}
+		};
+
 
 	}]);

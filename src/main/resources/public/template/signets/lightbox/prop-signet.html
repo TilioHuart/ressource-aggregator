@@ -1,10 +1,10 @@
-<div class="horizontal-spacing vertical-spacing" ng-controller="signetPropController as vm">
+<div class="horizontal-spacing vertical-spacing" ng-controller="signetPropController">
     <h2 style="color:red">Propriétés de mon signet</h2>
     <div class="horizontal-spacing vertical-spacing">
         <div class="six cell">
             <div class="twelve cell" ng-class="{ hidder: show.submitWait == true }"></div>
             <image-select id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
-                          ng-change="getTypeImage()" ng-model="vm.signet.image"/>
+                          ng-change="getTypeImage()" ng-model="signet.image"/>
         </div>
         <!--        <span style="color:red">
                     <i18n>Veuillez choisir une image</i18n>
@@ -13,18 +13,18 @@
             <div>
                 <label class="row twelve">
                     <input type="text" class="ten search_nav" ng-disabled="show.submitWait" required i18n-placeholder="Titre de mon signet *"
-                           ng-model="vm.signet.title" autofocus>
+                           ng-model="signet.title" autofocus>
                 </label>
                 <label class="row twelve">
                     <input type="text" class="ten search_nav" ng-disabled="show.submitWait" i18n-placeholder="URL de mon signet *"
-                           ng-model="vm.signet.url">
+                           ng-model="signet.url">
                 </label>
             </div>
             <div class="row">
                 <multi-combo title="[[idiom.translate('levels')]]" class="eight cell" combo-model="levels.all"
-                             search-on="label" order-by="label" filtered-model="vm.signet.levels"></multi-combo>
+                             search-on="label" order-by="label" filtered-model="filterChoice.levels"></multi-combo>
                 <div class="twelve cell select-blocks">
-                    <div ng-repeat="level in vm.signet.levels"
+                    <div ng-repeat="level in filterChoice.levels"
                          ng-click="removeLevelFromCourse(level)"
                          class="labels-in-ligne">
                         <div > [[ level.label]] </div>
@@ -33,9 +33,9 @@
             </div>
             <div class="row">
                 <multi-combo title="[[idiom.translate('disciplines')]]" class="eight cell" combo-model="disciplines.all"
-                             search-on="label"  order-by="label" filtered-model="vm.signet.disciplines"></multi-combo>
+                             search-on="label"  order-by="label" filtered-model="filterChoice.disciplines"></multi-combo>
                 <div class="twelve cell select-blocks">
-                    <div ng-repeat="discipline in vm.signet.disciplines"
+                    <div ng-repeat="discipline in filterChoice.disciplines"
                          ng-click="removeDisciplineFromCourse(discipline)"
                          class="labels-in-ligne">
                         <div> [[ discipline.label]] </div>
@@ -49,7 +49,7 @@
                 <input type="text" ng-model="query.plain_text" ng-keyup="addKeyWord($event)"
                        class="ten search_nav" i18n-placeholder="Veuillez renseigner les mots clés choisis" >
                 <div class=" twelve cell select-blocks">
-                    <div ng-repeat="word in vm.signet.plain_text.all"
+                    <div ng-repeat="word in signet.plain_text.all"
                          ng-click="removeWordFromCourse(word)"
                          class="labels-in-ligne">
                         <div><span ng-bind="word.label"></span> </div>
@@ -61,7 +61,7 @@
     <div class="row">
         <div class="right-magnet">
             <input type="button" class="cancel" i18n-value="cancel" ng-click="mc.onCloseSignetPropertiesPopUp()"/>
-            <input type="submit" class="button" i18n-value="Valider" ng-click="vm.save()"/>
+            <input type="submit" class="button" i18n-value="Valider" ng-click="save()"/>
         </div>
     </div>
 </div>

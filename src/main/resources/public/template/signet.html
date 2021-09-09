@@ -56,7 +56,7 @@
                             <div class="data-text">
                                 <div class="title" title="[[signet.title]]">[[signet.title]]</div>
                                 <div class="owner">[[signet.owner_name]]</div>
-                                <div class="date"><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_creation)]]</div>
+                                <div class="date"><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_modification)]]</div>
                             </div>
                             <div class="data-bottom">
                                 <div class="icons">
@@ -99,7 +99,7 @@
     <lightbox show="vm.display.lightbox.publishing">
         <container template="lightboxContainer"></container>
     </lightbox>
-    <lightbox show="vm.display.lightbox.properties">
+    <lightbox show="display.lightbox.properties">
         <container template="lightboxContainer"></container>
     </lightbox>
     <div ng-if="vm.display.lightbox.sharing">
