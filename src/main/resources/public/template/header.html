@@ -8,7 +8,7 @@
             <span class="horizontal-spacing"><i18n>mediacentre.title</i18n></span>
         </h1>
     </div>
-    <div class="mediacentre-button">
+    <div class="mediacentre-button" ng-init="mc.initHeader()">
         <input type="radio" id="item_1" name="box" ng-click="mc.goHome()" style="display: none;" checked>
             <label for="item_1" class="label-left">Accueil</label>
         <input ng-click="mc.goSignet()" type="radio" id="item_2" name="box" style="display: none;">

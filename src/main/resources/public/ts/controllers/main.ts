@@ -60,6 +60,8 @@ export interface MainController {
 
 	initField(field: { name: string, comparator: boolean }): void;
 
+	initHeader(): void;
+
 	openAdvancedSearch(): void;
 
 	closeAdvancedSearch(): void;
@@ -114,8 +116,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.disciplines = new Labels();
 		$scope.disciplines.sync("disciplines");
 
-
-
 		const startResearch = function (state: string, sources: string[], data: any) {
 			mc.limitTo = mc.pageSize;
 			$location.path(`/search/${state.toLowerCase()}`);
@@ -162,6 +162,15 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			mc.search.advanced.values[name] = {
 				value: '',
 				...comparator ? {comparator: '$or'} : {}
+			}
+		};
+
+		mc.initHeader = function () {
+			let accueil = document.getElementById('item_1');
+			let signets = document.getElementById('item_2');
+			if(accueil && signets){
+				accueil["checked"] = $location.url() !=  '/signet';
+				signets["checked"] = $location.url() ==  '/signet';
 			}
 		};
 

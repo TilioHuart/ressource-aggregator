@@ -1,7 +1,10 @@
 section.lightbox {
   height: auto !important;
+
   > div.content {
     padding: 0;
+    overflow: visible;
+    max-height: fit-content;
 
     .lightbox-title {
       padding: 10px;
@@ -10,10 +13,6 @@ section.lightbox {
       border-top-right-radius: 5px;
       color: $white;
       font-size: 20px;
-    }
-
-    .close-lightbox {
-      color: $white;
     }
   }
 }

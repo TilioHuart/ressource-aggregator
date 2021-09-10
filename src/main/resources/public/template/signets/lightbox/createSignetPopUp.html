@@ -1,8 +1,8 @@
 <!-- popup for create new course -->
 <div class="horizontal-spacing vertical-spacing" ng-controller="createSignetController">
-    <h2 style="color:red">Propriétés de mon signet</h2>
+    <h1 style="color:red">Propriétés de mon signet</h1>
         <div class="horizontal-spacing vertical-spacing">
-            <div class="six cell">
+            <div class="four cell horizontal-spacing">
                 <div class="twelve cell" ng-class="{ hidder: show.submitWait == true }"></div>
                 <image-select id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
                               ng-change="getTypeImage()" ng-model="signet.image"/>
@@ -10,7 +10,7 @@
             <!--        <span style="color:red">
                         <i18n>Veuillez choisir une image</i18n>
                     </span>-->
-            <div class="six cell">
+            <div class="eight cell">
                 <div>
                     <label class="row twelve">
                         <input type="text" class="ten search_nav" ng-disabled="show.submitWait" required i18n-placeholder="Titre de mon signet *"
