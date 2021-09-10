@@ -56,8 +56,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
     function ($scope, FavoriteService: FavoriteService, $location: ILocationService) {
 
         const vm: ViewModel = this;
-        $scope.path = $location.url();
-        $scope.safeApply();
         vm.signets = new Signets();
         vm.folder = "mine";
         vm.searchInput = "";
@@ -96,7 +94,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             }
 
             vm.loading = false;
-            $scope.path = $location.url();
             $scope.safeApply();
         };
 

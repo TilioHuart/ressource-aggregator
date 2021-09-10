@@ -84,7 +84,7 @@ $header-height: 165px;
     border-bottom-left-radius: 10px;
   }
 
-  input[type="radio"]:checked + .label-right, .label-left,   {
+  input[type="radio"]:checked + .label-right, input[type="radio"]:checked + .label-left  {
     background: #ff656a;
     color: white;
   }

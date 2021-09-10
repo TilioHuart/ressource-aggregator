@@ -23,7 +23,6 @@ export interface Scope extends IRootScopeService {
 	ws: Socket;
 	loaders: any;
 	idiom: any;
-	path: any;
 	signet: Signet;
 	safeApply(): void;
 	redirectTo(path: string): void;
@@ -107,7 +106,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.display = {
 			lightbox: {signet: false, properties: false}
 		};
-		$scope.path;
 		$scope.levels = new Labels();
 		$scope.levels.sync("levels");
 		$scope.disciplines = new Labels();

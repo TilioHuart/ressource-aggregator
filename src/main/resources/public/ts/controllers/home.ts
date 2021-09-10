@@ -38,7 +38,6 @@ interface EventResponses {
 export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location',
     function ($scope: Scope, route, $location: ILocationService) {
         const vm: ViewModel = this;
-        $scope.path = $location.url();
         $scope.safeApply();
         vm.favorites = [];
         vm.textbooks = [];
