@@ -5,11 +5,11 @@
                 <i18n>mediacentre.properties</i18n>
             </button>
             <button ng-click="vm.shareSignet()" class="cell"
-                    ng-show="vm.signets.selected.length === 1 ">
+                    ng-show="vm.signets.selected.length === 1">
                 <i18n>mediacentre.share</i18n>
             </button>
             <button ng-click="vm.openPublishSignet(vm.signets.selectedElements[0])" class="cell"
-                    ng-show="vm.signets.selected.length === 1 ">
+                    ng-show="vm.signets.selected.length === 1">
                 <i18n>mediacentre.publish</i18n>
             </button>
 <!--           <button ng-click="vm.archivesignets()" class="cell" ng-show="hasShareRightManager(vm.signets.selected[0])">
@@ -17,10 +17,10 @@
             </button>-->
         </div>
         <div class="row" ng-if="currentPage === Pages.signets_LIST && vm.signets.selected[0].archived" workflow="mediacentre.creation">
-            <button ng-click="vm.restoresignets()" class="cell" ng-show="hasShareRightManager(vm.signets.selected[0])">
+            <button ng-click="vm.restoresignets()" class="cell">
                 <i18n>mediacentre.restore</i18n>
             </button>
-            <button ng-click="vm.deletesignets()" class="cell" ng-show="hasShareRightManager(vm.signets.selected[0])">
+            <button ng-click="vm.deletesignets()" class="cell">
                 <i18n>mediacentre.delete</i18n>
             </button>
         </div>

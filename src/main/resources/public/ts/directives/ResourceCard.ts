@@ -23,9 +23,13 @@ export const ResourceCard = ng.directive('resourceCard',
                 $scope.type = $scope.type || 'resource';
                 let clipboard;
                 let random = Math.floor(Math.random() * 3) + 1;
-/*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
+                let signetId = 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16)
+                });
+                /*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
                 $scope.ngModel.displayTitle = $scope.ngModel.title;
-                $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode($scope.ngModel.resource_id) : hashCode($scope.ngModel.id);
+                $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode(signetId) : hashCode($scope.ngModel.id);
                 $scope.show = {
                     toolip: false,
                     loader: true
@@ -75,9 +79,9 @@ export const ResourceCard = ng.directive('resourceCard',
                     const addColoredBar = function () {
                         const colors = ["#F53B57", "#FEC63D", "#3B1D8F"]; // red, yellow, blue
                         const parent = element.find(`#color-${$scope.ngModel.hash}`).parent();
-                        parent.css("border-radius","inherit");
+                        parent.css("border-radius", "inherit");
                         parent.css("padding-left", "10px");
-                        parent.css("background-color", colors[random-1]);
+                        parent.css("background-color", colors[random - 1]);
                     };
 
                     $timeout(() => {
@@ -158,7 +162,6 @@ export const ResourceCard = ng.directive('resourceCard',
                             throw e;
                         }
                     }
-
                 }
             }
         }

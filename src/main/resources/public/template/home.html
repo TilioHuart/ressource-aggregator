@@ -68,4 +68,26 @@
             </resource-card>
         </div>
     </div>
+
+    <!--Signets-->
+    <div class="textbooks horizontal-spacing row vertical-spacing" ng-show="vm.publicSignets.length > 0">
+        <h2>
+            <i18n>MES SIGNETS</i18n>
+            <div class="cell right-magnet card horizontal-spacing"
+                 style="text-transform: capitalize; display: flex"
+                 ng-click="vm.refreshTextBooks()">
+                <i class="refresh horizontal-spacing"></i>
+                <i18n>mediacentre.textbooks.refresh</i18n>
+            </div>
+        </h2>
+
+        <!--Content-->
+        <div class="textbooks-grid" ng-show="vm.publicSignets.length > 0">
+            <resource-card
+                    ng-repeat="resource in vm.publicSignets | orderBy:'title' track by $index"
+                    type="textbook"
+                    ng-model="resource">
+            </resource-card>
+        </div>
+    </div>
 </div>

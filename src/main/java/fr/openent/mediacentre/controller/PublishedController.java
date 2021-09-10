@@ -51,6 +51,10 @@ public class PublishedController extends ControllerHelper {
 
     @Post("/signet/publish")
     @ApiDoc("Publish a signet in BP")
+    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+/*
+    @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
+*/
     public void publish (HttpServerRequest request) {
         RequestUtils.bodyToJson(request, signet -> {
                             callMediacentreEventBusForPublish(signet, mediacentreEventBus, event -> {

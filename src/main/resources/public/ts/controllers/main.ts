@@ -1,4 +1,4 @@
-import {_, idiom, model, ng, template} from 'entcore';
+import {_, Behaviours, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 import {Signet} from "../model/Signet";
@@ -9,6 +9,8 @@ import {Utils} from "../utils/Utils";
 declare const window: any;
 
 export interface Scope extends IRootScopeService {
+    hasShareRightView(signet: Signet): boolean;
+    hasShareRightManager(signet: Signet): boolean;
     removeLevelFromCourse(level: Label): void;
 	removeDisciplineFromCourse(discipline: Label): void;
 	removeWordFromCourse(word: Label): void;
@@ -250,5 +252,12 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			}
 		};
 
+		$scope.hasShareRightManager = (signet : Signet) => {
+			return signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.manager.right);
+		};
+
+		$scope.hasShareRightView = (signet : Signet) => {
+			return signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.contrib.right);
+		};
 
 	}]);

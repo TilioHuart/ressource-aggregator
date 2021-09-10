@@ -1,20 +1,36 @@
 package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.helper.ElasticSearchHelper;
 import fr.openent.mediacentre.service.SignetService;
-import fr.openent.mediacentre.service.SignetService;
+import fr.openent.mediacentre.source.Moodle;
+import fr.openent.mediacentre.source.Signet;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
-import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.sql.Sql;
 import org.entcore.common.sql.SqlResult;
 import org.entcore.common.user.UserInfos;
 import java.util.List;
-import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
+import java.util.function.UnaryOperator;
 
 public class DefaultSignetService implements SignetService {
+
+    private final UnaryOperator<JsonObject> actionProvider = resource -> {
+        JsonObject message = new JsonObject()
+                .put("success", String.format("%s.action.duplicate.success", Moodle.class.getName()))
+                .put("error", String.format("%s.action.duplicate.error", Moodle.class.getName()));
+
+        JsonObject action = new JsonObject()
+                .put("label", String.format("%s.action.duplicate", Moodle.class.getName()))
+                .put("url", String.format("/moodle/course/duplicate/BP/%s", resource.getString("id")))
+                .put("method", HttpMethod.POST)
+                .put("message", message);
+
+        return resource.put("action", action);
+    };
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
@@ -182,6 +198,10 @@ public class DefaultSignetService implements SignetService {
                 .add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR)
                 .add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR);
         Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
+    }
+
+    public void getPublicSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler) {
+        ElasticSearchHelper.filterSource(Signet.class, userId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
     }
 
 }

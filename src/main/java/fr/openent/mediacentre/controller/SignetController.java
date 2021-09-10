@@ -183,6 +183,9 @@ public class SignetController extends ControllerHelper {
     @Put("/share/resource/:id")
     @ApiDoc("Add rights for a given signet")
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+/*
+    @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
+*/
     public void shareResource(final HttpServerRequest request) {
         RequestUtils.bodyToJson(request, pathPrefix + "share", shareFormObject -> {
             UserUtils.getUserInfos(eb, request, user -> {

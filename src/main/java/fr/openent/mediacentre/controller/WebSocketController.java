@@ -2,14 +2,18 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.enums.SearchState;
+import fr.openent.mediacentre.helper.ElasticSearchHelper;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.helper.WorkflowHelper;
 import fr.openent.mediacentre.service.FavoriteService;
+import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.TextBookService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
+import fr.openent.mediacentre.service.impl.DefaultSignetService;
 import fr.openent.mediacentre.service.impl.DefaultTextBookService;
 import fr.openent.mediacentre.source.GAR;
+import fr.openent.mediacentre.source.Signet;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.request.CookieHelper;
@@ -38,6 +42,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
     private final Logger log = LoggerFactory.getLogger(WebSocketController.class);
     private final FavoriteService favoriteService = new DefaultFavoriteService();
     private final TextBookService textBookService = new DefaultTextBookService();
+    private final SignetService signetService = new DefaultSignetService();
     private final FavoriteHelper favoriteHelper = new FavoriteHelper();
 
 
@@ -87,6 +92,9 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                         case "textbooks": {
                             textBooks(state, userInfos, ws);
                             break;
+                        }
+                        case "signets": {
+                            getSignet(state, userInfos, ws);
                         }
                         default:
                             ws.writeTextMessage(new JsonObject().put("error", "Unknown event").put("status", "ko").encode());
@@ -240,6 +248,23 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                 ws.writeTextMessage(frame.encode());
             }
         });
+    }
+
+    private void getSignet(String state, UserInfos user, ServerWebSocket ws) {
+        Handler<Either<JsonObject, JsonObject>> handler = event -> {
+            if (event.isLeft()) {
+                log.error("[WebSockerController@getSignet] Failed to retrieve source resources.", event.left().getValue());
+                ws.writeTextMessage(new JsonObject().put("error", event.left().getValue()).put("status", "ko").encode());
+            } else {
+                JsonObject frame = new JsonObject()
+                        .put("event", "signets_Result")
+                        .put("state", state)
+                        .put("status", "ok")
+                        .put("data", new JsonObject().put("signets", event.right().getValue()));
+                ws.writeTextMessage(frame.encode());
+            }
+        };
+         signetService.getPublicSignet(user.getUserId(), handler);
     }
 
     /**

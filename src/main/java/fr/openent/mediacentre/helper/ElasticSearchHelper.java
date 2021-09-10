@@ -108,6 +108,17 @@ public class ElasticSearchHelper {
         });
     }
 
+    public static void filterSource(Class<?> source, String userId, Handler<AsyncResult<JsonArray>> handler) {
+        JsonArray must = new JsonArray();
+        must.add(sourceFilter(source));
+        JsonObject bool = new JsonObject()
+                .put("must", must);
+        JsonObject queryObject = new JsonObject()
+                .put("bool", bool);
+
+        search(source, userId, esQueryObject(queryObject), handler);
+    }
+
 
     public static void advancedSearch(Class<?> source, JsonObject query, String userId, List<String> structures, Handler<AsyncResult<JsonArray>> handler) {
         boolean hasStructures = Objects.nonNull(structures) && !structures.isEmpty();

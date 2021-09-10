@@ -2,7 +2,6 @@ package fr.openent.mediacentre.service;
 
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.user.UserInfos;
@@ -68,5 +67,7 @@ public interface SignetService {
      * @param handler function handler returning JsonArray data
      */
     void getAllMyFormRights(List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler);
+
+    void getPublicSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler);
 
 }
