@@ -1,0 +1,26 @@
+<lightbox show="vm.display.lightbox.delete" on-close="vm.display.lightbox.delete = false">
+    <h2><i18n>mediacentre.signet.delete.title</i18n></h2>
+    <div class="warning" ng-if="vm.display.warning" style="margin-top: 20px;">
+        <i18n>mediacentre.warning.signets.delete</i18n>
+    </div>
+    <table class="table" style="margin: 20px 10px;">
+        <thead>
+        <tr>
+            <th class="four"><i18n>mediacentre.table.title</i18n></th>
+            <th class="three"><i18n>mediacentre.table.author</i18n></th>
+            <th class="three"><i18n>mediacentre.table.modified</i18n></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="signet in vm.signets.selected">
+            <td>[[signet.title]]</td>
+            <td>[[signet.owner_name]]</td>
+            <td><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_modification)]]</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="action-buttons">
+        <button class="cell cancel" ng-click="vm.display.lightbox.delete = false"><i18n>mediacentre.cancel</i18n></button>
+        <button class="cell" ng-click="vm.doDeleteSignets()"><i18n>mediacentre.delete</i18n></button>
+    </div>
+</lightbox>

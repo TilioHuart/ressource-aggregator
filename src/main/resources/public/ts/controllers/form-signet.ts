@@ -80,6 +80,14 @@ export const signetPropController = ng.controller('signetPropController', ['$sco
             $scope.filterChoice.disciplines = _.without($scope.filterChoice.disciplines, discipline);
         };
 
+        $scope.removeWordFromCourse = (word: Label) => {
+            $scope.signet.plain_text.all = _.without($scope.signet.plain_text.all, word);
+            if($scope.signet.plain_text.length == 0) {
+                $scope.signet.plain_text = new Labels();
+                $scope.signet.plain_text.all = [];
+            }
+        };
+
         init();
 
     }]);

@@ -90,9 +90,9 @@ export class Signet implements Selectable, Shareable  {
             hash: this.hash,
             displayTitle: this.displayTitle,
             source: this.source,
-            disciplines: this.disciplines,
-            levels: this.levels,
-            plain_text: this.plain_text
+            disciplines: this.disciplines.all,
+            levels: this.levels.all,
+            plain_text: this.plain_text.all
         }
     }
 

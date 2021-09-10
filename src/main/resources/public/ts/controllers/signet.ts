@@ -46,6 +46,9 @@ interface ViewModel {
     closePublishSignetLightbox() : void;
     deleteSignets() : void;
     doDeleteSignets() : Promise<void>;
+    archiveSignets() : void;
+    doArchiveSignets() : Promise<void>;
+    restoreSignets(): void;
     infiniteScroll() : void;
     addFavorite(signet: Signet) : Promise<void>;
     removeFavorite(signet: Signet) : Promise<void>;
@@ -174,7 +177,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.deleteSignets = () : void => {
             vm.display.warning = true;
-            template.open('lightbox', 'lightbox/signet-confirm-delete');
+            template.open('lightboxContainer', 'signets/lightbox/signet-confirm-delete');
             vm.display.lightbox.delete = true;
         };
 
@@ -185,10 +188,48 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                         await signetService.delete(signet.id);
                     }
                 }
-                template.close('lightbox');
+                template.close('lightboxContainer');
                 vm.display.lightbox.delete = false;
                 vm.display.warning = false;
-                notify.success(idiom.translate('signetulaire.success.signets.delete'));
+                notify.success(idiom.translate('mediacentre.success.signets.delete'));
+                init();
+                $scope.safeApply();
+            }
+            catch (e) {
+                throw e;
+            }
+        };
+
+        vm.archiveSignets = () : void => {
+            vm.display.warning = !!vm.signets.selected.find(signet => signet.sent === true);
+            template.open('lightboxContainer', 'signets/lightbox/signet-confirm-archive');
+            vm.display.lightbox.archive = true;
+        };
+
+        vm.doArchiveSignets = async () : Promise<void> => {
+            try {
+                for (let signet of vm.signets.selected) {
+                    await signetService.archive(signet);
+                }
+                template.close('lightboxContainer');
+                vm.display.lightbox.archive = false;
+                vm.display.warning = false;
+                notify.success(idiom.translate('mediacentre.success.signets.archive'));
+                init();
+                $scope.safeApply();
+            }
+            catch (e) {
+                throw e;
+            }
+        };
+
+        vm.restoreSignets = async () : Promise<void> => {
+            try {
+                for (let signet of vm.signets.selected) {
+                    await signetService.restore(signet);
+                }
+                template.close('lightboxContainer');
+                notify.success(idiom.translate('mediacentre.success.signets.restore'));
                 init();
                 $scope.safeApply();
             }

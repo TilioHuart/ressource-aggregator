@@ -5,10 +5,13 @@ import {Signet} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
 import {Utils} from "../utils/Utils";
+import {AxiosResponse} from "axios";
 
 declare const window: any;
 
 export interface Scope extends IRootScopeService {
+	isStatusXXX(response: any, status: number): any;
+	getDataIf200(response: any): any;
     hasShareRightView(signet: Signet): boolean;
     hasShareRightManager(signet: Signet): boolean;
     removeLevelFromCourse(level: Label): void;
@@ -256,6 +259,15 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 
 		$scope.hasShareRightView = (signet : Signet) => {
 			return signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.contrib.right);
+		};
+
+		$scope.getDataIf200 = (response: AxiosResponse) : any => {
+			if ($scope.isStatusXXX(response, 200)) { return response.data; }
+			else { return null; }
+		};
+
+		$scope.isStatusXXX = (response: AxiosResponse, status: number) : any => {
+			return response.status === status;
 		};
 
 	}]);

@@ -8,6 +8,8 @@ export interface SignetService {
     save(signet: Signet) : Promise<AxiosResponse>;
     create(signet: Signet) : Promise<AxiosResponse>;
     update(signet: Signet) : Promise<AxiosResponse>;
+    archive(signet: Signet) : Promise<AxiosResponse>;
+    restore(signet: Signet) : Promise<AxiosResponse>;
     delete(signetId: number) : Promise<AxiosResponse>;
     unshare(signetId: number) : Promise<AxiosResponse>;
     getMySignetRights(signetId: number) : Promise<AxiosResponse>;
@@ -63,6 +65,26 @@ export const signetService: SignetService = {
             return await http.delete(`/mediacentre/signets/${signetId}`);
         } catch (err) {
             notify.error(idiom.translate('mediacentre.error.signetService.delete'));
+            throw err;
+        }
+    },
+
+    async archive(signet: Signet) : Promise<AxiosResponse> {
+        try {
+            signet.archived = true;
+            return await this.update(signet.toJson());
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.archive'));
+            throw err;
+        }
+    },
+
+    async restore(signet: Signet) : Promise<AxiosResponse> {
+        try {
+            signet.archived = false;
+            return await this.update(signet.toJson());
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.restore'));
             throw err;
         }
     },

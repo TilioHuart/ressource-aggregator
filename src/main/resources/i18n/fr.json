@@ -71,6 +71,18 @@
   "mediacentre.signets.sent": "Signets envoyés",
   "mediacentre.signets.archived": "Corbeille",
   "mediacentre.signets.empty": "Désolé, vous n'avez aucun signet ...",
+  "mediacentre.table.title": "Titre du Signet",
+  "mediacentre.signet.archive.title": "Supprimer les signets sélectionnés",
+  "mediacentre.signet.delete.title": "Supprimer définitivement",
+  "mediacentre.warning.signets.archive": "Attention, certains signets que vous souhaitez supprimer ont été envoyés à des utilisateurs et ne leur seront désormais plus accessibles",
+  "mediacentre.warning.signets.delete": "Supprimer définitivement ce(s) signet(s) ? Cette opération est irréversible",
+  "mediacentre.archive": "Archiver",
+  "mediacentre.restore": "Restaurer",
+  "mediacentre.delete": "Supprimer",
+  "mediacentre.confirm": "Confirmer",
+  "mediacentre.cancel": "Annuler",
+  "mediacentre.table.author": "Auteur",
+  "mediacentre.table.modified": "Dernière modification",
   "mediacentre.signet.create.button": "Créer un signet",
   "mediacentre.filter": "Filtre",
   "mediacentre.modified": "Modifié le ",
@@ -81,5 +93,26 @@
   "disciplines" : "Disciplines",
   "keyword": "Mots clés",
   "mediacentre.contrib": "Visualisation",
-  "mediacentre.manager": "Manager"
+  "mediacentre.manager": "Manager",
+
+
+  "mediacentre.error.signet.sync": "Une erreur est survenue lors de la synchronisation des signets",
+  "mediacentre.error.signetService.list": "Une erreur est survenue lors de la récupération des signets",
+  "mediacentre.error.signetService.create": "Une erreur est survenue lors  la création du nouveau signet",
+  "mediacentre.error.signetService.get": "Une erreur est survenue lors de la récupération du signet",
+  "mediacentre.error.signetService.update": "Une erreur est survenue lors de la sauvegarde du signet",
+  "mediacentre.error.signetService.archive": "Une erreur est survenue lors de l'archivage du signet",
+  "mediacentre.error.signetService.restore": "Une erreur est survenue lors de la restauration du signet",
+  "mediacentre.error.signetService.delete": "Une erreur est survenue lors de la suppression du signet",
+  "mediacentre.error.signetService.unshare": "Une erreur est survenue lors de la suppression du partage du signet",
+  "mediacentre.error.signetService.image": "Une erreur est survenue lors de la récupération de l'image",
+
+
+  "mediacentre.success.signet.create": "Votre signet a bien été créé !",
+  "mediacentre.success.signet.save": "Votre signet a bien été sauvegardé !",
+  "mediacentre.success.signet.share": "Votre signet a bien été partagé !",
+  "mediacentre.success.signets.archive": "Tous les signets sélectionnés ont bien été archivés !",
+  "mediacentre.success.signets.restore": "Tous les signets sélectionnés ont bien été restaurés !",
+  "mediacentre.success.signets.delete": "Tous les signets sélectionnés ont bien été supprimés !"
+
 }

@@ -100,7 +100,7 @@ public class SignetController extends ControllerHelper {
     }
 
     @Delete("/signets/:signetId")
-    @ApiDoc("Delete a scpecific signet")
+    @ApiDoc("Delete a specific signet")
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void delete(HttpServerRequest request) {
         String signetId = request.getParam("signetId");

@@ -12,15 +12,20 @@
                     ng-show="vm.signets.selected.length === 1">
                 <i18n>mediacentre.publish</i18n>
             </button>
-<!--           <button ng-click="vm.archivesignets()" class="cell" ng-show="hasShareRightManager(vm.signets.selected[0])">
+            <button ng-click="vm.deleteSignets()" class="cell"
+                    ng-show="vm.signets.selected.length === 1">
+                <i18n>mediacentre.delete</i18n>
+            </button>
+            <button ng-click="vm.archiveSignets()" class="cell"
+                    ng-show="vm.signets.selected.length === 1">
                 <i18n>mediacentre.archive</i18n>
-            </button>-->
+            </button>
         </div>
-        <div class="row" ng-if="currentPage === Pages.signets_LIST && vm.signets.selected[0].archived" workflow="mediacentre.creation">
-            <button ng-click="vm.restoresignets()" class="cell">
+        <div class="row" ng-if="vm.signets.selected[0].archived">
+            <button ng-click="vm.restoreSignets()" class="cell">
                 <i18n>mediacentre.restore</i18n>
             </button>
-            <button ng-click="vm.deletesignets()" class="cell">
+            <button ng-click="vm.deleteSignets()" class="cell">
                 <i18n>mediacentre.delete</i18n>
             </button>
         </div>
