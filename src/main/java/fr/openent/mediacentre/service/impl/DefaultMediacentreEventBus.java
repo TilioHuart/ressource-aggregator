@@ -70,7 +70,7 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
                         .put("authors", authors)
                         .put("id", signet.getInteger("id"))
                         .put("image", signet.getString("imageurl"))
-                        .put("document_types", new JsonArray().add("Parcours Mediacentre"))
+                        .put("document_types", signet.getBoolean("orientation") ? new JsonArray().add("Orientation") : new JsonArray().add("Parcours Mediacentre"))
                         .put("link", mediacentreConfig.getString("host") + signet.getString("url"))
                         .put("date", System.currentTimeMillis())
                         .put("favorite", false)

@@ -3,40 +3,23 @@ package fr.openent.mediacentre.service.impl;
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.helper.ElasticSearchHelper;
 import fr.openent.mediacentre.service.SignetService;
-import fr.openent.mediacentre.source.Moodle;
 import fr.openent.mediacentre.source.Signet;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.sql.Sql;
 import org.entcore.common.sql.SqlResult;
 import org.entcore.common.user.UserInfos;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 public class DefaultSignetService implements SignetService {
-
-    private final UnaryOperator<JsonObject> actionProvider = resource -> {
-        JsonObject message = new JsonObject()
-                .put("success", String.format("%s.action.duplicate.success", Moodle.class.getName()))
-                .put("error", String.format("%s.action.duplicate.error", Moodle.class.getName()));
-
-        JsonObject action = new JsonObject()
-                .put("label", String.format("%s.action.duplicate", Moodle.class.getName()))
-                .put("url", String.format("/moodle/course/duplicate/BP/%s", resource.getString("id")))
-                .put("method", HttpMethod.POST)
-                .put("message", message);
-
-        return resource.put("action", action);
-    };
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
         JsonArray params = new JsonArray();
         String query = "SELECT DISTINCT s.id, s.resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
-                "title, imageurl, s.owner_name, s.owner_id, url, date_creation, date_modification, favorite, collab, archived" +
+                "title, imageurl, s.owner_name, s.owner_id, url, date_creation, date_modification, favorite, collab, archived, orientation" +
                 " FROM " + Mediacentre.SIGNET_TABLE + " s" +
                 " LEFT JOIN " + Mediacentre.SIGNET_SHARES_TABLE + " ss ON s.id = ss.resource_id " +
                 " LEFT JOIN " + Mediacentre.MEMBERS_TABLE + " m ON (ss.member_id = m.id AND m.group_id IS NOT NULL) " +
@@ -61,7 +44,7 @@ public class DefaultSignetService implements SignetService {
     @Override
     public void get(String signetId, Handler<Either<String, JsonObject>> handler) {
         String query = "SELECT id, resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, "+
-                "title, imageurl as image, owner_name, owner_id, url, date_creation, date_modification, favorite, collab, archived FROM " + Mediacentre.SIGNET_TABLE + " WHERE id = ?;";
+                "title, imageurl as image, owner_name, owner_id, url, date_creation, date_modification, favorite, collab, archived, orientation FROM " + Mediacentre.SIGNET_TABLE + " WHERE id = ?;";
         JsonArray params = new JsonArray().add(signetId);
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
     }
@@ -100,8 +83,8 @@ public class DefaultSignetService implements SignetService {
         }
 
         String query = "INSERT INTO " + Mediacentre.SIGNET_TABLE + " (resource_id, discipline_label, level_label, key_words, title, " +
-                "imageurl, owner_name, owner_id, url, date_creation, date_modification) " +
-                "VALUES (?, " + Sql.arrayPrepared(disciplineArray) + " ," + Sql.arrayPrepared(levelArray) + " ," + Sql.arrayPrepared(plainTextArray) + ", ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
+                "imageurl, owner_name, owner_id, url, date_creation, date_modification, orientation) " +
+                "VALUES (?, " + Sql.arrayPrepared(disciplineArray) + " ," + Sql.arrayPrepared(levelArray) + " ," + Sql.arrayPrepared(plainTextArray) + ", ?, ?, ?, ?, ?, ?, ?, ?) RETURNING *;";
         JsonArray params = new JsonArray()
                 .add(signet.getString("id"))
                 .addAll(disciplineArray)
@@ -112,7 +95,8 @@ public class DefaultSignetService implements SignetService {
                 .add(user.getLastName() + " " + user.getFirstName())
                 .add(user.getUserId())
                 .add(signet.getString("url"))
-                .add("NOW()").add("NOW()");
+                .add("NOW()").add("NOW()")
+                .add(signet.getBoolean("orientation", false));
 
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
     }
@@ -150,7 +134,7 @@ public class DefaultSignetService implements SignetService {
         }
 
         String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET title = ?, imageurl = ?, url = ?, date_modification = ?, " +
-                "date_creation = ?, collab = ?, archived = ?, discipline_label = " + Sql.arrayPrepared(disciplineArray) + ", " +
+                "date_creation = ?, collab = ?, archived = ?, orientation = ?, discipline_label = " + Sql.arrayPrepared(disciplineArray) + ", " +
                 "level_label = " + Sql.arrayPrepared(levelArray) +", key_words = "+ Sql.arrayPrepared(plainTextArray) +
                 " WHERE id = ? RETURNING *;";
 
@@ -162,6 +146,7 @@ public class DefaultSignetService implements SignetService {
                 .add(signet.getString("date_creation", "NOW()"))
                 .add(signet.getBoolean("collab", false))
                 .add(signet.getBoolean("archived", false))
+                .add(signet.getBoolean("orientation", false))
                 .addAll(disciplineArray)
                 .addAll(levelArray)
                 .addAll(plainTextArray)

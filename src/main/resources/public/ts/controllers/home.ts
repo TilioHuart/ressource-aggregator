@@ -13,6 +13,7 @@ interface ViewModel {
     favorites: Resource[];
     textbooks: Resource[];
     publicSignets: Resource[];
+    orientationSignets: Resource[];
     displayedResources: Resource[];
 
     seeMyFavorite(): void;
@@ -70,7 +71,8 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                 $scope.safeApply();
             },
             signets_Result: function (frame) {
-                vm.publicSignets = frame.data.signets.resources;
+                vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Parcours Mediacentre");
+                vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
                 $scope.safeApply();
             },
             favorites_Result: function (frame) {

@@ -3,6 +3,7 @@ import {Signet} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
 import {Utils} from "../utils/Utils";
+import {idiom as i18n} from "entcore/types/src/ts/idiom";
 
 export const signetPropController = ng.controller('signetPropController', ['$scope',
     function ($scope) {
@@ -30,6 +31,7 @@ export const signetPropController = ng.controller('signetPropController', ['$sco
 
 
         $scope.save = async () : Promise<void> => {
+            if ($scope.fieldsAllFilled()) {
             $scope.signet.plain_text = $scope.signet.plain_text.all;
             $scope.signet.disciplines = $scope.filterChoice.disciplines;
             $scope.signet.levels = $scope.filterChoice.levels;
@@ -50,6 +52,9 @@ export const signetPropController = ng.controller('signetPropController', ['$sco
                 Utils.safeApply($scope);
                 $scope.mc.onCloseSignetPropertiesPopUp();
             });
+            } else {
+                notify.error(i18n.translate("mediacentre.error.info"));
+            }
         };
 
         $scope.getImage = async () : Promise<void> => {
@@ -87,6 +92,12 @@ export const signetPropController = ng.controller('signetPropController', ['$sco
                 $scope.signet.plain_text.all = [];
             }
         };
+
+        $scope.fieldsAllFilled = () => {
+            return $scope.signet.title.length >= 4 && $scope.signet.plain_text.all.length > 0 &&
+                $scope.signet.filterChoice.disciplines.length > 0 && $scope.signet.filterChoice.levels.length > 0 &&
+                !!$scope.signet.url && !!$scope.signet.image;
+        }
 
         init();
 

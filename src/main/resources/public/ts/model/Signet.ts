@@ -19,6 +19,7 @@ export class Signet implements Selectable, Shareable  {
     owner_id: string;
     owner_name: string;
     date_creation: Date;
+    orientation: boolean;
     sent: boolean;
     collab: boolean;
     reminded: boolean;
@@ -60,6 +61,7 @@ export class Signet implements Selectable, Shareable  {
         this.anonymous = false;
         this.displayed = true;
         this.selected = false;
+        this.orientation = false;
         this.hash = 0;
         this.resource_id = 0;
         this.displayTitle = "";
@@ -88,6 +90,7 @@ export class Signet implements Selectable, Shareable  {
             anonymous: this.anonymous,
             selected: this.selected,
             hash: this.hash,
+            orientation: this.orientation,
             displayTitle: this.displayTitle,
             source: this.source,
             disciplines: this.disciplines.all,

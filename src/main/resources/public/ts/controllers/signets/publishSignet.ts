@@ -31,7 +31,7 @@ export const publishSignetController = ng.controller('publishSignetController', 
          * Create a signet
          */
         $scope.publishSignet = async (): Promise<void> => {
-            if ($scope.signet.title.length >= 4) {
+            if ($scope.fieldsAllFilled()) {
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
                 $scope.signet.disciplines = $scope.filterChoice.disciplines;
                 $scope.signet.levels = $scope.filterChoice.levels;
@@ -53,7 +53,7 @@ export const publishSignetController = ng.controller('publishSignetController', 
                     $scope.vm.closePublishSignetLightbox();
                 });
             } else {
-                notify.error(i18n.translate("moodle.info.short.title"));
+                notify.error(i18n.translate("mediacentre.error.info"));
             }
             await Utils.safeApply($scope);
         };
@@ -86,6 +86,11 @@ export const publishSignetController = ng.controller('publishSignetController', 
                 $scope.signet.plain_text.all = [];
             }
         };
+
+        $scope.fieldsAllFilled = () => {
+            return $scope.signet.plain_text.all.length > 0 &&
+                   $scope.filterChoice.disciplines.length > 0 && $scope.filterChoice.levels.length > 0;
+        }
 
         init();
     }]);

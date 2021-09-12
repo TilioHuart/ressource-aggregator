@@ -106,6 +106,7 @@
   "mediacentre.error.signetService.delete": "Une erreur est survenue lors de la suppression du signet",
   "mediacentre.error.signetService.unshare": "Une erreur est survenue lors de la suppression du partage du signet",
   "mediacentre.error.signetService.image": "Une erreur est survenue lors de la récupération de l'image",
+  "mediacentre.error.info": "Un ou plusieurs champs n'ont pas été correctement saisis, veuillez ressayer",
 
 
   "mediacentre.success.signet.create": "Votre signet a bien été créé !",
