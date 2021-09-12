@@ -1,9 +1,8 @@
-import {_, idiom, model, ng, notify, template} from 'entcore';
+import {_, idiom as i18n, model, ng, notify, template} from 'entcore';
 import {Signet} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
 import {Utils} from "../utils/Utils";
-import {idiom as i18n} from "entcore/types/src/ts/idiom";
 
 export const signetPropController = ng.controller('signetPropController', ['$scope',
     function ($scope) {
@@ -95,7 +94,7 @@ export const signetPropController = ng.controller('signetPropController', ['$sco
 
         $scope.fieldsAllFilled = () => {
             return $scope.signet.title.length >= 4 && $scope.signet.plain_text.all.length > 0 &&
-                $scope.signet.filterChoice.disciplines.length > 0 && $scope.signet.filterChoice.levels.length > 0 &&
+                $scope.filterChoice.disciplines.length > 0 && $scope.filterChoice.levels.length > 0 &&
                 !!$scope.signet.url && !!$scope.signet.image;
         }
 
