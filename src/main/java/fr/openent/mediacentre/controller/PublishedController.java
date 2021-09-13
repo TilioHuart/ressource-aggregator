@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.service.impl.DefaultMediacentreEventBus;
 import fr.openent.mediacentre.service.impl.DefaultModuleSQLRequestService;
 import fr.wseduc.rs.ApiDoc;
@@ -49,12 +50,10 @@ public class PublishedController extends ControllerHelper {
         moduleSQLRequestService.getDisciplines(arrayResponseHandler(request));
     }
 
-    @Post("/signet/publish")
+    @Post("/signet/publish/:id")
     @ApiDoc("Publish a signet in BP")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
-/*
+    @ResourceFilter(ShareAndOwner.class)
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
-*/
     public void publish (HttpServerRequest request) {
         RequestUtils.bodyToJson(request, signet -> {
                             callMediacentreEventBusForPublish(signet, mediacentreEventBus, event -> {
@@ -64,61 +63,6 @@ public class PublishedController extends ControllerHelper {
                             });
     });
     }
-
-    /*@Post("/metadata/update")
-    @ApiDoc("Update public signet metadata")
-    @ResourceFilter(PublicateRight.class)
-    @SecuredAction(value = "", type = ActionType.RESOURCE)
-    public void updatePublicCourseMetadata(HttpServerRequest request) {
-        RequestUtils.bodyToJson(request, updateMetadata -> {
-            Integer signet_id = updateMetadata.getJsonArray("signetsId").getInteger(0);
-            JsonObject newMetadata = new JsonObject();
-
-            JsonArray levelArray = new JsonArray();
-            for (int i = 0; i < updateMetadata.getJsonArray("levels").size(); i++) {
-                levelArray.add((updateMetadata.getJsonArray("levels").getJsonObject(i).getString("label")));
-            }
-            if(levelArray.isEmpty()) {
-                levelArray.add("");
-            }
-            newMetadata.put("level_label", levelArray);
-
-            JsonArray disciplineArray = new JsonArray();
-            for (int i = 0; i < updateMetadata.getJsonArray("disciplines").size(); i++) {
-                disciplineArray.add((updateMetadata.getJsonArray("disciplines").getJsonObject(i).getString("label")));
-            }
-            if(disciplineArray.isEmpty()) {
-                disciplineArray.add("");
-            }
-            newMetadata.put("discipline_label", disciplineArray);
-
-            JsonArray plainTextArray = new JsonArray();
-            for (int i = 0; i < updateMetadata.getJsonArray("plain_text").size(); i++) {
-                plainTextArray.add((updateMetadata.getJsonArray("plain_text").getJsonObject(i).getString("label")));
-            }
-            if(plainTextArray.isEmpty()) {
-                plainTextArray.add("");
-            }
-            newMetadata.put("plain_text", plainTextArray);
-            callMediacentreEventBusToUpdateMetadata(updateMetadata, mediacentreEventBus, ebEvent -> {
-                if (ebEvent.isRight()) {
-                    moduleSQLRequestService.updatePublicCourseMetadata(signet_id, newMetadata, event -> {
-                        if (event.isRight()) {
-                            request.response()
-                                    .setStatusCode(200)
-                                    .end();
-                        } else {
-                            log.error("Problem updating the public signet metadata : " + event.left().getValue());
-                            unauthorized(request);
-                        }
-                    });
-                } else {
-                    log.error("Problem with ElasticSearch updating : " + ebEvent.left().getValue());
-                    unauthorized(request);
-                }
-            });
-        });
-    }*/
 
     static public void callMediacentreEventBusForPublish(JsonObject signet, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
                                                          final Handler<Either<String, JsonObject>> handler) {

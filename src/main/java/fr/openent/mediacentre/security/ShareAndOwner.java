@@ -31,7 +31,7 @@ public class ShareAndOwner implements ResourcesProvider {
             }
 
             Object[] groupsAndUserIds = gu.toArray();
-            String query = "SELECT count(*) FROM " + conf.getSchema() + conf.getTable() + " LEFT JOIN " + conf.getSchema() + conf.getShareTable() + " ON id = resource_id WHERE ((member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action = ?) OR owner_id = ?) AND id = ?";
+            String query = "SELECT count(*) FROM " + conf.getSchema() + conf.getTable() + " LEFT JOIN " + conf.getSchema() + conf.getShareTable() + " ON id = " + conf.getShareTable() + ".resource_id WHERE ((member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action = ?) OR owner_id = ?) AND id = ?";
             JsonArray values = (new fr.wseduc.webutils.collections.JsonArray(gu)).add(sharedMethod).add(user.getUserId()).add(Sql.parseId(id));
             Sql.getInstance().prepared(query, values, new Handler<Message<JsonObject>>() {
                 public void handle(Message<JsonObject> message) {

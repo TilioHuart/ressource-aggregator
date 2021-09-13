@@ -128,7 +128,7 @@ export const signetService: SignetService = {
 
     async publish(signet: Signet) : Promise<AxiosResponse> {
         try {
-            return await http.post(`/mediacentre/signet/publish`, signet);
+            return await http.post(`/mediacentre/signet/publish/${signet.id}`, signet);
         } catch (err) {
             notify.error('mediacentre.signetService.publish.err');
             throw err;

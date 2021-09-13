@@ -5,27 +5,27 @@
                 <i18n>mediacentre.properties</i18n>
             </button>
             <button ng-click="vm.shareSignet()" class="cell"
-                    ng-show="vm.signets.selected.length === 1">
+                    ng-show="vm.signets.selected.length === 1 && hasShareRightManager(vm.signets.selectedElements)">
                 <i18n>mediacentre.share</i18n>
             </button>
             <button ng-click="vm.openPublishSignet()" class="cell"
-                    ng-show="vm.signets.selected.length === 1">
+                    ng-show="vm.signets.selected.length === 1 && hasShareRightManager(vm.signets.selectedElements)">
                 <i18n>mediacentre.publish</i18n>
             </button>
             <button ng-click="vm.deleteSignets()" class="cell"
-                    ng-show="vm.signets.selected.length === 1">
+                    ng-show="hasShareRightManager(vm.signets.selectedElements)">
                 <i18n>mediacentre.delete</i18n>
             </button>
             <button ng-click="vm.archiveSignets()" class="cell"
-                    ng-show="vm.signets.selected.length === 1">
+                    ng-show="hasShareRightManager(vm.signets.selectedElements)">
                 <i18n>mediacentre.archive</i18n>
             </button>
         </div>
         <div class="row" ng-if="vm.signets.selected[0].archived">
-            <button ng-click="vm.restoreSignets()" class="cell">
+            <button ng-click="vm.restoreSignets()" ng-show="hasShareRightManager(vm.signets.selectedElements)" class="cell">
                 <i18n>mediacentre.restore</i18n>
             </button>
-            <button ng-click="vm.deleteSignets()" class="cell">
+            <button ng-click="vm.deleteSignets()" ng-show="hasShareRightManager(vm.signets.selectedElements)" class="cell">
                 <i18n>mediacentre.delete</i18n>
             </button>
         </div>

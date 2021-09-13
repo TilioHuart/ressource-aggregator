@@ -155,6 +155,17 @@ public class DefaultSignetService implements SignetService {
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
     }
 
+    public void updateCollab(String signetId, JsonObject signet, Handler<Either<String, JsonObject>> handler) {
+        String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET collab = ?" +
+                " WHERE id = ? RETURNING *;";
+
+        JsonArray params = new JsonArray()
+                .add(signet.getBoolean("collab", false))
+                .add(signetId);
+
+        Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
+    }
+
     @Override
     public void delete(String signetId, Handler<Either<String, JsonObject>> handler) {
         String query = "DELETE FROM " + Mediacentre.SIGNET_TABLE + " WHERE id = ?;";

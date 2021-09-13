@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.service.NeoService;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.SignetSharesService;
@@ -20,7 +21,6 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
-import org.entcore.common.http.filter.sql.ShareAndOwner;
 import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
 import java.util.ArrayList;
@@ -91,7 +91,8 @@ public class SignetController extends ControllerHelper {
 
     @Put("/signets/:signetId")
     @ApiDoc("Update a specific signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @ResourceFilter(ShareAndOwner.class)
+    @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void update(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
         RequestUtils.bodyToJson(request, signet -> {
@@ -101,7 +102,8 @@ public class SignetController extends ControllerHelper {
 
     @Delete("/signets/:signetId")
     @ApiDoc("Delete a specific signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @ResourceFilter(ShareAndOwner.class)
+    @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void delete(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
         signetService.delete(signetId, defaultResponseHandler(request));
@@ -182,10 +184,8 @@ public class SignetController extends ControllerHelper {
 
     @Put("/share/resource/:id")
     @ApiDoc("Add rights for a given signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
-/*
+    @ResourceFilter(ShareAndOwner.class)
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
-*/
     public void shareResource(final HttpServerRequest request) {
         RequestUtils.bodyToJson(request, pathPrefix + "share", shareFormObject -> {
             UserUtils.getUserInfos(eb, request, user -> {
@@ -258,16 +258,6 @@ public class SignetController extends ControllerHelper {
         signetService.get(signetId, getEvent -> {
             if (getEvent.isRight()) {
                 JsonObject signet = getEvent.right().getValue();
-                //Length == 8 when array is empty with "" so we need to remove them
-                if(signet.getJsonArray("disciplines").toString().length() == 8) {
-                    signet.getJsonArray("disciplines").remove(0);
-                }
-                if(signet.getJsonArray("levels").toString().length() == 8) {
-                    signet.getJsonArray("levels").remove(0);
-                }
-                if(signet.getJsonArray("plain_text").toString().length() == 8) {
-                    signet.getJsonArray("plain_text").remove(0);
-                }
                 boolean isShared = false;
                 int i = 0;
                 while (!isShared && i < idsObjects.size()) { // Iterate over "users", "groups", "bookmarks"
@@ -295,7 +285,7 @@ public class SignetController extends ControllerHelper {
                 }
 
                 signet.put("collab", isShared);
-                signetService.update(signetId, signet, updateEvent -> {
+                signetService.updateCollab(signetId, signet, updateEvent -> {
                     if (updateEvent.isLeft()) {
                         log.error("[Formulaire@updateFormCollabProp] Fail to update signet : " + updateEvent.left().getValue());
                     }

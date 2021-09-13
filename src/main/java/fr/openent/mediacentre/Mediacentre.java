@@ -70,6 +70,11 @@ public class Mediacentre extends BaseServer {
         signetConf.setTable("signet");
         signetConf.setShareTable("signet_shares");
 
+        SqlConf publishedConf = SqlConfs.createConf(PublishedController.class.getName());
+        publishedConf.setSchema("mediacentre");
+        publishedConf.setTable("signet");
+        publishedConf.setShareTable("signet_shares");
+
         SignetController signetController = new SignetController(eb);
         signetController.setShareService(new SqlShareService(mediacentreSchema, "signet_shares", eb, securedActions, null));
         signetController.setCrudService(new SqlCrudService(mediacentreSchema, "signet", "signet_shares"));

@@ -1,7 +1,7 @@
 import {_, Behaviours, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
-import {Signet} from "../model/Signet";
+import {Signet, Signets} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
 import {Utils} from "../utils/Utils";
@@ -12,8 +12,8 @@ declare const window: any;
 export interface Scope extends IRootScopeService {
 	isStatusXXX(response: any, status: number): any;
 	getDataIf200(response: any): any;
-    hasShareRightView(signet: Signet): boolean;
-    hasShareRightManager(signet: Signet): boolean;
+    hasShareRightView(signet: Signet[]): boolean;
+    hasShareRightManager(signet: Signet[]): boolean;
     removeLevelFromCourse(level: Label): void;
 	removeDisciplineFromCourse(discipline: Label): void;
 	removeWordFromCourse(word: Label): void;
@@ -262,13 +262,26 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			}
 		};
 
-		$scope.hasShareRightManager = (signet : Signet) => {
-			return signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.manager.right);
+		$scope.hasShareRightManager = (signets : Signet[]) => {
+			let hasRight = false;
+			signets.forEach(signet => {
+				hasRight = signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.manager.right);
+				if(hasRight == false) {
+					return false;
+				}
+			});
+			return hasRight;
 		};
 
-		$scope.hasShareRightView = (signet : Signet) => {
-			return signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.contrib.right);
-		};
+		$scope.hasShareRightView = (signets : Signet[]) => {
+			let hasRight = false;
+			signets.forEach(signet => {
+				hasRight = signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.contrib.right);
+				if(hasRight == false) {
+					return false;
+				}
+			});
+			return hasRight;		};
 
 		$scope.getDataIf200 = (response: AxiosResponse) : any => {
 			if ($scope.isStatusXXX(response, 200)) { return response.data; }
