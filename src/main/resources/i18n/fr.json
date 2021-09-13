@@ -114,6 +114,8 @@
   "mediacentre.success.signet.share": "Votre signet a bien été partagé !",
   "mediacentre.success.signets.archive": "Tous les signets sélectionnés ont bien été archivés !",
   "mediacentre.success.signets.restore": "Tous les signets sélectionnés ont bien été restaurés !",
-  "mediacentre.success.signets.delete": "Tous les signets sélectionnés ont bien été supprimés !"
+  "mediacentre.success.signets.delete": "Tous les signets sélectionnés ont bien été supprimés !",
+
+  "mediacentre.choose.image": "Veuillez choisir une image"
 
 }
