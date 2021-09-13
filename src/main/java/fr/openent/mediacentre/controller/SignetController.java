@@ -65,11 +65,11 @@ public class SignetController extends ControllerHelper {
         });
     }
 
-    @Get("/signets/:signetId")
+    @Get("/signets/:id")
     @ApiDoc("Get a specific signet by id")
     @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
     public void get(HttpServerRequest request) {
-        String signetId = request.getParam("signetId");
+        String signetId = request.getParam("id");
         signetService.get(signetId, defaultResponseHandler(request));
     }
 
@@ -89,23 +89,23 @@ public class SignetController extends ControllerHelper {
         });
     }
 
-    @Put("/signets/:signetId")
+    @Put("/signets/:id")
     @ApiDoc("Update a specific signet")
     @ResourceFilter(ShareAndOwner.class)
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void update(HttpServerRequest request) {
-        String signetId = request.getParam("signetId");
+        String signetId = request.getParam("id");
         RequestUtils.bodyToJson(request, signet -> {
             signetService.update(signetId, signet, defaultResponseHandler(request));
         });
     }
 
-    @Delete("/signets/:signetId")
+    @Delete("/signets/:id")
     @ApiDoc("Delete a specific signet")
     @ResourceFilter(ShareAndOwner.class)
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void delete(HttpServerRequest request) {
-        String signetId = request.getParam("signetId");
+        String signetId = request.getParam("id");
         signetService.delete(signetId, defaultResponseHandler(request));
     }
 
