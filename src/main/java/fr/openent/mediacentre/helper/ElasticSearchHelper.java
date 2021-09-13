@@ -64,6 +64,11 @@ public class ElasticSearchHelper {
                 handler.handle(Future.failedFuture(ar.left().getValue()));
             } else {
                 List<JsonObject> res = ar.right().getValue().getList();
+                for (int i = 0; i < res.size(); i++) {
+                    if(res.get(i).getString("source").equals("fr.openent.mediacentre.source.Signet")) {
+                        res.get(i).put("id", String.valueOf(res.get(0).getInteger("id")));
+                    }
+                }
                 List<String> favorites = res.stream().map(f -> f.getString("id")).collect(Collectors.toList());
                 handler.handle(Future.succeededFuture(favorites));
             }

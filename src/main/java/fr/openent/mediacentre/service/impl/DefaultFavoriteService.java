@@ -43,7 +43,7 @@ public class DefaultFavoriteService implements FavoriteService {
     @Override
     public void delete(String favoriteId, String source, Handler<Either<String, JsonObject>> handler) {
         JsonObject matcher = new JsonObject()
-                .put("id", Integer.parseInt(favoriteId))
+                .put("id", source.equals("fr.openent.mediacentre.source.Signet") ? Integer.parseInt(favoriteId) : favoriteId)
                 .put("source", source);
         MongoDb.getInstance().delete(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResult(message)));
     }
