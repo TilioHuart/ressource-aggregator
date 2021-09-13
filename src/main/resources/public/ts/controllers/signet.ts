@@ -2,10 +2,8 @@ import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
-import {Mix} from "entcore-toolkit";
 import {Resource} from "../model";
 import {hashCode} from "../utils";
-import {Label, Labels} from "../model/Label";
 import {ILocationService} from "angular";
 
 interface ViewModel {
@@ -39,7 +37,7 @@ interface ViewModel {
     getTitle(title: string): string;
     openSignet(signet: Signet) : void;
     openPropertiesSignet() : void;
-    openPublishSignet(signet: Signet): void;
+    openPublishSignet(): void;
     shareSignet() : void;
     publishSignet(signet: Signet) : void;
     closeShareSignetLightbox() : void;
@@ -50,8 +48,8 @@ interface ViewModel {
     doArchiveSignets() : Promise<void>;
     restoreSignets(): void;
     infiniteScroll() : void;
-    addFavorite(signet: Signet) : Promise<void>;
-    removeFavorite(signet: Signet) : Promise<void>;
+    addFavorite(signet: Signet, event: Event) : Promise<void>;
+    removeFavorite(signet: Signet, event: Event) : Promise<void>;
 
 }
 
@@ -151,7 +149,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             $scope.display.lightbox.properties = true;
         };
 
-        vm.openPublishSignet = (signet: Signet) : void => {
+        vm.openPublishSignet = () : void => {
             $scope.signet = vm.signets.selected[0];
             template.open('lightboxContainer', 'signets/lightbox/publishSignetPopUp');
             vm.display.lightbox.publishing = true;
@@ -201,7 +199,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         };
 
         vm.archiveSignets = () : void => {
-            vm.display.warning = !!vm.signets.selected.find(signet => signet.sent === true);
+            vm.display.warning = !!vm.signets.selected.find(signet => signet.sent);
             template.open('lightboxContainer', 'signets/lightbox/signet-confirm-archive');
             vm.display.lightbox.archive = true;
         };
@@ -238,7 +236,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             }
         };
 
-        vm.addFavorite = async function (signet: Signet) {
+        vm.addFavorite = async (signet, event) : Promise<void> => {
+            event.stopPropagation();
             signet.hash = hashCode(signet.resource_id);
             signet.displayTitle = signet.title;
             signet.image = signet.imageurl;
@@ -281,12 +280,13 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             $scope.safeApply();
         };
 
-        vm.removeFavorite = async function (signet: Signet) {
-           let signet_fav = <Resource> signet.toJson();
+        vm.removeFavorite = async (signet, event) : Promise<void> => {
+            event.stopPropagation();
+            let signet_fav = <Resource> signet.toJson();
             signet_fav.favorite = signet.favorite;
             await FavoriteService.updateFavorite(signet_fav);
-           let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
-           if (response.status === 200) {
+            let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
+            if (response.status === 200) {
                 signet.favorite = false;
                 $scope.$emit('deleteFavorite', signet.resource_id);
             }

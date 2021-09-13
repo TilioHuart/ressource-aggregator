@@ -64,11 +64,11 @@
                                     <i class="share md-icon" ng-if="signet.collab" title="[[vm.getTitle('shared')]]"></i>
                                     <i class="bell md-icon" ng-if="signet.reminded" title="[[vm.getTitle('reminded')]]"></i>
                                     <!--Add favorite-->
-                                    <div ng-if="!signet.favorite" class="cell add-to-favorite" data-ng-click="vm.addFavorite(signet)"
+                                    <div ng-if="!signet.favorite" class="cell add-to-favorite" data-ng-click="vm.addFavorite(signet, $event)"
                                          tooltip="<i18n>mediacentre.add.to.favorite</i18n>">&nbsp;
                                     </div>
                                     <!--Remove favorite-->
-                                    <div ng-if="signet.favorite" class="cell remove-to-favorite" data-ng-click="vm.removeFavorite(signet)"
+                                    <div ng-if="signet.favorite" class="cell remove-to-favorite" data-ng-click="vm.removeFavorite(signet, $event)"
                                          tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">&nbsp;
                                     </div>
                                 </div>
