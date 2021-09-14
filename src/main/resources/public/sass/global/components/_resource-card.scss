@@ -29,8 +29,7 @@ resource-card {
         display: flex !important;
       }
     }
-
-    &.textbook {
+    &.textbook, &.signet {
       height: 9rem;
 
       .data {

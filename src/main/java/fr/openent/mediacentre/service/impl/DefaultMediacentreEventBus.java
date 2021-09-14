@@ -68,6 +68,7 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
                 JsonArray authors = new JsonArray().add(signet.getString("owner_id"));
                 resource.put("title", signet.getString("title"))
                         .put("authors", authors)
+                        .put("editors", new JsonArray().add(signet.getString("owner_name")))
                         .put("id", signet.getInteger("id"))
                         .put("image", signet.getString("imageurl"))
                         .put("document_types", signet.getBoolean("orientation") ? new JsonArray().add("Orientation") : new JsonArray().add("Parcours Mediacentre"))
@@ -75,13 +76,6 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
                         .put("date", System.currentTimeMillis())
                         .put("favorite", false)
                         .put("source", "fr.openent.mediacentre.source.Signet");
-
-                if (signet.getString("owner_id").equals(signet.getString("owner_id"))) {
-                    resource.put("editors", authors);
-                } else {
-                    JsonArray editors = new JsonArray().add(signet.getString("owner_id"));
-                    resource.put("editors", editors);
-                }
 
                 JsonArray resourceLevels = new JsonArray();
                 for (int i = 0; signet.getJsonArray("levels").size() > i; i++) {
