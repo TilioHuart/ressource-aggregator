@@ -23,7 +23,7 @@
         align-items: center;
         justify-content: center;
         background: white;
-        &.empty { background: blue; }
+        &.empty { background: $primary; }
       }
 
       .data {
@@ -44,7 +44,7 @@
 
           .owner {
             font-size: 13px;
-            color: blue;
+            color: $primary;
           }
 
           .date {
