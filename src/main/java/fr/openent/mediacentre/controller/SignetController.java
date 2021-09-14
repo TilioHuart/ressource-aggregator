@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.security.CreationRight;
 import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.service.NeoService;
 import fr.openent.mediacentre.service.SignetService;
@@ -75,7 +76,8 @@ public class SignetController extends ControllerHelper {
 
     @Post("/signets")
     @ApiDoc("Create a signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @ResourceFilter(CreationRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void create(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {

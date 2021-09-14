@@ -1,5 +1,4 @@
 import {_, Behaviours} from 'entcore';
-import http from "axios";
 
 const rights = {
     resources: {
@@ -9,6 +8,9 @@ const rights = {
         manager: {
             right: "fr-openent-mediacentre-controller-MediacentreController|initManagerResourceRight"
         }
+    },
+    workflow: {
+        creation: 'fr.openent.mediacentre.controller.MediacentreController|initCreationRight'
     }
 };
 
