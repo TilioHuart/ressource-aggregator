@@ -145,7 +145,12 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.openPropertiesSignet = () : void => {
             $scope.signet = vm.signets.selected[0];
-            template.open('lightboxContainer', 'signets/lightbox/prop-signet');
+            let isDisabled = !$scope.hasShareRightManager(vm.signets.selected);
+            if(isDisabled) {
+                template.open('lightboxContainer', 'signets/lightbox/prop-signet-disabled');
+            } else {
+                template.open('lightboxContainer', 'signets/lightbox/prop-signet');
+            }
             $scope.display.lightbox.properties = true;
         };
 

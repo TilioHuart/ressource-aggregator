@@ -3,52 +3,52 @@
     <div class="horizontal-spacing vertical-spacing">
         <div class="four cell horizontal-spacing">
             <div class="twelve cell" ng-class="{ hidder: show.submitWait == true }"></div>
-            <image-select id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
-                          ng-change="getTypeImage()" ng-model="signet.image"/>
-            <span style="color:red"><i18n>mediacentre.choose.image</i18n></span>
+            <img id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
+                 src="signet.image"/>
         </div>
         <div class="eight cell">
             <div>
                 <label class="row twelve">
-                    <input type="text" class="ten search_nav" required i18n-placeholder="Titre de mon signet *"
-                           ng-model="signet.title" autofocus>
+                    <span class="title-prop">Titre</span>
+                    <br>
+                    <span>[[signet.title]]</span>
                 </label>
+                <br>
                 <label class="row twelve">
-                    <input type="text" class="ten search_nav" i18n-placeholder="URL de mon signet *"
-                           ng-model="signet.url">
+                    <span class="title-prop">Lien</span>
+                    <br>
+                    <span>[[signet.url]]</span>
                 </label>
             </div>
+            <br>
             <div class="row">
-                <multi-combo title="[[idiom.translate('levels')]]" class="eight cell" combo-model="levels.all"
-                             search-on="label" order-by="label" filtered-model="filterChoice.levels"></multi-combo>
+                <label class="title-prop">
+                    <i18n>Niveaux</i18n>
+                </label>
                 <div class="twelve cell select-blocks">
                     <div ng-repeat="level in filterChoice.levels"
-                         ng-click="removeLevelFromCourse(level)"
                          class="labels-in-ligne">
                         <div > [[ level.label]] </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <multi-combo title="[[idiom.translate('disciplines')]]" class="eight cell" combo-model="disciplines.all"
-                             search-on="label"  order-by="label" filtered-model="filterChoice.disciplines"></multi-combo>
+                <label class="title-prop">
+                    <i18n>Disciplines</i18n>
+                </label>
                 <div class="twelve cell select-blocks">
                     <div ng-repeat="discipline in filterChoice.disciplines"
-                         ng-click="removeDisciplineFromCourse(discipline)"
                          class="labels-in-ligne">
                         <div> [[ discipline.label]] </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <label >
+                <label class="title-prop">
                     <i18n>keyword</i18n>
                 </label>
-                <input type="text" ng-model="query.plain_text" ng-keyup="addKeyWord($event)"
-                       class="ten search_nav" i18n-placeholder="Veuillez renseigner les mots clés choisis" >
                 <div class=" twelve cell select-blocks">
                     <div ng-repeat="word in signet.plain_text.all"
-                         ng-click="removeWordFromCourse(word)"
                          class="labels-in-ligne">
                         <div><span ng-bind="word.label"></span> </div>
                     </div>
