@@ -24,7 +24,7 @@
 		<portal>
             <div ng-include="'/mediacentre/public/template/header.html'"></div>
 			<container template="main"></container>
-			<lightbox show="mc.search.advanced.show" on-close="mc.closeAdvancedSearch()">
+			<lightbox show="mc.search.advanced.show" on-close="mc.closeAdvancedSearch()" class="nopadding">
 				<div class="advanced-search" ng-include="'/mediacentre/public/template/advanced-search.html'"></div>
 			</lightbox>
 		</portal>

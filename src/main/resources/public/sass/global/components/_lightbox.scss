@@ -3,7 +3,6 @@ section.lightbox {
   overflow: visible;
 
   > div.content {
-    padding: 0;
     overflow: visible;
     max-height: fit-content;
 
@@ -14,6 +13,14 @@ section.lightbox {
       border-top-right-radius: 5px;
       color: $white;
       font-size: 20px;
+    }
+  }
+}
+
+lightbox.nopadding {
+  section.lightbox {
+    > div.content {
+      padding: 0;
     }
   }
 }
