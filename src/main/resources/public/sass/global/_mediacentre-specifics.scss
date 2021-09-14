@@ -70,15 +70,15 @@ body.mediacentre-v2 {
     }
   }
 
-/*  a.button.cancel, button.cancel {
-    background: $mediacentre-red;
-    color: $white;
+  /*  a.button.cancel, button.cancel {
+      background: $mediacentre-red;
+      color: $white;
 
-    &:hover {
-      color: $mediacentre-red;
-      background: $white;
-    }
-  }*/
+      &:hover {
+        color: $mediacentre-red;
+        background: $white;
+      }
+    }*/
 
   .textbooks, .favorites, .external {
     > .row {
@@ -109,13 +109,15 @@ body.mediacentre-v2 {
     /* favorite */
     &-flex {
       display: flex;
+
       &-card {
         display: grid;
-/*        grid-template-columns: 1fr 1fr 1fr 1fr;*/
+        /*        grid-template-columns: 1fr 1fr 1fr 1fr;*/
         grid-column-gap: 3rem;
         align-items: flex-start;
         flex: 9;
       }
+
       &-plus {
         text-align: center;
         align-self: center;
@@ -129,16 +131,20 @@ body.mediacentre-v2 {
     &-emptyState {
       display: flex;
       padding: 2rem;
+
       img {
         width: 17%;
       }
+
       &-flex {
         display: flex;
         flex-direction: column-reverse;
         padding-left: 2rem;
         padding-bottom: 3rem;
+
         span {
           color: $mediacentre-grey;
+
           &:nth-child(1) {
             padding-top: 24px;
           }
@@ -165,6 +171,7 @@ body.mediacentre-v2 {
         max-width: 100%;
       }
     }
+
     .multi-combo-panel-opts button {
       background-color: $mediacentre-red;
 
@@ -220,7 +227,9 @@ body.mediacentre-v2 {
     margin: 10px;
   }
 
-  .toaster-right { float: right; }
+  .toaster-right {
+    float: right;
+  }
 
   i.dropbtn {
     color: black;
@@ -239,14 +248,14 @@ body.mediacentre-v2 {
     background-color: #F0F0F0;
     border-radius: 2px;
     border-left: none;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.26);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.26);
   }
 
   nav.vertical ul li a {
     padding-left: 20px;
   }
 
-  .heightNavBar{
+  .heightNavBar {
     height: 80px !important;
   }
 
@@ -261,7 +270,7 @@ body.mediacentre-v2 {
     overflow-x: hidden;
     transition: 0.5s;
     top: 52px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.26);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.26);
     border-radius: 3px;
   }
 
@@ -271,14 +280,14 @@ body.mediacentre-v2 {
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
-    cursor:pointer;
+    cursor: pointer;
   }
 
-  .text-font{
+  .text-font {
     font-weight: bolder;
   }
 
-  .titleSideNav{
+  .titleSideNav {
     padding-left: 25px;
   }
 
@@ -294,6 +303,7 @@ body.mediacentre-v2 {
 
   .filter-forms {
     width: 97%;
+
     .drop-down-block, .drop-down-block .drop-down-label {
       margin-bottom: 0;
     }
@@ -342,6 +352,35 @@ body.mediacentre-v2 {
       content: '\e9d9';
       font-size: 24px;
       color: $mediacentre-yellow-star;
+    }
+  }
+
+  .copy-clipboard::before {
+    @include fonticon();
+    content: '\e84d';
+    font-size: 24px;
+  }
+
+  .copy-clipboard, .action {
+    color: $mediacentre-red;
+  }
+
+  .clipboard-tooltip {
+    position: absolute;
+    background-color: rgba(75, 75, 75, 1);
+    border-radius: 4px;
+    bottom: -35px;
+    left: 50%;
+    width: 60px;
+    margin-left: -30px;
+    line-height: 30px;
+    text-align: center;
+    color: $white;
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    &.show {
+      opacity: 1;
     }
   }
 }

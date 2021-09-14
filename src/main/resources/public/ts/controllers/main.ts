@@ -193,6 +193,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		 */
 		mc.openCreateSignetPopUp = function () {
 			$scope.signet = new Signet();
+			$scope.safeApply();
 			$scope.display.lightbox.signet = true;
 			template.open('lightboxContainer', 'signets/lightbox/createSignetPopUp');
 			$scope.safeApply();
