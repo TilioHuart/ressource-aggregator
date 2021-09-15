@@ -1,8 +1,9 @@
 <div ng-controller="HomeController as vm" class="home">
+    <div ng-include="'/mediacentre/public/template/header.html'"></div>
 
     <!--External resources-->
     <div class="external horizontal-spacing row vertical-spacing">
-        <div class="row">
+        <div class="title">
             <h2 class="cell">
                 <i18n>mediacentre.my.external.resources</i18n>
             </h2>
@@ -18,32 +19,10 @@
             <div class="external-flex-card">
                 <resource-card ng-repeat="resource in vm.displayedResources | orderBy:'title' track by $index"
                                ng-if="$index > vm.displayedResources.length - 1 - vm.resourceLimit"
+                               type="resource"
                                ng-model="resource">
                 </resource-card>
             </div>
-        </div>
-    </div>
-
-    <!--Favorite-->
-    <div ng-show="vm.favorites.length > 0" class="favorites horizontal-spacing row vertical-spacing">
-        <div class="row">
-            <h2 class="cell">
-                <i18n>mediacentre.my.favorite</i18n>
-            </h2>
-            <div class="seeMore cell" data-ng-click="vm.seeMyFavorite()">
-                <span>
-                    <i18n>mediacentre.see.more</i18n>
-                </span>
-            </div>
-        </div>
-
-        <!--Content-->
-        <div class="favorites-grid" ng-show="vm.favorites.length > 0">
-            <resource-card ng-repeat="resource in vm.favorites | orderBy:'title' track by $index"
-                           ng-if="$index > (vm.favorites.length - 1 - vm.favoriteLimit)"
-                           type="completeCard"
-                           ng-model="resource">
-            </resource-card>
         </div>
     </div>
 

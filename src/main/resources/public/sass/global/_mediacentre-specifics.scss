@@ -8,6 +8,19 @@ $mediacentre-pmb: #43b0a2;
 $mediacentre-grey: #232323;
 $mediacentre-white: #FFF;
 
+
+@font-face {
+  font-family: 'material-icons';
+  src: url('/mediacentre/public/font/material-design/fonts/materialdesignicons-webfont.eot');
+  src: url('/mediacentre/public/font/material-design/fonts/materialdesignicons-webfont.eot') format('embedded-opentype'),
+  url('/mediacentre/public/font/material-design/fonts/materialdesignicons-webfont.woff2') format('woff2'),
+  url('/mediacentre/public/font/material-design/fonts/materialdesignicons-webfont.woff2') format('woff'),
+  url('/mediacentre/public/font/material-design/fonts/materialdesignicons-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 body.mediacentre-v2 {
   @import 'components/index';
 
@@ -81,8 +94,10 @@ body.mediacentre-v2 {
     }*/
 
   .textbooks, .favorites, .external {
-    > .row {
-      margin-bottom: 2rem;
+
+    > .title {
+      display: flex;
+      align-items: center;
     }
 
     h2 {
@@ -95,14 +110,6 @@ body.mediacentre-v2 {
         font-size: 14px !important;
         font-weight: 300;
         margin: 0;
-      }
-    }
-
-    .row .favorites-flex-plus {
-      display: none;
-
-      @media (max-width: $tablette) {
-        display: block;
       }
     }
 
@@ -153,6 +160,12 @@ body.mediacentre-v2 {
     }
   }
 
+  .textbooks, .external {
+    > .title {
+      margin-bottom: 2rem;
+    }
+  }
+
   .textbooks-empty {
     justify-content: flex-start;
     align-items: center;
@@ -185,8 +198,6 @@ body.mediacentre-v2 {
     color: red;
     text-decoration: underline;
     margin-left: 15px;
-    padding-top: 10px;
-    line-height: 30px;
   }
 
   .seeFilter {
@@ -411,5 +422,11 @@ body.mediacentre-v2 {
   }
   div.select-blocks-cross>div.partial {
     background-color: #e9ebef
+  }
+
+  .Dupliquer::before {
+    font-family: 'material-icons';
+    content: '\F18F';
+    font-size: 24px;
   }
 }

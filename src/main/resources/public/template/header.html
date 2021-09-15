@@ -1,30 +1,56 @@
 <div class="header">
-    <div class="row mediacentre-title">
-        <img ng-click="mc.goHome()"
-             src="/mediacentre/public/img/logo-mediacentre.svg"
-             alt="Logo"
-             class="cell">
-        <h1 ng-click="mc.goHome()" class="cell">
-            <span class="horizontal-spacing"><i18n>mediacentre.title</i18n></span>
-        </h1>
-    </div>
-    <div class="mediacentre-button" ng-init="mc.initHeader()">
-        <input type="radio" id="item_1" name="box" ng-click="mc.goHome()" style="display: none;" checked>
+    <div class="header-main twelve">
+        <div class="mediacentre-title">
+            <img ng-click="mc.goHome()"
+                 src="/mediacentre/public/img/logo-mediacentre.svg"
+                 alt="Logo"
+                 class="cell">
+            <h1 ng-click="mc.goHome()" class="cell">
+                <span class="horizontal-spacing"><i18n>mediacentre.title</i18n></span>
+            </h1>
+        </div>
+        <div class="search-block six twelve-mobile">
+            <input type="text"
+                   ng-enter="mc.plainTextSearch()"
+                   ng-model="mc.search.plain_text.text"
+                   i18n-placeholder="mediacentre.resource.search"
+                   class="search nine twelve-mobile"/>
+            <a class="advanced-search-link"
+               ng-click="mc.openAdvancedSearch()"
+               aria-label="[[ idiom.translate('mediacentre.source.search.advanced') ]]">
+                <i class="advanced-search"></i>
+                <i18n>mediacentre.source.search.advanced</i18n>
+            </a>
+        </div>
+        <div class="mediacentre-button" ng-init="mc.initHeader()">
+            <input type="radio" id="item_1" name="box" ng-click="mc.goHome()" style="display: none;" checked>
             <label for="item_1" class="label label-left">Accueil</label>
-        <input ng-click="mc.goSignet()" type="radio" id="item_2" name="box" style="display: none;">
+            <input ng-click="mc.goSignet()" type="radio" id="item_2" name="box" style="display: none;">
             <label for="item_2" class="label label-right">Signets</label>
+        </div>
     </div>
-    <div class="search-block six eleven-mobile">
-        <input type="text"
-               ng-enter="mc.plainTextSearch()"
-               ng-model="mc.search.plain_text.text"
-               i18n-placeholder="mediacentre.resource.search"
-               class="search twelve"/>
-        <a class="advanced-search-link"
-           ng-click="mc.openAdvancedSearch()"
-           aria-label="[[ idiom.translate('mediacentre.source.search.advanced') ]]">
-            <i class="advanced-search"></i>
-            <i18n>mediacentre.source.search.advanced</i18n>
-        </a>
+
+    <!--Favorite-->
+    <div ng-show="mc.displayFavorites && mc.favorites.length > 0" class="favorites horizontal-spacing row vertical-spacing">
+        <div class="title">
+            <h2 class="cell">
+                <i18n>mediacentre.my.favorite</i18n>
+            </h2>
+            <div class="seeMore cell" data-ng-click="mc.goFavorites()">
+                <span>
+                    <i18n>mediacentre.see.more</i18n>
+                </span>
+            </div>
+        </div>
+
+        <!--Content-->
+        <div class="header-favorites" ng-show="mc.favorites.length > 0">
+            <resource-card
+                    ng-repeat="resource in mc.favorites | orderBy:'title' track by $index"
+                    ng-if="$index > (mc.favorites.length - 1 - mc.favoriteLimit)"
+                    type="mini-card"
+                    ng-model="resource">
+            </resource-card>
+        </div>
     </div>
 </div>

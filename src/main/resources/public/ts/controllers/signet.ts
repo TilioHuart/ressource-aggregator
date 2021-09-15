@@ -2,7 +2,7 @@ import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
-import {Resource} from "../model";
+import {Frame, Resource} from "../model";
 import {hashCode} from "../utils";
 import {ILocationService} from "angular";
 
@@ -27,6 +27,7 @@ interface ViewModel {
         warning: boolean
     };
     loading: boolean;
+    mobile: boolean;
 
     openFolder(folderName: string) : void;
     switchAll(value: boolean) : void;
@@ -77,6 +78,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             warning: false
         };
         vm.loading = true;
+        vm.mobile = screen.width < $scope.mc.screenWidthLimit;
 
         const init = async () : Promise<void> => {
             await vm.signets.sync();
@@ -297,6 +299,15 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             }
             $scope.safeApply();
         };
+
+        $scope.$on('deleteFavorite', function (event, id) {
+            $scope.mc.favorites = $scope.mc.favorites.filter(el => el.id !== id);
+            // $scope.mc.textbooks[$scope.mc.textbooks.findIndex(el => el.id == id)].favorite = false;
+        });
+
+        $scope.$on('addFavorite', function (event, resource) {
+            $scope.mc.favorites.push(resource);
+        });
 
         // Utils
 

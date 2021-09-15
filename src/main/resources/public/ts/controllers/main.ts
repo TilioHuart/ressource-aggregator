@@ -4,7 +4,6 @@ import {Frame, Resource, Socket} from '../model';
 import {Signet, Signets} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
-import {Utils} from "../utils/Utils";
 import {AxiosResponse} from "axios";
 
 declare const window: any;
@@ -34,10 +33,11 @@ export interface Scope extends IRootScopeService {
 }
 
 export interface MainController {
-
+	favorites: Resource[];
 	textbooks: Resource[];
 	pageSize: number;
 	limitTo: number;
+	displayFavorites: boolean;
 	search: {
 		plain_text: {
 			text: string
@@ -51,29 +51,20 @@ export interface MainController {
 	};
 	columns: number[];
 	screenWidthLimit: number;
+	favoriteLimit: number;
 
 	infiniteScroll(): void;
-
 	plainTextSearch(): void;
-
 	advancedSearch(): void;
-
 	initField(field: { name: string, comparator: boolean }): void;
-
 	initHeader(): void;
-
 	openAdvancedSearch(): void;
-
 	closeAdvancedSearch(): void;
-
 	goHome(): void;
-
+	goFavorites(): void;
 	goSignet(): void;
-
 	openCreateSignetPopUp(): void;
-
 	onCloseSignetPopUp(): void;
-
 	onCloseSignetPropertiesPopUp(): void;
 
 }
@@ -81,9 +72,11 @@ export interface MainController {
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
 	function ($scope: Scope, route, $location: ILocationService) {
 		const mc: MainController = this;
+		mc.favorites = [];
 		mc.textbooks = [];
 		mc.pageSize = 10;
 		mc.limitTo = mc.pageSize;
+		mc.displayFavorites = false;
 		mc.search = {
 			plain_text: {
 				text: ''
@@ -107,6 +100,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
 		};
 		mc.screenWidthLimit = 600;
+		mc.favoriteLimit = screen.width < mc.screenWidthLimit ? 2 : 7;
 		$scope.signet = new Signet();
 		$scope.display = {
 			lightbox: {signet: false, properties: false}
@@ -188,6 +182,10 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			$location.path('/')
 		};
 
+		mc.goFavorites = (): void => {
+			$location.path(`/favorite`);
+		};
+
 		/**
 		 * Open creation course lightbox
 		 */
@@ -216,12 +214,25 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				mc.search = {...mc.search, plain_text: {text: ''}};
 				mc.search.advanced.values = {};
 				mc.search.advanced.fields.forEach((field) => mc.initField(field));
+				mc.displayFavorites = true;
 				template.open('main', 'home');
 			},
-			favorite: () => template.open('main', 'favorite'),
-			signet: () => template.open('main', 'signet'),
-			searchPlainText: () => template.open('main', 'search'),
-			searchAdvanced: () => template.open('main', 'search'),
+			favorite: () => {
+				mc.displayFavorites = false;
+				template.open('main', 'favorite')
+			},
+			signet: () => {
+				mc.displayFavorites = true;
+				template.open('main', 'signet')
+			},
+			searchPlainText: () => {
+				mc.displayFavorites = false;
+				template.open('main', 'search')
+			},
+			searchAdvanced: () => {
+				mc.displayFavorites = false;
+				template.open('main', 'search')
+			},
 		});
 
 		$scope.safeApply = function () {

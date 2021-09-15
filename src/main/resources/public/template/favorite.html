@@ -1,5 +1,6 @@
-<div ng-controller="FavoriteController as vm" class="favorite horizontal-spacing">
-    <div class="search-header">
+<div ng-controller="FavoriteController as vm" class="favorite">
+    <div ng-include="'/mediacentre/public/template/header.html'"></div>
+    <div class="search-header horizontal-spacing">
         <div class="flex-left">
             <div class = "search-filters vertical-spacing-twice">
                 <div class="vertical-spacing-twice"
@@ -31,15 +32,15 @@
     </div>
 
     <!-- Cards -->
-    <div class="favorites-grid" ng-show="vm.displayedResources.length > 0">
+    <div class="favorites-grid horizontal-spacing" ng-show="vm.displayedResources.length > 0">
         <resource-card ng-repeat="resource in vm.displayedResources | limitTo:mc.limitTo track by $index"
-                       type="completeCard"
+                       type="complete-card"
                        ng-model="resource">
         </resource-card>
     </div>
 
     <!-- Empty state -->
-    <div class="favorites-emptyState" ng-show="vm.displayedResources.length === 0">
+    <div class="favorites-emptyState horizontal-spacing" ng-show="vm.displayedResources.length === 0">
         <img src="/mediacentre/public/img/favoris-emptyState.svg"
              alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
         <div class="favorites-emptyState-flex">

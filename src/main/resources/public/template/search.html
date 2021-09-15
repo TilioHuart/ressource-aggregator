@@ -1,5 +1,6 @@
-<div ng-controller="SearchController as vm" class="search horizontal-spacing">
-    <div class="search-header">
+<div ng-controller="SearchController as vm" class="search">
+    <div ng-include="'/mediacentre/public/template/header.html'"></div>
+    <div class="search-header horizontal-spacing">
         <div class="flex-left">
             <div class="cell" ng-if="vm.getAdvancedSearchField().length > 0 && !vm.emptyAdvancedSearch()">
                 <h2>
@@ -54,13 +55,13 @@
             </div>
         </div>
     </div>
-    <div class="search-grid" ng-show="vm.resources.length > 0">
+    <div class="search-grid horizontal-spacing" ng-show="vm.resources.length > 0">
         <resource-card ng-repeat="resource in vm.displayedResources | limitTo:mc.limitTo track by $index"
-                       type="completeCard"
+                       type="complete-card"
                        ng-model="resource">
         </resource-card>
     </div>
-    <div class="no-result eight centered" ng-show="!vm.isLoading() && vm.resources.length === 0">
+    <div class="no-result eight centered horizontal-spacing" ng-show="!vm.isLoading() && vm.resources.length === 0">
         <div class="six">
             <img src="/mediacentre/public/img/no-result.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
         </div>

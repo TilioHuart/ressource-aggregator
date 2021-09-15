@@ -16,13 +16,14 @@ export const ResourceCard = ng.directive('resourceCard',
                 type: '@?'
             },
             template: `
-            <div ng-include="getTemplate()" class="flex [[type]]" ng-class="{loading: show.loader}"></div>
+            <div ng-include="getTemplate()" class="flex [[type]]"></div>
         `,
             link: function ($scope, element) {
                 $scope.idiom = idiom;
                 $scope.type = $scope.type || 'resource';
+                const colors = ["#f78d3f", "#fcd271", "#2bbbd8", "#102e37"]; // orange, yellow, blue, black
                 let clipboard;
-                let random = Math.floor(Math.random() * 3) + 1;
+                let random = Math.floor(Math.random() * colors.length) + 1;
                 let signetId = 'xxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16)
@@ -77,11 +78,14 @@ export const ResourceCard = ng.directive('resourceCard',
                     };
 
                     const addColoredBar = function () {
-                        const colors = ["#F53B57", "#FEC63D", "#3B1D8F"]; // red, yellow, blue
                         const parent = element.find(`#color-${$scope.ngModel.hash}`).parent();
                         parent.css("border-radius", "inherit");
                         parent.css("padding-left", "10px");
                         parent.css("background-color", colors[random - 1]);
+                    };
+
+                    const manageSizes = function () {
+                        element.css("margin", "10px 30px");
                     };
 
                     $timeout(() => {
@@ -89,8 +93,12 @@ export const ResourceCard = ng.directive('resourceCard',
                             clampTitle();
                             $scope.show.loader = false;
                         }
-                        if ($scope.type === "completeCard") {
+                        if ($scope.type === "complete-card") {
                             addColoredBar();
+                        }
+                        else if ($scope.type === "mini-card") {
+                            addColoredBar();
+                            manageSizes();
                         }
                         const clipboardSelector = `.clipboard.${$scope.type}-resource-${$scope.ngModel.hash}`;
                         const clipboardElement = element.find(clipboardSelector);

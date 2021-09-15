@@ -1,10 +1,11 @@
-<div style="margin-top:20px" class="row" ng-controller="SignetController as vm">
+<div class="row" ng-controller="SignetController as vm">
+    <div ng-include="'/mediacentre/public/template/header.html'"></div>
 <!--
     <h4 class="zero-desktop"><input class="search_nav" type="text" ng-model="vm.searchInput" placeholder="Rechercher"></h4>
 -->
 
     <!--Navigation menu-->
-    <section class="cell three zero-mobile" style="padding-left: 20px; padding-top: 20px">
+    <section class="cell three zero-mobile vertical-spacing" style="padding-left: 10px">
         <input type="text" ng-model="vm.searchInput" class="search_nav" placeholder="Rechercher">
         <nav class="vertical row">
             <ul>
@@ -37,7 +38,7 @@
         </nav>
     </div>
 
-    <section style = "padding-top: 20px" class="cell eight twelve-mobile">
+    <section class="cell six twelve-mobile vertical-spacing">
 
         <div ng-include="'mediacentre/public/template/components/filters.html'"></div>
 
@@ -85,7 +86,7 @@
         </div>
     </section>
 
-    <section class="cell one zero-mobile" style="padding-right: 20px">
+    <section class="cell three zero-mobile vertical-spacing" style="padding-right: 20px">
         <div class="main-button">
             <button class="cell" workflow="mediacentre.creation" ng-click="mc.openCreateSignetPopUp()"><i18n>mediacentre.signet.create.button</i18n></button>
         </div>
