@@ -116,6 +116,11 @@
   "mediacentre.success.signets.restore": "Tous les signets sélectionnés ont bien été restaurés !",
   "mediacentre.success.signets.delete": "Tous les signets sélectionnés ont bien été supprimés !",
 
-  "mediacentre.choose.image": "Veuillez choisir une image"
+  "mediacentre.choose.image": "Veuillez choisir une image",
+
+  "mediacentre.signets.create.title": "Titre de mon signet *",
+  "mediacentre.signets.create.url": "URL de mon signet *",
+  "mediacentre.signets.create.keywords": "Veuillez renseigner les mots clés choisis",
+  "mediacentre.signets.create.orientation": "Orientation / Découverte des métiers"
 
 }
