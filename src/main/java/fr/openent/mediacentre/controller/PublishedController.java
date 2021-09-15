@@ -37,7 +37,7 @@ public class PublishedController extends ControllerHelper {
 
     @Get("/levels")
     @ApiDoc("get all levels")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void getLevels (HttpServerRequest request) {
         moduleSQLRequestService.getLevels(arrayResponseHandler(request));
     }
@@ -45,7 +45,7 @@ public class PublishedController extends ControllerHelper {
 
     @Get("/disciplines")
     @ApiDoc("get all disciplines")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void getDisciplines (HttpServerRequest request) {
         moduleSQLRequestService.getDisciplines(arrayResponseHandler(request));
     }
@@ -67,20 +67,5 @@ public class PublishedController extends ControllerHelper {
     static public void callMediacentreEventBusForPublish(JsonObject signet, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
                                                          final Handler<Either<String, JsonObject>> handler) {
         eventBus.publishInMediacentre(signet, handler);
-    }
-
-    static public void callMediacentreEventBusToDelete(HttpServerRequest request, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
-                                                       final Handler<Either<String, JsonObject>> handler) {
-        RequestUtils.bodyToJson(request, deleteEvent -> eventBus.deleteResourceInMediacentre(deleteEvent, handler));
-    }
-
-    public void callMediacentreEventBusToUpdateMetadata(JsonObject updateMetadata, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
-                                                        final Handler<Either<String, JsonObject>> handler) {
-        eventBus.updateResourceInMediacentre(updateMetadata, handler);
-    }
-
-    static public void callMediacentreEventBusToUpdate(JsonObject updateCourse, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
-                                                       final Handler<Either<String, JsonObject>> handler) {
-        eventBus.updateInMediacentre(updateCourse, handler);
     }
 }

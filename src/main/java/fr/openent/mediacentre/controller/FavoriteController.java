@@ -1,5 +1,6 @@
 package fr.openent.mediacentre.controller;
 
+import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.wseduc.rs.ApiDoc;
@@ -27,7 +28,7 @@ public class FavoriteController extends ControllerHelper {
 
     @Post("/favorites")
     @ApiDoc("Create favorites")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void createFavorites(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
             favorite.put("user", user.getUserId());
@@ -37,7 +38,7 @@ public class FavoriteController extends ControllerHelper {
 
     @Delete("/favorites")
     @ApiDoc("Delete favorites")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void deleteFavorites(final HttpServerRequest request) {
         if (!request.params().contains("id") && !request.params().contains("source")) {
             badRequest(request);
@@ -50,7 +51,7 @@ public class FavoriteController extends ControllerHelper {
 
     @Post("/update/favorites")
     @ApiDoc("Create favorites")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void updateFavorites(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
             favoriteService.update(favorite, DefaultResponseHandler.defaultResponseHandler(request));

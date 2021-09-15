@@ -388,4 +388,28 @@ body.mediacentre-v2 {
     font-weight: bold;
     font-size: 18px;
   }
+  div.select-blocks-cross {
+    margin: 10px 0px
+  }
+
+  div.select-blocks-cross>div {
+    margin-right: 2px;
+    padding: 5px 10px;
+    padding-right: 30px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    background-color: #e9ebef;
+    color: #8c939e;
+    transition: all 0.25s ease-in-out
+  }
+
+  div.select-blocks-cross>div {
+    position: relative;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold
+  }
+  div.select-blocks-cross>div.partial {
+    background-color: #e9ebef
+  }
 }

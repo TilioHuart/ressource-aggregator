@@ -3,8 +3,7 @@
     <div class="horizontal-spacing vertical-spacing">
         <div class="four cell horizontal-spacing">
             <div class="twelve cell" ng-class="{ hidder: show.submitWait == true }"></div>
-            <img id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
-                 src="signet.image"/>
+            <img class="initialFloat cell" ng-src="[[signet.image]]"/>
         </div>
         <div class="eight cell">
             <div>
@@ -25,7 +24,7 @@
                 <label class="title-prop">
                     <i18n>Niveaux</i18n>
                 </label>
-                <div class="twelve cell select-blocks">
+                <div class="twelve cell select-blocks-cross">
                     <div ng-repeat="level in filterChoice.levels"
                          class="labels-in-ligne">
                         <div > [[ level.label]] </div>
@@ -36,7 +35,7 @@
                 <label class="title-prop">
                     <i18n>Disciplines</i18n>
                 </label>
-                <div class="twelve cell select-blocks">
+                <div class="twelve cell select-blocks-cross">
                     <div ng-repeat="discipline in filterChoice.disciplines"
                          class="labels-in-ligne">
                         <div> [[ discipline.label]] </div>
@@ -47,7 +46,7 @@
                 <label class="title-prop">
                     <i18n>keyword</i18n>
                 </label>
-                <div class=" twelve cell select-blocks">
+                <div class="twelve cell select-blocks-cross">
                     <div ng-repeat="word in signet.plain_text.all"
                          class="labels-in-ligne">
                         <div><span ng-bind="word.label"></span> </div>

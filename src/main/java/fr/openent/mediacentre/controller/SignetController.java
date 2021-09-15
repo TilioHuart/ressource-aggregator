@@ -49,7 +49,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets")
     @ApiDoc("List all the signets created by me or shared with me")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void list(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -68,7 +68,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:id")
     @ApiDoc("Get a specific signet by id")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void get(HttpServerRequest request) {
         String signetId = request.getParam("id");
         signetService.get(signetId, defaultResponseHandler(request));
@@ -113,7 +113,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:signetId/rights")
     @ApiDoc("Get my rights for a specific signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void getMyFormRights(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
         UserUtils.getUserInfos(eb, request, user -> {
@@ -133,7 +133,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/rights/all")
     @ApiDoc("Get my rights for all the signets")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void getAllMyFormRights(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -157,14 +157,14 @@ public class SignetController extends ControllerHelper {
     @Override
     @Get("/share/json/:id")
     @ApiDoc("List rights for a given signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void shareJson(final HttpServerRequest request) {
         super.shareJson(request, false);
     }
 
     @Put("/share/json/:id")
     @ApiDoc("Add rights for a given signet")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @SecuredAction(Mediacentre.VIEW_RIGHT)
     public void shareSubmit(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
