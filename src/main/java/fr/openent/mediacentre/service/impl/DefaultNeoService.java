@@ -79,17 +79,11 @@ public class DefaultNeoService implements NeoService {
     }
 
     @Override
-    public void getUsersInfosFromIds(JsonArray userIds, JsonArray groupIds, Handler<Either<String, JsonArray>> handler) {
+    public void getUsersInfosFromIds(JsonArray groupIds, Handler<Either<String, JsonArray>> handler) {
         JsonObject params = new JsonObject()
-                .put("userIds", userIds)
                 .put("groupIds", groupIds);
-
-        String queryUsersNeo4j = "MATCH(ug:User) WHERE ug.id IN {userIds} WITH ug, " +
-                "collect({id: ug.id, username: ug.displayName}) AS users return users ";
         String queryGroupsNeo4j = "MATCH(g:Group)-[:IN]-(ug:User) WHERE g.id IN {groupIds} WITH g, " +
                 "collect({id: ug.id, username: ug.displayName}) AS users return users ";
-        String finalQuery = queryUsersNeo4j + "UNION " + queryGroupsNeo4j + ";";
-
-        Neo4j.getInstance().execute(finalQuery, params, Neo4jResult.validResultHandler(handler));
+        Neo4j.getInstance().execute(queryGroupsNeo4j, params, Neo4jResult.validResultHandler(handler));
     }
 }

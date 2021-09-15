@@ -1,10 +1,11 @@
-import {idiom, model, ng, notify, template} from 'entcore';
+import {Behaviours, idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
 import {Frame, Resource} from "../model";
 import {hashCode} from "../utils";
 import {ILocationService} from "angular";
+import * as Clipboard from "clipboard";
 
 interface ViewModel {
     signets: Signets;
@@ -54,8 +55,8 @@ interface ViewModel {
 
 }
 
-export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService', '$location',
-    function ($scope, FavoriteService: FavoriteService, $location: ILocationService) {
+export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService', '$location', '$timeout',
+    function ($scope, FavoriteService: FavoriteService, $location: ILocationService, $timeout) {
 
         const vm: ViewModel = this;
         vm.signets = new Signets();
@@ -126,15 +127,15 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         // Display functions
 
         vm.displayFilterName = (name: string) : string => {
-            return idiom.translate("signetulaire.filter." + name.toLowerCase());
+            return idiom.translate("mediacentre.filter." + name.toLowerCase());
         };
 
         vm.displayFolder = () : string => {
-            return idiom.translate("signetulaire.signets." + vm.folder);
+            return idiom.translate("mediacentre.signets." + vm.folder);
         };
 
         vm.getTitle = (title: string) : string => {
-            return idiom.translate('signetulaire.' + title);
+            return idiom.translate('mediacentre.' + title);
         };
 
         // Toaster
@@ -278,10 +279,9 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             signet_fav.plain_text = plaintextArray
             signet_fav.favorite = signet.favorite;
             delete signet.favorite;
-            let response = await FavoriteService.create(signet_fav);
+            let response = await FavoriteService.create(signet_fav, signet.id);
             if (response.status === 200) {
                 signet.favorite = true;
-                await FavoriteService.updateFavorite(signet_fav);
                 $scope.$emit('addFavorite', signet);
             }
             $scope.safeApply();
@@ -291,7 +291,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             event.stopPropagation();
             let signet_fav = <Resource> signet.toJson();
             signet_fav.favorite = signet.favorite;
-            await FavoriteService.updateFavorite(signet_fav);
             let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
             if (response.status === 200) {
                 signet.favorite = false;
@@ -316,4 +315,19 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         };
 
         init();
+
+        $scope.$watch('$viewContentLoaded', function(){
+            $timeout(function() {
+                vm.signets.all.forEach(signet => {
+                    let element = document.getElementsByClassName('clipboard signet-resource-' + signet.id);
+                    new Clipboard(element[0])
+                        .on('success', () => {
+                            $scope.$apply();
+                        })
+                        .on('error', console.error);
+                });
+                $scope.safeApply();
+            },2000);
+
+        });
     }]);

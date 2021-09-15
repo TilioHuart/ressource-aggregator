@@ -49,12 +49,24 @@ public class DefaultFavoriteService implements FavoriteService {
     }
 
     @Override
-    public void update(JsonObject favoritesBody, Handler<Either<String, JsonObject>> handler) {
-        String query = "UPDATE " + Mediacentre.SIGNET_TABLE + " SET favorite = ? " +
-                "WHERE id = ? RETURNING *;";
+    public void createSQL(JsonObject favoritesBody, String userId, Handler<Either<String, JsonObject>> handler) {
+        String query = "INSERT INTO " + Mediacentre.FAVORITES_TABLE + " (signet_id, user_id, favorite) VALUES (?, ?, ?) ";
         JsonArray params = new JsonArray()
-                .add(!favoritesBody.getBoolean("favorite"))
-                .add(favoritesBody.getInteger("id"));
+                .add(favoritesBody.getInteger("id"))
+                .add(userId)
+                .add(false);
+        Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
+    }
+
+    @Override
+    public void updateSQL(int favoriteId, String userId, boolean isFavorite, Handler<Either<String, JsonObject>> handler) {
+        String query = "INSERT INTO " + Mediacentre.FAVORITES_TABLE + " (signet_id, user_id, favorite) VALUES (?, ?, ?) " +
+                "ON CONFLICT (signet_id, user_id) DO UPDATE SET favorite = ?";
+        JsonArray params = new JsonArray()
+                .add(favoriteId)
+                .add(userId)
+                .add(isFavorite)
+                .add(isFavorite);
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
     }
 }

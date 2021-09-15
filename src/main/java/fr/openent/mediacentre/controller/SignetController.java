@@ -4,9 +4,11 @@ import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.security.CreationRight;
 import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.security.ViewRight;
+import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.NeoService;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.SignetSharesService;
+import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultNeoService;
 import fr.openent.mediacentre.service.impl.DefaultSignetService;
 import fr.openent.mediacentre.service.impl.DefaultSignetSharesService;
@@ -28,6 +30,8 @@ import org.entcore.common.user.UserUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static fr.openent.mediacentre.helper.FutureHelper.handlerJsonObject;
 import static org.entcore.common.http.response.DefaultResponseHandler.arrayResponseHandler;
 import static org.entcore.common.http.response.DefaultResponseHandler.defaultResponseHandler;
 
@@ -36,6 +40,7 @@ public class SignetController extends ControllerHelper {
     private final SignetService signetService;
     private final SignetSharesService signetShareService;
     private final NeoService neoService;
+    private FavoriteService favoriteService;
 
     public SignetController(EventBus eb) {
         super();
@@ -43,7 +48,7 @@ public class SignetController extends ControllerHelper {
         this.signetService = new DefaultSignetService();
         this.signetShareService = new DefaultSignetSharesService();
         this.neoService = new DefaultNeoService();
-
+        this.favoriteService = new DefaultFavoriteService();
     }
 
     // API
@@ -85,7 +90,10 @@ public class SignetController extends ControllerHelper {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
                 RequestUtils.bodyToJson(request, signet -> {
-                    signetService.create(signet, user, defaultResponseHandler(request));
+                    signetService.create(signet, user, event -> {
+                        JsonObject new_signet = event.right().getValue();
+                        favoriteService.createSQL(new_signet, user.getUserId(), defaultResponseHandler(request));
+                    });
                 });
             } else {
                 log.error("User not found in session.");
@@ -240,16 +248,34 @@ public class SignetController extends ControllerHelper {
                                 JsonObject right = rights.getJsonObject(i);
                                 shareFormObject.getJsonObject("users").getJsonArray(id).add(right.getString("action"));
                             }
+                            //List user to create signet favorite
+                            Object[] listUser = shareFormObject.getJsonObject("users").fieldNames().toArray();
+                            for(int j = 0; j < listUser.length -1; j++ ) {
+                                favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(listUser[j]), false, defaultResponseHandler(request));
+                            }
+                            //List group to create signet favorite
+                            Object[] listGroup = shareFormObject.getJsonObject("groups").fieldNames().toArray();
+                            for(int k = 0; k < listGroup.length; k++ ) {
+                                groupsIds.add(String.valueOf(listGroup[k]));
+                            }
+                            neoService.getUsersInfosFromIds(groupsIds, event_user -> {
+                                if(!event_user.right().getValue().isEmpty()) {
+                                    JsonArray users_group = event_user.right().getValue().getJsonObject(0).getJsonArray("users");
+                                    for(int l = 0; l< users_group.size(); l++) {
+                                        favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(users_group.getJsonObject(l).getString("id")),
+                                                false, defaultResponseHandler(request));
+                                    }
+                                }
+                                this.getShareService().share(user.getUserId(), signetId, shareFormObject, (r) -> {
+                                    if (r.isRight()) {
+                                        this.doShareSucceed(request, signetId, user, shareFormObject, (JsonObject)r.right().getValue(), false);
+                                    } else {
+                                        JsonObject error = (new JsonObject()).put("error", (String)r.left().getValue());
+                                        Renders.renderJson(request, error, 400);
+                                    }
+                                });                            });
 
                             // Classic sharing stuff (putting or removing ids from signet_shares table accordingly)
-                            this.getShareService().share(user.getUserId(), signetId, shareFormObject, (r) -> {
-                                if (r.isRight()) {
-                                    this.doShareSucceed(request, signetId, user, shareFormObject, (JsonObject)r.right().getValue(), false);
-                                } else {
-                                    JsonObject error = (new JsonObject()).put("error", (String)r.left().getValue());
-                                    Renders.renderJson(request, error, 400);
-                                }
-                            });
                         }
                         else {
                             log.error("[Formulaire@getSharedWithMe] Fail to get user's shared rights");

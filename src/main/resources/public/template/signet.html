@@ -72,6 +72,9 @@
                                     <div ng-if="signet.favorite" class="cell remove-to-favorite" data-ng-click="vm.removeFavorite(signet, $event)"
                                          tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">&nbsp;
                                     </div>
+                                    <div class="copy-clipboard clipboard signet-resource-[[signet.id]] pointer"
+                                         data-clipboard-text="[[signet.url]]" data-ng-click="$event.stopPropagation()" tooltip="<i18n>mediacentre.copy.link</i18n>">
+                                    </div>
                                 </div>
                             </div>
                         </div>
