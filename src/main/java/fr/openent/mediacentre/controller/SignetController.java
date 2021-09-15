@@ -3,6 +3,7 @@ package fr.openent.mediacentre.controller;
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.security.CreationRight;
 import fr.openent.mediacentre.security.ShareAndOwner;
+import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.NeoService;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.SignetSharesService;
@@ -49,7 +50,8 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets")
     @ApiDoc("List all the signets created by me or shared with me")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void list(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -68,7 +70,8 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:id")
     @ApiDoc("Get a specific signet by id")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void get(HttpServerRequest request) {
         String signetId = request.getParam("id");
         signetService.get(signetId, defaultResponseHandler(request));
@@ -113,7 +116,8 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:signetId/rights")
     @ApiDoc("Get my rights for a specific signet")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getMyFormRights(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
         UserUtils.getUserInfos(eb, request, user -> {
@@ -133,7 +137,8 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/rights/all")
     @ApiDoc("Get my rights for all the signets")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getAllMyFormRights(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -157,14 +162,16 @@ public class SignetController extends ControllerHelper {
     @Override
     @Get("/share/json/:id")
     @ApiDoc("List rights for a given signet")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void shareJson(final HttpServerRequest request) {
         super.shareJson(request, false);
     }
 
     @Put("/share/json/:id")
     @ApiDoc("Add rights for a given signet")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void shareSubmit(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {

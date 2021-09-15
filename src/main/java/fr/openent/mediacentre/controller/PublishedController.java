@@ -2,6 +2,7 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.security.ShareAndOwner;
+import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.impl.DefaultMediacentreEventBus;
 import fr.openent.mediacentre.service.impl.DefaultModuleSQLRequestService;
 import fr.wseduc.rs.ApiDoc;
@@ -37,7 +38,8 @@ public class PublishedController extends ControllerHelper {
 
     @Get("/levels")
     @ApiDoc("get all levels")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getLevels (HttpServerRequest request) {
         moduleSQLRequestService.getLevels(arrayResponseHandler(request));
     }
@@ -45,7 +47,8 @@ public class PublishedController extends ControllerHelper {
 
     @Get("/disciplines")
     @ApiDoc("get all disciplines")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getDisciplines (HttpServerRequest request) {
         moduleSQLRequestService.getDisciplines(arrayResponseHandler(request));
     }

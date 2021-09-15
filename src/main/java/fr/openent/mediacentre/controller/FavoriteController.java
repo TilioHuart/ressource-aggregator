@@ -28,7 +28,8 @@ public class FavoriteController extends ControllerHelper {
 
     @Post("/favorites")
     @ApiDoc("Create favorites")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void createFavorites(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
             favorite.put("user", user.getUserId());
@@ -38,7 +39,8 @@ public class FavoriteController extends ControllerHelper {
 
     @Delete("/favorites")
     @ApiDoc("Delete favorites")
-    @SecuredAction(Mediacentre.VIEW_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void deleteFavorites(final HttpServerRequest request) {
         if (!request.params().contains("id") && !request.params().contains("source")) {
             badRequest(request);

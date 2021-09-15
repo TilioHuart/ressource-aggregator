@@ -28,6 +28,7 @@ public class Mediacentre extends BaseServer {
     public static String SIGNET_SHARES_TABLE;
     public static String SIGNET_TABLE;
     public static String MEMBERS_TABLE;
+    public static String FAVORITES_TABLE;
 
 
     public static String DIRECTORY_BUS_ADDRESS = "directory";
@@ -52,6 +53,7 @@ public class Mediacentre extends BaseServer {
         SIGNET_SHARES_TABLE = mediacentreSchema + ".signet_shares";
         SIGNET_TABLE = mediacentreSchema + ".signet";
         MEMBERS_TABLE = mediacentreSchema + ".members";
+        FAVORITES_TABLE = mediacentreSchema + ".favorites";
         mediacentreConfig = config;
 
         /* Add All sources based on module configuration */
