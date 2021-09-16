@@ -17,14 +17,14 @@ public class DefaultSignetService implements SignetService {
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
-        JsonArray params = new JsonArray().add(user.getUserId()).add(user.getUserId());
+        JsonArray params = new JsonArray().add(user.getUserId()).add(user.getUserId()).add(user.getUserId());
         String query = "SELECT DISTINCT s.id, s.resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
                 "title, imageurl, s.owner_name, s.owner_id, url, date_creation, date_modification, collab, archived, orientation, " +
                 "CASE WHEN f.favorite = true and f.user_id = ? THEN true else false END as favorite" +
                 " FROM " + Mediacentre.SIGNET_TABLE + " s" +
                 " LEFT JOIN " + Mediacentre.SIGNET_SHARES_TABLE + " ss ON s.id = ss.resource_id " +
                 " LEFT JOIN " + Mediacentre.MEMBERS_TABLE + " m ON (ss.member_id = m.id AND m.group_id IS NOT NULL) " +
-                " LEFT JOIN " + Mediacentre.FAVORITES_TABLE + " f on (f.signet_id = s.id) " +
+                " LEFT JOIN " + Mediacentre.FAVORITES_TABLE + " f on (f.user_id = ?) " +
                 " WHERE f.user_id = ? AND s.owner_id = ? OR (ss.member_id IN " + Sql.listPrepared(groupsAndUserIds.toArray());
         for (String groupOrUser : groupsAndUserIds) {
             params.add(groupOrUser);
