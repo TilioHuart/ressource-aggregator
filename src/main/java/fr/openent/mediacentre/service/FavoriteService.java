@@ -33,5 +33,7 @@ public interface FavoriteService {
 
     void createSQL(JsonObject favorite, String userId, Handler<Either<String, JsonObject>> defaultResponseHandler);
 
-    void updateSQL(int favoriteId, String userId, boolean isFavorite, Handler<Either<String, JsonObject>> handler);
+    void updateSQL(int favoriteId, String userId, boolean isFavorite, boolean isShare, Handler<Either<String, JsonObject>> handler);
+
+    void getDesactivated(String signetId, JsonArray responders, Handler<Either<String, JsonArray>> handler);
 }

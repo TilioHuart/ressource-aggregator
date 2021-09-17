@@ -67,14 +67,14 @@ public interface SignetService {
      * @param groupsAndUserIds list of neo ids including the connected user
      * @param handler function handler returning JsonArray data
      */
-    void getMyFormRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler);
+    void getMySignetRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler);
 
     /**
      * Get my rights for all the signets
      * @param groupsAndUserIds list of neo ids including the connected user
      * @param handler function handler returning JsonArray data
      */
-    void getAllMyFormRights(List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler);
+    void getAllMySignetRights(List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler);
 
     void getPublicSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler);
 

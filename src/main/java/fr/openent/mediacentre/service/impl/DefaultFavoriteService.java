@@ -60,14 +60,39 @@ public class DefaultFavoriteService implements FavoriteService {
     }
 
     @Override
-    public void updateSQL(int favoriteId, String userId, boolean isFavorite, Handler<Either<String, JsonObject>> handler) {
-        String query = "INSERT INTO " + Mediacentre.FAVORITES_TABLE + " (signet_id, user_id, favorite) VALUES (?, ?, ?) " +
-                "ON CONFLICT (signet_id, user_id) DO UPDATE SET favorite = ?";
+    public void updateSQL(int favoriteId, String userId, boolean isFavorite, boolean isShare, Handler<Either<String, JsonObject>> handler) {
+        String query;
         JsonArray params = new JsonArray()
                 .add(favoriteId)
                 .add(userId)
-                .add(isFavorite)
                 .add(isFavorite);
+        if(isShare) {
+            query = "INSERT INTO " + Mediacentre.FAVORITES_TABLE + " (signet_id, user_id, favorite) VALUES (?, ?, ?) " +
+                    "ON CONFLICT (signet_id, user_id) DO NOTHING";
+        } else {
+            query = "INSERT INTO " + Mediacentre.FAVORITES_TABLE + " (signet_id, user_id, favorite) VALUES (?, ?, ?) " +
+                    "ON CONFLICT (signet_id, user_id) DO UPDATE SET favorite = ?";
+            params.add(isFavorite);
+        }
+
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
+    }
+
+    @Override
+    public void getDesactivated(String signetId, JsonArray responders, Handler<Either<String, JsonArray>> handler) {
+
+        JsonArray params = new JsonArray().add(signetId).add(true);
+        String query = "SELECT DISTINCT user_id FROM " + Mediacentre.FAVORITES_TABLE + " WHERE signet_id = ? and favorite = ? ";
+
+        if (responders.size() > 0) {
+            query += "AND user_id NOT IN (";
+            for (Object id : responders) {
+                query += "?, ";
+                params.add(id.toString());
+            }
+            query = query.substring(0, query.length() - 2) + ");";
+        }
+
+        Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(handler));
     }
 }

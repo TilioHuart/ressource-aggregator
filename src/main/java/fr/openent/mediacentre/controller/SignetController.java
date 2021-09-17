@@ -17,6 +17,10 @@ import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.http.Renders;
 import fr.wseduc.webutils.request.RequestUtils;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.CompositeFuture;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
@@ -126,7 +130,7 @@ public class SignetController extends ControllerHelper {
     @ApiDoc("Get my rights for a specific signet")
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
-    public void getMyFormRights(HttpServerRequest request) {
+    public void getMySignetRights(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -135,7 +139,7 @@ public class SignetController extends ControllerHelper {
                 if (user.getGroupsIds() != null) {
                     groupsAndUserIds.addAll(user.getGroupsIds());
                 }
-                signetService.getMyFormRights(signetId, groupsAndUserIds, arrayResponseHandler(request));
+                signetService.getMySignetRights(signetId, groupsAndUserIds, arrayResponseHandler(request));
             } else {
                 log.error("User not found in session.");
                 Renders.unauthorized(request);
@@ -147,7 +151,7 @@ public class SignetController extends ControllerHelper {
     @ApiDoc("Get my rights for all the signets")
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
-    public void getAllMyFormRights(HttpServerRequest request) {
+    public void getAllMySignetRights(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
                 List<String> groupsAndUserIds = new ArrayList();
@@ -155,7 +159,7 @@ public class SignetController extends ControllerHelper {
                 if (user.getGroupsIds() != null) {
                     groupsAndUserIds.addAll(user.getGroupsIds());
                 }
-                signetService.getAllMyFormRights(groupsAndUserIds, arrayResponseHandler(request));
+                signetService.getAllMySignetRights(groupsAndUserIds, arrayResponseHandler(request));
             } else {
                 log.error("User not found in session.");
                 Renders.unauthorized(request);
@@ -185,9 +189,9 @@ public class SignetController extends ControllerHelper {
             if (user != null) {
                 request.pause();
                 final String signetId = request.params().get("id");
-                signetService.get(signetId, getFormHandler -> {
+                signetService.get(signetId, getSignetHandler -> {
                     request.resume();
-                    final String signetName = getFormHandler.right().getValue().getString("title");
+                    final String signetName = getSignetHandler.right().getValue().getString("title");
                     JsonObject params = new fr.wseduc.webutils.collections.JsonObject();
                     SignetController.super.shareJsonSubmit(request, null, false, params, null);
                 });
@@ -204,14 +208,14 @@ public class SignetController extends ControllerHelper {
     @ResourceFilter(ShareAndOwner.class)
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void shareResource(final HttpServerRequest request) {
-        RequestUtils.bodyToJson(request, pathPrefix + "share", shareFormObject -> {
+        RequestUtils.bodyToJson(request, pathPrefix + "share", shareSignetObject -> {
             UserUtils.getUserInfos(eb, request, user -> {
                 if (user != null) {
                     // Get all ids, filter the one about sending (response right)
                     final String signetId = request.params().get("id");
-                    Map<String, Object> idUsers = shareFormObject.getJsonObject("users").getMap();
-                    Map<String, Object> idGroups = shareFormObject.getJsonObject("groups").getMap();
-                    Map<String, Object> idBookmarks = shareFormObject.getJsonObject("bookmarks").getMap();
+                    Map<String, Object> idUsers = shareSignetObject.getJsonObject("users").getMap();
+                    Map<String, Object> idGroups = shareSignetObject.getJsonObject("groups").getMap();
+                    Map<String, Object> idBookmarks = shareSignetObject.getJsonObject("bookmarks").getMap();
 
                     JsonArray usersIds = new JsonArray();
                     JsonArray groupsIds = new JsonArray();
@@ -227,7 +231,7 @@ public class SignetController extends ControllerHelper {
                                 (isGroup ? groupsIds : usersIds).add(id.getString("id"));
                             }
                         } else {
-                            log.error("[Formulaire@getUserIds] Fail to get ids from bookmarks' ids");
+                            log.error("[Mediacentre@getUserIds] Fail to get ids from bookmarks' ids");
                         }
                     });
 
@@ -242,33 +246,37 @@ public class SignetController extends ControllerHelper {
                         if (event.isRight() && event.right().getValue() != null) {
                             JsonArray rights = event.right().getValue();
                             String id = user.getUserId();
-                            shareFormObject.getJsonObject("users").put(id, new JsonArray());
-
+                            shareSignetObject.getJsonObject("users").put(id, new JsonArray());
+                            JsonArray allUsersIds = new JsonArray();
                             for (int i = 0; i < rights.size(); i++) {
                                 JsonObject right = rights.getJsonObject(i);
-                                shareFormObject.getJsonObject("users").getJsonArray(id).add(right.getString("action"));
+                                shareSignetObject.getJsonObject("users").getJsonArray(id).add(right.getString("action"));
                             }
                             //List user to create signet favorite
-                            Object[] listUser = shareFormObject.getJsonObject("users").fieldNames().toArray();
+                            Object[] listUser = shareSignetObject.getJsonObject("users").fieldNames().toArray();
                             for(int j = 0; j < listUser.length -1; j++ ) {
-                                favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(listUser[j]), false, defaultResponseHandler(request));
+                                usersIds.add(String.valueOf(listUser[j]));
+                                favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(listUser[j]), false, true, defaultResponseHandler(request));
                             }
+                            allUsersIds = allUsersIds.addAll(usersIds).add(String.valueOf(listUser[listUser.length - 1]));
                             //List group to create signet favorite
-                            Object[] listGroup = shareFormObject.getJsonObject("groups").fieldNames().toArray();
+                            Object[] listGroup = shareSignetObject.getJsonObject("groups").fieldNames().toArray();
                             for(int k = 0; k < listGroup.length; k++ ) {
                                 groupsIds.add(String.valueOf(listGroup[k]));
                             }
+                            JsonArray finalAllUsersIds = allUsersIds;
                             neoService.getUsersInfosFromIds(groupsIds, event_user -> {
                                 if(!event_user.right().getValue().isEmpty()) {
                                     JsonArray users_group = event_user.right().getValue().getJsonObject(0).getJsonArray("users");
                                     for(int l = 0; l< users_group.size(); l++) {
                                         favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(users_group.getJsonObject(l).getString("id")),
-                                                false, defaultResponseHandler(request));
+                                                false, true, defaultResponseHandler(request));
                                     }
                                 }
-                                this.getShareService().share(user.getUserId(), signetId, shareFormObject, (r) -> {
+                                this.getShareService().share(user.getUserId(), signetId, shareSignetObject, (r) -> {
                                     if (r.isRight()) {
-                                        this.doShareSucceed(request, signetId, user, shareFormObject, (JsonObject)r.right().getValue(), false);
+                                        syncFavorites(signetId, groupsIds.addAll(finalAllUsersIds));
+                                        this.doShareSucceed(request, signetId, user, shareSignetObject, (JsonObject)r.right().getValue(), false);
                                     } else {
                                         JsonObject error = (new JsonObject()).put("error", (String)r.left().getValue());
                                         Renders.renderJson(request, error, 400);
@@ -278,7 +286,7 @@ public class SignetController extends ControllerHelper {
                             // Classic sharing stuff (putting or removing ids from signet_shares table accordingly)
                         }
                         else {
-                            log.error("[Formulaire@getSharedWithMe] Fail to get user's shared rights");
+                            log.error("[Mediacentre@getSharedWithMe] Fail to get user's shared rights");
                         }
                     });
                 } else {
@@ -322,11 +330,46 @@ public class SignetController extends ControllerHelper {
                 signet.put("collab", isShared);
                 signetService.updateCollab(signetId, signet, updateEvent -> {
                     if (updateEvent.isLeft()) {
-                        log.error("[Formulaire@updateFormCollabProp] Fail to update signet : " + updateEvent.left().getValue());
+                        log.error("[Mediacentre@updateSignetCollabProp] Fail to update signet : " + updateEvent.left().getValue());
                     }
                 });
             } else {
-                log.error("[Formulaire@updateFormCollabProp] Fail to get signet : " + getEvent.left().getValue());
+                log.error("[Mediacentre@updateSignetCollabProp] Fail to get signet : " + getEvent.left().getValue());
+            }
+        });
+    }
+
+    private void syncFavorites(String formId, JsonArray responders) {
+        removeDeletedFavorites(formId, responders, removeEvt -> {
+            if (removeEvt.failed()) log.error(removeEvt.cause());
+        });
+    }
+
+    private void removeDeletedFavorites(String signetId, JsonArray responders, Handler<AsyncResult<String>> handler) {
+        favoriteService.getDesactivated(signetId, responders, filteringEvent -> {
+            if (filteringEvent.isRight()) {
+                JsonArray deactivated = filteringEvent.right().getValue();
+                if (!deactivated.isEmpty()) {
+                    List<Future> futures = new ArrayList<>();
+                    for(int i = 0; i < deactivated.size(); i++) {
+                        Future<JsonObject> removeFavoriteFuture = Future.future();
+                        Future<JsonObject> removeFavoriteSQLFuture = Future.future();
+                        futures.add(removeFavoriteFuture);
+                        futures.add(removeFavoriteSQLFuture);
+                        favoriteService.delete(signetId,"fr.openent.mediacentre.source.Signet" , deactivated.getJsonObject(i).getString("user_id"),
+                                handlerJsonObject(removeFavoriteFuture));
+                        favoriteService.updateSQL(Integer.parseInt(signetId), deactivated.getJsonObject(i).getString("user_id"), false, false, handlerJsonObject(removeFavoriteSQLFuture));
+                    }
+                    CompositeFuture.all(futures).setHandler(event -> {
+                                if (event.succeeded()) {
+                                    log.info("ok");
+                                }
+                            });
+                }
+                handler.handle(Future.succeededFuture());
+            } else {
+                handler.handle(Future.failedFuture(filteringEvent.left().getValue()));
+                log.error("[Mediacentre@removeDeletedSignets] Fail to filter signets to remove");
             }
         });
     }

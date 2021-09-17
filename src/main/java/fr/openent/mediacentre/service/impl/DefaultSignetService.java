@@ -176,7 +176,7 @@ public class DefaultSignetService implements SignetService {
     }
 
     @Override
-    public void getMyFormRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
+    public void getMySignetRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT action FROM " + Mediacentre.SIGNET_SHARES_TABLE +
                 " WHERE resource_id = ? AND member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?);";
         JsonArray params = new JsonArray()
@@ -188,7 +188,7 @@ public class DefaultSignetService implements SignetService {
     }
 
     @Override
-    public void getAllMyFormRights(List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
+    public void getAllMySignetRights(List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT resource_id, action FROM " + Mediacentre.SIGNET_SHARES_TABLE +
                 " WHERE member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?);";
         JsonArray params = new JsonArray()

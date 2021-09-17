@@ -52,7 +52,7 @@ public class FavoriteController extends ControllerHelper {
                     log.error("Favorite creation failed");
                 }
             });
-            favoriteService.updateSQL(favoriteId, user.getUserId(), true, handlerJsonObject(createFavoriteSql));
+            favoriteService.updateSQL(favoriteId, user.getUserId(), true, false, handlerJsonObject(createFavoriteSql));
             favoriteService.create(favorite, handlerJsonObject(createFavorite));
         }));
     }
@@ -81,7 +81,7 @@ public class FavoriteController extends ControllerHelper {
                     log.error("Favorite delete failed");
                 }
             });
-            favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, handlerJsonObject(deleteFavoriteSql));
+            favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false, handlerJsonObject(deleteFavoriteSql));
             favoriteService.delete(favoriteId, source, user.getUserId(), handlerJsonObject(deleteFavorite));
         });
     }
