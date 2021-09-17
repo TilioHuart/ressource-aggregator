@@ -49,7 +49,7 @@ export const signetPropController = ng.controller('signetPropController', ['$sco
                     default : $scope.vm.openFolder('mine'); break;
                 }
                 Utils.safeApply($scope);
-                $scope.mc.onCloseSignetPropertiesPopUp();
+                $scope.mc.onCloseSignetPopUp();
             });
             } else {
                 notify.error(i18n.translate("mediacentre.error.info"));

@@ -65,7 +65,6 @@ export interface MainController {
 	goSignet(): void;
 	openCreateSignetPopUp(): void;
 	onCloseSignetPopUp(): void;
-	onCloseSignetPropertiesPopUp(): void;
 
 }
 
@@ -199,12 +198,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 
 		mc.onCloseSignetPopUp = function () {
 			$scope.display.lightbox.signet = false;
-			template.close('lightboxContainer');
-			$scope.safeApply();
-		}
-
-		mc.onCloseSignetPropertiesPopUp = function () {
-			$scope.display.lightbox.properties = false;
 			template.close('lightboxContainer');
 			$scope.safeApply();
 		}

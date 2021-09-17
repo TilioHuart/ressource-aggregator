@@ -42,8 +42,6 @@ interface ViewModel {
     openPublishSignet(): void;
     shareSignet() : void;
     publishSignet(signet: Signet) : void;
-    closeShareSignetLightbox() : void;
-    closePublishSignetLightbox() : void;
     deleteSignets() : void;
     doDeleteSignets() : Promise<void>;
     archiveSignets() : void;
@@ -154,37 +152,25 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             } else {
                 template.open('lightboxContainer', 'signets/lightbox/prop-signet');
             }
-            $scope.display.lightbox.properties = true;
+            $scope.display.lightbox.signet = true;
         };
 
         vm.openPublishSignet = () : void => {
             $scope.signet = vm.signets.selected[0];
             template.open('lightboxContainer', 'signets/lightbox/publishSignetPopUp');
-            vm.display.lightbox.publishing = true;
+            $scope.display.lightbox.signet = true;
         };
 
         vm.shareSignet = (): void => {
             vm.signets.selected[0].generateShareRights();
             template.open('lightboxContainer', 'signets/lightbox/signet-sharing');
-            vm.display.lightbox.sharing = true;
-        };
-
-
-        vm.closeShareSignetLightbox = () : void => {
-            template.close('lightboxContainer');
-            vm.display.lightbox.sharing = false;
-            window.setTimeout(async function () { await init(); }, 100);
-        };
-
-        vm.closePublishSignetLightbox = () : void => {
-            template.close('lightboxContainer');
-            vm.display.lightbox.publishing = false;
+            $scope.display.lightbox.signet = true;
         };
 
         vm.deleteSignets = () : void => {
             vm.display.warning = true;
             template.open('lightboxContainer', 'signets/lightbox/signet-confirm-delete');
-            vm.display.lightbox.delete = true;
+            $scope.display.lightbox.signet = true;
         };
 
         vm.doDeleteSignets = async () : Promise<void> => {
@@ -195,7 +181,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     }
                 }
                 template.close('lightboxContainer');
-                vm.display.lightbox.delete = false;
+                $scope.mc.onCloseSignetPopUp();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.delete'));
                 init();
@@ -209,7 +195,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.archiveSignets = () : void => {
             vm.display.warning = !!vm.signets.selected.find(signet => signet.sent);
             template.open('lightboxContainer', 'signets/lightbox/signet-confirm-archive');
-            vm.display.lightbox.archive = true;
+            $scope.display.lightbox.signet = true;
         };
 
         vm.doArchiveSignets = async () : Promise<void> => {
@@ -218,7 +204,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     await signetService.archive(signet);
                 }
                 template.close('lightboxContainer');
-                vm.display.lightbox.archive = false;
+                $scope.mc.onCloseSignetPopUp();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.archive'));
                 init();
