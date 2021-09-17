@@ -82,7 +82,7 @@ public class FavoriteController extends ControllerHelper {
                 }
             });
             favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, handlerJsonObject(deleteFavoriteSql));
-            favoriteService.delete(favoriteId, source, handlerJsonObject(deleteFavorite));
+            favoriteService.delete(favoriteId, source, user.getUserId(), handlerJsonObject(deleteFavorite));
         });
     }
 

@@ -26,9 +26,10 @@ public interface FavoriteService {
      * Delete favorite
      * @param favorite  favorite identifier as parameter
      * @param source    favorite source as parameter
+     * @param userId
      * @param handler   function handler returning da
      */
-    void delete(String favorite, String source, Handler<Either<String, JsonObject>> handler);
+    void delete(String favorite, String source, String userId, Handler<Either<String, JsonObject>> handler);
 
     void createSQL(JsonObject favorite, String userId, Handler<Either<String, JsonObject>> defaultResponseHandler);
 
