@@ -91,15 +91,13 @@
 
     <section class="cell three zero-mobile vertical-spacing" style="padding-right: 20px">
         <div class="main-button">
-            <button class="cell" workflow="mediacentre.creation" ng-click="mc.openCreateSignetPopUp()"><i18n>mediacentre.signet.create.button</i18n></button>
+            <button class="cell" workflow="mediacentre.creation" ng-click="vm.openCreateSignet()"><i18n>mediacentre.signet.create.button</i18n></button>
         </div>
     </section>
 
     <infinite-scroll scrolled="vm.infiniteScroll()" loading-mode="true"></infinite-scroll>
 
-    <lightbox show="display.lightbox.signet" on-close="mc.onCloseSignetPopUp()">
-        <container template="lightboxContainer"></container>
-    </lightbox>
+    <container template="lightboxContainer"></container>
 
     <div ng-include="'mediacentre/public/template/components/toaster.html'"></div>
 </div>

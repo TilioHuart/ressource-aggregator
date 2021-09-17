@@ -16,17 +16,9 @@ resource-card {
       opacity: 1;
     }
 
-    .resource-loader {
-      display: none !important;
-    }
-
     &.loading {
       .resource-card {
         opacity: 0;
-      }
-
-      .resource-loader {
-        display: flex !important;
       }
     }
     &.textbook, &.signet {
@@ -128,7 +120,6 @@ resource-card {
 
         > img {
           max-height: 10rem;
-          max-width: 125%;
         }
       }
 
@@ -160,6 +151,9 @@ resource-card {
         color: $mediacentre-red;
         font-weight: bold;
         font-size: 18px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
 
         @media (max-width: $small-tablette) {
           font-size: 14px ! important;

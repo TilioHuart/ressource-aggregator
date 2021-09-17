@@ -1,57 +1,59 @@
-<div class="horizontal-spacing vertical-spacing" ng-controller="signetPropController">
-    <h1 style="color:red">Propriétés de mon signet</h1>
-    <div class="horizontal-spacing vertical-spacing">
-        <div class="four cell horizontal-spacing">
-            <img class="initialFloat cell" ng-src="[[signet.image]]"/>
-        </div>
-        <div class="eight cell">
-            <div>
-                <label class="row twelve">
-                    <span class="title-prop">Titre</span>
+<lightbox show="vm.display.lightbox.signet" on-close="vm.closeSignetLightbox()">
+    <div class="horizontal-spacing vertical-spacing" ng-controller="propSignetController">
+        <h1 style="color:red">Propriétés de mon signet</h1>
+        <div class="horizontal-spacing vertical-spacing">
+            <div class="four cell horizontal-spacing">
+                <img class="initialFloat cell" ng-src="[[signet.image]]"/>
+            </div>
+            <div class="eight cell">
+                <div>
+                    <label class="row twelve">
+                        <span class="title-prop">Titre</span>
+                        <br>
+                        <span>[[signet.title]]</span>
+                    </label>
                     <br>
-                    <span>[[signet.title]]</span>
-                </label>
+                    <label class="row twelve">
+                        <span class="title-prop">Lien</span>
+                        <br>
+                        <span>[[signet.url]]</span>
+                    </label>
+                </div>
                 <br>
-                <label class="row twelve">
-                    <span class="title-prop">Lien</span>
-                    <br>
-                    <span>[[signet.url]]</span>
-                </label>
-            </div>
-            <br>
-            <div class="row">
-                <label class="title-prop">
-                    <i18n>Niveaux</i18n>
-                </label>
-                <div class="twelve cell select-blocks-cross">
-                    <div ng-repeat="level in filterChoice.levels"
-                         class="labels-in-ligne">
-                        <div > [[ level.label]] </div>
+                <div class="row">
+                    <label class="title-prop">
+                        <i18n>Niveaux</i18n>
+                    </label>
+                    <div class="twelve cell select-blocks-cross">
+                        <div ng-repeat="level in filterChoice.levels"
+                             class="labels-in-ligne">
+                            <div > [[ level.label]] </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <label class="title-prop">
-                    <i18n>Disciplines</i18n>
-                </label>
-                <div class="twelve cell select-blocks-cross">
-                    <div ng-repeat="discipline in filterChoice.disciplines"
-                         class="labels-in-ligne">
-                        <div> [[ discipline.label]] </div>
+                <div class="row">
+                    <label class="title-prop">
+                        <i18n>Disciplines</i18n>
+                    </label>
+                    <div class="twelve cell select-blocks-cross">
+                        <div ng-repeat="discipline in filterChoice.disciplines"
+                             class="labels-in-ligne">
+                            <div> [[ discipline.label]] </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <label class="title-prop">
-                    <i18n>keyword</i18n>
-                </label>
-                <div class="twelve cell select-blocks-cross">
-                    <div ng-repeat="word in signet.plain_text.all"
-                         class="labels-in-ligne">
-                        <div><span ng-bind="word.label"></span> </div>
+                <div class="row">
+                    <label class="title-prop">
+                        <i18n>keyword</i18n>
+                    </label>
+                    <div class="twelve cell select-blocks-cross">
+                        <div ng-repeat="word in signet.plain_text.all"
+                             class="labels-in-ligne">
+                            <div><span ng-bind="word.label"></span> </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</lightbox>

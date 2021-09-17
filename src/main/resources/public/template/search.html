@@ -1,6 +1,6 @@
-<div ng-controller="SearchController as vm" class="search">
+<div ng-controller="SearchController as vm" class="global-search">
     <div ng-include="'/mediacentre/public/template/header.html'"></div>
-    <div class="search-header horizontal-spacing">
+    <div class="global-search-header horizontal-spacing">
         <div class="flex-left">
             <div class="cell" ng-if="vm.getAdvancedSearchField().length > 0 && !vm.emptyAdvancedSearch()">
                 <h2>
@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </div>
-            <div class = "search-filters vertical-spacing-twice">
+            <div class="global-search-filters vertical-spacing-twice">
                 <div class="vertical-spacing-twice"
                      ng-if="(vm.filters.initial.document_types.length > 0 || vm.filters.initial.levels.length > 0) && !vm.displayFilter"
                      ng-click="vm.showFilter()">

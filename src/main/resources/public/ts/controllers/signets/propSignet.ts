@@ -1,10 +1,10 @@
 import {_, idiom as i18n, model, ng, notify, template} from 'entcore';
-import {Signet} from "../model/Signet";
-import {signetService} from "../services/SignetService";
-import {Label, Labels} from "../model/Label";
-import {Utils} from "../utils/Utils";
+import {Signet} from "../../model/Signet";
+import {signetService} from "../../services/SignetService";
+import {Label, Labels} from "../../model/Label";
+import {Utils} from "../../utils/Utils";
 
-export const signetPropController = ng.controller('signetPropController', ['$scope',
+export const propSignetController = ng.controller('propSignetController', ['$scope',
     function ($scope) {
         $scope.filterChoice = {
             levels : [],

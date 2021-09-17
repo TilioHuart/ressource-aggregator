@@ -17,13 +17,7 @@ interface ViewModel {
     display: {
         grid: boolean,
         lightbox: {
-            properties: boolean;
-            publishing: boolean;
-            sending: boolean,
-            sharing: boolean,
-            archive: boolean,
-            delete: boolean,
-            reminder: boolean
+            signet: boolean
         },
         warning: boolean
     };
@@ -34,23 +28,33 @@ interface ViewModel {
     switchAll(value: boolean) : void;
     openNavMySignets() : void;
     closeNavMySignets() : void;
+
     displayFilterName(name: string) : string;
     displayFolder() : string;
     getTitle(title: string): string;
-    openSignet(signet: Signet) : void;
+
+    openCreateSignet(): void;
     openPropertiesSignet() : void;
     openPublishSignet(): void;
-    shareSignet() : void;
+    openShareSignet() : void;
     publishSignet(signet: Signet) : void;
-    deleteSignets() : void;
-    doDeleteSignets() : Promise<void>;
-    archiveSignets() : void;
-    doArchiveSignets() : Promise<void>;
+    closeSignetLightbox(): void;
+
+    openSignet(signet: Signet) : void;
+    openArchiveSignets() : void;
+    openDeleteSignets() : void;
+
+    deleteSignets() : Promise<void>;
+    archiveSignets() : Promise<void>;
     restoreSignets(): void;
+
     infiniteScroll() : void;
     addFavorite(signet: Signet, event: Event) : Promise<void>;
     removeFavorite(signet: Signet, event: Event) : Promise<void>;
+}
 
+interface EventResponses {
+    favorites_Result(frame: Frame): void;
 }
 
 export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService', '$location', '$timeout',
@@ -66,13 +70,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.display = {
             grid: true,
             lightbox: {
-                sending: false,
-                properties: false,
-                sharing: false,
-                archive: false,
-                delete: false,
-                publishing: false,
-                reminder: false
+                signet: false
             },
             warning: false
         };
@@ -136,11 +134,13 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             return idiom.translate('mediacentre.' + title);
         };
 
-        // Toaster
+        // Lightbox
 
-        vm.openSignet = (signet: Signet) : void => {
-            $scope.signet = signet;
-            $scope.redirectTo(`/signet/${signet.id}/edit`);
+        vm.openCreateSignet = function () {
+            $scope.signet = new Signet();
+            $scope.safeApply();
+            vm.display.lightbox.signet = true;
+            template.open('lightboxContainer', 'signets/lightbox/create-signet');
             $scope.safeApply();
         };
 
@@ -152,28 +152,65 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             } else {
                 template.open('lightboxContainer', 'signets/lightbox/prop-signet');
             }
-            $scope.display.lightbox.signet = true;
+            vm.display.lightbox.signet = true;
         };
 
         vm.openPublishSignet = () : void => {
             $scope.signet = vm.signets.selected[0];
-            template.open('lightboxContainer', 'signets/lightbox/publishSignetPopUp');
-            $scope.display.lightbox.signet = true;
+            template.open('lightboxContainer', 'signets/lightbox/publish-signet');
+            vm.display.lightbox.signet = true;
         };
 
-        vm.shareSignet = (): void => {
+        vm.openShareSignet = (): void => {
             vm.signets.selected[0].generateShareRights();
-            template.open('lightboxContainer', 'signets/lightbox/signet-sharing');
-            $scope.display.lightbox.signet = true;
+            template.open('lightboxContainer', 'signets/lightbox/share-signet');
+            vm.display.lightbox.signet = true;
         };
 
-        vm.deleteSignets = () : void => {
+        vm.openArchiveSignets = () : void => {
+            vm.display.warning = !!vm.signets.selected.find(signet => signet.sent);
+            template.open('lightboxContainer', 'signets/lightbox/signet-confirm-archive');
+            vm.display.lightbox.signet = true;
+        };
+
+        vm.openDeleteSignets = () : void => {
             vm.display.warning = true;
             template.open('lightboxContainer', 'signets/lightbox/signet-confirm-delete');
-            $scope.display.lightbox.signet = true;
+            vm.display.lightbox.signet = true;
         };
 
-        vm.doDeleteSignets = async () : Promise<void> => {
+        vm.closeSignetLightbox = function () {
+            vm.display.lightbox.signet = false;
+            template.close('lightboxContainer');
+            $scope.safeApply();
+        };
+
+        // Toaster
+
+        vm.openSignet = (signet: Signet) : void => {
+            $scope.signet = signet;
+            $scope.redirectTo(`/signet/${signet.id}/edit`);
+            $scope.safeApply();
+        };
+
+        vm.archiveSignets = async () : Promise<void> => {
+            try {
+                for (let signet of vm.signets.selected) {
+                    await signetService.archive(signet);
+                }
+                template.close('lightboxContainer');
+                $scope.mc.onCloseSignetPopUp();
+                vm.display.warning = false;
+                notify.success(idiom.translate('mediacentre.success.signets.archive'));
+                init();
+                $scope.safeApply();
+            }
+            catch (e) {
+                throw e;
+            }
+        };
+
+        vm.deleteSignets = async () : Promise<void> => {
             try {
                 for (let signet of vm.signets.selected) {
                     if ($scope.isStatusXXX(await signetService.unshare(signet.id), 200)) {
@@ -184,29 +221,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 $scope.mc.onCloseSignetPopUp();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.delete'));
-                init();
-                $scope.safeApply();
-            }
-            catch (e) {
-                throw e;
-            }
-        };
-
-        vm.archiveSignets = () : void => {
-            vm.display.warning = !!vm.signets.selected.find(signet => signet.sent);
-            template.open('lightboxContainer', 'signets/lightbox/signet-confirm-archive');
-            $scope.display.lightbox.signet = true;
-        };
-
-        vm.doArchiveSignets = async () : Promise<void> => {
-            try {
-                for (let signet of vm.signets.selected) {
-                    await signetService.archive(signet);
-                }
-                template.close('lightboxContainer');
-                $scope.mc.onCloseSignetPopUp();
-                vm.display.warning = false;
-                notify.success(idiom.translate('mediacentre.success.signets.archive'));
                 init();
                 $scope.safeApply();
             }
@@ -229,6 +243,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 throw e;
             }
         };
+
+        // Fovrites
 
         vm.addFavorite = async (signet, event) : Promise<void> => {
             event.stopPropagation();
@@ -285,6 +301,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             $scope.safeApply();
         };
 
+        // Websockets
+
         $scope.$on('deleteFavorite', function (event, id) {
             $scope.mc.favorites = $scope.mc.favorites.filter(el => el.id !== id);
             // $scope.mc.textbooks[$scope.mc.textbooks.findIndex(el => el.id == id)].favorite = false;
@@ -293,6 +311,32 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         $scope.$on('addFavorite', function (event, resource) {
             $scope.mc.favorites.push(resource);
         });
+
+        $scope.ws.onmessage = (message) => {
+            const {event, state, data, status} = JSON.parse(message.data);
+            if ("ok" !== status) {
+                throw data.error;
+            }
+            if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
+        };
+
+        const eventResponses: EventResponses = {
+            favorites_Result: function (frame) {
+                if (Object.keys(frame.data).length === 0) {
+                    $scope.mc.favorites = []
+                } else {
+                    $scope.mc.favorites = frame.data;
+                    $scope.mc.favorites.map((favorite) => {
+                        favorite.favorite = true;
+                    });
+                }
+                $scope.safeApply();
+            }
+        };
+
+        if ($scope.ws.connected) {
+            $scope.ws.send(new Frame('favorites', 'get', [], {}));
+        }
 
         // Utils
 

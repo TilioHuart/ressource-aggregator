@@ -1,7 +1,7 @@
 import {_, Behaviours, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
-import {Signet, Signets} from "../model/Signet";
+import {Signet} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
 import {AxiosResponse} from "axios";
@@ -21,7 +21,6 @@ export interface Scope extends IRootScopeService {
     disciplines: Labels;
     levels: Labels;
     displayDate (dateToFormat: Date): string;
-    display: { lightbox: { signet: boolean; properties: boolean }; };
 	ws: Socket;
 	loaders: any;
 	idiom: any;
@@ -63,9 +62,6 @@ export interface MainController {
 	goHome(): void;
 	goFavorites(): void;
 	goSignet(): void;
-	openCreateSignetPopUp(): void;
-	onCloseSignetPopUp(): void;
-
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
@@ -97,13 +93,11 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.ws = new Socket();
 		$scope.ws.onopen = (event) => {
 			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
+			$scope.ws.send(new Frame('favorites', 'get', [], {}));
 		};
 		mc.screenWidthLimit = 600;
 		mc.favoriteLimit = screen.width < mc.screenWidthLimit ? 2 : 7;
 		$scope.signet = new Signet();
-		$scope.display = {
-			lightbox: {signet: false, properties: false}
-		};
 		$scope.levels = new Labels();
 		$scope.levels.sync("levels");
 		$scope.disciplines = new Labels();
@@ -185,23 +179,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			$location.path(`/favorite`);
 		};
 
-		/**
-		 * Open creation course lightbox
-		 */
-		mc.openCreateSignetPopUp = function () {
-			$scope.signet = new Signet();
-			$scope.safeApply();
-			$scope.display.lightbox.signet = true;
-			template.open('lightboxContainer', 'signets/lightbox/createSignetPopUp');
-			$scope.safeApply();
-		};
-
-		mc.onCloseSignetPopUp = function () {
-			$scope.display.lightbox.signet = false;
-			template.close('lightboxContainer');
-			$scope.safeApply();
-		}
-
 		route({
 			home: () => {
 				mc.search = {...mc.search, plain_text: {text: ''}};
@@ -227,18 +204,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				template.open('main', 'search')
 			},
 		});
-
-		$scope.safeApply = function () {
-			let phase = $scope.$root.$$phase;
-			if (phase !== '$apply' && phase !== '$digest') {
-				$scope.$apply();
-			}
-		};
-
-		$scope.redirectTo = (path: string) => {
-			$location.path(path);
-			$scope.safeApply();
-		};
 
 		$scope.getSignetWithRights = async (signetId : number) : Promise<void> => {
 			$scope.signet.setFromJson(await signetService.get(signetId));
@@ -267,6 +232,20 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			}
 		};
 
+		// Utils
+
+		$scope.safeApply = function () {
+			let phase = $scope.$root.$$phase;
+			if (phase !== '$apply' && phase !== '$digest') {
+				$scope.$apply();
+			}
+		};
+
+		$scope.redirectTo = (path: string) => {
+			$location.path(path);
+			$scope.safeApply();
+		};
+
 		$scope.hasShareRightManager = (signets : Signet[]) => {
 			let hasRight = false;
 			signets.forEach(signet => {
@@ -286,7 +265,8 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 					return false;
 				}
 			});
-			return hasRight;		};
+			return hasRight;
+		};
 
 		$scope.getDataIf200 = (response: AxiosResponse) : any => {
 			if ($scope.isStatusXXX(response, 200)) { return response.data; }

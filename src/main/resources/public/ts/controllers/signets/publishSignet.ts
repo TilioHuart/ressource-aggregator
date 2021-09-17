@@ -50,7 +50,7 @@ export const publishSignetController = ng.controller('publishSignetController', 
                         default : $scope.vm.openFolder('mine'); break;
                     }
                     Utils.safeApply($scope);
-                    $scope.mc.onCloseSignetPopUp();
+                    $scope.vm.closeSignetLightbox();
                 });
             } else {
                 notify.error(i18n.translate("mediacentre.error.info"));

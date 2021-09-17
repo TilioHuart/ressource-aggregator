@@ -1,0 +1,72 @@
+<lightbox show="vm.display.lightbox.signet" on-close="vm.closeSignetLightbox()">
+    <div class="horizontal-spacing vertical-spacing" ng-controller="createSignetController">
+        <h1 style="color:red">Propriétés de mon signet</h1>
+            <div class="horizontal-spacing vertical-spacing">
+                <div class="image-container four cell horizontal-spacing">
+                    <span style="color:red" ng-if="!signet.image || signet.image == ''"><i18n>mediacentre.choose.image</i18n></span>
+                    <image-select id="image" class="initialFloat cell" default="/img/illustrations/image-default.svg"
+                                  ng-change="getTypeImage()" ng-model="signet.image"/>
+                </div>
+                <div class="eight cell">
+                    <div>
+                        <label class="row twelve">
+                            <input type="text" class="ten search_nav" required i18n-placeholder="mediacentre.signets.create.title"
+                                   ng-model="signet.title" autofocus>
+                        </label>
+                        <label class="row twelve">
+                            <input type="text" class="ten search_nav" i18n-placeholder="mediacentre.signets.create.url"
+                                   ng-model="signet.url">
+                        </label>
+                    </div>
+                    <div class="row">
+                        <multi-combo title="[[idiom.translate('levels')]]" class="eight cell" combo-model="levels.all"
+                                     search-on="label" order-by="label" filtered-model="signet.levels"></multi-combo>
+                        <div class="twelve cell select-blocks">
+                            <div ng-repeat="level in signet.levels"
+                                 ng-click="removeLevelFromCourse(level)"
+                                 class="labels-in-ligne">
+                                <div > [[ level.label]] </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <multi-combo title="[[idiom.translate('disciplines')]]" class="eight cell" combo-model="disciplines.all"
+                                     search-on="label"  order-by="label" filtered-model="signet.disciplines"></multi-combo>
+                        <div class="twelve cell select-blocks">
+                            <div ng-repeat="discipline in signet.disciplines"
+                                 ng-click="removeDisciplineFromCourse(discipline)"
+                                 class="labels-in-ligne">
+                                <div> [[ discipline.label]] </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label >
+                            <i18n>keyword</i18n>
+                        </label>
+                        <input type="text" ng-model="query.plain_text" ng-keyup="addKeyWord($event)"
+                               class="ten search_nav" i18n-placeholder="mediacentre.signets.create.keywords" >
+                        <div class=" twelve cell select-blocks" ng-if="signet.plain_text.all.length > 0">
+                            <div ng-repeat="word in signet.plain_text.all"
+                                 ng-click="removeWordFromCourse(word)"
+                                 class="labels-in-ligne">
+                                <div><span ng-bind="word.label"></span> </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row bottom-spacing-three">
+                        <label class="checkbox">
+                            <input type="checkbox" ng-model="signet.orientation"/>
+                            <span><i18n>mediacentre.signets.create.orientation</i18n></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="right-magnet">
+                <input type="button" class="cancel" i18n-value="cancel" ng-click="vm.closeSignetLightbox()"/>
+                <input type="submit" class="button" i18n-value="Valider" ng-click="createSignet()"/>
+            </div>
+        </div>
+    </div>
+</lightbox>

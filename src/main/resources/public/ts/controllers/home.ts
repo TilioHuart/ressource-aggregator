@@ -58,11 +58,6 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                 vm.textbooks = frame.data.textbooks;
                 $scope.safeApply();
             },
-            signets_Result: function (frame) {
-                vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Parcours Mediacentre");
-                vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
-                $scope.safeApply();
-            },
             favorites_Result: function (frame) {
                 if (Object.keys(frame.data).length === 0) {
                     $scope.mc.favorites = []
@@ -76,6 +71,11 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
             },
             search_Result: function (frame) {
                 vm.displayedResources = frame.data.resources;
+                $scope.safeApply();
+            },
+            signets_Result: function (frame) {
+                vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Parcours Mediacentre");
+                vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
                 $scope.safeApply();
             }
         };

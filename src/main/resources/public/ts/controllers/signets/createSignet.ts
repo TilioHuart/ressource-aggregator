@@ -28,10 +28,11 @@ export const createSignetController = ng.controller('createSignetController', ['
                             break;
                         default : $scope.vm.openFolder('mine'); break;
                     }
-                        Utils.safeApply($scope);
-                        $scope.mc.onCloseSignetPopUp();
-                    });
-            } else {
+                    Utils.safeApply($scope);
+                    $scope.vm.closeSignetLightbox();
+                });
+            }
+            else {
                 notify.error(i18n.translate("mediacentre.error.info"));
             }
             await Utils.safeApply($scope);
@@ -40,7 +41,7 @@ export const createSignetController = ng.controller('createSignetController', ['
         $scope.addKeyWord = (event) => {
             if (event.keyCode == 59 || event.key == "Enter") {
                 if ($scope.query.plain_text.trim()!= ""){
-                    if (!!!$scope.signet.plain_text) {
+                    if (!$scope.signet.plain_text) {
                         $scope.signet.plain_text = new Labels();
                     }
                     $scope.signet.plain_text.all.push(new Label(undefined, $scope.query.plain_text.trim()));

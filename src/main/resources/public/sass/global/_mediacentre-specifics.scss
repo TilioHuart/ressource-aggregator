@@ -435,4 +435,9 @@ body.mediacentre-v2 {
     flex-direction: column-reverse;
     align-items: center;
   }
+
+  .signet-container {
+    display: flex;
+    justify-content: space-between;
+  }
 }

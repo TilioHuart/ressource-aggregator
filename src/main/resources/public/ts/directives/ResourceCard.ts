@@ -46,6 +46,7 @@ export const ResourceCard = ng.directive('resourceCard',
                             const i = new Image();
                             i.onload = () => {
                                 crop.css('max-width', `${image.width * 0.6}px`);
+                                image.setAttribute('style', 'max-width: 125%;');
                                 $scope.show.loader = false;
                                 $scope.safeApply();
                             };
