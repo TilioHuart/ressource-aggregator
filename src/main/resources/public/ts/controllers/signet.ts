@@ -1,4 +1,4 @@
-import {Behaviours, idiom, model, ng, notify, template} from 'entcore';
+import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
@@ -17,7 +17,8 @@ interface ViewModel {
     display: {
         grid: boolean,
         lightbox: {
-            signet: boolean
+            signet: boolean,
+            overflow: boolean
         },
         warning: boolean
     };
@@ -70,7 +71,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.display = {
             grid: true,
             lightbox: {
-                signet: false
+                signet: false,
+                overflow: true
             },
             warning: false
         };
@@ -165,6 +167,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             vm.signets.selected[0].generateShareRights();
             template.open('lightboxContainer', 'signets/lightbox/share-signet');
             vm.display.lightbox.signet = true;
+            vm.display.lightbox.overflow = false;
         };
 
         vm.openArchiveSignets = () : void => {
@@ -181,6 +184,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.closeSignetLightbox = function () {
             vm.display.lightbox.signet = false;
+            vm.display.lightbox.overflow = true;
             template.close('lightboxContainer');
             $scope.safeApply();
         };
@@ -199,7 +203,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     await signetService.archive(signet);
                 }
                 template.close('lightboxContainer');
-                $scope.mc.onCloseSignetPopUp();
+                vm.closeSignetLightbox();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.archive'));
                 init();
@@ -218,7 +222,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     }
                 }
                 template.close('lightboxContainer');
-                $scope.mc.onCloseSignetPopUp();
+                vm.closeSignetLightbox();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.delete'));
                 init();

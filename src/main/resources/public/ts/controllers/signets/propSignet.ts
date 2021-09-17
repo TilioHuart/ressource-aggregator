@@ -1,5 +1,4 @@
-import {_, idiom as i18n, model, ng, notify, template} from 'entcore';
-import {Signet} from "../../model/Signet";
+import {_, idiom as i18n, model, ng, notify} from 'entcore';
 import {signetService} from "../../services/SignetService";
 import {Label, Labels} from "../../model/Label";
 import {Utils} from "../../utils/Utils";
@@ -48,8 +47,8 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
                         break;
                     default : $scope.vm.openFolder('mine'); break;
                 }
-                Utils.safeApply($scope);
-                $scope.mc.onCloseSignetPopUp();
+                $scope.vm.closeSignetLightbox();
+                await Utils.safeApply($scope);
             });
             } else {
                 notify.error(i18n.translate("mediacentre.error.info"));
@@ -66,7 +65,7 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
         $scope.addKeyWord = (event) => {
             if (event.keyCode == 59 || event.key == "Enter") {
                 if ($scope.query.plain_text.trim()!= ""){
-                    if (!!!$scope.signet.plain_text) {
+                    if (!$scope.signet.plain_text) {
                         $scope.signet.plain_text = new Labels();
                     }
                     $scope.signet.plain_text.all.push(new Label(undefined, $scope.query.plain_text.trim()));

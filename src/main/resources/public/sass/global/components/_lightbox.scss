@@ -1,11 +1,5 @@
 section.lightbox {
-  height: auto !important;
-  overflow: visible;
-
   > div.content {
-    overflow: visible;
-    max-height: fit-content;
-
     .lightbox-title {
       padding: 10px;
       background-color: $primary;
@@ -17,10 +11,21 @@ section.lightbox {
   }
 }
 
+lightbox.visibleoverflow {
+  section.lightbox {
+    overflow: visible;
+    > div.content {
+      overflow: visible;
+    }
+  }
+}
+
 lightbox.nopadding {
   section.lightbox {
+    height: auto !important;
     > div.content {
       padding: 0;
+      max-height: fit-content;
     }
   }
 }

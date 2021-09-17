@@ -97,7 +97,9 @@
 
     <infinite-scroll scrolled="vm.infiniteScroll()" loading-mode="true"></infinite-scroll>
 
-    <container template="lightboxContainer"></container>
+    <lightbox show="vm.display.lightbox.signet" on-close="vm.closeSignetLightbox()" ng-class="{visibleoverflow : vm.display.lightbox.overflow}">
+        <container template="lightboxContainer"></container>
+    </lightbox>
 
     <div ng-include="'mediacentre/public/template/components/toaster.html'"></div>
 </div>

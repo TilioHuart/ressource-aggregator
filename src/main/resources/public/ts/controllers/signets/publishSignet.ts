@@ -62,7 +62,7 @@ export const publishSignetController = ng.controller('publishSignetController', 
         $scope.addKeyWord = (event) => {
             if (event.keyCode == 59 || event.key == "Enter") {
                 if ($scope.query.plain_text.trim()!= ""){
-                    if (!!!$scope.signet.plain_text) {
+                    if (!$scope.signet.plain_text) {
                         $scope.signet.plain_text = new Labels();
                     }
                     $scope.signet.plain_text.all.push(new Label(undefined, $scope.query.plain_text.trim()));
