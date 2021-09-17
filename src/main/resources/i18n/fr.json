@@ -48,6 +48,7 @@
   "fr.openent.mediacentre.source.GAR": "Gar",
   "fr.openent.mediacentre.source.Moodle": "Moodle",
   "fr.openent.mediacentre.source.PMB": "PMB",
+  "fr.openent.mediacentre.source.Signet": "Signet",
   "mediacentre.resource.loading": "Votre ressource va s'afficher dans quelques instants...",
   "mediacentre.textbooks.refresh": "Actualiser",
   "mediacentre.description.button": "Fiche descriptive",
