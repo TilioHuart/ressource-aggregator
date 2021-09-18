@@ -110,6 +110,22 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 default : vm.openFolder('mine'); break;
             }
             vm.loading = false;
+
+            // Copy Link
+            $scope.$watch('$viewContentLoaded', function(){
+                $timeout(function() {
+                    vm.signets.all.forEach(signet => {
+                        let element = document.getElementsByClassName('clipboard signet-resource-' + signet.id);
+                        new Clipboard(element[0])
+                            .on('success', () => {
+                                $scope.$apply();
+                            })
+                            .on('error', console.error);
+                    });
+                    $scope.safeApply();
+                },1000);
+
+            });
             $scope.safeApply();
         };
 
@@ -366,19 +382,4 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         };
 
         init();
-
-        $scope.$watch('$viewContentLoaded', function(){
-            $timeout(function() {
-                vm.signets.all.forEach(signet => {
-                    let element = document.getElementsByClassName('clipboard signet-resource-' + signet.id);
-                    new Clipboard(element[0])
-                        .on('success', () => {
-                            $scope.$apply();
-                        })
-                        .on('error', console.error);
-                });
-                $scope.safeApply();
-            },2000);
-
-        });
     }]);

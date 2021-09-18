@@ -46,19 +46,6 @@ public interface mediacentreEventBus {
 
     void publishInMediacentre(JsonObject signet, final Handler<Either<String, JsonObject>> handler);
 
-    /**
-     * Delete resources in Mediacentre
-     * @param deleteEvent Resource JsonObject with the id to delete
-     * @param handler function handler returning data
-     */
-
-    void deleteResourceInMediacentre(JsonObject deleteEvent, final Handler<Either<String, JsonObject>> handler);
-
-    /**
-     * Modify metadata resources in Mediacentre
-     * @param updateMetadata Resource JsonObject with the id to modify
-     * @param handler function handler returning data
-     */
 
     void updateResourceInMediacentre(JsonObject updateMetadata, final Handler<Either<String, JsonObject>> handler);
 }
