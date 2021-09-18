@@ -4,6 +4,7 @@ import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.source.PMB;
+import fr.openent.mediacentre.source.Signet;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.AsyncResult;
@@ -113,6 +114,27 @@ public class ElasticSearchHelper {
         });
     }
 
+    public static void deletePublicSignets(String signetId, Handler<AsyncResult<JsonArray>> handler) {
+        JsonArray must = new JsonArray();
+        must.add(sourceFilter(Signet.class));
+        JsonObject term = new JsonObject()
+                .put("id", signetId);
+        must.add(new JsonObject().put("term", term));
+        JsonObject bool = new JsonObject()
+                .put("must", must);
+        JsonObject queryObject = new JsonObject()
+                .put("bool", bool);
+        JsonObject query = new JsonObject().put("query", queryObject);
+
+        ElasticSearch.getInstance().delete(Source.RESOURCE_TYPE_NAME, query, delete -> {
+            if (delete.failed()) {
+                handler.handle(Future.failedFuture(delete.cause()));
+            } else {
+                handler.handle(Future.succeededFuture(new JsonArray().add(delete.result())));
+            }
+        });
+    }
+
     public static void filterSource(Class<?> source, String userId, Handler<AsyncResult<JsonArray>> handler) {
         JsonArray must = new JsonArray();
         must.add(sourceFilter(source));
@@ -122,6 +144,20 @@ public class ElasticSearchHelper {
                 .put("bool", bool);
 
         search(source, userId, esQueryObject(queryObject), handler);
+    }
+
+    public static void myPublishedSignets(String userId, Handler<AsyncResult<JsonArray>> handler) {
+        JsonArray must = new JsonArray();
+        must.add(sourceFilter(Signet.class));
+        JsonObject term = new JsonObject()
+                .put("authors", userId);
+        must.add(new JsonObject().put("term", term));
+        JsonObject bool = new JsonObject()
+                .put("must", must);
+        JsonObject queryObject = new JsonObject()
+                .put("bool", bool);
+
+        search(Signet.class, userId, esQueryObject(queryObject), handler);
     }
 
 

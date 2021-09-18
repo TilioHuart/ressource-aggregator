@@ -18,10 +18,11 @@ export class Signet implements Selectable, Shareable  {
     owner_id: string;
     owner_name: string;
     date_creation: Date;
+    date_modification: Date;
     orientation: boolean;
     sent: boolean;
     collab: boolean;
-    reminded: boolean;
+    published: boolean;
     archived: boolean;
     multiple: boolean;
     anonymous: boolean;
@@ -51,9 +52,10 @@ export class Signet implements Selectable, Shareable  {
         this.owner_name = "";
         this.url = "";
         this.date_creation = new Date();
+        this.date_modification = new Date();
         this.sent = false;
         this.collab = false;
-        this.reminded = false;
+        this.published = false;
         this.archived = false;
         this.multiple = false;
         this.anonymous = false;
@@ -83,7 +85,7 @@ export class Signet implements Selectable, Shareable  {
             date_creation: new Date(this.date_creation),
             sent: this.sent,
             collab: this.collab,
-            reminded: this.reminded,
+            published: this.published,
             archived: this.archived,
             multiple: this.multiple,
             anonymous: this.anonymous,
@@ -101,8 +103,7 @@ export class Signet implements Selectable, Shareable  {
     setFromJson = (data: any) : void => {
         for (let key in data) {
             this[key] = data[key];
-            if (key === 'nb_responses' && !!!data[key]) { this[key] = 0; }
-            if ((key === 'date_creation' || key === 'date_modification' || key === 'date_opening' || key === 'date_ending')
+            if ((key === 'date_creation' || key === 'date_modification')
                 && !!data[key]) {
                     this[key] = new Date(this[key]);
             }

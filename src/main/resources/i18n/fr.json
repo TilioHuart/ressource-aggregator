@@ -69,6 +69,7 @@
   "mediacentre.signets.folders": "Mes dossiers",
   "mediacentre.signets.mine": "Mes signets",
   "mediacentre.signets.shared": "Signets partagés avec moi",
+  "mediacentre.signets.published": "Mes signets publiés",
   "mediacentre.signets.sent": "Signets envoyés",
   "mediacentre.signets.archived": "Corbeille",
   "mediacentre.signets.empty": "Désolé, vous n'avez aucun signet ...",
@@ -107,6 +108,8 @@
   "mediacentre.error.signetService.restore": "Une erreur est survenue lors de la restauration du signet",
   "mediacentre.error.signetService.delete": "Une erreur est survenue lors de la suppression du signet",
   "mediacentre.error.signetService.unshare": "Une erreur est survenue lors de la suppression du partage du signet",
+  "mediacentre.error.signetService.publish": "Une erreur est survenue lors de la publication du signet",
+  "mediacentre.error.signetService.published": "Une erreur est survenue lors de la récupération des signets publiés",
   "mediacentre.error.signetService.image": "Une erreur est survenue lors de la récupération de l'image",
   "mediacentre.error.info": "Un ou plusieurs champs n'ont pas été correctement saisis, veuillez ressayer",
 

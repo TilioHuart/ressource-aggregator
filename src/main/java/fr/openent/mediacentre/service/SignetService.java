@@ -78,4 +78,8 @@ public interface SignetService {
 
     void getPublicSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler);
 
+    void getMyPublishedSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler);
+
+    void deleteMyPublishedSignet(String signetId, Handler<Either<JsonObject, JsonObject>> handler);
+
 }

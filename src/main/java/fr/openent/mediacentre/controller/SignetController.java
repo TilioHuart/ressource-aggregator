@@ -86,6 +86,22 @@ public class SignetController extends ControllerHelper {
         signetService.get(signetId, defaultResponseHandler(request));
     }
 
+    @Get("/signets/public/")
+    @ApiDoc("Get all my published signets")
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void getPublic(HttpServerRequest request) {
+        UserUtils.getUserInfos(eb, request, user -> {
+                signetService.getMyPublishedSignet(user.getUserId(), event -> {
+                    if(event.isRight()) {
+                        renderJson(request, event.right().getValue());;
+                    } else {
+                        log.error("Public signet not found");
+                    }
+                });
+        });
+    }
+
     @Post("/signets")
     @ApiDoc("Create a signet")
     @ResourceFilter(CreationRight.class)
@@ -124,6 +140,21 @@ public class SignetController extends ControllerHelper {
     public void delete(HttpServerRequest request) {
         String signetId = request.getParam("id");
         signetService.delete(signetId, defaultResponseHandler(request));
+    }
+
+    @Delete("/signets/public/:id")
+    @ApiDoc("Delete a specific signet")
+    @ResourceFilter(ShareAndOwner.class)
+    @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
+    public void deletePublic(HttpServerRequest request) {
+        String signetId = request.getParam("id");
+        signetService.deleteMyPublishedSignet(signetId, event -> {
+            if(event.isRight()) {
+                renderJson(request, event.right().getValue());;
+            } else {
+                log.error("Public signet not deleted");
+            }
+        });
     }
 
     @Get("/signets/:signetId/rights")

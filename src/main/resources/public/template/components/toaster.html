@@ -1,6 +1,6 @@
 <section class="toggle-buttons" ng-if="vm.signets.selected.length > 0">
     <div class="toggle">
-        <div class="row" ng-if="!vm.signets.selected[0].archived">
+        <div class="row" ng-if="!vm.signets.selected[0].archived && !vm.signets.selected[0].published">
             <button ng-click="vm.openPropertiesSignet()" class="cell" ng-show="vm.signets.selected.length === 1">
                 <i18n>mediacentre.properties</i18n>
             </button>
@@ -17,10 +17,15 @@
                 <i18n>mediacentre.archive</i18n>
             </button>
         </div>
-        <div class="row" ng-if="vm.signets.selected[0].archived">
+        <div class="row" ng-if="vm.signets.selected[0].archived && !vm.signets.selected[0].published">
             <button ng-click="vm.restoreSignets()" ng-show="hasShareRightManager(vm.signets.selectedElements)" class="cell">
                 <i18n>mediacentre.restore</i18n>
             </button>
+            <button ng-click="vm.openDeleteSignets()" ng-show="hasShareRightManager(vm.signets.selectedElements)" class="cell">
+                <i18n>mediacentre.delete</i18n>
+            </button>
+        </div>
+        <div class="row" ng-if="vm.signets.selected[0].published">
             <button ng-click="vm.openDeleteSignets()" ng-show="hasShareRightManager(vm.signets.selectedElements)" class="cell">
                 <i18n>mediacentre.delete</i18n>
             </button>

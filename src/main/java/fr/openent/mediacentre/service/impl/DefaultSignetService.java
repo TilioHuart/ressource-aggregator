@@ -202,4 +202,14 @@ public class DefaultSignetService implements SignetService {
         ElasticSearchHelper.filterSource(Signet.class, userId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
     }
 
+    public void getMyPublishedSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler) {
+        ElasticSearchHelper.myPublishedSignets(userId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
+    }
+
+    public void deleteMyPublishedSignet(String signetId, Handler<Either<JsonObject, JsonObject>> handler) {
+        ElasticSearchHelper.deletePublicSignets(signetId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
+    }
+
+
+
 }

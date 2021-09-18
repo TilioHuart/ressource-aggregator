@@ -16,6 +16,8 @@ export interface SignetService {
     getAllMySignetRights() : Promise<AxiosResponse>;
     getInfoImage(signet: Signet) : Promise<AxiosResponse>;
     publish(signet: Signet) : Promise<AxiosResponse>;
+    getAllMySignetPublished() : Promise<AxiosResponse>
+    deleteSignetPublished(signetId: number) : Promise<AxiosResponse>;
 }
 
 export const signetService: SignetService = {
@@ -131,6 +133,22 @@ export const signetService: SignetService = {
             return await http.post(`/mediacentre/signet/publish/${signet.id}`, signet);
         } catch (err) {
             notify.error('mediacentre.signetService.publish.err');
+            throw err;
+        }
+    },
+    async getAllMySignetPublished() : Promise<AxiosResponse> {
+        try {
+            return http.get(`/mediacentre/signets/public/`);
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.published'));
+            throw err;
+        }
+    },
+    async deleteSignetPublished(signetId: number) : Promise<AxiosResponse> {
+        try {
+            return http.delete(`/mediacentre/signets/public/${signetId}`);
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.published'));
             throw err;
         }
     }

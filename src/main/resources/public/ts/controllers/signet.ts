@@ -89,12 +89,26 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 case "shared":
                     vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
                     break;
+                case "published":
+                    let { data } = await signetService.getAllMySignetPublished();
+                    vm.signets.all = [];
+                    for (let i = 0; i < data.resources.length; i++) {
+                        let tempSignet = new Signet();
+                        tempSignet.setFromJson(data.resources[i]);
+                        tempSignet.owner_id = data.resources[i].authors[0];
+                        tempSignet.owner_name = data.resources[i].editors[0];
+                        tempSignet.url = data.resources[i].link;
+                        tempSignet.date_creation = new Date(data.resources[i].date);
+                        tempSignet.date_modification = new Date(data.resources[i].date);
+                        tempSignet.published = true;
+                        vm.signets.all.push(tempSignet);
+                    }
+                    break;
                 case "archived":
                     vm.signets.all = vm.signets.all.filter(signet => signet.archived);
                     break;
                 default : vm.openFolder('mine'); break;
             }
-
             vm.loading = false;
             $scope.safeApply();
         };
@@ -217,8 +231,12 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.deleteSignets = async () : Promise<void> => {
             try {
                 for (let signet of vm.signets.selected) {
-                    if ($scope.isStatusXXX(await signetService.unshare(signet.id), 200)) {
-                        await signetService.delete(signet.id);
+                    if(signet.published) {
+                        await signetService.deleteSignetPublished(signet.id);
+                    } else {
+                        if ($scope.isStatusXXX(await signetService.unshare(signet.id), 200)) {
+                            await signetService.delete(signet.id);
+                        }
                     }
                 }
                 template.close('lightboxContainer');
