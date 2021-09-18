@@ -59,7 +59,7 @@
                          tooltip="<i18n>mediacentre.copy.link</i18n>">
                         <i18n>mediacentre.copy.link</i18n>
                     </div>
-                    <div ng-if="ngModel.action"
+                    <div ng-if="ngModel.action && ngModel.source != 'fr.openent.mediacentre.source.Signet'"
                          ng-click="action()"
                          class="cell action [[idiom.translate(ngModel.action.label)]] [[type]]-resource-[[ngModel.hash]] pointer">
                         [[idiom.translate(ngModel.action.label)]]

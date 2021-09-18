@@ -21,6 +21,8 @@ import org.entcore.common.http.response.DefaultResponseHandler;
 import org.entcore.common.user.UserUtils;
 
 import static fr.openent.mediacentre.helper.FutureHelper.handlerJsonObject;
+import static fr.wseduc.webutils.http.response.DefaultResponseHandler.arrayResponseHandler;
+import static fr.wseduc.webutils.http.response.DefaultResponseHandler.defaultResponseHandler;
 
 public class FavoriteController extends ControllerHelper {
 
@@ -40,20 +42,20 @@ public class FavoriteController extends ControllerHelper {
     public void createFavorites(final HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
             favorite.put("user", user.getUserId());
-            int favoriteId = Integer.parseInt(request.getParam("id"));
-            Future<JsonObject> createFavoriteSql = Future.future();
-            Future<JsonObject> createFavorite = Future.future();
-
-            CompositeFuture.all(createFavorite, createFavoriteSql).setHandler(event -> {
-                if(event.succeeded()) {
+            int favoriteId = 0;
+            if(favorite.getString("source").equals("fr.openent.mediacentre.source.Signet")) {
+                favoriteId = Integer.parseInt(request.getParam("id"));
+                favoriteService.updateSQL(favoriteId, user.getUserId(), true, false, defaultResponseHandler(request));
+            }
+            favoriteService.create(favorite, event -> {
+                if(event.isRight()) {
                     log.info("Favorite creation successful");
                     request.response().setStatusCode(200).end();
                 } else {
                     log.error("Favorite creation failed");
                 }
             });
-            favoriteService.updateSQL(favoriteId, user.getUserId(), true, false, handlerJsonObject(createFavoriteSql));
-            favoriteService.create(favorite, handlerJsonObject(createFavorite));
+
         }));
     }
 
@@ -69,20 +71,19 @@ public class FavoriteController extends ControllerHelper {
             }
             String favoriteId = request.getParam("id");
             String source = request.getParam("source");
-
-            Future<JsonObject> deleteFavoriteSql = Future.future();
-            Future<JsonObject> deleteFavorite = Future.future();
-
-            CompositeFuture.all(deleteFavorite, deleteFavoriteSql).setHandler(event -> {
-                if(event.succeeded()) {
+            favoriteService.delete(favoriteId, source, user.getUserId(), event -> {
+                if(event.isRight()) {
                     log.info("Favorite delete successful");
                     request.response().setStatusCode(200).end();
                 } else {
                     log.error("Favorite delete failed");
                 }
             });
-            favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false, handlerJsonObject(deleteFavoriteSql));
-            favoriteService.delete(favoriteId, source, user.getUserId(), handlerJsonObject(deleteFavorite));
+            // Non-signet
+            if (!request.getParam("id").equals("NaN")) {
+                favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false, defaultResponseHandler(request));
+            }
+
         });
     }
 

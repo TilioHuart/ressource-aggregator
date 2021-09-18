@@ -23,7 +23,6 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
                         $scope.filterChoice.disciplines.push(level);
                 });
             });
-            $scope.signet.image = $scope.signet.imageurl;
             $scope.safeApply();
         };
 

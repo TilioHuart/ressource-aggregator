@@ -254,7 +254,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             event.stopPropagation();
             signet.hash = hashCode(signet.resource_id);
             signet.displayTitle = signet.title;
-            signet.image = signet.imageurl;
             let signet_fav = <Resource> signet.toJson();
             let disciplinesArray:string[] = [];
             let levelsArray:string[] = [];
@@ -300,7 +299,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
             if (response.status === 200) {
                 signet.favorite = false;
-                $scope.$emit('deleteFavorite', signet.resource_id);
+                $scope.$emit('deleteFavorite', signet.id);
             }
             $scope.safeApply();
         };

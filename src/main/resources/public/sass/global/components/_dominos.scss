@@ -6,7 +6,7 @@
   .item {
     width: calc(90%/3);
     background: white;
-
+    height: 130px;
     &.response {
       width: calc(90%/4);
     }
@@ -43,12 +43,12 @@
           }
 
           .owner {
-            font-size: 13px;
+            font-size: 15px;
             color: $primary;
           }
 
           .date {
-            font-size: 12px;
+            font-size: 13px;
             font-style: italic;
             color: gray;
           }

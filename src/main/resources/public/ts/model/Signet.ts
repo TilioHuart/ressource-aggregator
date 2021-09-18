@@ -14,7 +14,6 @@ export class Signet implements Selectable, Shareable  {
 
     id: number;
     title: string;
-    imageurl: string;
     url: string;
     owner_id: string;
     owner_name: string;
@@ -48,7 +47,6 @@ export class Signet implements Selectable, Shareable  {
         this.owner = {userId: "", displayName: ""},
         this.id = 0;
         this.title = "";
-        this.imageurl = "";
         this.owner_id = "";
         this.owner_name = "";
         this.url = "";
@@ -79,6 +77,7 @@ export class Signet implements Selectable, Shareable  {
             title: this.title,
             image: this.image,
             link: this.url,
+            url: this.url,
             owner_id: this.owner_id,
             owner_name: this.owner_name,
             date_creation: new Date(this.date_creation),

@@ -38,19 +38,19 @@
         </nav>
     </div>
 
-    <section class="cell six twelve-mobile vertical-spacing">
+    <section class="cell eight twelve-mobile vertical-spacing">
 
         <div ng-include="'mediacentre/public/template/components/filters.html'"></div>
 
         <!--Dominos display-->
-        <div class="dominos" ng-if="!vm.signets.all.empty()">
+        <div class="dominos" ng-if="vm.signets.all.length > 0">
             <div ng-repeat="signet in vm.signets.all | limitTo:vm.limitTo"
                  ng-if="!vm.signets.all.empty() && signet.displayed"
                  ng-click="signet.selected = !signet.selected"
                  class="item" ng-class="{'selected' : signet.selected}">
                 <div class="domino">
-                    <div class="four picture" ng-class="{'empty': !signet.imageurl}">
-                        <img ng-src="[[(signet.imageurl) || '/mediacentre/public/img/empty-image.png']]"/>
+                    <div class="four picture" ng-class="{'empty': !signet.image}">
+                        <img ng-src="[[(signet.image) || '/mediacentre/public/img/empty-image.png']]"/>
                     </div>
                     <div class="eight">
                         <div class="data">
@@ -83,13 +83,13 @@
             </div>
         </div>
 
-        <div class="error" ng-if="vm.signets.all.empty()">
+        <div class="error" ng-if="vm.signets.all.length == 0">
             <img src="/mediacentre/public/img/onboarding.svg"/>
             <i18n>mediacentre.signets.empty</i18n>
         </div>
     </section>
 
-    <section class="cell three zero-mobile vertical-spacing" style="padding-right: 20px">
+    <section class="cell one zero-mobile vertical-spacing" style="padding-right: 20px">
         <div class="main-button">
             <button class="cell" workflow="mediacentre.creation" ng-click="vm.openCreateSignet()"><i18n>mediacentre.signet.create.button</i18n></button>
         </div>
