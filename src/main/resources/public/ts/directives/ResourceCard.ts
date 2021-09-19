@@ -136,7 +136,7 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.addFavorite = async function () {
                     delete $scope.ngModel.favorite;
-                    $scope.ngModel.id = parseInt($scope.ngModel.id);
+                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' && $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
                     let response = await FavoriteService.create($scope.ngModel, $scope.ngModel.id);
                     if (response.status === 200) {
                         $scope.ngModel.favorite = true;
@@ -146,6 +146,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
+                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' && $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
                     let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
                     if (response.status === 200) {
                         $scope.ngModel.favorite = false;

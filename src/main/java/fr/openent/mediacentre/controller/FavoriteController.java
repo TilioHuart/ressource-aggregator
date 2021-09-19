@@ -79,8 +79,8 @@ public class FavoriteController extends ControllerHelper {
                     log.error("Favorite delete failed");
                 }
             });
-            // Non-signet
-            if (!request.getParam("id").equals("NaN")) {
+            // Update sql for signet
+            if (source.equals("fr.openent.mediacentre.source.Signet")) {
                 favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false, defaultResponseHandler(request));
             }
 

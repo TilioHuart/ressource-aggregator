@@ -58,7 +58,7 @@
         <div class="textbooks-grid" ng-show="vm.publicSignets.length > 0">
             <resource-card
                     ng-repeat="resource in vm.publicSignets | orderBy:'title' track by $index"
-                    type="create"
+                    type="signet"
                     ng-model="resource">
             </resource-card>
         </div>
@@ -74,7 +74,7 @@
         <div class="textbooks-grid" ng-show="vm.orientationSignets.length > 0">
             <resource-card
                     ng-repeat="resource in vm.orientationSignets | orderBy:'title' track by $index"
-                    type="create"
+                    type="signet"
                     ng-model="resource">
             </resource-card>
         </div>
