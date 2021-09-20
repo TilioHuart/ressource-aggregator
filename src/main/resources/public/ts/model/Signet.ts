@@ -1,5 +1,5 @@
 import {Mix, Selectable, Selection} from "entcore-toolkit";
-import {http, idiom, notify, Rights, Shareable} from "entcore";
+import {idiom, notify, Rights, Shareable} from "entcore";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "./Label";
 
@@ -186,24 +186,8 @@ export class Signets extends Selection<Signet> {
         let ids = this.all.map(form => form.id);
         for (let i = 0; i < ids.length; i++) {
             let formId = ids[i];
-            let rights = data.filter(right => right.resource_id === formId).map(right => right.action);
-            this.all.filter(form => form.id === formId)[0].myRights = rights;
+            this.all.filter(form => form.id === formId)[0].myRights = data.filter(right => right.resource_id === formId).map(right => right.action);
         }
     };
-
-/*    async setInfoImg() {
-        const typesImgNoSend = ["image/png", "image/jpg", "image/jpeg", "image/gif"];
-        try {
-            const {data: {metadata}} = await http.get(`/moodle/info/image/${this.imageurl ? this.imageurl.split("/").slice(-1)[0] : null}`);
-            this.infoImg = {
-                name: metadata.filename,
-                type: metadata["content-type"],
-                compatibleMoodle: !typesImgNoSend.some(type => type === metadata["content-type"]),
-            };
-        } catch (e) {
-            notify.error("info img function didn't work");
-            throw e;
-        }
-    }*/
 
 }

@@ -249,8 +249,9 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.hasShareRightManager = (signets : Signet[]) => {
 			let hasRight = false;
 			signets.forEach(signet => {
-				hasRight = signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.manager.right);
-				if(hasRight == false) {
+				hasRight = signet.owner_id === model.me.userId ||
+					(signet.myRights && signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.manager.right));
+				if(!hasRight) {
 					return false;
 				}
 			});
@@ -260,8 +261,9 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.hasShareRightView = (signets : Signet[]) => {
 			let hasRight = false;
 			signets.forEach(signet => {
-				hasRight = signet.owner_id === model.me.userId || signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.contrib.right);
-				if(hasRight == false) {
+				hasRight = signet.owner_id === model.me.userId ||
+					(signet.myRights && signet.myRights.includes(Behaviours.applicationsBehaviours.mediacentre.rights.resources.contrib.right));
+				if(!hasRight) {
 					return false;
 				}
 			});
