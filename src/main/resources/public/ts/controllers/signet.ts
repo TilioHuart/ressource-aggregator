@@ -8,6 +8,7 @@ import {ILocationService} from "angular";
 import * as Clipboard from "clipboard";
 
 interface ViewModel {
+    signetPopUpSharing: boolean;
     signets: Signets;
     folder: string;
     allSignetsSelected: boolean;
@@ -77,6 +78,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             warning: false
         };
         vm.loading = true;
+        vm.signetPopUpSharing = false;
         vm.mobile = screen.width < $scope.mc.screenWidthLimit;
 
         const init = async () : Promise<void> => {
@@ -195,6 +197,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.openShareSignet = (): void => {
             vm.signets.selected[0].generateShareRights();
+            vm.signetPopUpSharing = true;
             template.open('lightboxContainer', 'signets/lightbox/share-signet');
             vm.display.lightbox.signet = true;
             vm.display.lightbox.overflow = false;
@@ -212,9 +215,13 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             vm.display.lightbox.signet = true;
         };
 
-        vm.closeSignetLightbox = function () {
+        vm.closeSignetLightbox = async function () {
             vm.display.lightbox.signet = false;
             vm.display.lightbox.overflow = true;
+            if (vm.signetPopUpSharing) {
+                vm.signets.selected[0].myRights = $scope.getDataIf200(await signetService.getMySignetRights(vm.signets.selected[0].id)).map(right => right.action);
+                vm.signetPopUpSharing = false;
+            }
             template.close('lightboxContainer');
             $scope.safeApply();
         };

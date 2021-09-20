@@ -207,9 +207,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 
 		$scope.getSignetWithRights = async (signetId : number) : Promise<void> => {
 			$scope.signet.setFromJson(await signetService.get(signetId));
-/*
-			$scope.form.myRights = $scope.getDataIf200(await formService.getMyFormRights(formId)).map(right => right.action);
-*/
+			$scope.signet.myRights = $scope.getDataIf200(await signetService.getMySignetRights(signetId)).map(right => right.action);
 		};
 
 		$scope.displayDate = (dateToFormat: Date) : string => {

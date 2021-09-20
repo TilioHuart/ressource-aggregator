@@ -183,10 +183,10 @@ export class Signets extends Selection<Signet> {
 
     setResourceRights = async () : Promise<void> => {
         let { data } = await signetService.getAllMySignetRights();
-        let ids = this.all.map(form => form.id);
+        let ids = this.all.map(signet => signet.id);
         for (let i = 0; i < ids.length; i++) {
-            let formId = ids[i];
-            this.all.filter(form => form.id === formId)[0].myRights = data.filter(right => right.resource_id === formId).map(right => right.action);
+            let signetId = ids[i];
+            this.all.filter(signet => signet.id === signetId)[0].myRights = data.filter(right => right.resource_id === signetId).map(right => right.action);
         }
     };
 

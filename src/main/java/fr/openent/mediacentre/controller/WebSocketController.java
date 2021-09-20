@@ -93,6 +93,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                         }
                         case "signets": {
                             getSignet(state, userInfos, ws);
+                            break;
                         }
                         default:
                             ws.writeTextMessage(new JsonObject().put("error", "Unknown event").put("status", "ko").encode());
