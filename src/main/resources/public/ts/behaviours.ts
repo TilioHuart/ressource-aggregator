@@ -10,7 +10,7 @@ const rights = {
         }
     },
     workflow: {
-        creation: 'fr.openent.mediacentre.controller.MediacentreController|initCreationRight'
+        creation: 'fr.openent.mediacentre.controller.SignetController|create'
     }
 };
 
