@@ -15,19 +15,16 @@ import fr.wseduc.webutils.request.RequestUtils;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
-import org.entcore.common.user.UserUtils;
 
-import static fr.openent.mediacentre.Mediacentre.mediacentreConfig;
 import static fr.wseduc.webutils.http.response.DefaultResponseHandler.arrayResponseHandler;
 
 public class PublishedController extends ControllerHelper {
 
     private final fr.openent.mediacentre.service.moduleSQLRequestService moduleSQLRequestService;
-    private fr.openent.mediacentre.service.mediacentreEventBus mediacentreEventBus;
+    private final fr.openent.mediacentre.service.mediacentreEventBus mediacentreEventBus;
 
     public PublishedController(EventBus eb) {
         super();

@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.source.GAR;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
@@ -14,6 +15,7 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
+import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserUtils;
 import org.vertx.java.core.http.RouteMatcher;
 
@@ -24,8 +26,8 @@ import static org.entcore.common.http.response.DefaultResponseHandler.arrayRespo
 
 public class MediacentreController extends ControllerHelper {
 
-    private List<Source> sources;
-    private JsonObject config;
+    private final List<Source> sources;
+    private final JsonObject config;
 
     public MediacentreController(List<Source> sources, JsonObject config) {
         super();
@@ -61,19 +63,16 @@ public class MediacentreController extends ControllerHelper {
     }
 
     @SecuredAction(value = Mediacentre.VIEW_RESOURCE_RIGHT, type = ActionType.RESOURCE)
-    public void initViewResourceRight(final HttpServerRequest request) {
+    public void initViewResourceRight() {
     }
 
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
-    public void initManagerResourceRight(final HttpServerRequest request) {
-    }
-
-    @SecuredAction(Mediacentre.CREATION_RIGHT)
-    public void initCreationRight(final HttpServerRequest request) {
+    public void initManagerResourceRight() {
     }
 
     @Get("/textbooks")
-    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getGar(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             for (Source source : this.sources) {

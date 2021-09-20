@@ -1,6 +1,5 @@
 package fr.openent.mediacentre.controller;
 
-import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
@@ -10,24 +9,18 @@ import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.request.RequestUtils;
-import io.vertx.core.CompositeFuture;
-import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
-import org.entcore.common.http.response.DefaultResponseHandler;
 import org.entcore.common.user.UserUtils;
 
-import static fr.openent.mediacentre.helper.FutureHelper.handlerJsonObject;
-import static fr.wseduc.webutils.http.response.DefaultResponseHandler.arrayResponseHandler;
 import static fr.wseduc.webutils.http.response.DefaultResponseHandler.defaultResponseHandler;
 
 public class FavoriteController extends ControllerHelper {
 
-    private EventBus eb;
-    private FavoriteService favoriteService;
+    private final EventBus eb;
+    private final FavoriteService favoriteService;
 
     public FavoriteController(EventBus eb) {
         super();
@@ -81,7 +74,8 @@ public class FavoriteController extends ControllerHelper {
             });
             // Update sql for signet
             if (source.equals("fr.openent.mediacentre.source.Signet")) {
-                favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false, defaultResponseHandler(request));
+                favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false,
+                        defaultResponseHandler(request));
             }
 
         });

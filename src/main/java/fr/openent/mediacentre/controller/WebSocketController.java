@@ -2,7 +2,6 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.enums.SearchState;
-import fr.openent.mediacentre.helper.ElasticSearchHelper;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.helper.WorkflowHelper;
@@ -13,7 +12,6 @@ import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultSignetService;
 import fr.openent.mediacentre.service.impl.DefaultTextBookService;
 import fr.openent.mediacentre.source.GAR;
-import fr.openent.mediacentre.source.Signet;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.request.CookieHelper;

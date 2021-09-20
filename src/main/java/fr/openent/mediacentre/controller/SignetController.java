@@ -1,7 +1,6 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
-import fr.openent.mediacentre.security.CreationRight;
 import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.FavoriteService;
@@ -31,6 +30,7 @@ import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserInfos;
 import org.entcore.common.user.UserUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class SignetController extends ControllerHelper {
     private final SignetService signetService;
     private final SignetSharesService signetShareService;
     private final NeoService neoService;
-    private FavoriteService favoriteService;
+    private final FavoriteService favoriteService;
 
     public SignetController(EventBus eb) {
         super();
@@ -104,8 +104,7 @@ public class SignetController extends ControllerHelper {
 
     @Post("/signets")
     @ApiDoc("Create a signet")
-    @ResourceFilter(CreationRight.class)
-    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    @SecuredAction(Mediacentre.CREATION_RIGHT)
     public void create(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -222,9 +221,9 @@ public class SignetController extends ControllerHelper {
                 final String signetId = request.params().get("id");
                 signetService.get(signetId, getSignetHandler -> {
                     request.resume();
-                    final String signetName = getSignetHandler.right().getValue().getString("title");
                     JsonObject params = new fr.wseduc.webutils.collections.JsonObject();
-                    SignetController.super.shareJsonSubmit(request, null, false, params, null);
+                    SignetController.super.shareJsonSubmit(request, null, false, params,
+                            null);
                 });
             }
             else {
@@ -255,7 +254,8 @@ public class SignetController extends ControllerHelper {
                     // Get group ids and users ids from bookmarks and add them to previous lists
                     neoService.getIdsFromBookMarks(bookmarksIds, eventBookmarks -> {
                         if (eventBookmarks.isRight()) {
-                            JsonArray ids = eventBookmarks.right().getValue().getJsonObject(0).getJsonArray("ids").getJsonObject(0).getJsonArray("ids");
+                            JsonArray ids = eventBookmarks.right().getValue().getJsonObject(0)
+                                    .getJsonArray("ids").getJsonObject(0).getJsonArray("ids");
                             for (int i = 0; i < ids.size(); i++) {
                                 JsonObject id = ids.getJsonObject(i);
                                 boolean isGroup = id.getString("name") != null;
@@ -287,29 +287,33 @@ public class SignetController extends ControllerHelper {
                             Object[] listUser = shareSignetObject.getJsonObject("users").fieldNames().toArray();
                             for(int j = 0; j < listUser.length -1; j++ ) {
                                 usersIds.add(String.valueOf(listUser[j]));
-                                favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(listUser[j]), false, true, defaultResponseHandler(request));
+                                favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(listUser[j]),
+                                        false, true, defaultResponseHandler(request));
                             }
                             allUsersIds = allUsersIds.addAll(usersIds).add(String.valueOf(listUser[listUser.length - 1]));
                             //List group to create signet favorite
                             Object[] listGroup = shareSignetObject.getJsonObject("groups").fieldNames().toArray();
-                            for(int k = 0; k < listGroup.length; k++ ) {
-                                groupsIds.add(String.valueOf(listGroup[k]));
+                            for (Object o : listGroup) {
+                                groupsIds.add(String.valueOf(o));
                             }
                             JsonArray finalAllUsersIds = allUsersIds;
                             neoService.getUsersInfosFromIds(groupsIds, event_user -> {
                                 if(!event_user.right().getValue().isEmpty()) {
-                                    JsonArray users_group = event_user.right().getValue().getJsonObject(0).getJsonArray("users");
+                                    JsonArray users_group = event_user.right().getValue().getJsonObject(0)
+                                            .getJsonArray("users");
                                     for(int l = 0; l< users_group.size(); l++) {
-                                        favoriteService.updateSQL(Integer.parseInt(signetId), String.valueOf(users_group.getJsonObject(l).getString("id")),
+                                        favoriteService.updateSQL(Integer.parseInt(signetId),
+                                                String.valueOf(users_group.getJsonObject(l).getString("id")),
                                                 false, true, defaultResponseHandler(request));
                                     }
                                 }
                                 this.getShareService().share(user.getUserId(), signetId, shareSignetObject, (r) -> {
                                     if (r.isRight()) {
                                         syncFavorites(signetId, groupsIds.addAll(finalAllUsersIds));
-                                        this.doShareSucceed(request, signetId, user, shareSignetObject, (JsonObject)r.right().getValue(), false);
+                                        this.doShareSucceed(request, signetId, user, shareSignetObject, r.right().getValue(),
+                                                false);
                                     } else {
-                                        JsonObject error = (new JsonObject()).put("error", (String)r.left().getValue());
+                                        JsonObject error = (new JsonObject()).put("error", r.left().getValue());
                                         Renders.renderJson(request, error, 400);
                                     }
                                 });                            });
@@ -387,9 +391,11 @@ public class SignetController extends ControllerHelper {
                         Future<JsonObject> removeFavoriteSQLFuture = Future.future();
                         futures.add(removeFavoriteFuture);
                         futures.add(removeFavoriteSQLFuture);
-                        favoriteService.delete(signetId,"fr.openent.mediacentre.source.Signet" , deactivated.getJsonObject(i).getString("user_id"),
+                        favoriteService.delete(signetId,"fr.openent.mediacentre.source.Signet" ,
+                                deactivated.getJsonObject(i).getString("user_id"),
                                 handlerJsonObject(removeFavoriteFuture));
-                        favoriteService.updateSQL(Integer.parseInt(signetId), deactivated.getJsonObject(i).getString("user_id"), false, false, handlerJsonObject(removeFavoriteSQLFuture));
+                        favoriteService.updateSQL(Integer.parseInt(signetId), deactivated.getJsonObject(i).getString("user_id"),
+                                false, false, handlerJsonObject(removeFavoriteSQLFuture));
                     }
                     CompositeFuture.all(futures).setHandler(event -> {
                                 if (event.succeeded()) {

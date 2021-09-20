@@ -22,7 +22,7 @@ public class Mediacentre extends BaseServer {
 
     public static int wsPort;
     public static final String VIEW_RIGHT = "mediacentre.view";
-    public static final String CREATION_RIGHT = "mediacentre.creation";
+    public static final String CREATION_RIGHT = "mediacentre.signets.creation";
     public static String mediacentreSchema;
     public static JsonObject mediacentreConfig;
     public static String SIGNET_SHARES_TABLE;
