@@ -1,5 +1,5 @@
 <div class="horizontal-spacing" ng-controller="propSignetController">
-    <h2>Propriétés de mon signet</h2>
+    <h2><i18n>mediacentre.signets.properties</i18n></h2>
     <div class="horizontal-spacing vertical-spacing">
         <div class="four cell horizontal-spacing">
             <img class="initialFloat cell" ng-src="[[signet.image]]"/>
@@ -7,13 +7,13 @@
         <div class="eight cell">
             <div>
                 <label class="row twelve">
-                    <span class="title-prop">Titre</span>
+                    <span class="title-prop"><i18n>mediacentre.advanced.name.title</i18n></span>
                     <br>
                     <span>[[signet.title]]</span>
                 </label>
                 <br>
                 <label class="row twelve">
-                    <span class="title-prop">Lien</span>
+                    <span class="title-prop"><i18n>mediacentre.link</i18n></span>
                     <br>
                     <span>[[signet.url]]</span>
                 </label>
@@ -21,7 +21,7 @@
             <br>
             <div class="row">
                 <label class="title-prop">
-                    <i18n>Niveaux</i18n>
+                    <i18n>mediacentre.levels</i18n>
                 </label>
                 <div class="twelve cell select-blocks-cross">
                     <div ng-repeat="level in filterChoice.levels"
@@ -32,7 +32,7 @@
             </div>
             <div class="row">
                 <label class="title-prop">
-                    <i18n>Disciplines</i18n>
+                    <i18n>mediacentre.disciplines</i18n>
                 </label>
                 <div class="twelve cell select-blocks-cross">
                     <div ng-repeat="discipline in filterChoice.disciplines"
@@ -43,7 +43,7 @@
             </div>
             <div class="row">
                 <label class="title-prop">
-                    <i18n>keyword</i18n>
+                    <i18n>mediacentre.keywords</i18n>
                 </label>
                 <div class="twelve cell select-blocks-cross">
                     <div ng-repeat="word in signet.plain_text.all"

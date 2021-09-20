@@ -92,9 +92,9 @@
   "mediacentre.shared": "Signet partagé",
   "mediacentre.properties": "Propriétés",
   "mediacentre.publish": "Publier",
-  "levels" : "Niveaux",
-  "disciplines" : "Disciplines",
-  "keyword": "Mots clés",
+  "mediacentre.levels" : "Niveaux",
+  "mediacentre.disciplines" : "Disciplines",
+  "mediacentre.keywords": "Mots clés",
   "mediacentre.contrib": "Visualisation",
   "mediacentre.manager": "Manager",
 
@@ -126,6 +126,14 @@
   "mediacentre.signets.create.title": "Titre de mon signet *",
   "mediacentre.signets.create.url": "URL de mon signet *",
   "mediacentre.signets.create.keywords": "Veuillez renseigner les mots clés choisis",
-  "mediacentre.signets.create.orientation": "Orientation / Découverte des métiers"
+  "mediacentre.signets.create.orientation": "Orientation / Découverte des métiers",
+  "mediacentre.signets.properties": "Propriétés de mon signet",
+  "mediacentre.signets.publish": "Publier mon signet",
+  "mediacentre.signets.publish.request": "Demande de publication pour : ",
+
+  "mediacentre.signets.mine.upperCase": "MES SIGNETS",
+  "mediacentre.signets.orientation.decouverte.upperCase": "ORIENTATION / DÉCOUVERTE DES MÉTIERS",
+
+  "mediacentre.link": "Lien"
 
 }
