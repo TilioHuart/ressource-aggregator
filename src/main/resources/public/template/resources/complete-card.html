@@ -84,13 +84,16 @@
             <div ng-if="ngModel.authors.length > 0" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-author subtitle">mediacentre.description.name.authors</i18n>
-                    <div class="content">
+                    <div ng-if="ngModel.source != 'fr.openent.mediacentre.source.Signet'" class="content">
                         <span class="content-item" ng-repeat-start="author in ngModel.authors track by $index">[[author]]</span>
                         <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
                     </div>
+                    <div ng-if="ngModel.source == 'fr.openent.mediacentre.source.Signet'" class="content">
+                        <span class="content-item" ng-bind="ngModel.editors[0]"></span>
+                    </div>
                 </div>
             </div>
-            <div ng-if="ngModel.editors.length > 0" class="detail">
+            <div ng-if="ngModel.editors.length > 0 && ngModel.source != 'fr.openent.mediacentre.source.Signet'" class="detail">
                 <div class="detail-container">
                     <i18n class="icon-editor subtitle">mediacentre.description.name.editors</i18n>
                     <div class="content">

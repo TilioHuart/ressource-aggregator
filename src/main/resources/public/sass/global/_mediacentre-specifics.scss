@@ -440,4 +440,21 @@ body.mediacentre-v2 {
     display: flex;
     justify-content: space-between;
   }
+
+  .error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .img_mini {
+    max-height: 300px;
+    margin: 25px;
+  }
 }
