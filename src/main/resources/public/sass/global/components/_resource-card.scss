@@ -680,6 +680,13 @@ resource-card {
       justify-content: space-between;
       align-items: center;
       text-align: center;
+      width: calc((100vw - 40px) / 7 - 90px);
+      font-size: small;
+      height: inherit;
+
+      @media (max-width: $small-tablette) {
+        width: calc((100vw - 40px) / 2 - 90px);
+      }
     }
 }
 
