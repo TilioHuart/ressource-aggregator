@@ -75,9 +75,11 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
             vm.resources.forEach(function (resource: Resource) {
                 let match = true;
                 vm.filteredFields.forEach(function (field: string) {
+                    let internalMatch = vm.filters.filtered[field].length == 0;
                     vm.filters.filtered[field].forEach(function ({name}: Filter) {
-                        match = match && resource[field].includes(name);
+                        internalMatch = internalMatch || resource[field].includes(name);
                     });
+                    match = match && internalMatch;
                 });
                 if (match) {
                     vm.displayedResources.push(resource);
