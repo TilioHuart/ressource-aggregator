@@ -55,21 +55,24 @@ export const createSignetController = ng.controller('createSignetController', ['
             return $scope.signet.title.length >= 4 && $scope.signet.plain_text.all.length > 0 &&
                    $scope.signet.disciplines.length > 0 && $scope.signet.levels.length > 0 &&
                    !!$scope.signet.url && !!$scope.signet.image;
-        }
+        };
 
+        $scope.removeLevelFromCourse = (level: Label) => {
+            $scope.signet.levels = _.without($scope.signet.levels, level);
+        };
 
-/*        /!**
-         * get info image
-         *!/
-        $scope.getTypeImage = function () {
-            if ($scope.signet.imageurl) {
-                $scope.signet.setInfoImg();
-                $timeout(() =>
-                        $scope.show.imgCompatibleMoodle = $scope.signet.infoImg.compatibleMoodle
-                    , 1000)
+        $scope.removeDisciplineFromCourse = (discipline: Label) => {
+            $scope.signet.disciplines = _.without($scope.signet.disciplines, discipline);
+        };
+
+        $scope.removeWordFromCourse = (word: Label) => {
+            $scope.signet.plain_text.all = _.without($scope.signet.plain_text.all, word);
+            if($scope.signet.plain_text.all.length == 0) {
+                $scope.signet.plain_text = new Labels();
+                $scope.signet.plain_text.all = [];
             }
-            Utils.safeApply($scope);
-        };*/
+        };
+
         function uuidv() {
             return 'xxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
