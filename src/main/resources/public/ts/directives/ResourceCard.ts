@@ -150,8 +150,8 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.displayTitle = function (title:string) {
                     // If title hasn't any kind of whitespace
-                    if (!(/\s/.test(title)) && title.length > 50){
-                        title = title.substr(0,30) + "...";
+                    if (!(/\s/.test(title.substr(0,25))) && title.length > 25){
+                        title = title.substr(0,20) + "...";
                     }
                     return title;
                 };
