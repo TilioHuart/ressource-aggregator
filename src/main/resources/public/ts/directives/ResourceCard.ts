@@ -71,7 +71,11 @@ export const ResourceCard = ng.directive('resourceCard',
                     }
 
                     const addColoredBar = function () {
-                        const parent = element.find(`#color-${$scope.ngModel.hash}`).parent();
+                        let hash = $scope.ngModel.hash;
+                        if($scope.ngModel.hash == undefined){
+                            hash = ''
+                        }
+                        const parent = element.find(`#color-${hash}`).parent();
                         parent.css("border-radius", "inherit");
                         parent.css("padding-left", "10px");
                         parent.css("background-color", colors[random - 1]);
