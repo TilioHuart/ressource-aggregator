@@ -58,25 +58,9 @@ export const ResourceCard = ng.directive('resourceCard',
                                 $(image).on('load', cropImage);
                             } else {
                                 cropImage();
-                                clampTitle();
                             }
                         }, 2000);
                     }
-
-                    // Clamp text after 2 rows if number of rows is greeter than 2
-                    const clampTitle = function () {
-                        const title = element.find('.title');
-                        const lineHeight = parseInt(title.css('line-height').replace(/\D/g,''));
-                        let titleH = title.height();
-                        let titleNumberLine = Math.ceil(titleH / lineHeight);
-                        if (titleNumberLine > 2) {
-                            while (title.outerHeight() > (2 * lineHeight)) {
-                                title.text(function (index, text) {
-                                    return text.replace(/\W*\s(\S)*$/, '...');
-                                });
-                            }
-                        }
-                    };
 
                     const addColoredBar = function () {
                         const parent = element.find(`#color-${$scope.ngModel.hash}`).parent();
@@ -91,7 +75,6 @@ export const ResourceCard = ng.directive('resourceCard',
 
                     $timeout(() => {
                         if ('fr.openent.mediacentre.source.GAR' !== $scope.ngModel.source) {
-                            clampTitle();
                             $scope.show.loader = false;
                         }
                         if ($scope.type === "complete-card") {

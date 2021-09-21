@@ -37,7 +37,7 @@ export class Socket {
         this._ws = new WebSocket(this.host);
         this._ws.onclose = (event: CloseEvent) => {
             setTimeout(() => toasts.info('mediacentre.socket.network.reconnect.in-progress'), 12000);
-            setTimeout(this._init, 15000);
+            setTimeout(() => this._init(), 15000);
         };
         this._ws.onmessage = (message: MessageEvent) => {
             let {data} = message;

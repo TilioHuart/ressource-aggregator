@@ -72,7 +72,7 @@
   "mediacentre.signets.published": "Mes signets publiés",
   "mediacentre.signets.sent": "Signets envoyés",
   "mediacentre.signets.archived": "Corbeille",
-  "mediacentre.signets.empty": "Désolé, vous n'avez aucun signet ...",
+  "mediacentre.signets.empty": "Il n'y a aucun signet pour le moment",
   "mediacentre.table.title": "Titre du Signet",
   "mediacentre.signet.archive.title": "Supprimer les signets sélectionnés",
   "mediacentre.signet.delete.title": "Supprimer définitivement",
