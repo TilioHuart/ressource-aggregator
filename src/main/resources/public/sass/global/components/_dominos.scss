@@ -30,6 +30,11 @@
         justify-content: center;
         background: white;
         &.empty { background: $primary; }
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
 
       .data {

@@ -36,6 +36,8 @@ export const ResourceCard = ng.directive('resourceCard',
                     loader: true
                 };
 
+                $scope.safeApply();
+
                 $scope.$on("$includeContentLoaded", function () {
                     if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
                         const crop = element.find('.resource-card .crop');
@@ -79,8 +81,7 @@ export const ResourceCard = ng.directive('resourceCard',
                         }
                         if ($scope.type === "complete-card") {
                             addColoredBar();
-                        }
-                        else if ($scope.type === "mini-card") {
+                        } else if ($scope.type === "mini-card") {
                             addColoredBar();
                             manageSizes();
                         }

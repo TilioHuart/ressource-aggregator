@@ -3,12 +3,23 @@ resource-card {
   border-radius: 10px;
   box-shadow: 0 5px 5px rgba(0, 0, 0, .2);
   margin-bottom: 10px;
+
+  .lineClamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
   
   .flex {
     position: relative;
     height: 100%;
 
     &.resource .resource-card {
+      height: 150px;
+    }
+
+    &.resource .resource-loader {
       height: 150px;
     }
 
@@ -151,19 +162,6 @@ resource-card {
         color: $mediacentre-red;
         font-weight: bold;
         font-size: 18px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        width: calc(((100vw - 20px - 9rem) / 4 - 20px) * 0.7 - 20px);
-        @media (max-width: 1350px) {
-          width: calc(((100vw - 20px - 6rem) / 3 - 20px) * 0.7 - 20px);
-        }
-        @media (max-width: 1000px) {
-          width: calc(((100vw - 20px - 3rem) / 2 - 20px) * 0.7 - 20px);
-        }
-        @media (max-width: $tablette) {
-          width: calc((100vw - 40px) * 0.7 - 20px);
-        }
 
         @media (max-width: $small-tablette) {
           font-size: 14px ! important;
