@@ -44,9 +44,13 @@
         </nav>
     </div>
 
-    <section class="cell nine twelve-mobile vertical-spacing">
+    <section class="cell ten twelve-mobile vertical-spacing">
 
-        <div ng-include="'mediacentre/public/template/components/filters.html'"></div>
+        <section class="row one zero-mobile" style="padding-right: 20px">
+            <div class="main-button">
+                <button class="cell" workflow="mediacentre.creation" ng-click="vm.openCreateSignet()"><i18n>mediacentre.signet.create.button</i18n></button>
+            </div>
+        </section>
 
         <!--Dominos display-->
         <div class="dominos" ng-if="vm.signets.all.length > 0">
@@ -92,12 +96,6 @@
         <div class="error" ng-if="vm.signets.all.length == 0">
             <img src="/mediacentre/public/img/onboarding.svg" class="img_mini"/>
             <h1><i18n>mediacentre.signets.empty</i18n></h1>
-        </div>
-    </section>
-
-    <section class="cell one zero-mobile vertical-spacing" style="padding-right: 20px">
-        <div class="main-button">
-            <button class="cell" workflow="mediacentre.creation" ng-click="vm.openCreateSignet()"><i18n>mediacentre.signet.create.button</i18n></button>
         </div>
     </section>
 
