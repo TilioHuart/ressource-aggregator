@@ -19,6 +19,12 @@ export const ResourceCard = ng.directive('resourceCard',
             <div ng-include="getTemplate()" class="flex [[type]]"></div>
         `,
             link: function ($scope, element) {
+                $scope.safeApply = () => {
+                    let phase = $scope.$root.$$phase;
+                    if (phase !== '$apply' && phase !== '$digest') {
+                        $scope.$apply();
+                    }
+                };
                 $scope.idiom = idiom;
                 $scope.type = $scope.type || 'resource';
                 const colors = ["#f78d3f", "#fcd271", "#2bbbd8", "#102e37"]; // orange, yellow, blue, black
@@ -100,13 +106,6 @@ export const ResourceCard = ng.directive('resourceCard',
                         $scope.safeApply();
                     });
                 });
-
-                $scope.safeApply = () => {
-                    let phase = $scope.$root.$$phase;
-                    if (phase !== '$apply' && phase !== '$digest') {
-                        $scope.$apply();
-                    }
-                };
 
                 $scope.$on('$destroy', function () {
                     if (clipboard) {
