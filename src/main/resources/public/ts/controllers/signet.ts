@@ -256,9 +256,11 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 for (let signet of vm.signets.selected) {
                     if(signet.published) {
                         await signetService.deleteSignetPublished(signet.id);
+                        vm.signets.all = vm.signets.all.filter(signetToRemove => signet.id !== signetToRemove.id);
                     } else {
                         if ($scope.isStatusXXX(await signetService.unshare(signet.id), 200)) {
                             await signetService.delete(signet.id);
+                            vm.signets.all = vm.signets.all.filter(signetToRemove => signet.id !== signetToRemove.id);
                         }
                     }
                 }
@@ -266,7 +268,6 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 vm.closeSignetLightbox();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.delete'));
-                init();
                 $scope.safeApply();
             }
             catch (e) {

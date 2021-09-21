@@ -66,7 +66,7 @@ export const ResourceCard = ng.directive('resourceCard',
                     // Clamp text after 2 rows if number of rows is greeter than 2
                     const clampTitle = function () {
                         const title = element.find('.title');
-                        const lineHeight = parseInt(title.css('line-height'));
+                        const lineHeight = parseInt(title.css('line-height').replace(/\D/g,''));
                         let titleH = title.height();
                         let titleNumberLine = Math.ceil(titleH / lineHeight);
                         if (titleNumberLine > 2) {

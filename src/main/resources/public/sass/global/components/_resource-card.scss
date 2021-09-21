@@ -151,6 +151,19 @@ resource-card {
         color: $mediacentre-red;
         font-weight: bold;
         font-size: 18px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        width: calc(((100vw - 20px - 9rem) / 4 - 20px) * 0.7 - 20px);
+        @media (max-width: 1350px) {
+          width: calc(((100vw - 20px - 6rem) / 3 - 20px) * 0.7 - 20px);
+        }
+        @media (max-width: 1000px) {
+          width: calc(((100vw - 20px - 3rem) / 2 - 20px) * 0.7 - 20px);
+        }
+        @media (max-width: $tablette) {
+          width: calc((100vw - 40px) * 0.7 - 20px);
+        }
 
         @media (max-width: $small-tablette) {
           font-size: 14px ! important;
