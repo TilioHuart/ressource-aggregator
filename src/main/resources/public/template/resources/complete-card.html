@@ -14,8 +14,8 @@
         </div>
         <div class="data nine">
             <div class="resource-information">
-                <div class="title pointer" ng-if="ngModel.type != fr.openent.mediacentre.source.Signet" ng-click="open()">[[ngModel.displayTitle]]</div>
-                <div class="title pointer" ng-if="ngModel.type == fr.openent.mediacentre.source.Signet" ng-click="open()">[[ngModel.title]]</div>
+                <div class="title pointer" ng-if="ngModel.type != fr.openent.mediacentre.source.Signet" ng-click="open()">[[displayTitle(ngModel.title)]]</div>
+                <div class="title pointer" ng-if="ngModel.type == fr.openent.mediacentre.source.Signet" ng-click="open()">[[displayTitle(ngModel.title)]]</div>
                 <div class="subtitle" ng-show="ngModel.type != fr.openent.mediacentre.source.Signet">
                     <em class="metadata">
                         <i18n>mediacentre.edited.by</i18n>

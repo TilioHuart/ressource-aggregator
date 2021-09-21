@@ -1,6 +1,6 @@
 <div class="mini-card" id="color-[[ngModel.hash]]" ng-show="!show.loader">
     <div class="resource-card">
-        <div class="title pointer" ng-click="open()">[[ngModel.displayTitle]]</div>
+        <div class="title pointer" ng-click="open()">[[displayTitle(ngModel.title)]]</div>
         <div class="image" ng-click="open()">
             <div class="crop" data-resource-id="[[ngModel.id]]">
                 <img ng-src="[[ngModel.image]]"

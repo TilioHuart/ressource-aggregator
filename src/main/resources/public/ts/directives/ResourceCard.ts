@@ -35,12 +35,8 @@ export const ResourceCard = ng.directive('resourceCard',
                     return v.toString(16)
                 });
                 /*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
-                $scope.ngModel.displayTitle = $scope.ngModel.title;
-                $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode(signetId) : hashCode($scope.ngModel.id);
-                // If title hasn't any kind of whitespace
-                if (!(/\s/.test($scope.ngModel.displayTitle)) && $scope.ngModel.displayTitle.length > 50){
-                    $scope.ngModel.displayTitle = $scope.ngModel.displayTitle.substr(0,30) + "...";
-                }
+                $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode(signetId) :
+                    hashCode($scope.ngModel.id);
                 $scope.show = {
                     toolip: false,
                     loader: true
@@ -127,7 +123,8 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.addFavorite = async function () {
                     delete $scope.ngModel.favorite;
-                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' && $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
+                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' &&
+                    $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
                     let response = await FavoriteService.create($scope.ngModel, $scope.ngModel.id);
                     if (response.status === 200) {
                         $scope.ngModel.favorite = true;
@@ -137,7 +134,8 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
-                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' && $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
+                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' &&
+                    $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
                     let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
                     if (response.status === 200) {
                         $scope.ngModel.favorite = false;
@@ -148,6 +146,14 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.getTemplate = function () {
                     return `/mediacentre/public/template/resources/${$scope.type}.html`;
+                };
+
+                $scope.displayTitle = function (title:string) {
+                    // If title hasn't any kind of whitespace
+                    if (!(/\s/.test(title)) && title.length > 50){
+                        title = title.substr(0,30) + "...";
+                    }
+                    return title;
                 };
 
                 $scope.action = async function () {
