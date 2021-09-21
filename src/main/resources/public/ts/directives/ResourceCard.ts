@@ -37,6 +37,10 @@ export const ResourceCard = ng.directive('resourceCard',
                 /*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
                 $scope.ngModel.displayTitle = $scope.ngModel.title;
                 $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode(signetId) : hashCode($scope.ngModel.id);
+                // If title hasn't any kind of whitespace
+                if (!(/\s/.test($scope.ngModel.displayTitle)) && $scope.ngModel.displayTitle.length > 50){
+                    $scope.ngModel.displayTitle = $scope.ngModel.displayTitle.substr(0,30) + "...";
+                }
                 $scope.show = {
                     toolip: false,
                     loader: true
