@@ -176,6 +176,26 @@ public class DefaultSignetService implements SignetService {
     }
 
     @Override
+    public void search(List<String> groupsAndUserIds, UserInfos user, String query, Handler<Either<String, JsonArray>> handler) {
+        JsonArray params = new JsonArray().add(user.getUserId()).add(user.getUserId()).add(query).add(user.getUserId());
+        String sqlquery = "SELECT DISTINCT s.id, s.resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
+                "title, imageurl as image, s.owner_name, s.owner_id, url, date_creation, date_modification, collab, archived, orientation, " +
+                "CASE WHEN f.favorite = true and f.user_id = ? AND s.id = f.signet_id THEN true else false END as favorite" +
+                " FROM " + Mediacentre.SIGNET_TABLE + " s" +
+                " LEFT JOIN " + Mediacentre.SIGNET_SHARES_TABLE + " ss ON s.id = ss.resource_id " +
+                " LEFT JOIN " + Mediacentre.MEMBERS_TABLE + " m ON (ss.member_id = m.id AND m.group_id IS NOT NULL) " +
+                " LEFT JOIN " + Mediacentre.FAVORITES_TABLE + " f on (f.signet_id = s.id and f.user_id = ?) " +
+                " WHERE s.title ~* ? AND f.user_id = ? AND (s.owner_id = ? OR (ss.member_id IN " + Sql.listPrepared(groupsAndUserIds.toArray());
+        for (String groupOrUser : groupsAndUserIds) {
+            params.add(groupOrUser);
+        }
+        sqlquery += " AND (ss.action = ? OR ss.action = ?))) ORDER BY s.id desc;";
+        params.add(user.getUserId()).add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR).add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR);
+
+        Sql.getInstance().prepared(sqlquery, params, SqlResult.validResultHandler(handler));
+    }
+
+    @Override
     public void getMySignetRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT action FROM " + Mediacentre.SIGNET_SHARES_TABLE +
                 " WHERE resource_id = ? AND member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?);";
@@ -199,11 +219,14 @@ public class DefaultSignetService implements SignetService {
     }
 
     public void getPublicSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.filterSource(Signet.class, userId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
-    }
+        ElasticSearchHelper.plainTextSearch(Signet.class, ".*", userId, null, false, ElasticSearchHelper.searchHandler(Signet.class, null, handler));}
 
     public void getMyPublishedSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.myPublishedSignets(userId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
+        ElasticSearchHelper.plainTextSearch(Signet.class, ".*", userId, null, true, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
+    }
+
+    public void searchMyPublishedSignet(String query, String userId, Handler<Either<JsonObject, JsonObject>> handler) {
+        ElasticSearchHelper.plainTextSearch(Signet.class, query, userId, null, true, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
     }
 
     public void deleteMyPublishedSignet(String signetId, Handler<Either<JsonObject, JsonObject>> handler) {

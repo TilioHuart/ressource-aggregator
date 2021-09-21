@@ -142,44 +142,48 @@ export class Signets extends Selection<Signet> {
         this.all = [];
         try {
             let { data } = await signetService.list();
-            for (let i = 0; i < data.length; i++) {
-                let tempSignet = new Signet();
-                tempSignet.setFromJson(data[i]);
-                let disciplinesArray = new Labels();
-                let levelsArray = new Labels();
-                let textArray = new Labels();
-                if(!!tempSignet.disciplines) {
-                    tempSignet.disciplines.forEach(function (discipline) {
-                        if(!!discipline[1]) {
-                            disciplinesArray.all.push(new Label(undefined, discipline[1]));
-                        }
-                    });
-                    tempSignet.disciplines.all = Mix.castArrayAs(Label, disciplinesArray.all);;
-                }
-                if(!!tempSignet.levels) {
-                    tempSignet.levels.forEach(function (level) {
-                        if(!!level[1]) {
-                            levelsArray.all.push(new Label(undefined, level[1]));
-                        }
-                    });
-                    tempSignet.levels.all = Mix.castArrayAs(Label, levelsArray.all);
-                }
-                if(!!tempSignet.plain_text) {
-                    tempSignet.plain_text.forEach(function (word) {
-                        if(!!word[1]) {
-                            textArray.all.push(new Label(undefined, word[1]));
-                        }
-                    });
-                    tempSignet.plain_text.all = Mix.castArrayAs(Label, textArray.all);
-                }
-                this.all.push(tempSignet);
-            }
+            this.formatSignets(data);
             await this.setResourceRights();
         } catch (e) {
             notify.error(idiom.translate('formulaire.error.form.sync'));
             throw e;
         }
     };
+
+    formatSignets = (data) : void => {
+        for (let i = 0; i < data.length; i++) {
+            let tempSignet = new Signet();
+            tempSignet.setFromJson(data[i]);
+            let disciplinesArray = new Labels();
+            let levelsArray = new Labels();
+            let textArray = new Labels();
+            if(!!tempSignet.disciplines) {
+                tempSignet.disciplines.forEach(function (discipline) {
+                    if(!!discipline[1]) {
+                        disciplinesArray.all.push(new Label(undefined, discipline[1]));
+                    }
+                });
+                tempSignet.disciplines.all = Mix.castArrayAs(Label, disciplinesArray.all);;
+            }
+            if(!!tempSignet.levels) {
+                tempSignet.levels.forEach(function (level) {
+                    if(!!level[1]) {
+                        levelsArray.all.push(new Label(undefined, level[1]));
+                    }
+                });
+                tempSignet.levels.all = Mix.castArrayAs(Label, levelsArray.all);
+            }
+            if(!!tempSignet.plain_text) {
+                tempSignet.plain_text.forEach(function (word) {
+                    if(!!word[1]) {
+                        textArray.all.push(new Label(undefined, word[1]));
+                    }
+                });
+                tempSignet.plain_text.all = Mix.castArrayAs(Label, textArray.all);
+            }
+            this.all.push(tempSignet);
+        }
+    }
 
     setResourceRights = async () : Promise<void> => {
         let { data } = await signetService.getAllMySignetRights();

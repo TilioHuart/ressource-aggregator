@@ -52,7 +52,7 @@ export const createSignetController = ng.controller('createSignetController', ['
         };
 
         $scope.fieldsAllFilled = () => {
-            return $scope.signet.title.length >= 4 && $scope.signet.plain_text.all.length > 0 &&
+            return $scope.signet.title.length >= 1 && $scope.signet.plain_text.all.length > 0 &&
                    $scope.signet.disciplines.length > 0 && $scope.signet.levels.length > 0 &&
                    !!$scope.signet.url && !!$scope.signet.image;
         };

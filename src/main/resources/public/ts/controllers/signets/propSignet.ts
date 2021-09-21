@@ -91,7 +91,7 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
         };
 
         $scope.fieldsAllFilled = () => {
-            return $scope.signet.title.length >= 4 && $scope.signet.plain_text.all.length > 0 &&
+            return $scope.signet.title.length >= 1 && $scope.signet.plain_text.all.length > 0 &&
                 $scope.filterChoice.disciplines.length > 0 && $scope.filterChoice.levels.length > 0 &&
                 !!$scope.signet.url && !!$scope.signet.image;
         }

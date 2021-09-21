@@ -40,7 +40,7 @@ public class Moodle implements Source {
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.plainTextSearch(Moodle.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Moodle.class, actionProvider, handler));
+        ElasticSearchHelper.plainTextSearch(Moodle.class, query, user.getUserId(), null, false, ElasticSearchHelper.searchHandler(Moodle.class, actionProvider, handler));
     }
 
     @Override

@@ -76,7 +76,7 @@ public class ElasticSearchHelper {
         });
     }
 
-    public static void plainTextSearch(Class<?> source, String query, String userId, List<String> structures, Handler<AsyncResult<JsonArray>> handler) {
+    public static void plainTextSearch(Class<?> source, String query, String userId, List<String> structures, boolean myPublishedSignets, Handler<AsyncResult<JsonArray>> handler) {
         JsonArray should = new JsonArray();
         for (String field : Source.PLAIN_TEXT_FIELDS) {
             JsonObject regexp = new JsonObject()
@@ -85,6 +85,11 @@ public class ElasticSearchHelper {
         }
 
         JsonArray must = new JsonArray();
+        if(myPublishedSignets) {
+            JsonObject term = new JsonObject()
+                    .put("authors", userId);
+            must.add(new JsonObject().put("term", term));
+        }
         must.add(sourceFilter(source));
         if (Objects.nonNull(structures) && !structures.isEmpty()) {
             must.add(structureFilter(structures));

@@ -11,6 +11,7 @@ export interface SignetService {
     archive(signet: Signet) : Promise<AxiosResponse>;
     restore(signet: Signet) : Promise<AxiosResponse>;
     delete(signetId: number) : Promise<AxiosResponse>;
+    searchMySignet(query: string) : Promise<AxiosResponse>;
     unshare(signetId: number) : Promise<AxiosResponse>;
     getMySignetRights(signetId: number) : Promise<AxiosResponse>;
     getAllMySignetRights() : Promise<AxiosResponse>;
@@ -18,6 +19,8 @@ export interface SignetService {
     publish(signet: Signet) : Promise<AxiosResponse>;
     getAllMySignetPublished() : Promise<AxiosResponse>
     deleteSignetPublished(signetId: number) : Promise<AxiosResponse>;
+    searchMySignetPublished(query: string) : Promise<AxiosResponse>;
+
 }
 
 export const signetService: SignetService = {
@@ -70,7 +73,14 @@ export const signetService: SignetService = {
             throw err;
         }
     },
-
+    async searchMySignet(query: string) : Promise<AxiosResponse> {
+        try {
+            return http.get(`/mediacentre/signets/search?query=${query}`);
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.published'));
+            throw err;
+        }
+    },
     async archive(signet: Signet) : Promise<AxiosResponse> {
         try {
             signet.archived = true;
@@ -151,7 +161,15 @@ export const signetService: SignetService = {
             notify.error(idiom.translate('mediacentre.error.signetService.published'));
             throw err;
         }
-    }
+    },
+    async searchMySignetPublished(query: string) : Promise<AxiosResponse> {
+        try {
+            return http.get(`/mediacentre/signets/search/public?query=${query}`);
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.published'));
+            throw err;
+        }
+    },
 };
 
 export const SignetService = ng.service('SignetService', (): SignetService => signetService);

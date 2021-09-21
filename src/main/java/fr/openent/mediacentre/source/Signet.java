@@ -40,7 +40,7 @@ public class Signet implements Source {
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.plainTextSearch(Signet.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Signet.class, actionProvider, handler));
+        ElasticSearchHelper.plainTextSearch(Signet.class, query, user.getUserId(), null, false, ElasticSearchHelper.searchHandler(Signet.class, actionProvider, handler));
     }
 
     @Override

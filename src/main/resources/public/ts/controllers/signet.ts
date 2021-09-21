@@ -27,6 +27,7 @@ interface ViewModel {
     mobile: boolean;
 
     openFolder(folderName: string) : void;
+    search(folderName: string, query: string) : void;
     switchAll(value: boolean) : void;
     openNavMySignets() : void;
     closeNavMySignets() : void;
@@ -143,6 +144,40 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             value ? vm.signets.selectAll() : vm.signets.deselectAll();
             vm.allSignetsSelected = value;
         };
+
+        vm.search = async (folderName: string, query: string): Promise<void> => {
+            if (folderName == "published") {
+                let {data} = await signetService.searchMySignetPublished(query);
+                vm.signets.all = [];
+                for (let i = 0; i < data.resources.length; i++) {
+                    let tempSignet = new Signet();
+                    tempSignet.setFromJson(data.resources[i]);
+                    tempSignet.owner_id = data.resources[i].authors[0];
+                    tempSignet.owner_name = data.resources[i].editors[0];
+                    tempSignet.url = data.resources[i].link;
+                    tempSignet.date_creation = new Date(data.resources[i].date);
+                    tempSignet.date_modification = new Date(data.resources[i].date);
+                    tempSignet.published = true;
+                    vm.signets.all.push(tempSignet);
+                }
+            } else if (folderName == "shared") {
+                let {data} = await signetService.searchMySignet(query);
+                vm.signets.all = [];
+                vm.signets.formatSignets(data);
+                vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
+            } else if (folderName == "mine") {
+                let {data} = await signetService.searchMySignet(query);
+                vm.signets.all = [];
+                vm.signets.formatSignets(data);
+                vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.owner_id === model.me.userId);
+            } else if (folderName == "archived") {
+                let {data} = await signetService.searchMySignet(query);
+                vm.signets.all = [];
+                vm.signets.formatSignets(data);
+                vm.signets.all = vm.signets.all.filter(signet => signet.archived);
+            }
+            $scope.safeApply();
+        }
 
         vm.openNavMySignets = () : void => {
             let element = document.getElementById("mySidenavSignets") as HTMLDivElement;
@@ -290,7 +325,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             }
         };
 
-        // Fovrites
+        // Favorites
 
         vm.addFavorite = async (signet, event) : Promise<void> => {
             event.stopPropagation();

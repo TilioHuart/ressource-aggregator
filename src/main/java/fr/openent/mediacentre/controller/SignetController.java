@@ -156,6 +156,45 @@ public class SignetController extends ControllerHelper {
         });
     }
 
+    @Get("/signets/search")
+    @ApiDoc("Search in the signets created by me or shared with me")
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void searchSignet(HttpServerRequest request) {
+        UserUtils.getUserInfos(eb, request, user -> {
+            if (user != null) {
+                String query = request.getParam("query");
+                final List<String> groupsAndUserIds = new ArrayList<>();
+                groupsAndUserIds.add(user.getUserId());
+                if (user.getGroupsIds() != null) {
+                    groupsAndUserIds.addAll(user.getGroupsIds());
+                }
+                signetService.search(groupsAndUserIds, user, query, arrayResponseHandler(request));
+            } else {
+                log.error("User not found in session.");
+                Renders.unauthorized(request);
+            }
+        });
+    }
+
+    @Get("/signets/search/public")
+    @ApiDoc("Search in my published signets")
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void searchSignetPublic(HttpServerRequest request) {
+        String query = request.getParam("query");
+        UserUtils.getUserInfos(eb, request, user -> {
+            signetService.searchMyPublishedSignet(query, user.getUserId(), event -> {
+                if(event.isRight()) {
+                    renderJson(request, event.right().getValue());;
+                } else {
+                    log.error("Searching public signet not found");
+                }
+            });
+        });
+    }
+
+
     @Get("/signets/:signetId/rights")
     @ApiDoc("Get my rights for a specific signet")
     @ResourceFilter(ViewRight.class)

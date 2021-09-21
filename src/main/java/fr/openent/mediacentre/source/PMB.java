@@ -22,7 +22,7 @@ public class PMB implements Source {
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.plainTextSearch(PMB.class, query, user.getUserId(), user.getStructures(), ElasticSearchHelper.searchHandler(PMB.class, null, handler));
+        ElasticSearchHelper.plainTextSearch(PMB.class, query, user.getUserId(), user.getStructures(), false, ElasticSearchHelper.searchHandler(PMB.class, null, handler));
     }
 
     @Override

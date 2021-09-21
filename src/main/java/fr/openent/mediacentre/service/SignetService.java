@@ -61,6 +61,8 @@ public interface SignetService {
      */
     void delete(String signetId, Handler<Either<String, JsonObject>> handler);
 
+    void search(List<String> groupsAndUserIds, UserInfos user, String query, Handler<Either<String, JsonArray>> handler);
+
     /**
      * Get my rights for a specific signet
      * @param signetId signet identifier
@@ -79,6 +81,8 @@ public interface SignetService {
     void getPublicSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler);
 
     void getMyPublishedSignet(String userId, Handler<Either<JsonObject, JsonObject>> handler);
+
+    void searchMyPublishedSignet(String query, String userId, Handler<Either<JsonObject, JsonObject>> handler);
 
     void deleteMyPublishedSignet(String signetId, Handler<Either<JsonObject, JsonObject>> handler);
 
