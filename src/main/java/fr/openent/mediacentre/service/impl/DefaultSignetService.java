@@ -196,6 +196,56 @@ public class DefaultSignetService implements SignetService {
     }
 
     @Override
+    public void advancedSearch(List<String> groupsAndUserIds, UserInfos user, Object query, Handler<Either<String, JsonArray>> handler) {
+        JsonArray params = new JsonArray().add(user.getUserId()).add(user.getUserId()).add(user.getUserId());
+        JsonObject q = ((JsonObject) query);
+        String sqlquery = "SELECT DISTINCT s.id, s.resource_id, discipline_label as disciplines, level_label as levels, key_words as plain_text, " +
+                "title, imageurl as image, s.owner_name, s.owner_id, url, date_creation, date_modification, collab, archived, orientation, " +
+                "CASE WHEN f.favorite = true and f.user_id = ? AND s.id = f.signet_id THEN true else false END as favorite" +
+                " FROM " + Mediacentre.SIGNET_TABLE + " s" +
+                " LEFT JOIN " + Mediacentre.SIGNET_SHARES_TABLE + " ss ON s.id = ss.resource_id " +
+                " LEFT JOIN " + Mediacentre.MEMBERS_TABLE + " m ON (ss.member_id = m.id AND m.group_id IS NOT NULL) " +
+                " LEFT JOIN " + Mediacentre.FAVORITES_TABLE + " f on (f.signet_id = s.id and f.user_id = ?) " +
+                " WHERE f.user_id = ? AND (s.owner_id = ? OR (ss.member_id IN " + Sql.listPrepared(groupsAndUserIds.toArray());
+        for (String groupOrUser : groupsAndUserIds) {
+            params.add(groupOrUser);
+        }
+        sqlquery += " AND (ss.action = ? OR ss.action = ?)))";
+        params.add(user.getUserId()).add(Mediacentre.MANAGER_RESOURCE_BEHAVIOUR).add(Mediacentre.VIEW_RESOURCE_BEHAVIOUR);
+        if(!(q.getJsonObject("title").getString("value")).equals("")) {
+            sqlquery += " AND title ~* ?";
+            params.add(q.getJsonObject("title").getString("value"));
+        }
+
+        if(!(q.getJsonObject("authors").getString("value")).equals("")) {
+            String comparator = q.getJsonObject("authors").getString("comparator").equals("$or") ? " OR" : " AND";
+            sqlquery += comparator +  " owner_name ~* ?";
+            params.add(q.getJsonObject("authors").getString("value"));
+        }
+
+        if(!(q.getJsonObject("editors").getString("value")).equals("")) {
+            String comparator = q.getJsonObject("editors").getString("comparator").equals("$or") ? " OR" : " AND";
+            sqlquery += comparator +  " owner_name ~* ?";
+            params.add(q.getJsonObject("editors").getString("value"));
+        }
+
+        if(!(q.getJsonObject("levels").getString("value")).equals("")) {
+            String comparator = q.getJsonObject("levels").getString("comparator").equals("$or") ? " OR" : " AND";
+            sqlquery += comparator +  " EXISTS ( SELECT * from unnest(level_label) as X where x ~* ? )";
+            params.add(q.getJsonObject("levels").getString("value"));
+        }
+
+        if(!(q.getJsonObject("disciplines").getString("value")).equals("")) {
+            String comparator = q.getJsonObject("disciplines").getString("comparator").equals("$or") ? " OR" : " AND";
+            sqlquery += comparator +  " EXISTS ( SELECT * from unnest(discipline_label) as X where x ~* ? )";
+            params.add(q.getJsonObject("disciplines").getString("value"));
+        }
+
+        sqlquery += "ORDER BY s.id desc;";
+        Sql.getInstance().prepared(sqlquery, params, SqlResult.validResultHandler(handler));
+    }
+
+    @Override
     public void getMySignetRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler) {
         String query = "SELECT action FROM " + Mediacentre.SIGNET_SHARES_TABLE +
                 " WHERE resource_id = ? AND member_id IN " + Sql.listPrepared(groupsAndUserIds) + " AND action IN (?, ?);";

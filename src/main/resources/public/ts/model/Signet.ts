@@ -1,7 +1,8 @@
 import {Mix, Selectable, Selection} from "entcore-toolkit";
-import {idiom, notify, Rights, Shareable} from "entcore";
+import {idiom, model, notify, Rights, Shareable} from "entcore";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "./Label";
+import {Resource} from "./Resource";
 
 export class Signet implements Selectable, Shareable  {
     shared: any;
@@ -183,6 +184,49 @@ export class Signets extends Selection<Signet> {
             }
             this.all.push(tempSignet);
         }
+    }
+
+    formatSharedSignets = (resources: Resource[]) : void => {
+        this.all.forEach(signet => {
+            if(!signet.archived && signet.collab && signet.owner_id != model.me.userId) {
+                let signet_shared = <Resource>signet.toJson();
+                let disciplinesArray: string[] = [];
+                let levelsArray: string[] = [];
+                let plaintextArray: string[] = [];
+                if (!!signet.disciplines) {
+                    signet.disciplines.forEach(function (discipline) {
+                        if (!!discipline[1]) {
+                            disciplinesArray.push(discipline[1]);
+                        }
+                    });
+                }
+                signet_shared.disciplines = disciplinesArray;
+                if (!!signet.levels) {
+                    signet.levels.forEach(function (level) {
+                        if (!!level[1]) {
+                            levelsArray.push(level[1]);
+                        }
+                    });
+                }
+                signet_shared.levels = levelsArray;
+                if (!!signet.plain_text) {
+                    signet.plain_text.forEach(function (word) {
+                        if (!!word[1]) {
+                            plaintextArray.push(word[1]);
+                        }
+                    });
+                }
+                signet_shared.plain_text = plaintextArray
+                signet_shared.favorite = signet.favorite;
+                signet_shared.document_types = [];
+                signet_shared.authors = [];
+                signet_shared.editors = [];
+                signet_shared.authors.push(signet.owner_id);
+                signet_shared.editors.push(signet.owner_name);
+                signet_shared.document_types.push(signet.orientation ? "Orientation" : "Signet");
+                resources.push((signet_shared));
+            }
+        });
     }
 
     setResourceRights = async () : Promise<void> => {

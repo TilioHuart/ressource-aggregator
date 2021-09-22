@@ -63,6 +63,8 @@ public interface SignetService {
 
     void search(List<String> groupsAndUserIds, UserInfos user, String query, Handler<Either<String, JsonArray>> handler);
 
+    void advancedSearch(List<String> groupsAndUserIds, UserInfos user, Object query, Handler<Either<String, JsonArray>> arrayResponseHandler);
+
     /**
      * Get my rights for a specific signet
      * @param signetId signet identifier

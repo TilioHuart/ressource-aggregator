@@ -1,8 +1,10 @@
-import {ng} from 'entcore';
+import {model, ng} from 'entcore';
 import {Scope} from './main'
 import {Filter, Frame, Resource} from "../model";
 import {ILocationService} from "angular";
 import {addFilters} from "../utils";
+import {Signets} from "../model/Signet";
+import {signetService} from "../services/SignetService";
 
 declare let window: any;
 
@@ -13,6 +15,7 @@ function initSources(value: boolean) {
 }
 
 interface ViewModel {
+    signets: Signets;
     width: number;
     mobile: boolean;
     displayFilter: boolean;
@@ -54,17 +57,31 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
         const vm: ViewModel = this;
         vm.mobile = screen.width < $scope.mc.screenWidthLimit;
         vm.displayFilter = !vm.mobile;
+        vm.signets = new Signets();
         vm.filteredFields = ['document_types', 'levels', 'source'];
 
-        const initSearch = function () {
+        const initSearch = async function () {
             vm.loaders = initSources(true);
             vm.sources = initSources(false);
             vm.displayedResources = [];
-            vm.resources = [];
+
             vm.filters = {
                 initial: {document_types: [], levels: [], source: []},
                 filtered: {document_types: [], levels: [], source: []}
             };
+
+            vm.resources = [];
+            vm.signets.all = [];
+            if(!!$scope.mc.search.plain_text.text) {
+                let {data} = await signetService.searchMySignet($scope.mc.search.plain_text.text);
+                vm.signets.formatSignets(data);
+                vm.signets.formatSharedSignets(vm.resources);
+            } else {
+                let {data} = await signetService.advancedSearchMySignet($scope.mc.search.advanced.values);
+                vm.signets.formatSignets(data);
+                vm.signets.formatSharedSignets(vm.resources);
+            }
+            filter();
         };
 
         initSearch();

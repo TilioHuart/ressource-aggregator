@@ -65,9 +65,8 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
     public void publishInMediacentre(JsonObject signet, final Handler<Either<String, JsonObject>> handler) {
                 log.info("Event Bus launched");
                 JsonObject resource = new JsonObject();
-                JsonArray authors = new JsonArray().add(signet.getString("owner_id"));
                 resource.put("title", signet.getString("title"))
-                        .put("authors", authors)
+                        .put("authors",  new JsonArray().add(signet.getString("owner_name")))
                         .put("editors", new JsonArray().add(signet.getString("owner_name")))
                         .put("id", signet.getInteger("id"))
                         .put("image", signet.getString("image"))

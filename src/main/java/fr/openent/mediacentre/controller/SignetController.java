@@ -92,7 +92,7 @@ public class SignetController extends ControllerHelper {
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getPublic(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
-                signetService.getMyPublishedSignet(user.getUserId(), event -> {
+                signetService.getMyPublishedSignet(user.getLastName() + " " + user.getFirstName(), event -> {
                     if(event.isRight()) {
                         renderJson(request, event.right().getValue());;
                     } else {
@@ -177,6 +177,28 @@ public class SignetController extends ControllerHelper {
         });
     }
 
+    @Post("/signets/advanced")
+    @ApiDoc("Advanced search in the signets created by me or shared with me")
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void advancedSearchSignet(HttpServerRequest request) {
+        UserUtils.getUserInfos(eb, request, user -> {
+            if (user != null) {
+                RequestUtils.bodyToJson(request, query -> {
+                    final List<String> groupsAndUserIds = new ArrayList<>();
+                    groupsAndUserIds.add(user.getUserId());
+                    if (user.getGroupsIds() != null) {
+                        groupsAndUserIds.addAll(user.getGroupsIds());
+                    }
+                    signetService.advancedSearch(groupsAndUserIds, user, query, arrayResponseHandler(request));
+                });
+            } else {
+                log.error("User not found in session.");
+                Renders.unauthorized(request);
+            }
+        });
+    }
+
     @Get("/signets/search/public")
     @ApiDoc("Search in my published signets")
     @ResourceFilter(ViewRight.class)
@@ -184,7 +206,7 @@ public class SignetController extends ControllerHelper {
     public void searchSignetPublic(HttpServerRequest request) {
         String query = request.getParam("query");
         UserUtils.getUserInfos(eb, request, user -> {
-            signetService.searchMyPublishedSignet(query, user.getUserId(), event -> {
+            signetService.searchMyPublishedSignet(query, user.getLastName() + " " + user.getFirstName(), event -> {
                 if(event.isRight()) {
                     renderJson(request, event.right().getValue());;
                 } else {

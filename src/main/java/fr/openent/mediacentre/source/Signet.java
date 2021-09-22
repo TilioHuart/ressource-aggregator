@@ -20,32 +20,18 @@ public class Signet implements Source {
 
     private final ElasticSearch es = ElasticSearch.getInstance();
 
-    private final UnaryOperator<JsonObject> actionProvider = resource -> {
-        JsonObject message = new JsonObject()
-                .put("success", String.format("%s.action.duplicate.success", Signet.class.getName()))
-                .put("error", String.format("%s.action.duplicate.error", Signet.class.getName()));
-
-        JsonObject action = new JsonObject()
-                .put("label", String.format("%s.action.duplicate", Signet.class.getName()))
-                .put("url", String.format("/moodle/course/duplicate/BP/%s", resource.getString("id")))
-                .put("method", HttpMethod.POST)
-                .put("message", message);
-
-        return resource.put("action", action);
-    };
-
     public Signet() {
         super();
     }
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.plainTextSearch(Signet.class, query, user.getUserId(), null, false, ElasticSearchHelper.searchHandler(Signet.class, actionProvider, handler));
+        ElasticSearchHelper.plainTextSearch(Signet.class, query, user.getUserId(), null, false, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
     }
 
     @Override
     public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
-        ElasticSearchHelper.advancedSearch(Signet.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Signet.class, actionProvider, handler));
+        ElasticSearchHelper.advancedSearch(Signet.class, query, user.getUserId(), null, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
     }
 
     @Override

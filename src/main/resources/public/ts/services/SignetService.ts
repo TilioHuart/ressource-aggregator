@@ -12,6 +12,7 @@ export interface SignetService {
     restore(signet: Signet) : Promise<AxiosResponse>;
     delete(signetId: number) : Promise<AxiosResponse>;
     searchMySignet(query: string) : Promise<AxiosResponse>;
+    advancedSearchMySignet(query: Object): Promise<AxiosResponse>;
     unshare(signetId: number) : Promise<AxiosResponse>;
     getMySignetRights(signetId: number) : Promise<AxiosResponse>;
     getAllMySignetRights() : Promise<AxiosResponse>;
@@ -20,7 +21,6 @@ export interface SignetService {
     getAllMySignetPublished() : Promise<AxiosResponse>
     deleteSignetPublished(signetId: number) : Promise<AxiosResponse>;
     searchMySignetPublished(query: string) : Promise<AxiosResponse>;
-
 }
 
 export const signetService: SignetService = {
@@ -76,6 +76,14 @@ export const signetService: SignetService = {
     async searchMySignet(query: string) : Promise<AxiosResponse> {
         try {
             return http.get(`/mediacentre/signets/search?query=${query}`);
+        } catch (err) {
+            notify.error(idiom.translate('mediacentre.error.signetService.published'));
+            throw err;
+        }
+    },
+    async advancedSearchMySignet(query: object) : Promise<AxiosResponse> {
+        try {
+            return http.post(`/mediacentre/signets/advanced`, query);
         } catch (err) {
             notify.error(idiom.translate('mediacentre.error.signetService.published'));
             throw err;

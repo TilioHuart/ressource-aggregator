@@ -64,8 +64,8 @@ export interface MainController {
 	goSignet(): void;
 }
 
-export const mainController = ng.controller('MainController', ['$scope', 'route', '$location',
-	function ($scope: Scope, route, $location: ILocationService) {
+export const mainController = ng.controller('MainController', ['$scope', 'route', '$location', '$timeout',
+	function ($scope: Scope, route, $location: ILocationService, $timeout) {
 		const mc: MainController = this;
 		mc.favorites = [];
 		mc.textbooks = [];
@@ -103,11 +103,13 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.disciplines = new Labels();
 		$scope.disciplines.sync("disciplines");
 
-		const startResearch = function (state: string, sources: string[], data: any) {
+		const startResearch = async function (state: string, sources: string[], data: any) {
 			mc.limitTo = mc.pageSize;
 			$location.path(`/search/${state.toLowerCase()}`);
-			$scope.ws.send(new Frame('search', state, sources, data));
-			$scope.$broadcast('search', {state, data});
+			$timeout(() => {
+				$scope.ws.send(new Frame('search', state, sources, data));
+				$scope.$broadcast('search', {state, data});
+			}, 300);
 		};
 
 		mc.infiniteScroll = function () {

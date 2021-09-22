@@ -263,7 +263,7 @@ public class WebSocketController implements Handler<ServerWebSocket> {
                 ws.writeTextMessage(frame.encode());
             }
         };
-         signetService.getPublicSignet(user.getUserId(), handler);
+         signetService.getPublicSignet(user.getLastName() + " " + user.getFirstName(), handler);
     }
 
     /**
