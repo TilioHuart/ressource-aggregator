@@ -87,6 +87,7 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                 $scope.safeApply();
             },
             signets_Result: async function (frame) {
+                vm.signets.all = vm.publicSignets = vm.orientationSignets = vm.sharedSignets = [];
                 await vm.signets.sync();
                 vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
                 vm.signets.formatSharedSignets(vm.sharedSignets);
