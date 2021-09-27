@@ -13,6 +13,7 @@ export interface Scope extends IRootScopeService {
 	getDataIf200(response: any): any;
     hasShareRightView(signet: Signet[]): boolean;
     hasShareRightManager(signet: Signet[]): boolean;
+	hasSignetRight(): boolean;
     removeLevelFromCourse(level: Label): void;
 	removeDisciplineFromCourse(discipline: Label): void;
 	removeWordFromCourse(word: Label): void;
@@ -268,6 +269,10 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				}
 			});
 			return hasRight;
+		};
+
+		$scope.hasSignetRight = () => {
+			return model.me.hasWorkflow(Behaviours.applicationsBehaviours.mediacentre.rights.workflow.signets);
 		};
 
 		$scope.getDataIf200 = (response: AxiosResponse) : any => {

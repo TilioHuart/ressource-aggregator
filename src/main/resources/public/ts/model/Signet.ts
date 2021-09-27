@@ -127,7 +127,7 @@ export class Signet implements Selectable, Shareable  {
                 compatible: !typesImgNoSend.some(type => type === metadata["content-type"]),
             };
         } catch (e) {
-            notify.error(idiom.translate('formulaire.error.form.image'));
+            notify.error(idiom.translate('mediacentre.error.signet.image'));
             throw e;
         }
     };
@@ -146,7 +146,7 @@ export class Signets extends Selection<Signet> {
             this.formatSignets(data);
             await this.setResourceRights();
         } catch (e) {
-            notify.error(idiom.translate('formulaire.error.form.sync'));
+            notify.error(idiom.translate('mediacentre.error.signet.sync'));
             throw e;
         }
     };

@@ -10,7 +10,8 @@ const rights = {
         }
     },
     workflow: {
-        creation: 'fr.openent.mediacentre.controller.SignetController|create'
+        creation: 'fr.openent.mediacentre.controller.SignetController|create',
+        signets: 'fr.openent.mediacentre.controller.SignetController|list'
     }
 };
 

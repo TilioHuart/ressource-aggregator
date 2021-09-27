@@ -87,15 +87,17 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                 $scope.safeApply();
             },
             signets_Result: async function (frame) {
-                vm.signets.all = vm.publicSignets = vm.orientationSignets = vm.sharedSignets = [];
-                await vm.signets.sync();
-                vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
-                vm.signets.formatSharedSignets(vm.sharedSignets);
-                vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Signet");
-                vm.publicSignets = vm.publicSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Signet"));
-                vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
-                vm.orientationSignets = vm.orientationSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Orientation"));
-                $scope.safeApply();
+                if($scope.hasSignetRight()) {
+                    vm.signets.all = vm.publicSignets = vm.orientationSignets = vm.sharedSignets = [];
+                    await vm.signets.sync();
+                    vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
+                    vm.signets.formatSharedSignets(vm.sharedSignets);
+                    vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Signet");
+                    vm.publicSignets = vm.publicSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Signet"));
+                    vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
+                    vm.orientationSignets = vm.orientationSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Orientation"));
+                    $scope.safeApply();
+                }
             }
         };
 

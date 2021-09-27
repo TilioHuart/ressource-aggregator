@@ -22,11 +22,13 @@
                 <i18n>mediacentre.source.search.advanced</i18n>
             </a>
         </div>
-        <div class="mediacentre-button" ng-init="mc.initHeader()">
+        <div ng-show="hasSignetRight()" class="mediacentre-button" ng-init="mc.initHeader()">
             <input type="radio" id="item_1" name="box" ng-click="mc.goHome()" style="display: none;" checked>
             <label for="item_1" class="label label-left">Accueil</label>
             <input ng-click="mc.goSignet()" type="radio" id="item_2" name="box" style="display: none;">
             <label for="item_2" class="label label-right">Signets</label>
+        </div>
+        <div ng-show="!hasSignetRight()">
         </div>
     </div>
 
