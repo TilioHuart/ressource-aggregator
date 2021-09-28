@@ -11,7 +11,7 @@ const rights = {
     },
     workflow: {
         creation: 'fr.openent.mediacentre.controller.SignetController|create',
-        signets: 'fr.openent.mediacentre.controller.SignetController|list'
+        signets: 'fr.openent.mediacentre.controller.MediacentreController|initSignetResourceRight'
     }
 };
 

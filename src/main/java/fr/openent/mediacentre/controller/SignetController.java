@@ -60,7 +60,8 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets")
     @ApiDoc("List all the signets created by me or shared with me")
-    @SecuredAction(Mediacentre.SIGNET_RIGHT)
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void list(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
             if (user != null) {
@@ -79,7 +80,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:id")
     @ApiDoc("Get a specific signet by id")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void get(HttpServerRequest request) {
         String signetId = request.getParam("id");
@@ -88,7 +89,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/public/")
     @ApiDoc("Get all my published signets")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getPublic(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
@@ -158,7 +159,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/search")
     @ApiDoc("Search in the signets created by me or shared with me")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void searchSignet(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
@@ -179,7 +180,7 @@ public class SignetController extends ControllerHelper {
 
     @Post("/signets/advanced")
     @ApiDoc("Advanced search in the signets created by me or shared with me")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void advancedSearchSignet(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
@@ -201,7 +202,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/search/public")
     @ApiDoc("Search in my published signets")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void searchSignetPublic(HttpServerRequest request) {
         String query = request.getParam("query");
@@ -219,7 +220,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:signetId/rights")
     @ApiDoc("Get my rights for a specific signet")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getMySignetRights(HttpServerRequest request) {
         String signetId = request.getParam("signetId");
@@ -240,7 +241,7 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/rights/all")
     @ApiDoc("Get my rights for all the signets")
-    @ResourceFilter(SignetRight.class)
+    @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getAllMySignetRights(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
