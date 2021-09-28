@@ -1,4 +1,4 @@
-<div class="complete-card" id="color-[[ngModel.hash]]">
+<div class="complete-card" id="color-[[ngModel.hash]]" ng-show="!show.loader">
     <img class="right-magnet source"
          ng-src="[[ '/mediacentre/public/img/' + ngModel.source + '.png' ]]"
          alt="[[ ngModel.source ]]" ng-if="ngModel.source != 'fr.openent.mediacentre.source.Signet' "/>
@@ -6,10 +6,11 @@
 
     <div class="resource-card complete-card-container">
         <div class="image three" ng-click="open()">
-            <div class="crop" data-resource-id="[[ngModel.id]]">
+            <div class="crop" data-resource-id="[[ngModel.id]]" ng-class="{'no-max-width' : ngModel.source !== 'fr.openent.mediacentre.source.GAR'}">
                 <img ng-src="[[ngModel.image]]"
                      onerror="this.src='./mediacentre/public/img/empty-textbooks.svg'; this.style.maxWidth='100%';"
-                     alt="[[ngModel.image]]">
+                     alt="[[ngModel.image]]"
+                    ng-class="{'no-max-width' : ngModel.source !== 'fr.openent.mediacentre.source.GAR'}">
             </div>
         </div>
         <div class="data nine">

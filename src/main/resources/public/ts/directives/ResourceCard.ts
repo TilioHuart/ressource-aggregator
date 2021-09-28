@@ -42,8 +42,6 @@ export const ResourceCard = ng.directive('resourceCard',
                     loader: true
                 };
 
-                $scope.safeApply();
-
                 $scope.$on("$includeContentLoaded", function () {
                     if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
                         const crop = element.find('.resource-card .crop');
@@ -53,7 +51,7 @@ export const ResourceCard = ng.directive('resourceCard',
                             //Get default image size
                             const i = new Image();
                             i.onload = () => {
-                                crop.css('max-width', `${image.width * 0.6}px`);
+                                crop.css('max-width', `${image.width * 0.4}px`);
                                 image.setAttribute('style', 'max-width: 125%;');
                                 $scope.show.loader = false;
                                 $scope.safeApply();
@@ -67,7 +65,7 @@ export const ResourceCard = ng.directive('resourceCard',
                             } else {
                                 cropImage();
                             }
-                        }, 2000);
+                        });
                     }
 
                     const addColoredBar = function () {
