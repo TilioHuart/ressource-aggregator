@@ -42,28 +42,28 @@ export const ResourceCard = ng.directive('resourceCard',
                     loader: true
                 };
 
+                $scope.cropImage = function (crop,image) {
+                    //Get default image size
+                    const i = new Image();
+                    i.onload = () => {
+                        crop.css('max-width', `${image.width * 0.4}px`);
+                        image.setAttribute('style', 'max-width: 125%;');
+                        $scope.show.loader = false;
+                        $scope.safeApply();
+                    };
+                    i.src = image.src;
+                }
+
                 $scope.$on("$includeContentLoaded", function () {
                     if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
                         const crop = element.find('.resource-card .crop');
                         const image: HTMLImageElement = crop.children()[0];
 
-                        const cropImage = () => {
-                            //Get default image size
-                            const i = new Image();
-                            i.onload = () => {
-                                crop.css('max-width', `${image.width * 0.4}px`);
-                                image.setAttribute('style', 'max-width: 125%;');
-                                $scope.show.loader = false;
-                                $scope.safeApply();
-                            };
-                            i.src = image.src;
-                        };
-
                         $timeout(() => {
                             if (image && !image.complete) {
-                                $(image).on('load', cropImage);
+                                $(image).on('load', $scope.cropImage(crop,image));
                             } else {
-                                cropImage();
+                                $scope.cropImage(crop,image);
                             }
                         });
                     }
@@ -108,6 +108,22 @@ export const ResourceCard = ng.directive('resourceCard',
                         $scope.safeApply();
                     });
                 });
+
+                $scope.checkIfLoaded = function () {
+                    $timeout(() => {
+                        if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source && $scope.show.loader) {
+                            const crop = element.find('.resource-card .crop');
+                            const image: HTMLImageElement = crop.children()[0];
+                            if (image && !image.complete) {
+                                $(image).on('load', $scope.cropImage(crop, image));
+                            } else {
+                                $scope.cropImage(crop, image);
+                            }
+                        }
+                    }, 3000);
+                }
+
+                $scope.checkIfLoaded();
 
                 $scope.$on('$destroy', function () {
                     if (clipboard) {
