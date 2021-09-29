@@ -2,7 +2,6 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.security.ShareAndOwner;
-import fr.openent.mediacentre.security.SignetRight;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.NeoService;
@@ -80,8 +79,8 @@ public class SignetController extends ControllerHelper {
 
     @Get("/signets/:id")
     @ApiDoc("Get a specific signet by id")
-    @ResourceFilter(ViewRight.class)
-    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    @ResourceFilter(ShareAndOwner.class)
+    @SecuredAction(value = Mediacentre.VIEW_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void get(HttpServerRequest request) {
         String signetId = request.getParam("id");
         signetService.get(signetId, defaultResponseHandler(request));

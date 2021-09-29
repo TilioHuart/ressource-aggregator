@@ -28,7 +28,6 @@ export interface Scope extends IRootScopeService {
 	signet: Signet;
 	safeApply(): void;
 	redirectTo(path: string): void;
-	getSignetWithRights(signetId : number): void;
 	mc: MainController;
 }
 
@@ -207,11 +206,6 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				template.open('main', 'search')
 			},
 		});
-
-		$scope.getSignetWithRights = async (signetId : number) : Promise<void> => {
-			$scope.signet.setFromJson(await signetService.get(signetId));
-			$scope.signet.myRights = $scope.getDataIf200(await signetService.getMySignetRights(signetId)).map(right => right.action);
-		};
 
 		$scope.displayDate = (dateToFormat: Date) : string => {
 			return new Date(dateToFormat).toLocaleString([], {day: '2-digit', month: '2-digit', year:'numeric'});
