@@ -18,12 +18,12 @@ CREATE TABLE mediacentre.signet (
     owner_name character varying,
     owner_id character varying,
     url character varying,
-    favorite boolean DEFAULT false,
     collab boolean NOT NULL DEFAULT FALSE,
     archived boolean NOT NULL DEFAULT FALSE,
     orientation boolean NOT NULL DEFAULT FALSE,
     date_creation timestamp with time zone,
-    date_modification timestamp with time zone
+    date_modification timestamp with time zone,
+    CONSTRAINT unique_id UNIQUE (id)
 );
 
 CREATE TABLE mediacentre.disciplines (
