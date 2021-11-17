@@ -17,7 +17,7 @@
   },
   "homepage": "",
   "dependencies": {
-    "entcore": "3.12.6",
+    "entcore": "3.12.7",
     "entcore-toolkit": "^1.0.1",
     "axios": "^0.19.0",
     "lit-element": "^2.2.0",
