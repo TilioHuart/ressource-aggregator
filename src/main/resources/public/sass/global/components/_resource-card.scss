@@ -615,6 +615,7 @@ resource-card {
       justify-content: space-between;
       height: 8rem;
       width: calc((100vw - 40px) / 7 - 90px);
+      min-width: 90px;
       background-color: $mediacentre-white;
       border-top-right-radius: inherit;
       border-bottom-right-radius: inherit;

@@ -10,6 +10,11 @@
     }
     @media (max-width: 950px) {
       width: calc(89%/3);
+      min-width: 300px;
+    }
+    @media (max-width: 630px) {
+      width: -webkit-fill-available;
+      min-width: 300px;
     }
     background: white;
     height: 130px;

@@ -80,7 +80,11 @@ export const ResourceCard = ng.directive('resourceCard',
                     };
 
                     const manageSizes = function () {
-                        element.css("margin", "10px 30px");
+                        if(screen.width < 600){
+                            element.css("margin", "10px");
+                        }else{
+                            element.css("margin", "10px 30px");
+                        }
                     };
 
                     $timeout(() => {

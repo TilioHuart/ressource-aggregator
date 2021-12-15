@@ -80,6 +80,7 @@ $header-height: 50px;
     .mediacentre-button {
       @media (max-width: $tablette) {
         order: 2;
+        margin: 10px auto;
       }
 
     .label{

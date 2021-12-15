@@ -25,7 +25,20 @@
         </nav>
     </section>
 
-    <div id="mySidenavForms" class="sideNavMyForms zero-desktop ellipsis">
+    <div class="vertical-spacing row zero-desktop">
+        <i ng-click="vm.openNavMySignets()" class="dropbtn"></i>
+        <span>[[vm.displayFolder()]]</span>
+    </div>
+
+    <div class="zero-desktop">
+        <input type="text" ng-model="vm.searchInput" placeholder="Rechercher" ng-change="vm.search(vm.folder, vm.searchInput)" class="search_nav">
+    </div>
+
+    <div id="mySidenavSignets" class="sideNavMyForms zero-desktop ellipsis">
+        <div class="vertical-spacing row">
+            <i18n class="text-font titleSideNav">mediacentre.signets.folders</i18n>
+            <a class="closebtn" ng-click="vm.closeNavMySignets()">&times;</a>
+        </div>
         <nav class="vertical row">
             <ul>
                 <li><a ng-click="vm.openFolder('mine')" ng-class="{selected : vm.folder === 'mine'}">
@@ -65,9 +78,9 @@
                     <div class="eight">
                         <div class="data">
                             <div class="data-text">
-                                <div class="title" title="[[signet.title]]">[[signet.title]]</div>
-                                <div class="owner">[[signet.owner_name]]</div>
-                                <div class="date"><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_modification)]]</div>
+                                <div class="title ellipsis" title="[[signet.title]]">[[signet.title]]</div>
+                                <div class="owner ellipsis">[[signet.owner_name]]</div>
+                                <div class="date ellipsis"><i18n>mediacentre.modified</i18n>[[displayDate(signet.date_modification)]]</div>
                             </div>
                             <div class="data-bottom">
                                 <div class="icons">

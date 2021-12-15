@@ -28,8 +28,8 @@ export const createSignetController = ng.controller('createSignetController', ['
                             break;
                         default : $scope.vm.openFolder('mine'); break;
                     }
-                    Utils.safeApply($scope);
                     $scope.vm.closeSignetLightbox();
+                    await Utils.safeApply($scope);
                 });
             }
             else {

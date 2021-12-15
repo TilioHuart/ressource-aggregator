@@ -135,9 +135,10 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         // Global functions
 
-        vm.openFolder = (folderName: string) : void => {
+        vm.openFolder = async (folderName: string): Promise<void> => {
             vm.folder = folderName;
-            init();
+            await init();
+            vm.closeNavMySignets()
         };
 
         vm.switchAll = (value: boolean) : void => {
@@ -181,7 +182,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.openNavMySignets = () : void => {
             let element = document.getElementById("mySidenavSignets") as HTMLDivElement;
-                element.style.width = "200px";
+                element.style.width = "220px";
         };
 
         vm.closeNavMySignets = () : void => {
