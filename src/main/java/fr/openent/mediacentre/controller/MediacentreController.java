@@ -74,6 +74,10 @@ public class MediacentreController extends ControllerHelper {
     public void initSignetResourceRight() {
     }
 
+    @SecuredAction(Mediacentre.GAR_RIGHT)
+    public void initGarResourceRight() {
+    }
+
     @Get("/textbooks")
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)

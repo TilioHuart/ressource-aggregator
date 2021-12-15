@@ -3,6 +3,8 @@ package fr.openent.mediacentre.source;
 import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
+import fr.openent.mediacentre.security.WorkflowActionUtils;
+import fr.openent.mediacentre.security.WorkflowActions;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.wseduc.webutils.Either;
@@ -34,11 +36,11 @@ public class GAR implements Source {
     /**
      * Retrieve and format user GAR resources
      *
-     * @param userId      User that needs to retrieve GAR resources
+     * @param user      User that needs to retrieve GAR resources
      * @param structureId Structure identifier
      * @param handler     Function handler returning data
      */
-    private void getData(String userId, String structureId, Handler<Either<String, JsonArray>> handler) {
+    private void getData(UserInfos user, String structureId, Handler<Either<String, JsonArray>> handler) {
 
         Future<JsonArray> getResourcesFuture = Future.future();
         Future<JsonArray> getFavoritesResourcesFuture = Future.future();
@@ -59,34 +61,38 @@ public class GAR implements Source {
             }
         });
 
-        getResources(userId, structureId, FutureHelper.handlerJsonArray(getResourcesFuture));
-        favoriteService.get(GAR.class.getName(), userId, FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
+        getResources(user, structureId, FutureHelper.handlerJsonArray(getResourcesFuture));
+        favoriteService.get(GAR.class.getName(), user.getUserId(), FutureHelper.handlerJsonArray(getFavoritesResourcesFuture));
     }
 
     /**
      * Get GAR resources
      *
-     * @param userId      User that needs to retrieve resources
+     * @param user      User that needs to retrieve resources
      * @param structureId User structure identifier
      * @param handler     Function handler returning data
      */
-    private void getResources(String userId, String structureId, Handler<Either<String, JsonArray>> handler) {
-        JsonObject action = new JsonObject()
-                .put("action", "getResources")
-                .put("structure", structureId)
-                .put("user", userId)
-                .put("hostname", config.getString("host").split("//")[1]);
+    private void getResources(UserInfos user, String structureId, Handler<Either<String, JsonArray>> handler) {
+        if(WorkflowActionUtils.hasRight(user, WorkflowActions.GAR_RIGHT.toString())) {
+            JsonObject action = new JsonObject()
+                    .put("action", "getResources")
+                    .put("structure", structureId)
+                    .put("user", user.getUserId())
+                    .put("hostname", config.getString("host").split("//")[1]);
 
-        String GAR_ADDRESS = "openent.mediacentre";
-        eb.send(GAR_ADDRESS, action, handlerToAsyncHandler(event -> {
-            if (!"ok".equals(event.body().getString("status"))) {
-                log.error("[Gar@search] Failed to retrieve gar resources", event.body().getString("message"));
-                handler.handle(new Either.Left<>(event.body().getString("message")));
-                return;
-            }
+            String GAR_ADDRESS = "openent.mediacentre";
+            eb.send(GAR_ADDRESS, action, handlerToAsyncHandler(event -> {
+                if (!"ok".equals(event.body().getString("status"))) {
+                    log.error("[Gar@search] Failed to retrieve gar resources", event.body().getString("message"));
+                    handler.handle(new Either.Left<>(event.body().getString("message")));
+                    return;
+                }
 
-            handler.handle(new Either.Right<>(event.body().getJsonArray("message")));
-        }));
+                handler.handle(new Either.Right<>(event.body().getJsonArray("message")));
+            }));
+        } else {
+            handler.handle(new Either.Right<>(new JsonArray()));
+        }
     }
 
     /**
@@ -101,7 +107,7 @@ public class GAR implements Source {
         for (String structure : structures) {
             Future<JsonArray> future = Future.future();
             futures.add(future);
-            getData(user.getUserId(), structure, FutureHelper.handlerJsonArray(future));
+            getData(user, structure, FutureHelper.handlerJsonArray(future));
         }
 
         CompositeFuture.join(futures).setHandler(handler);
@@ -373,7 +379,7 @@ public class GAR implements Source {
         for (String structure : structures) {
             Future<JsonArray> future = Future.future();
             futures.add(future);
-            getResources(user.getUserId(), structure, FutureHelper.handlerJsonArray(future));
+            getResources(user, structure, FutureHelper.handlerJsonArray(future));
         }
 
         String pattern = queryPattern(config.getJsonArray("textbook_typology", new JsonArray()));
