@@ -386,32 +386,30 @@ public class GAR implements Source {
         Pattern regexp = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
 
         CompositeFuture.join(futures).setHandler(event -> {
-            JsonArray textBooks = new JsonArray();
-            JsonArray resources = new JsonArray();
-            List<String> list = new ArrayList<>();
-            for (Future future : futures) {
-                if (future.succeeded()) {
-                    resources.addAll((JsonArray) future.result());
+            if(event.succeeded()) {
+                JsonArray textBooks = new JsonArray();
+                JsonArray resources = new JsonArray();
+                List<String> list = new ArrayList<>();
+                for (Future future : futures) {
+                    if (future.succeeded()) {
+                        resources.addAll((JsonArray) future.result());
+                    }
                 }
-            }
 
-            if (resources.isEmpty()) {
+                for (int i = 0; i < resources.size(); i++) {
+                    JsonObject resource = resources.getJsonObject(i);
+                    JsonObject type = resource.getJsonObject("typePresentation");
+                    Matcher matcher = regexp.matcher(type.getString("code"));
+                    if (matcher.find() && !list.contains(resource.getString("idRessource"))) {
+                        list.add(resource.getString("idRessource"));
+                        textBooks.add(format(resource));
+                    }
+                }
+                handler.handle(new Either.Right<>(textBooks));
+            } else  {
                 log.error("[Gar@initTextBooks] Failed to retrieve GAR resources", event.cause());
                 handler.handle(new Either.Left<>(event.cause().toString()));
-                return;
             }
-
-            for (int i = 0; i < resources.size(); i++) {
-                JsonObject resource = resources.getJsonObject(i);
-                JsonObject type = resource.getJsonObject("typePresentation");
-                Matcher matcher = regexp.matcher(type.getString("code"));
-                if (matcher.find() && !list.contains(resource.getString("idRessource"))) {
-                    list.add(resource.getString("idRessource"));
-                    textBooks.add(format(resource));
-                }
-            }
-
-            handler.handle(new Either.Right<>(textBooks));
         });
     }
 }
