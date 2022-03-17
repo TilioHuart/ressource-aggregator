@@ -26,9 +26,7 @@ public class TextBookHelper {
     private final Logger log = LoggerFactory.getLogger(TextBookHelper.class);
     private final FavoriteHelper favoriteHelper = new FavoriteHelper();
 
-    public Future<JsonObject> retrieveTextBooks(String state, UserInfos user, List<Source> sources, ResponseHandlerHelper answer) {
-        Promise<JsonObject> promise = Promise.promise();
-
+    public void retrieveTextBooks(String state, UserInfos user, List<Source> sources, ResponseHandlerHelper answer) {
         Future<JsonArray> getTextBookFuture = getTextBooks(user.getUserId());
         Future<JsonArray> getFavoritesResourcesFuture = getFavorite(GAR.class.getName(), user.getUserId());
 
@@ -54,7 +52,6 @@ public class TextBookHelper {
                 ).encode());
             }
         });
-        return promise.future();
     }
 
     private Future<JsonArray> getTextBooks(String userId) {

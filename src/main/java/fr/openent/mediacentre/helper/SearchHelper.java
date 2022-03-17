@@ -22,6 +22,10 @@ public class SearchHelper extends ControllerHelper {
                                              String state,
                                              Handler<Either<JsonObject, JsonObject>> handler) {
 
+        if (expectedSources.isEmpty()) {
+            // If expected sources is empty. Search in all sources
+            expectedSources = new JsonArray(sources.stream().map(source -> source.getClass().getName()).collect(Collectors.toList()));
+        }
 
         if (SearchState.PLAIN_TEXT.toString().equals(state)) {
             String query = data.getString("query");
@@ -46,23 +50,20 @@ public class SearchHelper extends ControllerHelper {
         Handler<Either<JsonObject, JsonObject>> handler = event -> {
             if (event.isLeft()) {
                 log.error("[SearchController@search] Failed to retrieve source resources.", event.left().getValue());
-                answer.answerFailure(new JsonObject().put("error", event.left().getValue()).put("status", "ko").encode());
+                answer.storeMultiple(new JsonObject().put("error", event.left().getValue()).put("status", "ko"),
+                        expectedSources.size());
             } else {
-                answer.answerSuccess(HelperUtils
+                answer.storeMultiple(HelperUtils
                         .frameLoad( "search_Result",
                                         state, "ok",
-                                        event.right().getValue())
-                        .encode());
+                                        event.right().getValue()),
+                        expectedSources.size()
+                );
             }
         };
-
-        if (expectedSources.isEmpty()) {
-            // If expected sources is empty. Search in all sources
-            expectedSources = new JsonArray(sources.stream().map(source -> source.getClass().getName()).collect(Collectors.toList()));
-        }
-
-        if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state))
+        if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state)){
             searchRetrieve(user, expectedSources, sources, data, state, handler);
+        }
         else
             answer.answerFailure(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());
     }

@@ -31,10 +31,10 @@ public class SignetHelper {
                                 .encode());
                     } else {
                         answer.answerSuccess(
-                                HelperUtils.frameLoad("signets_Result",
+                                HelperUtils.frameLoad("signets_Results",
                                         state,
                                         "ok",
-                                        new JsonObject().put("signets", event.right().getValue())).encode()
+                                        event.right().getValue()).encode()
                         );
                     }
                 }
