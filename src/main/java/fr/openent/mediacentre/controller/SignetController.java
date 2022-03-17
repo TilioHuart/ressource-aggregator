@@ -1,6 +1,8 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.helper.APIHelper;
+import fr.openent.mediacentre.helper.SignetHelper;
 import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.FavoriteService;
@@ -45,6 +47,7 @@ public class SignetController extends ControllerHelper {
     private final SignetSharesService signetShareService;
     private final NeoService neoService;
     private final FavoriteService favoriteService;
+    private final SignetHelper signetHelper;
 
     public SignetController(EventBus eb) {
         super();
@@ -53,11 +56,20 @@ public class SignetController extends ControllerHelper {
         this.signetShareService = new DefaultSignetSharesService();
         this.neoService = new DefaultNeoService();
         this.favoriteService = new DefaultFavoriteService();
+        this.signetHelper = new SignetHelper();
     }
 
-    // API
-
     @Get("/signets")
+    @ApiDoc("Retrieve all the public signets")
+    @ResourceFilter(ViewRight.class)
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void getPublicSignets(HttpServerRequest request) {
+        UserUtils.getUserInfos(eb, request, user -> {
+            signetHelper.signetRetrieve(user, "get", new APIHelper(request));
+        });
+    }
+
+    @Get("/mysignets")
     @ApiDoc("List all the signets created by me or shared with me")
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)

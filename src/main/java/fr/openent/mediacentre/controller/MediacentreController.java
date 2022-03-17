@@ -1,8 +1,6 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
-import fr.openent.mediacentre.security.ViewRight;
-import fr.openent.mediacentre.source.GAR;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
@@ -15,14 +13,10 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
-import org.entcore.common.http.filter.ResourceFilter;
-import org.entcore.common.user.UserUtils;
 import org.vertx.java.core.http.RouteMatcher;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.entcore.common.http.response.DefaultResponseHandler.arrayResponseHandler;
 
 public class MediacentreController extends ControllerHelper {
 
@@ -78,16 +72,6 @@ public class MediacentreController extends ControllerHelper {
     public void initGarResourceRight() {
     }
 
-    @Get("/textbooks")
-    @ResourceFilter(ViewRight.class)
-    @SecuredAction(value = "", type = ActionType.RESOURCE)
-    public void getGar(HttpServerRequest request) {
-        UserUtils.getUserInfos(eb, request, user -> {
-            for (Source source : this.sources) {
-                if (source instanceof GAR) {
-                    ((GAR) source).initTextBooks(user, arrayResponseHandler(request));
-                }
-            }
-        });
-    }
+
+
 }

@@ -1,10 +1,13 @@
 package fr.openent.mediacentre.controller;
 
+import fr.openent.mediacentre.helper.APIHelper;
+import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Delete;
+import fr.wseduc.rs.Get;
 import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
@@ -21,11 +24,23 @@ public class FavoriteController extends ControllerHelper {
 
     private final EventBus eb;
     private final FavoriteService favoriteService;
+    private final FavoriteHelper favoriteHelper;
 
     public FavoriteController(EventBus eb) {
         super();
         this.eb = eb;
         this.favoriteService = new DefaultFavoriteService();
+        this.favoriteHelper = new FavoriteHelper();
+    }
+
+    @Get("/favorites")
+    @ResourceFilter(ViewRight.class)
+    @ApiDoc("Retrieve all the books from favorites")
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void getFavorites(HttpServerRequest request) {
+        UserUtils.getUserInfos(eb, request, user -> {
+            favoriteHelper.favoritesRetrieve(user, favoriteService, new APIHelper(request));
+        });
     }
 
     @Post("/favorites")
@@ -80,5 +95,4 @@ public class FavoriteController extends ControllerHelper {
 
         });
     }
-
 }

@@ -3,6 +3,7 @@ package fr.openent.mediacentre.helper;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -26,6 +27,17 @@ public class FutureHelper {
         };
     }
 
+    public static Handler<Either<String, JsonArray>> handlerJsonArray(Promise<JsonArray> promise) {
+        return event -> {
+            if (event.isRight()) {
+                promise.complete(event.right().getValue());
+            } else {
+                LOGGER.error(event.left().getValue());
+                promise.fail(event.left().getValue());
+            }
+        };
+    }
+
     public static Handler<Either<String, JsonObject>> handlerJsonObject(Future<JsonObject> future) {
         return event -> {
             if (event.isRight()) {
@@ -36,4 +48,5 @@ public class FutureHelper {
             }
         };
     }
+
 }

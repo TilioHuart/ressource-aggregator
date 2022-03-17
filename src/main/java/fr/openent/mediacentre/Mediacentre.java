@@ -87,6 +87,8 @@ public class Mediacentre extends BaseServer {
         addController(new MediacentreController(sources, config));
         addController(new FavoriteController(eb));
         addController(new PublishedController(eb));
+        addController(new SearchController(eb, sources));
+        addController(new TextBooksController(eb, sources));
                                                                                                                                                                                                                                                         addController(signetController);
 
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
