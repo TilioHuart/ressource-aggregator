@@ -37,7 +37,7 @@ public class FavoriteHelper {
             if (event.isLeft()) {
                 log.error("[favorite@get] Failed to retrieve favorite", event.left());
                 answer.answerFailure(new JsonObject()
-                        .put("error", event.left().getValue())
+                        .put("error", event.left().getValue().toString())
                         .put("status", "ko")
                         .encode());
                 return;

@@ -22,6 +22,10 @@ public class SearchHelper extends ControllerHelper {
                                              String state,
                                              Handler<Either<JsonObject, JsonObject>> handler) {
 
+        if (expectedSources.isEmpty()) {
+            // If expected sources is empty. Search in all sources
+            expectedSources = new JsonArray(sources.stream().map(source -> source.getClass().getName()).collect(Collectors.toList()));
+        }
 
         if (SearchState.PLAIN_TEXT.toString().equals(state)) {
             String query = data.getString("query");
@@ -55,12 +59,6 @@ public class SearchHelper extends ControllerHelper {
                         .encode());
             }
         };
-
-        if (expectedSources.isEmpty()) {
-            // If expected sources is empty. Search in all sources
-            expectedSources = new JsonArray(sources.stream().map(source -> source.getClass().getName()).collect(Collectors.toList()));
-        }
-
         if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state))
             searchRetrieve(user, expectedSources, sources, data, state, handler);
         else

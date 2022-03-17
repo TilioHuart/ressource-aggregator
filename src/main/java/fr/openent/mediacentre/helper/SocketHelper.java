@@ -15,6 +15,6 @@ public class SocketHelper implements ResponseHandlerHelper{
 
     @Override
     public void answerFailure(String answer) {
-        ws.writeTextMessage(answer);
+        answerSuccess(answer);
     }
 }
