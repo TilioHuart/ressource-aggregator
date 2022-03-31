@@ -27,7 +27,7 @@ export const signetService: SignetService = {
 
     async list() : Promise<AxiosResponse> {
         try {
-            return http.get('/mediacentre/signets');
+            return http.get('/mediacentre/mysignets');
         } catch (err) {
             notify.error(idiom.translate('mediacentre.error.signetService.list'));
             throw err;
