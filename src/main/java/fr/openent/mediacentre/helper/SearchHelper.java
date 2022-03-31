@@ -52,15 +52,16 @@ public class SearchHelper extends ControllerHelper {
                 log.error("[SearchController@search] Failed to retrieve source resources.", event.left().getValue());
                 answer.answerFailure(new JsonObject().put("error", event.left().getValue()).put("status", "ko").encode());
             } else {
-                answer.answerSuccess(HelperUtils
+                answer.storeMultiple(HelperUtils
                         .frameLoad( "search_Result",
                                         state, "ok",
-                                        event.right().getValue())
-                        .encode());
+                                        event.right().getValue()));
             }
         };
-        if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state))
+        if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state)){
             searchRetrieve(user, expectedSources, sources, data, state, handler);
+            answer.answerMultiple();
+        }
         else
             answer.answerFailure(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());
     }
