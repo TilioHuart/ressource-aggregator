@@ -40,6 +40,7 @@ public class WebSocketController implements Handler<ServerWebSocket>{
     @Override
     public void handle(ServerWebSocket ws) {
         ws.pause();
+        SocketHelper socketHelper = new SocketHelper(ws);
         String sessionId = CookieHelper.getInstance().getSigned(SESSION_ID, ws);
         UserUtils.getSession(eb, sessionId, user -> {
             if (user == null) {
@@ -58,7 +59,7 @@ public class WebSocketController implements Handler<ServerWebSocket>{
             ws.frameHandler(frame -> {
                 UserUtils.getSession(eb, sessionId, session -> {
                     if (session == null) {
-                        ws.writeTextMessage(new JsonObject().put("error", "Unauthorized").put("status", "ko").encode());
+                        socketHelper.answerSuccess(new JsonObject().put("error", "Unauthorized").put("status", "ko").encode());
                         return;
                     }
                     if (!frame.isText()) return;
@@ -68,23 +69,23 @@ public class WebSocketController implements Handler<ServerWebSocket>{
                     JsonObject data = message.getJsonObject("data", new JsonObject());
                     switch (message.getString("event")) {
                         case "search": {
-                            searchHelper.search(state, sources, expectedSources, data, userInfos, new SocketHelper(ws));
+                            searchHelper.search(state, sources, expectedSources, data, userInfos, socketHelper);
                             break;
                         }
                         case "favorites": {
-                            favorites(state, userInfos, ws);
+                            favorites(state, userInfos, socketHelper);
                             break;
                         }
                         case "textbooks": {
-                            textBooks(state, userInfos, ws);
+                            textBooks(state, userInfos, socketHelper);
                             break;
                         }
                         case "signets": {
-                            getSignet(state, userInfos, ws);
+                            getSignet(state, userInfos, socketHelper);
                             break;
                         }
                         default:
-                            ws.writeTextMessage(new JsonObject().put("error", "Unknown event").put("status", "ko").encode());
+                            socketHelper.answerFailure(new JsonObject().put("error", "Unknown event").put("status", "ko").encode());
                     }
                 });
             });
@@ -93,8 +94,7 @@ public class WebSocketController implements Handler<ServerWebSocket>{
         });
     }
 
-    private void favorites(String state, UserInfos user, ServerWebSocket ws) {
-        SocketHelper socketHelper = new SocketHelper(ws);
+    private void favorites(String state, UserInfos user, SocketHelper socketHelper) {
         if ("get".equals(state)) {
             favoriteHelper.favoritesRetrieve(user, favoriteService, socketHelper);
         }
@@ -107,13 +107,11 @@ public class WebSocketController implements Handler<ServerWebSocket>{
 
     /**
      * Text book management
-     *
-     * @param state State request
+     *  @param state State request
      * @param user  Current user
-     * @param ws    WebSocket server
+     * @param socketHelper
      */
-    private void textBooks(String state, UserInfos user, ServerWebSocket ws) {
-        SocketHelper socketHelper = new SocketHelper(ws);
+    private void textBooks(String state, UserInfos user, SocketHelper socketHelper) {
         switch (state) {
             case "get": {
                 textBookHelper.retrieveTextBooks(state, user, sources, socketHelper);
@@ -128,8 +126,8 @@ public class WebSocketController implements Handler<ServerWebSocket>{
         }
     }
 
-    private void getSignet(String state, UserInfos user, ServerWebSocket ws) {
-        signetHelper.signetRetrieve(user, state, new SocketHelper(ws));
+    private void getSignet(String state, UserInfos user, SocketHelper socketHelper) {
+        signetHelper.signetRetrieve(user, state, socketHelper);
     }
 
 
