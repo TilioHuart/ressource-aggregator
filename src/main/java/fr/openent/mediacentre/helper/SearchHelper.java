@@ -55,12 +55,13 @@ public class SearchHelper extends ControllerHelper {
                 answer.storeMultiple(HelperUtils
                         .frameLoad( "search_Result",
                                         state, "ok",
-                                        event.right().getValue()));
+                                        event.right().getValue()),
+                        expectedSources.getList()
+                );
             }
         };
         if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state)){
             searchRetrieve(user, expectedSources, sources, data, state, handler);
-            answer.answerMultiple();
         }
         else
             answer.answerFailure(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());

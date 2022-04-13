@@ -1,7 +1,10 @@
 package fr.openent.mediacentre.helper;
 
+import fr.openent.mediacentre.source.Source;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.JsonObject;
+
+import java.util.List;
 
 public class SocketHelper implements ResponseHandlerHelper{
     private final ServerWebSocket ws;
@@ -15,7 +18,7 @@ public class SocketHelper implements ResponseHandlerHelper{
     }
 
     @Override
-    public void storeMultiple(JsonObject answer) {
+    public void storeMultiple(JsonObject answer, List<Source> sources) {
         answerSuccess(answer.encode());
     }
 
