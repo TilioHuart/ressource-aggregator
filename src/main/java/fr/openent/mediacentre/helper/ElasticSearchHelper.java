@@ -3,7 +3,6 @@ package fr.openent.mediacentre.helper;
 import fr.openent.mediacentre.enums.Comparator;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
-import fr.openent.mediacentre.source.PMB;
 import fr.openent.mediacentre.source.Signet;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.Either;
@@ -292,7 +291,7 @@ public class ElasticSearchHelper {
     public static Handler<AsyncResult<JsonArray>> searchHandler(Class<?> source, Function<JsonObject, JsonObject> actionProvider, Handler<Either<JsonObject, JsonObject>> handler) {
         return ar -> {
             if (ar.failed())
-                handler.handle(new Either.Left<>(new JsonObject().put("source", PMB.class.getName()).put("error", "[PMB] " + ar.cause().getMessage())));
+                handler.handle(new Either.Left<>(new JsonObject().put("source", source.getName()).put("error", "[" + source.getName() + "] " + ar.cause().getMessage())));
             else {
                 List<JsonObject> resources = ((List<JsonObject>) ar.result().getList());
                 if (Objects.nonNull(actionProvider)) {
