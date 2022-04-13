@@ -48,7 +48,10 @@ public class APIHelper implements ResponseHandlerHelper{
 
     @Override
     public void answerMultiple() {
-        answerSuccess(this.finalRender.encode());
+        if (checkRequestSet (request))
+            Renders.renderJson(request, finalRender);
+        else
+            log.error("[APIHelper] Request null");
     }
 
 
