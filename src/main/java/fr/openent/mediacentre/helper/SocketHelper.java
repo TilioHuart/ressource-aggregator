@@ -18,7 +18,7 @@ public class SocketHelper implements ResponseHandlerHelper{
     }
 
     @Override
-    public void storeMultiple(JsonObject answer, List<Source> sources) {
+    public void storeMultiple(JsonObject answer, int nbSources) {
         answerSuccess(answer.encode());
     }
 

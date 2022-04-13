@@ -39,9 +39,9 @@ public class APIHelper implements ResponseHandlerHelper{
     }
 
     @Override
-    public void storeMultiple(JsonObject answer, List<Source> sources) {
+    public void storeMultiple(JsonObject answer, int nbSources) {
         finalRender.add(answer);
-        if (finalRender.size() == sources.size()) {
+        if (finalRender.size() == nbSources) {
             answerMultiple();
         }
     }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ResponseHandlerHelper {
     void answerSuccess(String answer);
-    void storeMultiple(JsonObject answer, List<Source> sources);
+    void storeMultiple(JsonObject answer, int nbSource);
     void answerMultiple();
     void answerFailure (String answer);
 }
