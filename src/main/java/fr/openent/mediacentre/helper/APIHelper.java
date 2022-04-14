@@ -1,6 +1,5 @@
 package fr.openent.mediacentre.helper;
 
-import fr.openent.mediacentre.source.Source;
 import fr.wseduc.webutils.http.Renders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
@@ -8,10 +7,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
-import java.util.List;
-
 public class APIHelper implements ResponseHandlerHelper{
-    private Logger log = LoggerFactory.getLogger(APIHelper.class);
+    private final Logger log = LoggerFactory.getLogger(APIHelper.class);
     private HttpServerRequest request;
     private JsonArray finalRender;
     public APIHelper() {}
