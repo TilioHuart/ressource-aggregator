@@ -108,6 +108,9 @@ export class Signet implements Selectable, Shareable  {
                 && !!data[key]) {
                     this[key] = new Date(this[key]);
             }
+            if (key === 'id' && !!data[key]) {
+                this[key] =  Number(this[key].toString());
+            }
         }
     };
 
