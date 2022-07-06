@@ -1,7 +1,8 @@
 <div class="resource-card" ng-show="!show.loader">
   <div class="image" ng-click="open()">
     <div class="crop" data-resource-id="[[ngModel.id]]">
-      <img ng-src="[[ngModel.image]]" alt="[[ngModel.image]]">
+      <img ng-src="[[ngModel.image || './mediacentre/public/img/empty-textbooks.svg']]"
+           alt="[[ngModel.image]]"/>
     </div>
   </div>
   <div class="data">
@@ -21,15 +22,16 @@
     <div class="resource-footer">
       <!--Add favorite-->
       <div ng-if="!ngModel.favorite" class="cell add-to-favorite" data-ng-click="addFavorite()"
-           tooltip="<i18n>mediacentre.add.to.favorite</i18n>">&nbsp;
+           tooltip="<i18n>mediacentre.add.to.favorite</i18n>">
       </div>
       <!--Remove favorite-->
       <div ng-if="ngModel.favorite" class="cell remove-to-favorite" data-ng-click="removeFavorite()"
-           tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">&nbsp;
+           tooltip="<i18n>mediacentre.remove.to.favorite</i18n>">
       </div>
 
       <div class="copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
-           data-clipboard-text="[[ngModel.link]]" tooltip="<i18n>mediacentre.copy.link</i18n>">
+           data-clipboard-text="[[ngModel.link]]" tooltip="<i18n>mediacentre.copy.link</i18n>"
+           data-ng-click="copyLink()">
       </div>
     </div>
   </div>

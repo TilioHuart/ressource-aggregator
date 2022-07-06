@@ -6,6 +6,7 @@ import {Frame, Resource} from "../model";
 import {hashCode} from "../utils";
 import {ILocationService} from "angular";
 import * as Clipboard from "clipboard";
+import {ResourceCard} from "../directives";
 
 interface ViewModel {
     signetPopUpSharing: boolean;

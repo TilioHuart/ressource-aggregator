@@ -3,9 +3,7 @@
         <div class="title pointer" ng-click="open()">[[displayTitle(ngModel.title)]]</div>
         <div class="image" ng-click="open()">
             <div class="crop" data-resource-id="[[ngModel.id]]">
-                <img ng-src="[[ngModel.image]]"
-                     onerror="this.src='./mediacentre/public/img/empty-textbooks.svg'; this.style.maxWidth='100%';"
-                     alt="[[ngModel.image]]">
+                <img ng-src="[[(ngModel.image) || '/mediacentre/public/img/empty-textbooks.svg']]"/>
             </div>
         </div>
         <div class="resource-footer">
@@ -26,14 +24,15 @@
                 <div ng-if="!ngModel.action"
                      class="cell copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
                      data-clipboard-text="[[ngModel.link]]"
-                     tooltip="<i18n>mediacentre.copy.link</i18n>">
+                     tooltip="<i18n>mediacentre.copy.link</i18n>"
+                     data-ng-click="copyLink()">
                 </div>
                 <div ng-if="ngModel.action"
                      data-ng-click="action()"
                      class="cell action [[idiom.translate(ngModel.action.label)]] [[type]]-resource-[[ngModel.hash]] pointer">
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 </div>
 

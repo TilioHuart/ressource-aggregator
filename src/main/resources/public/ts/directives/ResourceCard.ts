@@ -1,10 +1,11 @@
-import {idiom, ng, toasts} from 'entcore';
+import {idiom, ng, notify, toasts} from 'entcore';
 import http from 'axios';
 import {hashCode} from '../utils';
 
 import * as Clipboard from 'clipboard';
 
 import {FavoriteService} from "../services";
+import {idiom as i18n} from "entcore/types/src/ts/idiom";
 
 declare const window: Window;
 
@@ -166,6 +167,10 @@ export const ResourceCard = ng.directive('resourceCard',
                     return `/mediacentre/public/template/resources/${$scope.type}.html`;
                 };
 
+                $scope.copyLink = (): void => {
+                    toasts.confirm(idiom.translate("mediacentre.link.copy.success"));
+                }
+
                 $scope.displayTitle = function (title:string) {
                     // If title hasn't any kind of whitespace
                     if (!(/\s/.test(title.substr(0,25))) && title.length > 25){
@@ -176,7 +181,9 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.action = async function () {
                     const {method, target, url, message} = $scope.ngModel.action;
-                    if (method === 'GET' && target && target === '_blank') window.open(url);
+                    if (method === 'GET' && target && target === '_blank') {
+                        window.open(url);
+                    }
                     else {
                         try {
                             await http({method, url});
@@ -186,6 +193,20 @@ export const ResourceCard = ng.directive('resourceCard',
                             throw e;
                         }
                     }
+                }
+
+                $scope.getImgLink = async (imgId) : Promise<boolean> => {
+                    try{
+                        let data = await http.get(`${imgId}`);
+                        console.log(imgId, data.status);
+                        return data.status < 400;
+                    }
+                    catch (err)
+                    {
+                        console.log(imgId, err);
+                        return false;
+                    }
+
                 }
             }
         }

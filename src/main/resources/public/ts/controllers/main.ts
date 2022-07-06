@@ -1,10 +1,10 @@
-import {_, Behaviours, idiom, model, ng, template} from 'entcore';
+import {_, Behaviours, idiom, model, ng, notify, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 import {Signet} from "../model/Signet";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "../model/Label";
-import {AxiosResponse} from "axios";
+import http, {AxiosResponse} from "axios";
 
 declare const window: any;
 
@@ -62,6 +62,7 @@ export interface MainController {
 	goHome(): void;
 	goFavorites(): void;
 	goSignet(): void;
+	getImgLink(imgId: string): Promise<boolean>;
 }
 
 export const mainController = ng.controller('MainController', ['$scope', 'route', '$location', '$timeout',
@@ -111,6 +112,20 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				$scope.$broadcast('search', {state, data});
 			}, 300);
 		};
+
+		mc.getImgLink = async (imgId) : Promise<boolean> => {
+			try{
+				let data = await http.get(`${imgId}`);
+				console.log(imgId, data.status);
+				return data.status < 400;
+			}
+			catch (err)
+			{
+				console.log(imgId, err);
+				return false;
+			}
+
+		}
 
 		mc.infiniteScroll = function () {
 			mc.limitTo += mc.pageSize;
@@ -277,5 +292,4 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 		$scope.isStatusXXX = (response: AxiosResponse, status: number) : any => {
 			return response.status === status;
 		};
-
 	}]);

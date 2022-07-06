@@ -33,6 +33,9 @@ export const publishSignetController = ng.controller('publishSignetController', 
         $scope.publishSignet = async (): Promise<void> => {
             if ($scope.fieldsAllFilled()) {
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
+                if ($scope.query && $scope.query.plain_text.length > 0) {
+                    $scope.addSingleKeyWord();
+                }
                 $scope.signet.disciplines = $scope.filterChoice.disciplines;
                 $scope.signet.levels = $scope.filterChoice.levels;
                 await signetService.publish($scope.signet).then(async (): Promise<void> => {
@@ -58,6 +61,15 @@ export const publishSignetController = ng.controller('publishSignetController', 
             await Utils.safeApply($scope);
         };
 
+        $scope.addSingleKeyWord = () => {
+            if ($scope.query.plain_text.trim()!= ""){
+                if (!$scope.query.plain_text) {
+                    $scope.query.plain_text = new Labels();
+                }
+                $scope.signet.plain_text.push(new Label(undefined, $scope.query.plain_text.trim()));
+                Utils.safeApply($scope);
+            }
+        };
 
         $scope.addKeyWord = (event) => {
             if (event.keyCode == 59 || event.key == "Enter") {
@@ -88,8 +100,7 @@ export const publishSignetController = ng.controller('publishSignetController', 
         };
 
         $scope.fieldsAllFilled = () => {
-            return $scope.signet.plain_text.all.length > 0 &&
-                   $scope.filterChoice.disciplines.length > 0 && $scope.filterChoice.levels.length > 0;
+            return $scope.filterChoice.disciplines.length > 0 && $scope.filterChoice.levels.length > 0;
         }
 
         init();

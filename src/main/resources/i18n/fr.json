@@ -45,7 +45,7 @@
   "mediacentre.advances.name.sources": "Source",
   "mediacentre.advanced.textbooks.mine": "Mes manuels",
   "mediacentre.textbooks.empty": "Vous n'avez pas de manuels scolaires pour l'instant",
-  "mediacentre.ressources.empty": "Vous n'avez pas de ressources pour l'instant",
+  "mediacentre.ressources.empty": "Vous n'avez pas de ressource pour l'instant",
   "fr.openent.mediacentre.source.GAR": "Gar",
   "fr.openent.mediacentre.source.Moodle": "Moodle",
   "fr.openent.mediacentre.source.PMB": "PMB",
@@ -75,9 +75,9 @@
   "mediacentre.signets.archived": "Corbeille",
   "mediacentre.signets.empty": "Il n'y a aucun signet pour le moment",
   "mediacentre.table.title": "Titre du Signet",
-  "mediacentre.signet.archive.title": "Supprimer les signets sélectionnés",
+  "mediacentre.signet.archive.title": "Archiver les signets sélectionnés",
   "mediacentre.signet.delete.title": "Supprimer définitivement",
-  "mediacentre.warning.signets.archive": "Attention, certains signets que vous souhaitez supprimer ont été envoyés à des utilisateurs et ne leur seront désormais plus accessibles",
+  "mediacentre.warning.signets.archive": "Les signets archivés seront déplacés dans la Corbeille",
   "mediacentre.warning.signets.delete": "Supprimer définitivement ce(s) signet(s) ? Cette opération est irréversible",
   "mediacentre.archive": "Archiver",
   "mediacentre.restore": "Restaurer",
@@ -112,7 +112,7 @@
   "mediacentre.error.signetService.publish": "Une erreur est survenue lors de la publication du signet",
   "mediacentre.error.signetService.published": "Une erreur est survenue lors de la récupération des signets publiés",
   "mediacentre.error.signetService.image": "Une erreur est survenue lors de la récupération de l'image",
-  "mediacentre.error.info": "Un ou plusieurs champs n'ont pas été correctement saisis, veuillez ressayer",
+  "mediacentre.error.info": "Vous devez remplir tous les champs, veuillez ressayer",
 
 
   "mediacentre.success.signet.create": "Votre signet a bien été créé !",
@@ -135,6 +135,6 @@
   "mediacentre.signets.mine.upperCase": "MES SIGNETS",
   "mediacentre.signets.orientation.decouverte.upperCase": "ORIENTATION / DÉCOUVERTE DES MÉTIERS",
 
-  "mediacentre.link": "Lien"
-
+  "mediacentre.link": "Lien",
+  "mediacentre.link.copy.success": "Le lien a bien été copié"
 }

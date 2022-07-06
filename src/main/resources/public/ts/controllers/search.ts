@@ -129,7 +129,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
         const eventResponses: EventResponses = {
             search_Result: function (frame) {
                 vm.resources = [...vm.resources, ...frame.data.resources];
-                vm.resources = vm.resources.sort((a, b) => a.title.localeCompare(b.title));
+                vm.resources = vm.resources.sort((a, b) => a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
                 frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
                 filter();
                 frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));

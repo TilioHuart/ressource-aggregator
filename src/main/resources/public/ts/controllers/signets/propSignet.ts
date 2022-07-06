@@ -29,7 +29,10 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
 
         $scope.save = async () : Promise<void> => {
             if ($scope.fieldsAllFilled()) {
-            $scope.signet.plain_text = $scope.signet.plain_text.all;
+                $scope.signet.plain_text = $scope.signet.plain_text.all;
+                if ($scope.query && $scope.query.plain_text.length > 0) {
+                    $scope.addSingleKeyWord();
+                }
             $scope.signet.disciplines = $scope.filterChoice.disciplines;
             $scope.signet.levels = $scope.filterChoice.levels;
             await signetService.save($scope.signet).then(async (): Promise<void> => {
@@ -59,6 +62,16 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
                 await $scope.signet.setInfoImage();
             }
             $scope.safeApply();
+        };
+
+        $scope.addSingleKeyWord = () => {
+            if ($scope.query.plain_text.trim()!= ""){
+                if (!$scope.query.plain_text) {
+                    $scope.query.plain_text = new Labels();
+                }
+                $scope.signet.plain_text.push(new Label(undefined, $scope.query.plain_text.trim()));
+                Utils.safeApply($scope);
+            }
         };
 
         $scope.addKeyWord = (event) => {
@@ -91,7 +104,7 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
         };
 
         $scope.fieldsAllFilled = () => {
-            return $scope.signet.title.length >= 1 && $scope.signet.plain_text.all.length > 0 &&
+            return $scope.signet.title.length >= 1 &&
                 $scope.filterChoice.disciplines.length > 0 && $scope.filterChoice.levels.length > 0 &&
                 !!$scope.signet.url && !!$scope.signet.image;
         }

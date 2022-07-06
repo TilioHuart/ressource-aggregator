@@ -1,4 +1,4 @@
-import {model, ng, notify, idiom as i18n, _, template} from "entcore";
+import {model, ng, notify, idiom as i18n, _, template, idiom, toasts} from "entcore";
 import {Utils} from "../../utils/Utils";
 import {Label, Labels} from "../../model/Label";
 import {signetService} from "../../services/SignetService";
@@ -13,6 +13,9 @@ export const createSignetController = ng.controller('createSignetController', ['
         $scope.createSignet = async (): Promise<void> => {
             if ($scope.fieldsAllFilled()) {
                 $scope.signet.plain_text = $scope.signet.plain_text.all;
+                if ($scope.query && $scope.query.plain_text.length > 0) {
+                    $scope.addSingleKeyWord();
+                }
                 $scope.signet.id = uuidv();
                 await signetService.create($scope.signet).then(async (): Promise<void> => {
                     await $scope.vm.signets.sync();
@@ -30,12 +33,23 @@ export const createSignetController = ng.controller('createSignetController', ['
                     }
                     $scope.vm.closeSignetLightbox();
                     await Utils.safeApply($scope);
+                    toasts.confirm(i18n.translate('mediacentre.success.signet.create'));
                 });
             }
             else {
                 notify.error(i18n.translate("mediacentre.error.info"));
             }
             await Utils.safeApply($scope);
+        };
+
+        $scope.addSingleKeyWord = () => {
+            if ($scope.query.plain_text.trim()!= ""){
+                if (!$scope.query.plain_text) {
+                    $scope.query.plain_text = new Labels();
+                }
+                $scope.signet.plain_text.push(new Label(undefined, $scope.query.plain_text.trim()));
+                Utils.safeApply($scope);
+            }
         };
 
         $scope.addKeyWord = (event) => {
@@ -52,7 +66,7 @@ export const createSignetController = ng.controller('createSignetController', ['
         };
 
         $scope.fieldsAllFilled = () => {
-            return $scope.signet.title.length >= 1 && $scope.signet.plain_text.all.length > 0 &&
+            return $scope.signet.title.length >= 1 &&
                    $scope.signet.disciplines.length > 0 && $scope.signet.levels.length > 0 &&
                    !!$scope.signet.url && !!$scope.signet.image;
         };

@@ -7,10 +7,8 @@
     <div class="resource-card complete-card-container">
         <div class="image three" ng-click="open()">
             <div class="crop" data-resource-id="[[ngModel.id]]" ng-class="{'no-max-width' : ngModel.source !== 'fr.openent.mediacentre.source.GAR'}">
-                <img ng-src="[[ngModel.image]]"
-                     onerror="this.src='./mediacentre/public/img/empty-textbooks.svg'; this.style.maxWidth='100%';"
-                     alt="[[ngModel.image]]"
-                    ng-class="{'no-max-width' : ngModel.source !== 'fr.openent.mediacentre.source.GAR'}">
+                <img ng-src="[[ngModel.image || './mediacentre/public/img/empty-textbooks.svg']]"
+                     alt="[[ngModel.image]]"/>
             </div>
         </div>
         <div class="data nine">
@@ -21,7 +19,7 @@
                     <em class="metadata">
                         <i18n>mediacentre.edited.by</i18n>
                         <span ng-repeat-start="editor in ngModel.editors | limitTo:3 track by $index">[[editor]]</span>
-                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        <span ng-repeat-end ng-if="!$last"></span>
                     </em>
                     <div ng-if="ngModel.display_structure_name">
                         <em class="metadata">
@@ -31,7 +29,7 @@
                 </div>
                 <div class="types">
                     <resource-type ng-repeat-start="type in ngModel.document_types | limitTo:3 track by $index">[[type]]</resource-type>
-                    <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                    <span ng-repeat-end ng-if="!$last"></span>
                 </div>
             </div>
             <div class="resource-footer">
@@ -58,12 +56,14 @@
                     <div ng-if="!ngModel.action"
                          class="cell copy-clipboard clipboard [[type]]-resource-[[ngModel.hash]] pointer"
                          data-clipboard-text="[[ngModel.link]]"
-                         tooltip="<i18n>mediacentre.copy.link</i18n>">
+                         tooltip="<i18n>mediacentre.copy.link</i18n>"
+                         data-ng-click="copyLink()">
                         <i18n>mediacentre.copy.link</i18n>
                     </div>
                     <div ng-if="ngModel.action && ngModel.source != 'fr.openent.mediacentre.source.Signet'"
                          ng-click="action()"
-                         class="cell action [[idiom.translate(ngModel.action.label)]] [[type]]-resource-[[ngModel.hash]] pointer">
+                         class="cell action [[idiom.translate(ngModel.action.label)]] [[type]]-resource-[[ngModel.hash]] pointer"
+                         data-ng-click="copyLink()">
                         [[idiom.translate(ngModel.action.label)]]
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                     <i18n class="icon-author subtitle">mediacentre.description.name.authors</i18n>
                     <div ng-if="ngModel.source != 'fr.openent.mediacentre.source.Signet'" class="content">
                         <span class="content-item" ng-repeat-start="author in ngModel.authors track by $index">[[author]]</span>
-                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        <span ng-repeat-end ng-if="!$last"></span>
                     </div>
                     <div ng-if="ngModel.source == 'fr.openent.mediacentre.source.Signet'" class="content">
                         <span class="content-item" ng-bind="ngModel.editors[0]"></span>
@@ -100,7 +100,7 @@
                     <i18n class="icon-editor subtitle">mediacentre.description.name.editors</i18n>
                     <div class="content">
                         <span class="content-item" ng-repeat-start="editor in ngModel.editors track by $index">[[editor]]</span>
-                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        <span ng-repeat-end ng-if="!$last"></span>
                     </div>
                 </div>
             </div>
@@ -115,7 +115,7 @@
                     <i18n class="icon-discipline subtitle">mediacentre.description.name.disciplines</i18n>
                     <div class="content">
                         <span class="content-item" ng-repeat-start="discipline in ngModel.disciplines track by $index">[[discipline]]</span>
-                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        <span ng-repeat-end ng-if="!$last"></span>
                     </div>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                     <i18n class="icon-level subtitle">mediacentre.description.name.levels</i18n>
                     <div class="content">
                         <span class="content-item" ng-repeat-start="level in ngModel.levels track by $index">[[level]]</span>
-                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        <span ng-repeat-end ng-if="!$last"></span>
                     </div>
                 </div>
             </div>
@@ -134,7 +134,7 @@
                     <div class="content">
                         <div ng-if="'ngModel.source === fr.openent.mediacentre.source.Moodle' || ngModel.source === 'fr.openent.mediacentre.source.Signet'">
                         <span class="content-bold" ng-repeat-start="keyword in ngModel.plain_text track by $index">[[keyword]]</span>
-                        <span ng-repeat-end ng-if="!$last">,&nbsp;</span>
+                        <span ng-repeat-end ng-if="!$last"></span>
                         </div>
                         <div ng-if="'fr.openent.mediacentre.source.GAR' === ngModel.source">
                             <span class="content-bold">[[ngModel.plain_text]]</span>

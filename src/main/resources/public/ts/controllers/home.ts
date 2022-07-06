@@ -59,6 +59,7 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
             $scope.mc.favorites.push(resource);
         });
 
+
         $scope.ws.onmessage = (message) => {
             const {event, state, data, status} = JSON.parse(message.data);
             if ("ok" !== status) {

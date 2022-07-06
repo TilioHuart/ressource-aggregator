@@ -125,8 +125,8 @@ public class GAR implements Source {
             }
 
             if (resources.isEmpty()) {
-                log.error("[GarSource@plainTextSearch] Failed to retrieve GAR resources.", event.cause());
-                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] " + event.cause().getMessage())));
+                log.error("[GarSource@plainTextSearch] resources are empty");
+                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] resources are empty")));
                 return;
             }
 
