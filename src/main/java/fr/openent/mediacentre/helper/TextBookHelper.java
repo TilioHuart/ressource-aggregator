@@ -69,7 +69,12 @@ public class TextBookHelper {
     public void initUserTextBooks(String state, UserInfos user, List<Source> sources, ResponseHandlerHelper answer) {
         sources = sources.stream().filter(source -> source instanceof GAR).collect(Collectors.toList());
         if (sources.isEmpty()) {
-            answer.answerFailure("[WebSocketController] Failed to retrieve GAR textbooks\"");
+            answer.answerFailure(HelperUtils.frameLoad(
+                    "textbooks_Result",
+                    state,
+                    "ko",
+                    new JsonObject().put("error", "[WebSocketController] Failed to retrieve GAR textbooks")
+            ).encode());
         } else {
             retrieveUserTextbooks(state, user, sources.get(0), answer);
         }

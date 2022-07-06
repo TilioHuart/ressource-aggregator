@@ -29,7 +29,10 @@
     "elasticsearch": true,
     "elasticsearchConfig" : {
         "server-uri": "${elasticServerURI}",
-        "index": "${elasticIndexName}"
+        "index": "${elasticIndexName}",
+        "elasticsearch-ssl": "${elasticSearchSsl}",
+        "username": "${elasticSearchUsername}",
+        "password": "${elasticSearchPassword}"
     }
   }
 }
