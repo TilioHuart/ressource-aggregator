@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
@@ -15,6 +16,9 @@ import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
 import org.vertx.java.core.http.RouteMatcher;
 
+import java.io.UnsupportedEncodingException;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -22,15 +26,14 @@ public class MediacentreController extends ControllerHelper {
 
     private final List<Source> sources;
     private final JsonObject config;
+    private EventStore eventStore;
+    private enum MediacentreEvent { ACCESS }
 
     public MediacentreController(List<Source> sources, JsonObject config) {
         super();
         this.sources = sources;
         this.config = config;
     }
-    private EventStore eventStore;
-    private enum MediacentreEvent { ACCESS }
-
 
     @Override
     public void init(Vertx vertx, JsonObject config, RouteMatcher rm,
@@ -38,6 +41,7 @@ public class MediacentreController extends ControllerHelper {
         super.init(vertx, config, rm, securedActions);
         eventStore = EventStoreFactory.getFactory().getEventStore(Mediacentre.class.getSimpleName());
     }
+
     @Get("")
     @ApiDoc("Render mediacentre view")
     @SecuredAction(Mediacentre.VIEW_RIGHT)
@@ -53,7 +57,53 @@ public class MediacentreController extends ControllerHelper {
                 .put("sources", sourceList);
         renderView(request, params);
         eventStore.createAndStoreEvent(MediacentreEvent.ACCESS.name(), request);
+    }
 
+    @Get("/resource/open")
+    @ApiDoc("Open a resource")
+    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    public void openResource(HttpServerRequest request) {
+        String targetUrl = request.getParam(Field.URL);
+
+        if (targetUrl == null || targetUrl.isEmpty()) {
+            log.error("[Mediacentre@openResource] No URL where redirect to.");
+            noContent(request);
+            return;
+        }
+
+        // Convert to URL type
+        URL url;
+        try {
+            String decodedURL = URLDecoder.decode(targetUrl, StandardCharsets.UTF_8.name());
+            url = new URL(decodedURL);
+        }
+        catch (UnsupportedEncodingException | MalformedURLException e) {
+            String message = "[Mediacentre@openResource] Failed to convert targeted source into URL type : " + e.getMessage();
+            log.error(message);
+            badRequest(request, message);
+            return;
+        }
+
+        // Check WhiteList
+        JsonArray whiteList = config.getJsonArray("whitelist-sources");
+        if (whiteList == null || whiteList.isEmpty()) {
+            log.error("[Mediacentre@openResource] No sources in whitelist.");
+            noContent(request);
+            return;
+        }
+
+        if (!whiteList.contains(url.getHost())) {
+            String message = "[Mediacentre@openResource] You cannot access host " + url.getHost();
+            log.error(message);
+            unauthorized(request, message);
+            return;
+        }
+
+        // Redirect if everything is ok
+        request.response().setStatusCode(302);
+        request.response().putHeader("Location", targetUrl);
+        request.response().putHeader("Access-Control-Allow-Origin", getScheme(request) + "://" + getHost(request));
+        request.response().end();
     }
 
     @SecuredAction(value = Mediacentre.VIEW_RESOURCE_RIGHT, type = ActionType.RESOURCE)

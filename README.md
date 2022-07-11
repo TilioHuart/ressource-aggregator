@@ -27,6 +27,7 @@ L'application **ressource-aggregator (Mediacentre v2)** devrait permettre l'acc√
         "fr.openent.mediacentre.source.PMB": true,
         "fr.openent.mediacentre.source.Signet": true
     },
+    "whitelist-sources": [],
     "textbook_typology": [
         "MAN"
     ],
@@ -34,7 +35,10 @@ L'application **ressource-aggregator (Mediacentre v2)** devrait permettre l'acc√
     "elasticsearch": true,
     "elasticsearchConfig" : {
         "server-uri": "${elasticServerURI}",
-        "index": "${elasticIndexName}"
+        "index": "${elasticIndexName}",
+        "elasticsearch-ssl": "${elasticSearchSsl}",
+        "username": "${elasticSearchUsername}",
+        "password": "${elasticSearchPassword}"
     }
   }
 }
@@ -43,6 +47,10 @@ L'application **ressource-aggregator (Mediacentre v2)** devrait permettre l'acc√
 Dans votre springboard, vous devez inclure des variables d'environnement :
 
 <pre>
+whitelist-sources = ${Array}
 elasticServerURI = ${String}
 elasticIndexName = ${String}
+elasticSearchSsl = ${Boolean}
+elasticSearchUsername = ${String}
+elasticSearchPassword = ${String}
 </pre>
