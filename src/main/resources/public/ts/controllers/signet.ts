@@ -44,6 +44,7 @@ interface ViewModel {
     publishSignet(signet: Signet) : void;
     closeSignetLightbox(): void;
 
+    selectSignet(signet: Signet): void;
     openSignet(signet: Signet) : void;
     openArchiveSignets() : void;
     openDeleteSignets() : void;
@@ -264,6 +265,25 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         };
 
         // Toaster
+
+        vm.selectSignet = (signet: Signet) : void => {
+            if (vm.folder == "archived" && !$scope.hasShareRightManager([signet])) {
+                return;
+            }
+
+            if (vm.folder != "mine") {
+                if (!signet.selected) {
+                    vm.signets.deselectAll();
+                    signet.selected = true;
+                }
+                else {
+                    vm.signets.deselectAll();
+                }
+            }
+            else {
+                signet.selected = !signet.selected;
+            }
+        }
 
         vm.openSignet = (signet: Signet) : void => {
             $scope.signet = signet;

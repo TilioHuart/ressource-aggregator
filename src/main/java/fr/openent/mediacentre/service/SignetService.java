@@ -74,6 +74,14 @@ public interface SignetService {
     void getMySignetRights(String signetId, List<String> groupsAndUserIds, Handler<Either<String, JsonArray>> handler);
 
     /**
+     * Set published value of a signet
+     * @param signetId signet identifier
+     * @param publishValue published value to set
+     * @param handler function handler returning JsonObject data
+     */
+    void setPublishValueSignet(String signetId, boolean publishValue, Handler<Either<String, JsonObject>> handler);
+
+    /**
      * Get my rights for all the signets
      * @param groupsAndUserIds list of neo ids including the connected user
      * @param handler function handler returning JsonArray data

@@ -72,7 +72,7 @@
         <div class="dominos" ng-if="vm.signets.all.length > 0">
             <div ng-repeat="signet in vm.signets.all | limitTo:vm.limitTo"
                  ng-if="!vm.signets.all.empty() && signet.displayed"
-                 ng-click="signet.selected = !signet.selected"
+                 ng-click="vm.selectSignet(signet)"
                  class="item" ng-class="{'selected' : signet.selected}">
                 <div class="domino">
                     <div class="four picture" ng-class="{'empty': !signet.image}">

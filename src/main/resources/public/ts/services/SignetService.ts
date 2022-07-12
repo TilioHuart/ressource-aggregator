@@ -24,7 +24,6 @@ export interface SignetService {
 }
 
 export const signetService: SignetService = {
-
     async list() : Promise<AxiosResponse> {
         try {
             return http.get('/mediacentre/mysignets');
@@ -73,6 +72,7 @@ export const signetService: SignetService = {
             throw err;
         }
     },
+
     async searchMySignet(query: string) : Promise<AxiosResponse> {
         try {
             return http.get(`/mediacentre/signets/search?query=${query}`);
@@ -81,6 +81,7 @@ export const signetService: SignetService = {
             throw err;
         }
     },
+
     async advancedSearchMySignet(query: object) : Promise<AxiosResponse> {
         try {
             return http.post(`/mediacentre/signets/advanced`, query);
@@ -89,6 +90,7 @@ export const signetService: SignetService = {
             throw err;
         }
     },
+
     async archive(signet: Signet) : Promise<AxiosResponse> {
         try {
             signet.archived = true;
@@ -154,6 +156,7 @@ export const signetService: SignetService = {
             throw err;
         }
     },
+
     async getAllMySignetPublished() : Promise<AxiosResponse> {
         try {
             return http.get(`/mediacentre/signets/public/`);
@@ -162,6 +165,7 @@ export const signetService: SignetService = {
             throw err;
         }
     },
+
     async deleteSignetPublished(signetId: number) : Promise<AxiosResponse> {
         try {
             return http.delete(`/mediacentre/signets/public/${signetId}`);
@@ -170,6 +174,7 @@ export const signetService: SignetService = {
             throw err;
         }
     },
+
     async searchMySignetPublished(query: string) : Promise<AxiosResponse> {
         try {
             return http.get(`/mediacentre/signets/search/public?query=${query}`);
@@ -177,7 +182,7 @@ export const signetService: SignetService = {
             notify.error(idiom.translate('mediacentre.error.signetService.published'));
             throw err;
         }
-    },
+    }
 };
 
 export const SignetService = ng.service('SignetService', (): SignetService => signetService);

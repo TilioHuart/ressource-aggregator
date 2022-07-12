@@ -159,12 +159,31 @@ public class SignetController extends ControllerHelper {
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void deletePublic(HttpServerRequest request) {
         String signetId = request.getParam("id");
-        signetService.deleteMyPublishedSignet(signetId, event -> {
-            if(event.isRight()) {
-                renderJson(request, event.right().getValue());;
-            } else {
-                log.error("Public signet not deleted");
+        signetService.deleteMyPublishedSignet(signetId, deleteEvt -> {
+            if (deleteEvt.isLeft()) {
+                String message = "[Médiacentre@deletePublic] Failed to delete publish signet with id " + signetId + " : " + deleteEvt.left().getValue();
+                log.error(message);
+                renderError(request, new JsonObject().put("message", message));
+                return;
             }
+
+            signetService.get(signetId, getEvt -> {
+                if (getEvt.isLeft()) {
+                    String message = "[Médiacentre@deletePublic] Failed to get signet with id " + signetId + " : " + getEvt.left().getValue();
+                    log.error(message);
+                    renderError(request, new JsonObject().put("message", message));
+                    return;
+                }
+
+                if (getEvt.right().getValue().size() <= 0) {
+                    log.info("[Médiacentre@deletePublic] The signet with id " + signetId + " has already been deleted");
+                    noContent(request);
+                    return;
+                }
+
+                signetService.setPublishValueSignet(signetId, false, defaultResponseHandler(request));
+            });
+
         });
     }
 

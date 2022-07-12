@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.mediacentreEventBus;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
@@ -15,7 +16,7 @@ import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 public class DefaultMediacentreEventBus extends ControllerHelper implements mediacentreEventBus {
 
     private final EventBus eb;
-
+    private final SignetService signetService = new DefaultSignetService();
 
     public DefaultMediacentreEventBus(EventBus eb) {
         super();
@@ -54,7 +55,9 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
                     resourceKeyword.add(new JsonObject(signet.getJsonArray("plain_text").getValue(i).toString()).getString("label"));
                 }
                 resource.put("key_words", resourceKeyword);
-                eb.send(Mediacentre.MEDIACENTRE_CREATE, resource, handlerToAsyncHandler(event -> {
+
+                String action = signet.getBoolean("published", false) ? Mediacentre.MEDIACENTRE_UPDATE : Mediacentre.MEDIACENTRE_CREATE;
+                eb.send(action, resource, handlerToAsyncHandler(event -> {
                     if ("ok".equals(event.body().getString("status"))) {
                         log.info("export succeeded");
                         handler.handle(new Either.Right<>(event.body().getJsonObject("result")));

@@ -5,6 +5,7 @@ import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.impl.DefaultMediacentreEventBus;
 import fr.openent.mediacentre.service.impl.DefaultModuleSQLRequestService;
+import fr.openent.mediacentre.service.impl.DefaultSignetService;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
 import fr.wseduc.rs.Post;
@@ -25,12 +26,12 @@ public class PublishedController extends ControllerHelper {
 
     private final fr.openent.mediacentre.service.moduleSQLRequestService moduleSQLRequestService;
     private final fr.openent.mediacentre.service.mediacentreEventBus mediacentreEventBus;
+    private final DefaultSignetService signetService = new DefaultSignetService();
 
     public PublishedController(EventBus eb) {
         super();
         this.moduleSQLRequestService = new DefaultModuleSQLRequestService(Mediacentre.mediacentreSchema, "signet");
         this.mediacentreEventBus = new DefaultMediacentreEventBus(eb);
-
     }
 
     @Get("/levels")
@@ -56,12 +57,28 @@ public class PublishedController extends ControllerHelper {
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void publish (HttpServerRequest request) {
         RequestUtils.bodyToJson(request, signet -> {
-                            callMediacentreEventBusForPublish(signet, mediacentreEventBus, event -> {
-                                request.response()
-                                        .setStatusCode(200)
-                                        .end();
-                            });
-    });
+            callMediacentreEventBusForPublish(signet, mediacentreEventBus, event -> {
+                if (event.isLeft()) {
+                    String message = "[Médiacentre@publish] Failed to publish signet : " + event.left().getValue();
+                    log.error(message);
+                    renderError(request, new JsonObject().put("message", message));
+                    return;
+                }
+
+                signetService.setPublishValueSignet(signet.getInteger("id").toString(), true, publishEvt -> {
+                    if (event.isLeft()) {
+                        String message = "[Médiacentre@publish] Failed to set publish prop : " + publishEvt.left().getValue();
+                        log.error(message);
+                        renderError(request, new JsonObject().put("message", message));
+                        return;
+                    }
+
+                    request.response()
+                            .setStatusCode(200)
+                            .end();
+                });
+            });
+        });
     }
 
     static public void callMediacentreEventBusForPublish(JsonObject signet, fr.openent.mediacentre.service.mediacentreEventBus eventBus,
