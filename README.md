@@ -54,3 +54,11 @@ elasticSearchSsl = ${Boolean}
 elasticSearchUsername = ${String}
 elasticSearchPassword = ${String}
 </pre>
+
+**whitelist-sources** : List of domains of resources who need a redirection for mobile use
+**elasticServerURI** : URI of Elastic Search server
+**elasticIndexName** : End of the URI to point towards the right index (ex : '/mediacentre')
+**elasticSearchSsl** : Is the Elastic Search server using SSL ?
+**elasticSearchUsername** : Username to access Elastic Search server if there is Basic Authentication protection (else, left empty)
+**elasticSearchPassword** : Password to access Elastic Search server if there is Basic Authentication protection (else, left empty)
+
