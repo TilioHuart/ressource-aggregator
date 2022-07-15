@@ -109,7 +109,7 @@
             </div>
         </div>
 
-        <div class="error" ng-if="vm.signets.all.length == 0">
+        <div class="error" ng-if="vm.signets.all.length == 0 && vm.loaded">
             <img src="/mediacentre/public/img/onboarding.svg" class="img_mini"/>
             <h1><i18n>mediacentre.signets.empty</i18n></h1>
         </div>

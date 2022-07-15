@@ -1,6 +1,6 @@
 import {ng} from 'entcore';
 import {Scope} from './main'
-import {Filter, Frame, Resource} from '../model';
+import {Filter, Resource} from '../model';
 import {addFilters} from '../utils';
 
 interface ViewModel {
@@ -18,9 +18,9 @@ interface ViewModel {
     showFilter() : void;
 }
 
-interface EventResponses {
-    favorites_Result(frame: Frame): void;
-}
+// interface EventResponses {
+//     favorites_Result(frame: Frame): void;
+// }
 
 
 export const favoriteController = ng.controller('FavoriteController', ['$scope', 'route', function ($scope: Scope) {
@@ -68,29 +68,38 @@ export const favoriteController = ng.controller('FavoriteController', ['$scope',
     $scope.$watch(() => vm.filters.filtered.document_types.length, filter);
     $scope.$watch(() => vm.filters.filtered.levels.length, filter);
 
-    $scope.ws.onmessage = (message) => {
-        const {event, state, data, status} = JSON.parse(message.data);
-        if ("ok" !== status) {
-            throw data.error;
-        }
-        if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-    };
+    // $scope.ws.onmessage = (message) => {
+    //     const {event, state, data, status} = JSON.parse(message.data);
+    //     if ("ok" !== status) {
+    //         throw data.error;
+    //     }
+    //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
+    // };
 
-    const eventResponses: EventResponses = {
-        favorites_Result: function (frame) {
-            vm.resources = [...vm.resources, ...frame.data];
-            vm.favorites = frame.data;
-            vm.favorites.map((favorite) => {
-                favorite.favorite = true;
-            });
-            frame.data.forEach((resource)=> addFilters(vm.filteredFields, vm.filters.initial, resource));
-            filter();
-            $scope.safeApply();
-        }
-    };
+    // const eventResponses: EventResponses = {
+    //     favorites_Result: function (frame) {
+    //         vm.resources = [...vm.resources, ...frame.data];
+    //         vm.favorites = frame.data;
+    //         vm.favorites.map((favorite) => {
+    //             favorite.favorite = true;
+    //         });
+    //         frame.data.forEach((resource)=> addFilters(vm.filteredFields, vm.filters.initial, resource));
+    //         filter();
+    //         $scope.safeApply();
+    //     }
+    // };
 
     function initFavoritePage() {
-        $scope.ws.send(new Frame('favorites', 'get', [], {}));
+        //$scope.ws.send(new Frame('favorites', 'get', [], {}));
+        const data = $scope.mc.favorites;
+        vm.resources = [...vm.resources, ...data];
+        vm.favorites = data;
+        vm.favorites.map((favorite) => {
+            favorite.favorite = true;
+        });
+        data.forEach((resource)=> addFilters(vm.filteredFields, vm.filters.initial, resource));
+        filter();
+        $scope.safeApply();
     }
 
     if ($scope.ws.connected) {
