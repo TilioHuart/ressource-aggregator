@@ -2,10 +2,11 @@ import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
-import {Resource} from "../model";
+import {Frame, Resource} from "../model";
 import {hashCode} from "../utils";
 import {ILocationService} from "angular";
 import * as Clipboard from "clipboard";
+import {ResourceCard} from "../directives";
 
 interface ViewModel {
     signetPopUpSharing: boolean;
@@ -25,7 +26,6 @@ interface ViewModel {
     };
     loading: boolean;
     mobile: boolean;
-    loaded: boolean;
 
     openFolder(folderName: string) : void;
     search(folderName: string, query: string) : void;
@@ -55,12 +55,12 @@ interface ViewModel {
 
     infiniteScroll() : void;
     addFavorite(signet: Signet, event: Event) : Promise<void>;
-    removeFavorite(signet: Signet, event?: Event) : Promise<void>;
+    removeFavorite(signet: Signet, event: Event) : Promise<void>;
 }
 
-// interface EventResponses {
-//     favorites_Result(frame: Frame): void;
-// }
+interface EventResponses {
+    favorites_Result(frame: Frame): void;
+}
 
 export const signetController = ng.controller('SignetController', ['$scope', 'FavoriteService', '$location', '$timeout',
     function ($scope, FavoriteService: FavoriteService, $location: ILocationService, $timeout) {
@@ -83,11 +83,9 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.loading = true;
         vm.signetPopUpSharing = false;
         vm.mobile = screen.width < $scope.mc.screenWidthLimit;
-        vm.loaded = false;
 
         const init = async () : Promise<void> => {
             await vm.signets.sync();
-            vm.loaded = true;
             // Check if the folder is ok
             switch (vm.folder) {
                 case "mine":
@@ -317,12 +315,10 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 for (let signet of vm.signets.selected) {
                     if(signet.published) {
                         await signetService.deleteSignetPublished(signet.id);
-
                         vm.signets.all = vm.signets.all.filter(signetToRemove => signet.id !== signetToRemove.id);
                     } else {
                         if ($scope.isStatusXXX(await signetService.unshare(signet.id), 200)) {
                             await signetService.delete(signet.id);
-                            await vm.removeFavorite(signet);
                             vm.signets.all = vm.signets.all.filter(signetToRemove => signet.id !== signetToRemove.id);
                         }
                     }
@@ -397,10 +393,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             $scope.safeApply();
         };
 
-        vm.removeFavorite = async (signet: Signet, event?: Event) : Promise<void> => {
-            if(event) {
-                event.stopPropagation();
-            }
+        vm.removeFavorite = async (signet, event) : Promise<void> => {
+            event.stopPropagation();
             let signet_fav = <Resource> signet.toJson();
             signet_fav.favorite = signet.favorite;
             let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
@@ -422,31 +416,31 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             $scope.mc.favorites.push(resource);
         });
 
-        // $scope.ws.onmessage = (message) => {
-        //     const {event, state, data, status} = JSON.parse(message.data);
-        //     if ("ok" !== status) {
-        //         throw data.error;
-        //     }
-        //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-        // };
+        $scope.ws.onmessage = (message) => {
+            const {event, state, data, status} = JSON.parse(message.data);
+            if ("ok" !== status) {
+                throw data.error;
+            }
+            if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
+        };
 
-        // const eventResponses: EventResponses = {
-        //     favorites_Result: function (frame) {
-        //         if (Object.keys(frame.data).length === 0) {
-        //             $scope.mc.favorites = []
-        //         } else {
-        //             $scope.mc.favorites = frame.data;
-        //             $scope.mc.favorites.map((favorite) => {
-        //                 favorite.favorite = true;
-        //             });
-        //         }
-        //         $scope.safeApply();
-        //     }
-        // };
+        const eventResponses: EventResponses = {
+            favorites_Result: function (frame) {
+                if (Object.keys(frame.data).length === 0) {
+                    $scope.mc.favorites = []
+                } else {
+                    $scope.mc.favorites = frame.data;
+                    $scope.mc.favorites.map((favorite) => {
+                        favorite.favorite = true;
+                    });
+                }
+                $scope.safeApply();
+            }
+        };
 
-        // if ($scope.ws.connected) {
-        //     $scope.ws.send(new Frame('favorites', 'get', [], {}));
-        // }
+        if ($scope.ws.connected) {
+            $scope.ws.send(new Frame('favorites', 'get', [], {}));
+        }
 
         // Utils
 
