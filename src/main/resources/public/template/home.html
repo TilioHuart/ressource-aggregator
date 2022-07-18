@@ -18,7 +18,7 @@
         <div class="external-flex" ng-show="vm.displayedResources.length > 0">
             <div class="external-flex-card">
                 <resource-card ng-repeat="resource in vm.displayedResources | orderBy:'title' track by $index"
-                               ng-if="$index > vm.displayedResources.length - 1 - vm.resourceLimit"
+                               ng-if="$index < vm.resourceLimit"
                                type="resource"
                                ng-model="resource">
                 </resource-card>
@@ -57,8 +57,8 @@
         <!--Content-->
         <div class="textbooks-grid" ng-show="vm.publicSignets.length > 0">
             <resource-card
-                    ng-repeat="resource in vm.publicSignets | orderBy:'title' track by $index"
-                    ng-if="$index > vm.publicSignets.length - 1 - vm.signetLimit"
+                    ng-repeat="resource in vm.publicSignets | filter:filterArchivedData | orderBy:'title' track by $index"
+                    ng-if="$index < vm.signetLimit"
                     type="signet"
                     ng-model="resource">
             </resource-card>
@@ -75,7 +75,7 @@
         <div class="textbooks-grid" ng-show="vm.orientationSignets.length > 0">
             <resource-card
                     ng-repeat="resource in vm.orientationSignets | orderBy:'title' track by $index"
-                    ng-if="$index > vm.orientationSignets.length - 1 - vm.signetLimit"
+                    ng-if="$index < vm.signetLimit"
                     type="signet"
                     ng-model="resource">
             </resource-card>

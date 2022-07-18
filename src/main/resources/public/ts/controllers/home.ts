@@ -20,6 +20,7 @@ interface ViewModel {
     refreshTextBooks(): void;
     seeMyExternalResource(): void;
     goSignet(): void;
+    filterArchivedSignets(signet: any): boolean;
 }
 
 interface EventResponses {
@@ -112,6 +113,10 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
 
         vm.goSignet = (): void => {
             $location.path(`/signet/`);
+        };
+
+        vm.filterArchivedSignets = (signet): boolean => {
+            return !signet.archived;
         };
 
         function initHomePage() {
