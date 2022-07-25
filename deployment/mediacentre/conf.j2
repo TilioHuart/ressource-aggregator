@@ -27,11 +27,15 @@
         },
         "textbook_typology": ["MAN"],
         "wsPort": 6503,
+		"whitelist-sources": {{ mediacentreWhitelist | default('[]') }},
         {% if elasticServerURIs is defined and mediacentreESIndex is defined %}
 			"elasticsearch": true,
 			"elasticsearchConfig" : {
 				"server-uris": {{ elasticServerURIs }},
-				"index": "{{ mediacentreESIndex }}"
+				"index": "{{ mediacentreESIndex }}",
+				"elasticsearch-ssl": "{{ mediacentreESSsl }}",
+				"username": "{{ mediacentreESUsername }}",
+				"password": "{{ mediacentreESPassword }}"
 			},
         {% endif %}
         "publicConf": {
