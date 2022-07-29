@@ -63,7 +63,7 @@ public class DefaultMediacentreEventBus extends ControllerHelper implements medi
                         handler.handle(new Either.Right<>(event.body().getJsonObject("result")));
                     } else {
                         log.error(event.body());
-                        handler.handle(new Either.Left<>("Failed create public course"));
+                        handler.handle(new Either.Left<>("Failed action public course : " + action));
                     }
                 }));
             }

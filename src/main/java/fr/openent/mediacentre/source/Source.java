@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface Source {
-    String RESOURCE_TYPE_NAME = "_doc";
+    String RESOURCE_TYPE_NAME = "resources";
 
     List<String> PLAIN_TEXT_FIELDS = Arrays.asList("title", "plain_text", "levels", "disciplines", "editors", "authors", "description");
 

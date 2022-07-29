@@ -1,8 +1,6 @@
 package fr.openent.mediacentre.source;
 
 import fr.openent.mediacentre.helper.ElasticSearchHelper;
-import fr.openent.mediacentre.helper.elasticsearch.BulkRequest;
-import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -11,6 +9,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import org.entcore.common.elasticsearch.BulkRequest;
+import org.entcore.common.elasticsearch.ElasticSearch;
 import org.entcore.common.user.UserInfos;
 
 import java.util.List;
