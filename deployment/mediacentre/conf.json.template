@@ -1,5 +1,5 @@
 {
-  "name": "fr.openent~mediacentre~3.1.1",
+  "name": "fr.openent~mediacentre~3.2-SNAPSHOT",
   "config": {
     "main" : "fr.openent.mediacentre.Mediacentre",
     "port" : 8064,
