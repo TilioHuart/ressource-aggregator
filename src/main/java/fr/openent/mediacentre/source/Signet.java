@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.source;
 
 import fr.openent.mediacentre.helper.ElasticSearchHelper;
+import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -8,7 +9,6 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import org.entcore.common.elasticsearch.ElasticSearch;
 import org.entcore.common.user.UserInfos;
 
 public class Signet implements Source {
@@ -87,7 +87,7 @@ public class Signet implements Source {
         resources.put("query", query)
                 .put("id", event.body().getInteger("id"));
 
-        es.update(RESOURCE_TYPE_NAME, query, event.body().getInteger("id"), response -> {
+        es.update(query, event.body().getInteger("id"), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);
@@ -98,7 +98,7 @@ public class Signet implements Source {
     }
 
     public void delete(Message<JsonObject> event) {
-        es.delete(RESOURCE_TYPE_NAME, event.body(), response -> {
+        es.delete(event.body(), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);
