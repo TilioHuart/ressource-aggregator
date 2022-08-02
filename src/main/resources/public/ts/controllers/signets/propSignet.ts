@@ -1,4 +1,4 @@
-import {_, idiom as i18n, model, ng, notify} from 'entcore';
+import {_, idiom, idiom as i18n, model, ng, notify, toasts} from 'entcore';
 import {signetService} from "../../services/SignetService";
 import {Label, Labels} from "../../model/Label";
 import {Utils} from "../../utils/Utils";
@@ -52,6 +52,7 @@ export const propSignetController = ng.controller('propSignetController', ['$sco
                 $scope.vm.closeSignetLightbox();
                 await Utils.safeApply($scope);
             });
+            toasts.confirm(idiom.translate("mediacentre.success.signets.modify"));
             } else {
                 notify.error(i18n.translate("mediacentre.error.info"));
             }

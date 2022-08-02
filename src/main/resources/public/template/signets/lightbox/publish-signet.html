@@ -32,6 +32,11 @@
             </label>
             <input type="text" ng-model="query.plain_text" ng-keyup="addKeyWord($event)"
                    class="twelve search_nav" i18n-placeholder="Veuillez renseigner les mots clés choisis" >
+            <div class="row-keywords">
+                <label>
+                    <i18n>mediacentre.keywords.explain</i18n>
+                </label>
+            </div>
             <div class=" twelve cell select-blocks">
                 <div ng-repeat="word in signet.plain_text.all"
                      ng-click="removeWordFromCourse(word)"

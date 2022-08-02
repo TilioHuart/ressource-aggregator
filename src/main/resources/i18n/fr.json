@@ -96,6 +96,7 @@
   "mediacentre.levels" : "Niveaux",
   "mediacentre.disciplines" : "Disciplines",
   "mediacentre.keywords": "Mots clés",
+  "mediacentre.keywords.explain": "Veuillez taper sur entrer après chaque mot clé pour le valider",
   "mediacentre.contrib": "Visualisation",
   "mediacentre.manager": "Edition",
 
@@ -121,6 +122,7 @@
   "mediacentre.success.signets.archive": "Tous les signets sélectionnés ont bien été archivés !",
   "mediacentre.success.signets.restore": "Tous les signets sélectionnés ont bien été restaurés !",
   "mediacentre.success.signets.delete": "Tous les signets sélectionnés ont bien été supprimés !",
+  "mediacentre.success.signets.modify": "Votre signé a bien été modifié",
 
   "mediacentre.choose.image": "Veuillez choisir une image",
 

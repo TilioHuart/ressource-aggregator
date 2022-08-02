@@ -253,7 +253,19 @@ body.mediacentre-v2 {
 
   .table {
     table-layout: fixed;
-    margin: 10px;
+    margin: 20px auto 30px;
+    thead {
+      th {
+        padding: 10px 30px;
+      }
+    }
+    tbody {
+      tr {
+        td {
+          padding: 10px 30px;
+        }
+      }
+    }
   }
 
   .toaster-right {
@@ -353,6 +365,13 @@ body.mediacentre-v2 {
     i.arrow:before {
       font-size: 14px;
     }
+  }
+
+  .row-keywords {
+    margin-top: -10px;
+    margin-bottom: 15px;
+    color: grey;
+    font-size: 15px;
   }
 
   .main-button {

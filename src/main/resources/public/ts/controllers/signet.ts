@@ -1,4 +1,4 @@
-import {idiom, model, ng, notify, template} from 'entcore';
+import {idiom, model, ng, notify, template, toasts} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
@@ -56,6 +56,8 @@ interface ViewModel {
     infiniteScroll() : void;
     addFavorite(signet: Signet, event: Event) : Promise<void>;
     removeFavorite(signet: Signet, event: Event) : Promise<void>;
+
+    copyLink() : void;
 }
 
 interface EventResponses {
@@ -261,6 +263,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             if (vm.signetPopUpSharing) {
                 vm.signets.selected[0].myRights = $scope.getDataIf200(await signetService.getMySignetRights(vm.signets.selected[0].id)).map(right => right.action);
                 vm.signetPopUpSharing = false;
+                toasts.confirm(idiom.translate("mediacentre.success.signet.share"));
             }
             template.close('lightboxContainer');
             $scope.safeApply();
@@ -301,7 +304,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 template.close('lightboxContainer');
                 vm.closeSignetLightbox();
                 vm.display.warning = false;
-                notify.success(idiom.translate('mediacentre.success.signets.archive'));
+                toasts.confirm(idiom.translate("mediacentre.success.signets.archive"));
                 init();
                 $scope.safeApply();
             }
@@ -326,7 +329,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 template.close('lightboxContainer');
                 vm.closeSignetLightbox();
                 vm.display.warning = false;
-                notify.success(idiom.translate('mediacentre.success.signets.delete'));
+                toasts.confirm(idiom.translate("mediacentre.success.signets.delete"));
                 $scope.safeApply();
             }
             catch (e) {
@@ -340,7 +343,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     await signetService.restore(signet);
                 }
                 template.close('lightboxContainer');
-                notify.success(idiom.translate('mediacentre.success.signets.restore'));
+                toasts.confirm(idiom.translate("mediacentre.success.signets.restore"));
                 init();
                 $scope.safeApply();
             }
@@ -392,6 +395,10 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             }
             $scope.safeApply();
         };
+
+        vm.copyLink = (): void => {
+            toasts.confirm(idiom.translate("mediacentre.link.copy.success"));
+        }
 
         vm.removeFavorite = async (signet, event) : Promise<void> => {
             event.stopPropagation();
