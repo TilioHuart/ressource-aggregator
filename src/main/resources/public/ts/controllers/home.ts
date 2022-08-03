@@ -70,7 +70,16 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
 
         const eventResponses: EventResponses = {
             textbooks_Result: function (frame) {
-                vm.textbooks = frame.data.textbooks;
+                let allTextbooks: Resource[] = frame.data.textbooks;
+                //organise depending on assigning date but if same, according to alphabetical order
+                vm.textbooks = allTextbooks.sort( function (textbook1, textbook2) {
+                        if (textbook2.date - textbook1.date !== 0) {
+                            return textbook2.date - textbook1.date;
+                        } else {
+                            return textbook1.title.localeCompare(textbook2.title, 'fr', {ignorePunctuation: true});
+                        }
+                }
+                    );
                 $scope.safeApply();
             },
             favorites_Result: function (frame) {
@@ -85,7 +94,9 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                 $scope.safeApply();
             },
             search_Result: function (frame) {
-                vm.displayedResources = frame.data.resources;
+                let allDisplayedResources: Resource[] = frame.data.resources;
+                vm.displayedResources = allDisplayedResources.sort((resource1: Resource, resource2: Resource) =>
+                    resource1.title.localeCompare(resource2.title, 'fr', {ignorePunctuation: true}));
                 $scope.safeApply();
             },
             signets_Result: async function (frame) {
@@ -93,10 +104,17 @@ export const homeController = ng.controller('HomeController', ['$scope', 'route'
                 await vm.signets.sync();
                 vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
                 vm.signets.formatSharedSignets(vm.sharedSignets);
-                vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Signet");
-                vm.publicSignets = vm.publicSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Signet"));
-                vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
-                vm.orientationSignets = vm.orientationSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Orientation"));
+
+                let allPublicSignets: Resource[] = frame.data.signets.resources.filter(el => el.document_types[0] === "Signet");
+                allPublicSignets = allPublicSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Signet"));
+                vm.publicSignets = allPublicSignets.sort((resource1: Resource, resource2: Resource) =>
+                    resource1.title.localeCompare(resource2.title, 'fr', {ignorePunctuation: true}));
+
+                let allOrientationSignets: Resource[] = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
+                allOrientationSignets = allOrientationSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Orientation"));
+                vm.orientationSignets = allOrientationSignets.sort((resource1: Resource, resource2: Resource) =>
+                    resource1.title.localeCompare(resource2.title, 'fr', {ignorePunctuation: true}));
+
                 $scope.safeApply();
             }
         };
