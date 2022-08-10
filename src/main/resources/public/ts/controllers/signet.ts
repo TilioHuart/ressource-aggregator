@@ -108,6 +108,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                         tempSignet.published = true;
                         vm.signets.all.push(tempSignet);
                     }
+                    vm.signets.all = vm.signets.all.sort( (signet1, signet2) =>
+                        signet2.date_modification.getTime() - signet1.date_modification.getTime());
                     break;
                 case "archived":
                     vm.signets.all = vm.signets.all.filter(signet => signet.archived);
