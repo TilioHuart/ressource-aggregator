@@ -33,9 +33,9 @@
 			"elasticsearchConfig" : {
 				"server-uris": {{ elasticServerURIs }},
 				"index": "{{ mediacentreESIndex }}",
-				"elasticsearch-ssl": "{{ mediacentreESSsl }}",
-				"username": "{{ mediacentreESUsername }}",
-				"password": "{{ mediacentreESPassword }}"
+				"elasticsearch-ssl": {{ mediacentreESSsl  | default('false') }},
+				"username": "{{ mediacentreESUsername  | default('') }}",
+				"password": "{{ mediacentreESPassword  | default('') }}"
 			},
         {% endif %}
         "publicConf": {
