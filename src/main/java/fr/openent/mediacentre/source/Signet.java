@@ -83,10 +83,6 @@ public class Signet implements Source {
         JsonObject query = new JsonObject()
                 .put("doc", signet);
 
-        JsonObject resources = new JsonObject();
-        resources.put("query", query)
-                .put("id", event.body().getInteger("id"));
-
         es.update(query, event.body().getInteger("id"), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
@@ -98,6 +94,7 @@ public class Signet implements Source {
     }
 
     public void delete(Message<JsonObject> event) {
+        // Never called
         es.delete(event.body(), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
