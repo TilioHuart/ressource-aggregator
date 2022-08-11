@@ -14,6 +14,8 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
+import org.entcore.common.http.filter.ResourceFilter;
+import org.entcore.common.http.filter.SuperAdminFilter;
 import org.vertx.java.core.http.RouteMatcher;
 
 import java.io.UnsupportedEncodingException;
@@ -104,6 +106,21 @@ public class MediacentreController extends ControllerHelper {
         request.response().putHeader("Location", targetUrl);
         request.response().putHeader("Access-Control-Allow-Origin", getScheme(request) + "://" + getHost(request));
         request.response().end();
+    }
+
+    @Get("/config")
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    @ResourceFilter(SuperAdminFilter.class)
+    public void getConfig(final HttpServerRequest request) {
+        JsonObject safeConfig = config.copy();
+
+        JsonObject elasticsearchConfig = safeConfig.getJsonObject("elasticsearchConfig", null);
+        if (elasticsearchConfig != null) {
+            if (elasticsearchConfig.getString("username", null) != null) elasticsearchConfig.put("username", "**********");
+            if (elasticsearchConfig.getString("password", null) != null) elasticsearchConfig.put("password", "**********");
+        }
+
+        renderJson(request, safeConfig);
     }
 
     @SecuredAction(value = Mediacentre.VIEW_RESOURCE_RIGHT, type = ActionType.RESOURCE)
