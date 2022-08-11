@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.helper;
 
 import fr.openent.mediacentre.enums.Comparator;
+import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.source.Signet;
@@ -12,7 +13,6 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.entcore.common.elasticsearch.ElasticSearch;
 
 import java.util.*;
 import java.util.function.Function;
@@ -119,18 +119,12 @@ public class ElasticSearchHelper {
     }
 
     public static void deletePublicSignets(String signetId, Handler<AsyncResult<JsonArray>> handler) {
-        JsonArray must = new JsonArray();
-        must.add(sourceFilter(Signet.class));
         JsonObject term = new JsonObject()
                 .put("id", signetId);
-        must.add(new JsonObject().put("term", term));
-        JsonObject bool = new JsonObject()
-                .put("must", must);
-        JsonObject queryObject = new JsonObject()
-                .put("bool", bool);
-        JsonObject query = new JsonObject().put("query", queryObject);
+        JsonObject query = new JsonObject().put("term", term);
+        JsonObject object = new JsonObject().put("query", query);
 
-        ElasticSearch.getInstance().delete(Source.RESOURCE_TYPE_NAME, query, delete -> {
+        ElasticSearch.getInstance().delete(object, delete -> {
             if (delete.failed()) {
                 handler.handle(Future.failedFuture(delete.cause()));
             } else {

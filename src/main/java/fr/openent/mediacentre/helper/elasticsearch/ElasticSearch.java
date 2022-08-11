@@ -148,8 +148,7 @@ public class ElasticSearch {
 	}
 
 	public void delete(JsonObject object, Handler<AsyncResult<JsonObject>> handler) {
-		JsonObject finalObject = new JsonObject().put("doc", object).put("doc_as_upsert", true);
-		this.postInternal(this.defaultIndex + "/_delete_by_query", 200, finalObject, handler);
+		this.postInternal(this.defaultIndex + "/_delete_by_query", 200, object, handler);
 	}
 
 	public void update(JsonObject object, Integer id, Handler<AsyncResult<JsonObject>> handler) {
