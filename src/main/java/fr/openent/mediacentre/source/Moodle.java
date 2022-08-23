@@ -1,7 +1,6 @@
 package fr.openent.mediacentre.source;
 
 import fr.openent.mediacentre.helper.ElasticSearchHelper;
-import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.EventBus;
@@ -10,6 +9,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import org.entcore.common.elasticsearch.ElasticSearch;
 import org.entcore.common.user.UserInfos;
 
 import java.util.function.UnaryOperator;
@@ -96,8 +96,7 @@ public class Moodle implements Source {
     }
 
     public void update(Message<JsonObject> event) {
-        // Query already formatted
-        es.update(event.body().getJsonObject("query"), event.body().getInteger("id"), response -> {
+        es.update(RESOURCE_TYPE_NAME, event.body().getJsonObject("query"), event.body().getInteger("id"), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);
@@ -108,8 +107,7 @@ public class Moodle implements Source {
     }
 
     public void delete(Message<JsonObject> event) {
-        // Never called
-        es.delete(event.body(), response -> {
+        es.delete(RESOURCE_TYPE_NAME, event.body(), response -> {
             if (response.failed()) {
                 JsonObject error = (new JsonObject()).put("status", "error").put("message", response.cause().getMessage());
                 event.reply(error);

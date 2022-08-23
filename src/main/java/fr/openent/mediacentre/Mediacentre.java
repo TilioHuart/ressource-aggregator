@@ -1,7 +1,6 @@
 package fr.openent.mediacentre;
 
 import fr.openent.mediacentre.controller.*;
-import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.openent.mediacentre.source.Source;
 import fr.openent.mediacentre.tasks.AmassTask;
 import fr.wseduc.cron.CronTrigger;
@@ -92,11 +91,11 @@ public class Mediacentre extends BaseServer {
         addController(new TextBooksController(eb, sources));
         addController(signetController);
 
-        if (this.config.getBoolean("elasticsearch", false)) {
-            if (this.config.getJsonObject("elasticsearchConfig") != null) {
-                ElasticSearch.getInstance().init(this.vertx, this.config.getJsonObject("elasticsearchConfig"));
-            }
-        }
+//        if (this.config.getBoolean("elasticsearch", false)) {
+//            if (this.config.getJsonObject("elasticsearchConfig") != null) {
+//                ElasticSearch.getInstance().init(this.vertx, this.config.getJsonObject("elasticsearchConfig"));
+//            }
+//        }
 
         HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
         HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);
