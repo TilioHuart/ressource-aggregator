@@ -2,16 +2,21 @@ package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.helper.ElasticSearchHelper;
+import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.source.Signet;
 import fr.wseduc.webutils.Either;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.sql.Sql;
 import org.entcore.common.sql.SqlResult;
 import org.entcore.common.user.UserInfos;
 import java.util.List;
+
+import static org.entcore.common.http.response.DefaultResponseHandler.defaultResponseHandler;
 
 public class DefaultSignetService implements SignetService {
 
@@ -166,6 +171,13 @@ public class DefaultSignetService implements SignetService {
                 .add(signetId);
 
         Sql.getInstance().prepared(query, params, SqlResult.validUniqueResultHandler(handler));
+    }
+
+    @Override
+    public Future<JsonObject> delete(String signetId) {
+        Promise<JsonObject> promise = Promise.promise();
+        this.delete(signetId, FutureHelper.handlerEitherPromise(promise, "DefaultSignetService::delete"));
+        return promise.future();
     }
 
     @Override

@@ -49,4 +49,21 @@ public class FutureHelper {
         };
     }
 
+    public static <L, R> Handler<Either<L, R>> handlerEitherPromise(Promise<R> promise) {
+        return handlerEitherPromise(promise, null);
+    }
+
+    public static <L, R> Handler<Either<L, R>> handlerEitherPromise(Promise<R> promise, String extraMessagesLogs) {
+        return event -> {
+            if (event.isRight()) {
+                promise.complete(event.right().getValue());
+            } else {
+                String message = String.format("[Mediacentre@%s::handlerEitherPromise]: %s ",
+                        FutureHelper.class.getSimpleName(), event.left().getValue());
+                LOGGER.error(message + (extraMessagesLogs != null ? extraMessagesLogs : ""));
+                promise.fail(event.left().getValue().toString());
+            }
+        };
+    }
+
 }

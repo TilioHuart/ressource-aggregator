@@ -1,11 +1,14 @@
 package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.Utils;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -38,6 +41,13 @@ public class DefaultFavoriteService implements FavoriteService {
         JsonObject matcher = new JsonObject().put("user", userId);
         if (source != null) matcher.put("source", source);
         MongoDb.getInstance().find(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResults(message)));
+    }
+
+    @Override
+    public Future<JsonObject> delete(String favoriteId, String source, String userId) {
+        Promise<JsonObject> promise = Promise.promise();
+        delete(favoriteId, source, userId, FutureHelper.handlerEitherPromise(promise, "DefaultFavoriteService::delete"));
+        return promise.future();
     }
 
     @Override

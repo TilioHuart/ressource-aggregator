@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.service;
 
 import fr.wseduc.webutils.Either;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -53,6 +54,13 @@ public interface SignetService {
      * @param handler function handler returning JsonObject data
      */
     void updateCollab(String signetId, JsonObject signet, Handler<Either<String, JsonObject>> handler);
+
+    /**
+     * Delete a specific signet
+     * @param signetId signet identifier
+     * @return Future with completed JsonObject
+     */
+    Future<JsonObject> delete(String signetId);
 
     /**
      * Delete a scpecific signet

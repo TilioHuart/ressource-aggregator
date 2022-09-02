@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.helper.APIHelper;
 import fr.openent.mediacentre.helper.SignetHelper;
 import fr.openent.mediacentre.security.ShareAndOwner;
@@ -149,8 +150,18 @@ public class SignetController extends ControllerHelper {
     @ResourceFilter(ShareAndOwner.class)
     @SecuredAction(value = Mediacentre.MANAGER_RESOURCE_RIGHT, type = ActionType.RESOURCE)
     public void delete(HttpServerRequest request) {
-        String signetId = request.getParam("id");
-        signetService.delete(signetId, defaultResponseHandler(request));
+        UserUtils.getUserInfos(eb, request, user -> {
+            if (user != null) {
+                String signetId = request.getParam(Field.ID);
+                signetService.delete(signetId)
+                        .compose(res -> favoriteService.delete(signetId, "fr.openent.mediacentre.source.Signet", user.getUserId()))
+                        .onSuccess(res -> renderJson(request, new JsonObject().put(Field.MESSAGE, Field.OK)))
+                        .onFailure(err -> renderError(request, new JsonObject().put(Field.MESSAGE, err.getMessage())));
+            } else {
+                log.error("User not found in session.");
+                Renders.unauthorized(request);
+            }
+        });
     }
 
     @Delete("/signets/public/:id")
