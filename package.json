@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/OPEN-ENT-NG/ressource-aggregator#readme",
   "dependencies": {
-    "entcore": "4.5.0",
+    "entcore": "~4.6.0-dev",
     "entcore-toolkit": "^1.0.1",
     "axios": "^0.19.0",
     "lit-element": "^2.2.0",
