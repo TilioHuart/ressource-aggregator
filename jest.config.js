@@ -19,8 +19,5 @@ module.exports = {
     "coverageReporters": [
         "text",
         "cobertura"
-    ],
-    "moduleNameMapper": {
-        "^@ressource-aggregator(.*)$": "<rootDir>/ressource-aggregator/src/main/resources/public/ts$1",
-    }
+    ]
 };
