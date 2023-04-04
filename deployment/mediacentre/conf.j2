@@ -13,6 +13,7 @@
         "ssl" : true,
         "sql" : true,
         "db-schema" : "mediacentre",
+        "mediacentreUpdateFrequency": {{ mediacentreUpdateFrequency | default('60000') }},
         "event-collection": "gar-events",
         {% if overrideTheme %} "override-theme": {{ override2d }}, {% endif %}
         "auto-redeploy": false,

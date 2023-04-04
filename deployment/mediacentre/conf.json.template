@@ -10,6 +10,7 @@
     "ssl" : $ssl,
     "sql" : true,
     "db-schema" : "mediacentre",
+    "mediacentreUpdateFrequency": ${mediacentreUpdateFrequency},
     "auto-redeploy": false,
     "userbook-host": "${host}",
     "integration-mode" : "HTTP",

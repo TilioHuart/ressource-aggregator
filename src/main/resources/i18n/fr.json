@@ -113,6 +113,7 @@
   "mediacentre.error.signetService.published": "Une erreur est survenue lors de la récupération des signets publiés",
   "mediacentre.error.signetService.image": "Une erreur est survenue lors de la récupération de l'image",
   "mediacentre.error.info": "Vous devez remplir tous les champs, veuillez ressayer",
+  "mediacentre.error.favorite.retrieval": "Erreur lors de la mise à jour des favoris",
 
 
   "mediacentre.success.signet.create": "Votre signet a bien été créé !",
