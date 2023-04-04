@@ -1,1 +1,1 @@
-export * from './FavoriteService'
+export * from './favorite.service'

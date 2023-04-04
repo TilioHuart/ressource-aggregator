@@ -22,6 +22,8 @@
                                          combo-model="vm.filters.initial[filter]"
                                          search-on="name"
                                          order-by="name"
+                                         selection-event="vm.fetchFavorites(vm.filters.filtered)"
+                                         deselection-event="vm.fetchFavorites(vm.filters.filtered)"
                                          filtered-model="vm.filters.filtered[filter]">
                             </multi-combo>
                         </div>
@@ -32,15 +34,15 @@
     </div>
 
     <!-- Cards -->
-    <div class="favorites-grid horizontal-spacing" ng-show="vm.displayedResources.length > 0">
-        <resource-card ng-repeat="resource in vm.displayedResources | limitTo:mc.limitTo track by $index"
+    <div class="favorites-grid horizontal-spacing" ng-show="vm.favorites.length > 0">
+        <resource-card ng-repeat="resource in vm.favorites | limitTo:mc.limitTo track by $index"
                        type="complete-card"
                        ng-model="resource">
         </resource-card>
     </div>
 
     <!-- Empty state -->
-    <div class="favorites-emptyState horizontal-spacing" ng-show="vm.displayedResources.length === 0">
+    <div class="favorites-emptyState horizontal-spacing" ng-show="vm.favorites.length === 0">
         <img src="/mediacentre/public/img/favoris-emptyState.svg"
              alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
         <div class="favorites-emptyState-flex">

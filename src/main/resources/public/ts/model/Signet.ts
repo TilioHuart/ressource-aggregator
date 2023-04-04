@@ -44,6 +44,7 @@ export class Signet implements Selectable, Shareable  {
     levels: Labels;
     plain_text: Labels;
     resource_id: number;
+    document_types: Array<String>;
 
     constructor() {
         this.owner = {userId: "", displayName: ""},
@@ -70,7 +71,8 @@ export class Signet implements Selectable, Shareable  {
         this.source = "fr.openent.mediacentre.source.Signet",
         this.disciplines = new Labels(),
         this.levels = new Labels(),
-        this.plain_text = new Labels()
+        this.plain_text = new Labels(),
+        this.document_types = []
     }
 
     toJson() : Object {
@@ -97,7 +99,8 @@ export class Signet implements Selectable, Shareable  {
             source: this.source,
             disciplines: this.disciplines.all,
             levels: this.levels.all,
-            plain_text: this.plain_text.all
+            plain_text: this.plain_text.all,
+            document_types: this.document_types ? this.document_types : ["Signet"]
         }
     }
 

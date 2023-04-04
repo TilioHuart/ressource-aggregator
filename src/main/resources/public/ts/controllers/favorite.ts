@@ -1,105 +1,115 @@
-import {ng} from 'entcore';
-import {Scope} from './main'
-import {Filter, Frame, Resource} from '../model';
+import {ng, toasts, idiom as lang} from 'entcore';
+import {Filter, Resource} from '../model';
 import {addFilters} from '../utils';
+import {FavoriteService} from "../services";
+import {IIntervalService} from "angular";
+import {Utils} from "../utils/Utils";
 
-interface ViewModel {
+declare var mediacentreUpdateFrequency: number;
+
+interface IViewModel extends ng.IController {
     loaders: any;
     resources: Resource[];
     favorites: Resource[];
-    displayedResources: Resource[];
     displayFilter: boolean;
     filters: {
         initial: {  source: Filter[], document_types: Filter[], levels: Filter[] }
         filtered: {  source: Filter[], document_types: Filter[], levels: Filter[] }
     };
     filteredFields: string[];
+    updateFrequency: number;
 
     showFilter() : void;
+    fetchFavorites(filteredResources?: Resource[]): void;
 }
 
-interface EventResponses {
-    favorites_Result(frame: Frame): void;
+interface IFavoriteScope extends ng.IScope {
+    vm: IViewModel;
 }
 
+class Controller implements IViewModel {
 
-export const favoriteController = ng.controller('FavoriteController', ['$scope', 'route', function ($scope: Scope) {
-    const vm: ViewModel = this;
+    displayFilter: boolean;
+    favorites: Resource[];
+    filteredFields: string[];
+    filters: { initial: { source: Filter[]; document_types: Filter[]; levels: Filter[] }; filtered: { source: Filter[]; document_types: Filter[]; levels: Filter[] } };
+    loaders: any;
+    resources: Resource[];
+    updateFrequency: number;
 
-    vm.favorites = [];
-    vm.filteredFields = [ 'document_types', 'levels'];
-    vm.displayFilter = screen.width >= $scope.mc.screenWidthLimit;
-
-    $scope.$on('deleteFavorite', function(event, id) {
-        vm.displayedResources = vm.favorites.filter(el => el.id !== id);
-    });
-
-    const initFavorite = function () {
-        vm.displayedResources = [];
-        vm.resources = [];
-        vm.favorites = [];
-        vm.filters = {
+    constructor(private $scope: IFavoriteScope, 
+                private route,
+                private favoriteService: FavoriteService,
+                private $interval: IIntervalService) {
+        this.$scope.vm = this;
+        this.favorites = [];
+        this.filteredFields = ['document_types', 'levels'];
+        this.filters = {
             initial: { source: [], document_types: [], levels: []},
             filtered: {source: [], document_types: [], levels: []}
         };
-    };
+    }
 
-    initFavorite();
+    async $onInit() {
+        this.displayFilter = screen.width >= this.$scope['mc'].screenWidthLimit;
+        this.updateFrequency = mediacentreUpdateFrequency;
 
-    const filter = function () {
-        vm.displayedResources = [];
-        vm.resources.forEach(function (resource: Resource) {
+        await this.fetchFavorites();
+
+        let viewModel: IViewModel = this;
+        this.$scope.$on('deleteFavorite', function (event, id) {
+            viewModel.favorites = viewModel.favorites.filter(el => el.id !== id);
+        });
+
+        this.$interval(async (): Promise<void> => {
+            await this.fetchFavorites();
+        }, this.updateFrequency, 0, false);
+    }
+
+    showFilter(): void {
+        this.displayFilter = !this.displayFilter;
+    }
+
+    async fetchFavorites(filteredResources?: Resource[]) {
+        try {
+            let favoriteResources: Array<Resource> = await this.favoriteService.get();
+            this.addFavoriteFilter(favoriteResources);
+            this.filter(favoriteResources);
+        } catch (e) {
+            console.error("An error has occurred during fetching favorite ", e);
+            toasts.warning(lang.translate("mediacentre.error.favorite.retrieval"));
+        }
+    }
+
+    private addFavoriteFilter(favoriteResources: Array<Resource>): void {
+        favoriteResources.forEach((resource: Resource) => {
+            resource.favorite = true;
+            addFilters(this.filteredFields, this.filters.initial, resource);
+        });
+    }
+
+    private filter(favoriteResources: Array<Resource>) {
+        this.favorites = [];
+        favoriteResources.forEach((resource: Resource) => {
             let match = true;
-            vm.filteredFields.forEach(function (field: string) {
-                let internalMatch = vm.filters.filtered[field].length == 0;
-                vm.filters.filtered[field].forEach(function ({name}: Filter) {
+            this.filteredFields.forEach((field: string) => {
+                let internalMatch = this.filters.filtered[field].length == 0;
+                this.filters.filtered[field].forEach(({name}: Filter) => {
                     internalMatch = internalMatch || resource[field].includes(name);
                 });
                 match = match && internalMatch;
             });
             if (match) {
-                vm.displayedResources.push(resource);
+                this.favorites.push(resource);
             }
         });
-
-        $scope.safeApply();
+        Utils.safeApply(this.$scope);
     };
 
-    $scope.$watch(() => vm.filters.filtered.document_types.length, filter);
-    $scope.$watch(() => vm.filters.filtered.levels.length, filter);
-
-    $scope.ws.onmessage = (message) => {
-        const {event, state, data, status} = JSON.parse(message.data);
-        if ("ok" !== status) {
-            throw data.error;
-        }
-        if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-    };
-
-    const eventResponses: EventResponses = {
-        favorites_Result: function (frame) {
-            vm.resources = [...vm.resources, ...frame.data];
-            vm.favorites = frame.data;
-            vm.favorites.map((favorite) => {
-                favorite.favorite = true;
-            });
-            frame.data.forEach((resource)=> addFilters(vm.filteredFields, vm.filters.initial, resource));
-            filter();
-            $scope.safeApply();
-        }
-    };
-
-    function initFavoritePage() {
-        $scope.ws.send(new Frame('favorites', 'get', [], {}));
+    $onDestroy(): void {
     }
 
-    if ($scope.ws.connected) {
-        initFavoritePage();
-    } else {
-        $scope.ws.onopen = initFavoritePage;
-    }
+}
 
-    vm.showFilter = function () {
-        vm.displayFilter = !vm.displayFilter;
-    }
-}]);
+export const favoriteController = ng.controller('FavoriteController', ['$scope', 'route', 'FavoriteService',
+    '$interval', Controller]);
