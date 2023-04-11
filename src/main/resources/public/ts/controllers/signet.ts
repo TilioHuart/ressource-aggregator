@@ -7,6 +7,7 @@ import {hashCode} from "../utils";
 import {ILocationService} from "angular";
 import * as Clipboard from "clipboard";
 import {ResourceCard} from "../directives";
+import {Utils} from "../utils/Utils";
 
 interface ViewModel {
     signetPopUpSharing: boolean;
@@ -129,11 +130,11 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                             })
                             .on('error', console.error);
                     });
-                    $scope.safeApply();
+                    Utils.safeApply($scope)
                 },1000);
 
             });
-            $scope.safeApply();
+            Utils.safeApply($scope)
         };
 
 
@@ -181,7 +182,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 vm.signets.formatSignets(data);
                 vm.signets.all = vm.signets.all.filter(signet => signet.archived);
             }
-            $scope.safeApply();
+            Utils.safeApply($scope)
         }
 
         vm.openNavMySignets = () : void => {
@@ -212,10 +213,10 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.openCreateSignet = function () {
             $scope.signet = new Signet();
-            $scope.safeApply();
+            Utils.safeApply($scope)
             vm.display.lightbox.signet = true;
             template.open('lightboxContainer', 'signets/lightbox/create-signet');
-            $scope.safeApply();
+            Utils.safeApply($scope)
         };
 
         vm.openPropertiesSignet = () : void => {
@@ -263,7 +264,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 vm.signetPopUpSharing = false;
             }
             template.close('lightboxContainer');
-            $scope.safeApply();
+            Utils.safeApply($scope)
         };
 
         // Toaster
@@ -290,7 +291,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.openSignet = (signet: Signet) : void => {
             $scope.signet = signet;
             $scope.redirectTo(`/signet/${signet.id}/edit`);
-            $scope.safeApply();
+            Utils.safeApply($scope)
         };
 
         vm.archiveSignets = async () : Promise<void> => {
@@ -303,7 +304,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.archive'));
                 init();
-                $scope.safeApply();
+                Utils.safeApply($scope)
             }
             catch (e) {
                 throw e;
@@ -327,7 +328,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 vm.closeSignetLightbox();
                 vm.display.warning = false;
                 notify.success(idiom.translate('mediacentre.success.signets.delete'));
-                $scope.safeApply();
+                Utils.safeApply($scope)
             }
             catch (e) {
                 throw e;
@@ -342,7 +343,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 template.close('lightboxContainer');
                 notify.success(idiom.translate('mediacentre.success.signets.restore'));
                 init();
-                $scope.safeApply();
+                Utils.safeApply($scope)
             }
             catch (e) {
                 throw e;
@@ -392,7 +393,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 signet.favorite = true;
                 $scope.$emit('addFavorite', signet);
             }
-            $scope.safeApply();
+            Utils.safeApply($scope)
         };
 
         vm.removeFavorite = async (signet, event) : Promise<void> => {
@@ -404,7 +405,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                 signet.favorite = false;
                 $scope.$emit('deleteFavorite', signet.id);
             }
-            $scope.safeApply();
+            Utils.safeApply($scope)
         };
 
         // Websockets

@@ -1,27 +1,29 @@
-import {_, Behaviours, idiom, model, ng, notify, template} from 'entcore';
+import {_, Behaviours, idiom, model, ng, notify, template, toasts} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Frame, Resource, Socket} from '../model';
 import {Signet} from "../model/Signet";
-import {signetService} from "../services/SignetService";
+import {FavoriteService as favoriteService} from "../services";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
+import {Utils} from "../utils/Utils";
 
 declare const window: any;
+declare var mediacentreUpdateFrequency: number;
 
-export interface Scope extends IRootScopeService {
+export interface MainScope extends IRootScopeService {
 	isStatusXXX(response: any, status: number): any;
 	getDataIf200(response: any): any;
-    hasShareRightView(signet: Signet[]): boolean;
-    hasShareRightManager(signet: Signet[]): boolean;
+	hasShareRightView(signet: Signet[]): boolean;
+	hasShareRightManager(signet: Signet[]): boolean;
 	hasSignetRight(): boolean;
-    removeLevelFromCourse(level: Label): void;
+	removeLevelFromCourse(level: Label): void;
 	removeDisciplineFromCourse(discipline: Label): void;
 	removeWordFromCourse(word: Label): void;
-    query: any;
-    addKeyWord(event: any): void;
-    disciplines: Labels;
-    levels: Labels;
-    displayDate (dateToFormat: Date): string;
+	query: any;
+	addKeyWord(event: any): void;
+	disciplines: Labels;
+	levels: Labels;
+	displayDate (dateToFormat: Date): string;
 	ws: Socket;
 	loaders: any;
 	idiom: any;
@@ -31,7 +33,7 @@ export interface Scope extends IRootScopeService {
 	mc: MainController;
 }
 
-export interface MainController {
+export interface MainController extends ng.IController {
 	favorites: Resource[];
 	textbooks: Resource[];
 	pageSize: number;
@@ -65,15 +67,48 @@ export interface MainController {
 	getImgLink(imgId: string): Promise<boolean>;
 }
 
-export const mainController = ng.controller('MainController', ['$scope', 'route', '$location', '$timeout',
-	function ($scope: Scope, route, $location: ILocationService, $timeout) {
-		const mc: MainController = this;
-		mc.favorites = [];
-		mc.textbooks = [];
-		mc.pageSize = 10;
-		mc.limitTo = mc.pageSize;
-		mc.displayFavorites = false;
-		mc.search = {
+class Controller implements MainController {
+	favorites: Resource[];
+	textbooks: Resource[];
+	pageSize: number;
+	limitTo: number;
+	displayFavorites: boolean;
+	search: {
+		plain_text: {
+			text: string
+		},
+		advanced: {
+			show: boolean,
+			sources: any
+			fields: Array<{ name: string, comparator: boolean }>,
+			values: object
+		}
+	};
+	columns: number[];
+	screenWidthLimit: number;
+	favoriteLimit: number;
+
+	query: any;
+	disciplines: Labels;
+	levels: Labels;
+	ws: Socket;
+	loaders: any;
+	idiom: any;
+	signet: Signet;
+
+
+	constructor(private $scope: MainScope,
+				private route,
+				private $location: ILocationService,
+				private $timeout) {
+		this.$scope.mc = this;
+
+		this.favorites = [];
+		this.textbooks = [];
+		this.pageSize = 10;
+		this.limitTo = this.pageSize;
+		this.displayFavorites = false;
+		this.search = {
 			plain_text: {
 				text: ''
 			},
@@ -90,30 +125,59 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 				values: {}
 			}
 		};
-		$scope.idiom = idiom;
-		$scope.ws = new Socket();
-		$scope.ws.onopen = (event) => {
-			console.info(`WebSocket opened on ${$scope.ws.host}`, event);
-			$scope.ws.send(new Frame('favorites', 'get', [], {}));
-		};
-		mc.screenWidthLimit = 600;
-		mc.favoriteLimit = screen.width < mc.screenWidthLimit ? 2 : 7;
-		$scope.signet = new Signet();
-		$scope.levels = new Labels();
-		$scope.levels.sync("levels");
-		$scope.disciplines = new Labels();
-		$scope.disciplines.sync("disciplines");
+		this.idiom = idiom;
+		this.ws = new Socket();
 
-		const startResearch = async function (state: string, sources: string[], data: any) {
-			mc.limitTo = mc.pageSize;
-			$location.path(`/search/${state.toLowerCase()}`);
-			$timeout(() => {
-				$scope.ws.send(new Frame('search', state, sources, data));
-				$scope.$broadcast('search', {state, data});
+		this.screenWidthLimit = 600;
+		this.favoriteLimit = screen.width < this.screenWidthLimit ? 2 : 7;
+		this.signet = new Signet();
+		this.levels = new Labels();
+		this.levels.sync("levels");
+		this.disciplines = new Labels();
+		this.disciplines.sync("disciplines");
+	}
+
+
+
+	$onInit = async () => {
+		this.route({
+			home: () => {
+				this.search = {...this.search, plain_text: {text: ''}};
+				this.search.advanced.values = {};
+				this.search.advanced.fields.forEach((field) => this.initField(field));
+				this.displayFavorites = true;
+				template.open('main', 'home');
+			},
+			favorite: () => {
+				this.displayFavorites = false;
+				template.open('main', 'favorite')
+			},
+			signet: () => {
+				this.displayFavorites = true;
+				template.open('main', 'signet')
+			},
+			searchPlainText: () => {
+				this.displayFavorites = false;
+				template.open('main', 'search')
+			},
+			searchAdvanced: () => {
+				this.displayFavorites = false;
+				template.open('main', 'search')
+			},
+		});
+	};
+
+
+		startResearch = async (state: string, sources: string[], data: any) => {
+			this.limitTo = this.pageSize;
+			this.$location.path(`/search/${state.toLowerCase()}`);
+			this.$timeout(() => {
+				this.ws.send(new Frame('search', state, sources, data));
+				this.$scope.$broadcast('search', {state, data});
 			}, 300);
 		};
 
-		mc.getImgLink = async (imgId) : Promise<boolean> => {
+		getImgLink = async (imgId) : Promise<boolean> => {
 			try{
 				let data = await http.get(`${imgId}`);
 				console.log(imgId, data.status);
@@ -127,23 +191,23 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 
 		}
 
-		mc.infiniteScroll = function () {
-			mc.limitTo += mc.pageSize;
+		infiniteScroll = () => {
+			this.limitTo += this.pageSize;
 		};
 
-		mc.plainTextSearch = function () {
-			if (mc.search.plain_text.text.trim() === '') return;
-			startResearch('PLAIN_TEXT', [], {query: mc.search.plain_text.text});
+		plainTextSearch = () => {
+			if (this.search.plain_text.text.trim() === '') return;
+			this.startResearch('PLAIN_TEXT', [], {query: this.search.plain_text.text});
 		};
 
-		mc.goSignet = (): void => {
-			$location.path(`/signet/`);
+		goSignet = (): void => {
+			this.$location.path(`/signet/`);
 		};
 
-		mc.advancedSearch = function () {
-			const {values} = mc.search.advanced;
+		advancedSearch = () => {
+			const {values} = this.search.advanced;
 			let data = {};
-			mc.search.advanced.fields.forEach((field) => {
+			this.search.advanced.fields.forEach((field) => {
 				let t = {};
 				if (values[field.name].value.trim() !== '') {
 					t[field.name] = values[field.name];
@@ -155,108 +219,74 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			});
 			if (Object.keys(data).length === 0) return;
 			let sources: string[] = [];
-			Object.keys(mc.search.advanced.sources).forEach(key => {
-				if (mc.search.advanced.sources[key]) sources.push(key);
+			Object.keys(this.search.advanced.sources).forEach(key => {
+				if (this.search.advanced.sources[key]) sources.push(key);
 			});
-			startResearch('ADVANCED', sources, data);
-			mc.search.advanced.show = false;
+			this.startResearch('ADVANCED', sources, data);
+			this.search.advanced.show = false;
 		};
 
-		mc.initField = function ({name, comparator}) {
-			mc.search.advanced.values[name] = {
+		initField = ({name, comparator}) => {
+			this.search.advanced.values[name] = {
 				value: '',
 				...comparator ? {comparator: '$or'} : {}
 			}
 		};
 
-		mc.initHeader = function () {
+		initHeader = () => {
 			let accueil = document.getElementById('item_1');
 			let signets = document.getElementById('item_2');
 			if(accueil && signets){
-				accueil["checked"] = $location.url() !=  '/signet';
-				signets["checked"] = $location.url() ==  '/signet';
+				accueil["checked"] = this.$location.url() !=  '/signet';
+				signets["checked"] = this.$location.url() ==  '/signet';
 			}
 		};
 
-		mc.openAdvancedSearch = function () {
-			mc.search.plain_text.text = '';
-			mc.search.advanced.show = true;
-			window.sources.forEach(source => mc.search.advanced.sources[source] = true);
+		openAdvancedSearch = () => {
+			this.search.plain_text.text = '';
+			this.search.advanced.show = true;
+			window.sources.forEach(source => this.search.advanced.sources[source] = true);
 		};
 
-		mc.closeAdvancedSearch = function () {
-			mc.search.advanced.show = false;
+		closeAdvancedSearch = () => {
+			this.search.advanced.show = false;
 		};
 
-		mc.goHome = function () {
-			$location.path('/')
+		goHome = () => {
+			this.$location.path('/')
 		};
 
-		mc.goFavorites = (): void => {
-			$location.path(`/favorite`);
+		goFavorites = (): void => {
+			this.$location.path(`/favorite`);
 		};
 
-		route({
-			home: () => {
-				mc.search = {...mc.search, plain_text: {text: ''}};
-				mc.search.advanced.values = {};
-				mc.search.advanced.fields.forEach((field) => mc.initField(field));
-				mc.displayFavorites = true;
-				template.open('main', 'home');
-			},
-			favorite: () => {
-				mc.displayFavorites = false;
-				template.open('main', 'favorite')
-			},
-			signet: () => {
-				mc.displayFavorites = true;
-				template.open('main', 'signet')
-			},
-			searchPlainText: () => {
-				mc.displayFavorites = false;
-				template.open('main', 'search')
-			},
-			searchAdvanced: () => {
-				mc.displayFavorites = false;
-				template.open('main', 'search')
-			},
-		});
-
-		$scope.displayDate = (dateToFormat: Date) : string => {
+		displayDate = (dateToFormat: Date) : string => {
 			return new Date(dateToFormat).toLocaleString([], {day: '2-digit', month: '2-digit', year:'numeric'});
 		};
 
-		$scope.removeLevelFromCourse = (level: Label) => {
-			$scope.signet.levels = _.without($scope.signet.levels, level);
+		removeLevelFromCourse = (level: Label) => {
+			this.signet.levels = _.without(this.signet.levels, level);
 		};
 
-		$scope.removeDisciplineFromCourse = (discipline: Label) => {
-			$scope.signet.disciplines = _.without($scope.signet.disciplines, discipline);
+		removeDisciplineFromCourse = (discipline: Label) => {
+			this.signet.disciplines = _.without(this.signet.disciplines, discipline);
 		};
 
-		$scope.removeWordFromCourse = (word: Label) => {
-			$scope.signet.plain_text = _.without($scope.signet.plain_text, word);
-			if($scope.signet.plain_text.length == 0) {
-				$scope.signet.plain_text = new Labels();
-				$scope.signet.plain_text.all = [];
+		removeWordFromCourse = (word: Label) => {
+			this.signet.plain_text = _.without(this.signet.plain_text, word);
+			if(this.signet.plain_text.length == 0) {
+				this.signet.plain_text = new Labels();
+				this.signet.plain_text.all = [];
 			}
 		};
 
-		// Utils
 
-		$scope.safeApply = function () {
-			let phase = $scope.$root.$$phase;
-			if (phase !== '$apply' && phase !== '$digest') {
-				$scope.$apply();
-			}
+		redirectTo = (path: string) => {
+			this.$location.path(path);
+			Utils.safeApply(this.$scope);
 		};
 
-		$scope.redirectTo = (path: string) => {
-			$location.path(path);
-			$scope.safeApply();
-		};
-
-		$scope.hasShareRightManager = (signets : Signet[]) => {
+		hasShareRightManager = (signets : Signet[]) => {
 			let hasRight = false;
 			signets.forEach(signet => {
 				hasRight = signet.owner_id === model.me.userId ||
@@ -268,7 +298,7 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			return hasRight;
 		};
 
-		$scope.hasShareRightView = (signets : Signet[]) => {
+		hasShareRightView = (signets : Signet[]) => {
 			let hasRight = false;
 			signets.forEach(signet => {
 				hasRight = signet.owner_id === model.me.userId ||
@@ -280,16 +310,25 @@ export const mainController = ng.controller('MainController', ['$scope', 'route'
 			return hasRight;
 		};
 
-		$scope.hasSignetRight = () => {
+		hasSignetRight = () => {
 			return model.me.hasWorkflow(Behaviours.applicationsBehaviours.mediacentre.rights.workflow.signets);
 		};
 
-		$scope.getDataIf200 = (response: AxiosResponse) : any => {
-			if ($scope.isStatusXXX(response, 200)) { return response.data; }
+		getDataIf200 = (response: AxiosResponse) : any => {
+			if (this.isStatusXXX(response, 200)) { return response.data; }
 			else { return null; }
 		};
 
-		$scope.isStatusXXX = (response: AxiosResponse, status: number) : any => {
+		isStatusXXX = (response: AxiosResponse, status: number) : any => {
 			return response.status === status;
 		};
-	}]);
+
+	$onDestroy(): void {
+	}
+
+	addKeyWord(event: any): void {
+	}
+};
+
+export const mainController = ng.controller('MainController', ['$scope', 'route', '$location', '$timeout',
+	Controller]);
