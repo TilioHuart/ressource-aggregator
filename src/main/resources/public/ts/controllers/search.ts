@@ -1,10 +1,11 @@
 import {model, ng} from 'entcore';
-import {Scope} from './main'
+import {MainController} from './main'
 import {Filter, Frame, Resource} from "../model";
 import {ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
 import {signetService} from "../services/SignetService";
+import {Utils} from "../utils/Utils";
 
 declare let window: any;
 
@@ -49,7 +50,7 @@ interface EventResponses {
 }
 
 export const searchController = ng.controller('SearchController', ['$scope', '$location',
-    function ($scope: Scope, $location: ILocationService) {
+    function ($scope: MainController, $location: ILocationService) {
         if ($scope.mc.search.plain_text.text.trim().length === 0
             && Object.keys($scope.mc.search.advanced.values).length === 0) {
             $location.path('/');
@@ -103,7 +104,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
                 }
             });
 
-            $scope.safeApply();
+            Utils.safeApply($scope);
         };
 
         $scope.$watch(() => vm.filters.filtered.document_types.length, filter);
@@ -113,18 +114,18 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
 
         $scope.$on('search', function () {
             initSearch();
-            $scope.safeApply();
+            Utils.safeApply($scope);
         });
 
-        $scope.ws.onmessage = (message) => {
-            const {event, state, data, status, error} = JSON.parse(message.data);
-            if ("ok" !== status) {
-                vm.loaders[error.source] = false;
-                $scope.safeApply();
-                throw JSON.parse(message.data).error;
-            }
-            if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-        };
+        // $scope.ws.onmessage = (message) => {
+        //     const {event, state, data, status, error} = JSON.parse(message.data);
+        //     if ("ok" !== status) {
+        //         vm.loaders[error.source] = false;
+        //         Utils.safeApply($scope);
+        //         throw JSON.parse(message.data).error;
+        //     }
+        //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
+        // };
 
         const eventResponses: EventResponses = {
             search_Result: function (frame) {
@@ -134,7 +135,7 @@ export const searchController = ng.controller('SearchController', ['$scope', '$l
                 filter();
                 frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
                 vm.loaders[frame.data.source] = false;
-                $scope.safeApply();
+                Utils.safeApply($scope);
             }
         };
         vm.getSourcesLength = function () {

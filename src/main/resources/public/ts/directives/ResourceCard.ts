@@ -146,7 +146,6 @@ export const ResourceCard = ng.directive('resourceCard',
                     $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
                     let response = await FavoriteService.create($scope.ngModel, $scope.ngModel.id);
                     if (response.status === 200) {
-                        $scope.ngModel.favorite = true;
                         $scope.$emit('addFavorite', $scope.ngModel);
                     }
                     $scope.safeApply();
@@ -157,7 +156,6 @@ export const ResourceCard = ng.directive('resourceCard',
                     $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
                     let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
                     if (response.status === 200) {
-                        $scope.ngModel.favorite = false;
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);
                     }
                     $scope.safeApply();

@@ -1,4 +1,4 @@
-import {ng, toasts, idiom as lang} from 'entcore';
+import {ng, toasts, idiom} from 'entcore';
 import {Filter, Resource} from '../model';
 import {addFilters} from '../utils';
 import {FavoriteService} from "../services";
@@ -18,6 +18,7 @@ interface IViewModel extends ng.IController {
     };
     filteredFields: string[];
     updateFrequency: number;
+    lang: typeof idiom;
 
     showFilter() : void;
     fetchFavorites(filteredResources?: Resource[]): void;
@@ -36,6 +37,7 @@ class Controller implements IViewModel {
     loaders: any;
     resources: Resource[];
     updateFrequency: number;
+    lang: typeof idiom = idiom;
 
     constructor(private $scope: IFavoriteScope, 
                 private route,
@@ -77,7 +79,7 @@ class Controller implements IViewModel {
             this.filter(favoriteResources);
         } catch (e) {
             console.error("An error has occurred during fetching favorite ", e);
-            toasts.warning(lang.translate("mediacentre.error.favorite.retrieval"));
+            toasts.warning(this.lang.translate("mediacentre.error.favorite.retrieval"));
         }
     }
 

@@ -1,10 +1,15 @@
-import {model, ng} from 'entcore';
-import {Scope} from './main'
-import {Frame, Resource} from '../model';
-import {ILocationService} from "angular";
-import {Signets} from "../model/Signet";
+import {model, ng, toasts, idiom as lang} from 'entcore';
+import {Filter, Frame, Resource} from '../model';
+import {IIntervalService, ILocationService} from "angular";
+import {Signet, Signets} from "../model/Signet";
+import {Utils} from "../utils/Utils";
+import {MainScope} from "./main";
+import {FavoriteService} from "../services";
+import {addFilters} from "../utils";
 
-interface ViewModel {
+declare var mediacentreUpdateFrequency: number;
+
+interface IHomeViewModel extends ng.IController {
     signetLimit: number;
     signets: Signets;
     mobile: boolean;
@@ -17,120 +22,156 @@ interface ViewModel {
     orientationSignets: Resource[];
     displayedResources: Resource[];
 
+    updateFrequency: number;
+
     refreshTextBooks(): void;
     seeMyExternalResource(): void;
     goSignet(): void;
     filterArchivedSignets(signet: any): boolean;
-}
 
-interface EventResponses {
-    favorites_Result(frame: Frame): void;
     textbooks_Result(frame: Frame): void;
     search_Result(frame: Frame): void;
     signets_Result(frame: Frame): void;
 }
 
+interface IHomeScope extends ng.IScope {
+    hc: IHomeViewModel;
+    mainScope: MainScope;
+}
 
-export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location',
-    function ($scope: Scope, route, $location: ILocationService) {
-        const vm: ViewModel = this;
-        $scope.safeApply();
-        vm.textbooks = [];
-        vm.publicSignets = [];
-        vm.sharedSignets = [];
-        vm.signets = new Signets();
-        vm.displayedResources = [];
-        vm.mobile = screen.width < $scope.mc.screenWidthLimit;
-        vm.resourceLimit = vm.mobile ? 6 : 12;
-        vm.signetLimit = vm.mobile ? 4 : 8;
+class Controller implements IHomeViewModel {
+    signetLimit: number;
+    signets: Signets;
+    mobile: boolean;
+    resourceLimit: number;
+    loaders: any;
+    resources: Resource[];
+    textbooks: Resource[];
+    publicSignets: Resource[];
+    sharedSignets: Resource[];
+    orientationSignets: Resource[];
+    displayedResources: Resource[];
+    mainScope: MainScope;
+    updateFrequency: number;
 
-        $scope.$on('deleteFavorite', function (event, id) {
-            $scope.mc.favorites = $scope.mc.favorites.filter(el => el.id !== id);
-            if(vm.textbooks.findIndex(el => el.id == id) != -1) {
-                vm.textbooks[vm.textbooks.findIndex(el => el.id == id)].favorite = false;
-            } else if(vm.publicSignets.findIndex(el => el.id == id) != -1) {
-                vm.publicSignets[vm.publicSignets.findIndex(el => el.id == id)].favorite = false;
-            } else if(vm.orientationSignets.findIndex(el => el.id == id) != -1) {
-                vm.orientationSignets[vm.orientationSignets.findIndex(el => el.id == id)].favorite = false;
-            }
+    constructor(private $scope: IHomeScope,
+                private route,
+                private $location: ILocationService,
+                private $interval: IIntervalService,
+                private favoriteService: FavoriteService) {
+        this.$scope.hc = this;
+        this.mainScope = (<MainScope> this.$scope.$parent);
+
+        this.textbooks = [];
+        this.publicSignets = [];
+        this.sharedSignets = [];
+        this.signets = new Signets();
+        this.displayedResources = [];
+        this.mobile = screen.width < this.mainScope.mc.screenWidthLimit;
+        this.resourceLimit = this.mobile ? 6 : 12;
+        this.signetLimit = this.mobile ? 4 : 8;
+
+    }
+
+    async $onInit() {
+        this.updateFrequency = mediacentreUpdateFrequency;
+
+        try {
+            await Promise.all([
+                this.syncResources()
+            ])
+            Utils.safeApply(this.$scope);
+        } catch (e) {
+
+        }
+        //
+        //
+        // this.$scope.ws.send(new Frame('textbooks', 'get', [], {}));
+        // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
+        // this.$scope.ws.send(new Frame('signets', 'get', ['fr.openent.mediacentre.source.Signet'], {}));
+        //
+        // this.$scope.vm.ws.onmessage = (message) => {
+        //     const {event, state, data, status} = JSON.parse(message.data);
+        //     if ("ok" !== status) {
+        //         throw data.error;
+        //     }
+        //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
+        // };
+
+        let viewModel: IHomeViewModel = this;
+        let mainScopeModel : MainScope = this.mainScope;
+        this.$scope.$on('deleteFavorite', async (event, id) => {
+            await this.syncResources();
         });
 
-        $scope.$on('addFavorite', function (event, resource) {
-            $scope.mc.favorites.push(resource);
+        this.$scope.$on('addFavorite', async (event, resource) => {
+            await this.syncResources();
         });
 
+        this.$interval(async (): Promise<void> => {
+            await this.syncResources();
+        }, this.updateFrequency, 0, false);
 
-        $scope.ws.onmessage = (message) => {
-            const {event, state, data, status} = JSON.parse(message.data);
-            if ("ok" !== status) {
-                throw data.error;
-            }
-            if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-        };
+        Utils.safeApply(this.$scope);
+    }
 
-        const eventResponses: EventResponses = {
-            textbooks_Result: function (frame) {
-                vm.textbooks = frame.data.textbooks;
-                $scope.safeApply();
-            },
-            favorites_Result: function (frame) {
-                if (Object.keys(frame.data).length === 0) {
-                    $scope.mc.favorites = []
-                } else {
-                    $scope.mc.favorites = frame.data;
-                    $scope.mc.favorites.map((favorite) => {
-                        favorite.favorite = true;
-                    });
-                }
-                $scope.safeApply();
-            },
-            search_Result: function (frame) {
-                vm.displayedResources = frame.data.resources;
-                $scope.safeApply();
-            },
-            signets_Result: async function (frame) {
-                vm.signets.all = vm.publicSignets = vm.orientationSignets = vm.sharedSignets = [];
-                await vm.signets.sync();
-                vm.signets.all = vm.signets.all.filter(signet => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
-                vm.signets.formatSharedSignets(vm.sharedSignets);
-                vm.publicSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Signet");
-                vm.publicSignets = vm.publicSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Signet"));
-                vm.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
-                vm.orientationSignets = vm.orientationSignets.concat(vm.sharedSignets.filter(el => el.document_types[0] === "Orientation"));
-                $scope.safeApply();
-            }
-        };
-
-        vm.refreshTextBooks = (): void => {
-            vm.textbooks = [];
-            $scope.safeApply();
-            $scope.ws.send(new Frame('textbooks', 'refresh', [], {}));
-        };
-
-        vm.seeMyExternalResource = (): void => {
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
-            $location.path(`/search/plain_text`);
-        };
-
-        vm.goSignet = (): void => {
-            $location.path(`/signet/`);
-        };
-
-        vm.filterArchivedSignets = (signet): boolean => {
-            return !signet.archived;
-        };
-
-        function initHomePage() {
-            $scope.ws.send(new Frame('textbooks', 'get', [], {}));
-            $scope.ws.send(new Frame('favorites', 'get', [], {}));
-            $scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
-            $scope.ws.send(new Frame('signets', 'get', ['fr.openent.mediacentre.source.Signet'], {}));
-            $scope.safeApply();
+    async syncResources() {
+        try {
+            this.mainScope.mc.favorites = await this.favoriteService.get();
+            this.mainScope.mc.favorites.forEach((resource: Resource) => {
+                resource.favorite = true;
+            });
+            Utils.safeApply(this.$scope);
+        } catch (e) {
+            console.error("An error has occurred during fetching favorite ", e);
+            toasts.warning("mediacentre.error.favorite.retrieval");
         }
+    }
 
-        if ($scope.ws.connected) {
-            initHomePage();
-        } else {
-            $scope.ws.onopen = initHomePage;
-        }
-    }]);
+    textbooks_Result = (frame) => {
+        this.textbooks = frame.data.textbooks;
+        Utils.safeApply(this.$scope);
+    }
+    search_Result = (frame) => {
+        this.displayedResources = frame.data.resources;
+        Utils.safeApply(this.$scope);
+    }
+    signets_Result = async (frame) => {
+        this.signets.all = this.publicSignets = this.orientationSignets = this.sharedSignets = [];
+        await this.signets.sync();
+        this.signets.all = this.signets.all.filter((signet: Signet) => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
+        this.signets.formatSharedSignets(this.sharedSignets);
+        this.publicSignets = frame.data.signets.resources.filter((el: Resource) => el.document_types[0] === "Signet");
+        this.publicSignets = this.publicSignets.concat(this.sharedSignets.filter((el: Resource) => el.document_types[0] === "Signet"));
+        this.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
+        this.orientationSignets = this.orientationSignets.concat(this.sharedSignets.filter((el: Resource) => el.document_types[0] === "Orientation"));
+        Utils.safeApply(this.$scope);
+    }
+
+
+    refreshTextBooks = (): void => {
+        this.textbooks = [];
+        Utils.safeApply(this.$scope);
+        // $scope.ws.send(new Frame('textbooks', 'refresh', [], {}));
+    };
+
+    seeMyExternalResource = (): void => {
+        // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
+        this.$location.path(`/search/plain_text`);
+    };
+
+    goSignet = (): void => {
+        this.$location.path(`/signet/`);
+    };
+
+    filterArchivedSignets = (signet): boolean => {
+        return !signet.archived;
+    };
+
+    $onDestroy(): void {
+    }
+}
+
+export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location', '$interval',
+    'FavoriteService', Controller]);
+

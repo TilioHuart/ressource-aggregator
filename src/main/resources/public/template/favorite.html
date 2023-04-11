@@ -18,7 +18,7 @@
                         <div class="row">
                             <multi-combo ng-repeat="filter in vm.filteredFields"
                                          ng-if="vm.filters.initial[filter].length > 0"
-                                         title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
+                                         title="[[ vm.lang.translate('mediacentre.search.filter.' + filter) ]]"
                                          combo-model="vm.filters.initial[filter]"
                                          search-on="name"
                                          order-by="name"
@@ -44,7 +44,7 @@
     <!-- Empty state -->
     <div class="favorites-emptyState horizontal-spacing" ng-show="vm.favorites.length === 0">
         <img src="/mediacentre/public/img/favoris-emptyState.svg"
-             alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
+             alt="[[ vm.lang.translate('mediacentre.no-result.alt') ]]">
         <div class="favorites-emptyState-flex">
             <span><i18n>mediacentre.favorite.empty.first</i18n></span>
             <span><i18n>mediacentre.favorite.empty.second</i18n></span>

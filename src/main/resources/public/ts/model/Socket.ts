@@ -51,12 +51,12 @@ export class Socket {
                 this.callbacks.onmessage(message);
             }
         };
-        this._ws.onopen = (message: Event) => {
-            this.connected = true;
-            if ('onopen' in this.callbacks && this.callbacks.onopen !== undefined) {
-                this.callbacks.onopen(message);
-            }
-        };
+        // this._ws.onopen = (message: Event) => {
+        //     this.connected = true;
+        //     if ('onopen' in this.callbacks && this.callbacks.onopen !== undefined) {
+        //         this.callbacks.onopen(message);
+        //     }
+        // };
         this._ws.onerror = (event: Event) => {
             toasts.warning('mediacentre.socket.network.error');
             if ('onerror' in this.callbacks && this.callbacks.onerror !== undefined) {
