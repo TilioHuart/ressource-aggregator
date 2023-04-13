@@ -6,6 +6,7 @@ import * as Clipboard from 'clipboard';
 
 import {FavoriteService} from "../services";
 import {idiom as i18n} from "entcore/types/src/ts/idiom";
+import {ResourceBody} from "../model";
 
 declare const window: Window;
 
@@ -144,7 +145,7 @@ export const ResourceCard = ng.directive('resourceCard',
                     delete $scope.ngModel.favorite;
                     $scope.ngModel.id = typeof $scope.ngModel.id == 'string' &&
                     $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
-                    let response = await FavoriteService.create($scope.ngModel, $scope.ngModel.id);
+                    let response = await FavoriteService.create(new ResourceBody($scope.ngModel).toJson(), $scope.ngModel.id);
                     if (response.status === 200) {
                         $scope.$emit('addFavorite', $scope.ngModel);
                     }

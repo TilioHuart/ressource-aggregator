@@ -1,6 +1,8 @@
 package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
+import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.enums.SourceEnum;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.webutils.Either;
@@ -43,9 +45,15 @@ public class DefaultFavoriteService implements FavoriteService {
     @Override
     public void delete(String favoriteId, String source, String userId, Handler<Either<String, JsonObject>> handler) {
         JsonObject matcher = new JsonObject()
-                .put("id", source.equals("fr.openent.mediacentre.source.Signet") ? Integer.parseInt(favoriteId) : favoriteId)
-                .put("user", userId)
-                .put("source", source);
+                .put(Field.USER, userId)
+                .put(Field.SOURCE, source);
+
+        if (source.equals(SourceEnum.SIGNET.method())) {
+            matcher.put(Field.ID, Integer.parseInt(favoriteId));
+        } else {
+            matcher.put(Field._ID, favoriteId);
+        }
+
         MongoDb.getInstance().delete(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResult(message)));
     }
 

@@ -2,7 +2,7 @@ import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
 import {signetService} from "../services/SignetService";
-import {Frame, Resource} from "../model";
+import {Frame, IResourceBody, ResourceBody, Resource} from "../model";
 import {hashCode} from "../utils";
 import {ILocationService} from "angular";
 import * as Clipboard from "clipboard";
@@ -352,13 +352,12 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         // Favorites
 
-        vm.addFavorite = async (signet, event) : Promise<void> => {
+        vm.addFavorite = async (signet: Signet, event: Event) : Promise<void> => {
             event.stopPropagation();
             signet.hash = hashCode(signet.resource_id);
-            signet.displayTitle = signet.title;
-            let signet_fav = <Resource> signet.toJson();
+            let resourceBody: IResourceBody = new ResourceBody(signet).toJson();
             let disciplinesArray:string[] = [];
-            let levelsArray:string[] = [];
+            let levelsArray: string[] = [];
             let plaintextArray:string[] = [];
             if(!!signet.disciplines) {
                 signet.disciplines.forEach(function (discipline) {
@@ -367,7 +366,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     }
                 });
             }
-            signet_fav.disciplines = disciplinesArray;
+            resourceBody.disciplines = disciplinesArray;
             if(!!signet.levels) {
                 signet.levels.forEach(function (level) {
                     if(!!level[1]) {
@@ -375,7 +374,7 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     }
                 });
             }
-            signet_fav.levels = levelsArray;
+            resourceBody.levels = levelsArray;
             if(!!signet.plain_text) {
                 signet.plain_text.forEach(function (word) {
                     if(!!word[1]) {
@@ -383,12 +382,11 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
                     }
                 });
             }
-            signet_fav.plain_text = plaintextArray
-            signet_fav.favorite = signet.favorite;
-            signet_fav.document_types = signet.orientation ? ["Orientation"] : ["Signet"];
-            signet_fav.date = new Date(signet.date_creation).valueOf();
+            resourceBody.plain_text = plaintextArray
+            resourceBody.document_types = signet.orientation ? ["Orientation"] : ["Signet"];
+            resourceBody.date = new Date(signet.date_creation).valueOf();
             delete signet.favorite;
-            let response = await FavoriteService.create(signet_fav, signet.id);
+            let response = await FavoriteService.create(resourceBody, signet.id);
             if (response.status === 200) {
                 signet.favorite = true;
                 $scope.$emit('addFavorite', signet);
@@ -398,9 +396,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
 
         vm.removeFavorite = async (signet, event) : Promise<void> => {
             event.stopPropagation();
-            let signet_fav = <Resource> signet.toJson();
-            signet_fav.favorite = signet.favorite;
-            let response = await FavoriteService.delete(signet_fav.id, signet_fav.source);
+            let resourceBody: IResourceBody = new ResourceBody(signet).toJson();
+            let response = await FavoriteService.delete(resourceBody.id, resourceBody.source);
             if (response.status === 200) {
                 signet.favorite = false;
                 $scope.$emit('deleteFavorite', signet.id);

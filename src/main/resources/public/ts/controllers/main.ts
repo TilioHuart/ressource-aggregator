@@ -1,8 +1,7 @@
-import {_, Behaviours, idiom, model, ng, notify, template, toasts} from 'entcore';
+import {_, Behaviours, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
-import {Frame, Resource, Socket} from '../model';
+import {Resource, Socket} from '../model';
 import {Signet} from "../model/Signet";
-import {FavoriteService as favoriteService} from "../services";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
 import {Utils} from "../utils/Utils";
@@ -172,7 +171,7 @@ class Controller implements MainController {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);
 			this.$timeout(() => {
-				this.ws.send(new Frame('search', state, sources, data));
+				// this.ws.send(new Frame('search', state, sources, data));
 				this.$scope.$broadcast('search', {state, data});
 			}, 300);
 		};

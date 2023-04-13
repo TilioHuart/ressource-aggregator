@@ -1,3 +1,5 @@
+import {Signet} from "./Signet";
+
 export interface IResourceResponse {
     authors: string[];
     date: number;
@@ -25,6 +27,7 @@ export interface IResourceResponse {
 }
 
 export class Resource {
+
     private _authors: string[];
     private _date: number;
     private _description: string;
@@ -45,8 +48,8 @@ export class Resource {
     private _structure_name: string;
     private _structure_uai: string;
     private _display_structure_name?: boolean;
-
     private _user?: string;
+    private _id_info: string;
 
     constructor() {
         this._id = null;
@@ -70,10 +73,11 @@ export class Resource {
         this._structure_uai = null;
         this._display_structure_name = null;
         this._user = null;
+        this._id_info = null;
     }
 
     build(data: IResourceResponse): Resource {
-        this._id = data.id;
+        this._id = data._id;
         this._authors = data.authors ? data.authors : [];
         this._date = data.date;
         this._description = data.description;
@@ -94,6 +98,7 @@ export class Resource {
         this._structure_uai = data.structure_uai;
         this._display_structure_name = data.display_structure_name;
         this._user = data.user;
+        this._id_info = data.id;
 
         return this;
     }
@@ -264,5 +269,13 @@ export class Resource {
 
     set user(value: string) {
         this._user = value;
+    }
+
+    get id_info(): string {
+        return this._id_info;
+    }
+
+    set id_info(value: string) {
+        this._id_info = value;
     }
 }

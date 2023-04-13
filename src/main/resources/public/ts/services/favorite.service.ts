@@ -1,15 +1,16 @@
 import {ng} from 'entcore'
 import http, {AxiosResponse} from 'axios';
-import {IResourceResponse, Resource} from "../model";
+import {IResourceBody, IResourceResponse, ResourceBody, Resource} from "../model";
+import {Signet} from "../model/Signet";
 
 export interface FavoriteService {
-    create(bodyResource: Resource, id:number): Promise<AxiosResponse>;
+    create(bodyResource: IResourceBody, id:number): Promise<AxiosResponse>;
     delete(id: string, source: string): Promise<AxiosResponse>;
     get(): Promise<Array<Resource>>;
 }
 
 export const FavoriteService = ng.service('FavoriteService', (): FavoriteService => ({
-    create: async (bodyResource: Resource, id:number): Promise<AxiosResponse> => {
+    create: async (bodyResource: IResourceBody, id:number): Promise<AxiosResponse> => {
         return await http.post(`/mediacentre/favorites?id=${id}`, bodyResource);
     },
 
