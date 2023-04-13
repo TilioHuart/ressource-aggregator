@@ -114,8 +114,8 @@
   "mediacentre.error.signetService.published": "Une erreur est survenue lors de la récupération des signets publiés",
   "mediacentre.error.signetService.image": "Une erreur est survenue lors de la récupération de l'image",
   "mediacentre.error.info": "Vous devez remplir tous les champs, veuillez ressayer",
-  "mediacentre.error.favorite.retrieval": "Erreur lors de la mise à jour des favoris",
-
+  "mediacentre.error.favorite.retrieval": "Erreur lors de la mise à jour des favoris.",
+  "mediacentre.error.textbook.retrieval": "Erreur lors de la mise à jour des manuels.",
 
   "mediacentre.success.signet.create": "Votre signet a bien été créé !",
   "mediacentre.success.signet.save": "Votre signet a bien été sauvegardé !",
@@ -123,6 +123,8 @@
   "mediacentre.success.signets.archive": "Tous les signets sélectionnés ont bien été archivés !",
   "mediacentre.success.signets.restore": "Tous les signets sélectionnés ont bien été restaurés !",
   "mediacentre.success.signets.delete": "Tous les signets sélectionnés ont bien été supprimés !",
+  "mediacentre.success.textbook.retrieval": "Les manuels ont bien été mis à jour.",
+
 
   "mediacentre.choose.image": "Veuillez choisir une image",
 

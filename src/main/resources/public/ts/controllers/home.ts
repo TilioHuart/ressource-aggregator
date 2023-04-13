@@ -1,11 +1,10 @@
-import {model, ng, toasts, idiom as lang} from 'entcore';
-import {Filter, Frame, Resource} from '../model';
+import {model, ng, toasts} from 'entcore';
+import {Frame, Resource} from '../model';
 import {IIntervalService, ILocationService} from "angular";
 import {Signet, Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {MainScope} from "./main";
-import {FavoriteService} from "../services";
-import {addFilters} from "../utils";
+import {FavoriteService, ITextbookService} from "../services";
 
 declare var mediacentreUpdateFrequency: number;
 
@@ -24,12 +23,11 @@ interface IHomeViewModel extends ng.IController {
 
     updateFrequency: number;
 
-    refreshTextBooks(): void;
+    syncTextbooks(): Promise<void>;
     seeMyExternalResource(): void;
     goSignet(): void;
     filterArchivedSignets(signet: any): boolean;
 
-    textbooks_Result(frame: Frame): void;
     search_Result(frame: Frame): void;
     signets_Result(frame: Frame): void;
 }
@@ -58,7 +56,8 @@ class Controller implements IHomeViewModel {
                 private route,
                 private $location: ILocationService,
                 private $interval: IIntervalService,
-                private favoriteService: FavoriteService) {
+                private favoriteService: FavoriteService,
+                private textbookService: ITextbookService) {
         this.$scope.hc = this;
         this.mainScope = (<MainScope> this.$scope.$parent);
 
@@ -78,15 +77,14 @@ class Controller implements IHomeViewModel {
 
         try {
             await Promise.all([
-                this.syncResources()
+                this.syncFavoriteResources(),
+                this.syncTextbooks()
             ])
             Utils.safeApply(this.$scope);
         } catch (e) {
 
         }
-        //
-        //
-        // this.$scope.ws.send(new Frame('textbooks', 'get', [], {}));
+
         // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
         // this.$scope.ws.send(new Frame('signets', 'get', ['fr.openent.mediacentre.source.Signet'], {}));
         //
@@ -101,26 +99,30 @@ class Controller implements IHomeViewModel {
         let viewModel: IHomeViewModel = this;
         let mainScopeModel : MainScope = this.mainScope;
         this.$scope.$on('deleteFavorite', async (event, id) => {
-            await this.syncResources();
+            await this.syncFavoriteResources();
         });
 
         this.$scope.$on('addFavorite', async (event, resource) => {
-            await this.syncResources();
+            await this.syncFavoriteResources();
         });
 
         this.$interval(async (): Promise<void> => {
-            await this.syncResources();
+            await Promise.all([
+                this.syncFavoriteResources(),
+                this.syncTextbooks()
+            ]);
         }, this.updateFrequency, 0, false);
 
         Utils.safeApply(this.$scope);
     }
 
-    async syncResources() {
+    private async syncFavoriteResources() {
         try {
             this.mainScope.mc.favorites = await this.favoriteService.get();
             this.mainScope.mc.favorites.forEach((resource: Resource) => {
                 resource.favorite = true;
             });
+            this.setFavoriteResources();
             Utils.safeApply(this.$scope);
         } catch (e) {
             console.error("An error has occurred during fetching favorite ", e);
@@ -128,10 +130,6 @@ class Controller implements IHomeViewModel {
         }
     }
 
-    textbooks_Result = (frame) => {
-        this.textbooks = frame.data.textbooks;
-        Utils.safeApply(this.$scope);
-    }
     search_Result = (frame) => {
         this.displayedResources = frame.data.resources;
         Utils.safeApply(this.$scope);
@@ -149,11 +147,22 @@ class Controller implements IHomeViewModel {
     }
 
 
-    refreshTextBooks = (): void => {
-        this.textbooks = [];
-        Utils.safeApply(this.$scope);
-        // $scope.ws.send(new Frame('textbooks', 'refresh', [], {}));
+    async syncTextbooks(isRefreshButton?: boolean): Promise<void> {
+        try {
+            this.mainScope.mc.textbooks = await this.textbookService.get();
+            this.setFavoriteResources();
+            if (isRefreshButton) toasts.info("mediacentre.success.textbook.retrieval");
+            Utils.safeApply(this.$scope);
+        } catch (e) {
+            console.error("An error has occurred during fetching textbooks ", e);
+            toasts.warning("mediacentre.error.textbook.retrieval");
+        }
     };
+
+    private setFavoriteResources(): void {
+        this.mainScope.mc.textbooks.forEach((resource: Resource) =>
+            resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id == resource.id));
+    }
 
     seeMyExternalResource = (): void => {
         // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
@@ -173,5 +182,5 @@ class Controller implements IHomeViewModel {
 }
 
 export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location', '$interval',
-    'FavoriteService', Controller]);
+    'FavoriteService', 'TextbookService', Controller]);
 

@@ -2,7 +2,7 @@ import {Mix, Selectable, Selection} from "entcore-toolkit";
 import {idiom, model, notify, Rights, Shareable} from "entcore";
 import {signetService} from "../services/SignetService";
 import {Label, Labels} from "./Label";
-import {Resource} from "./Resource";
+import {Resource} from "./resource.model";
 
 export class Signet implements Selectable, Shareable  {
     shared: any;

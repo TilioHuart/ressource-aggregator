@@ -27,21 +27,21 @@
     </div>
 
     <!--Textbooks-->
-    <div class="textbooks horizontal-spacing row vertical-spacing" ng-show="vm.textbooks.length > 0">
+    <div class="textbooks horizontal-spacing row vertical-spacing" ng-show="vm.mainScope.mc.textbooks.length > 0">
         <h2>
             <i18n>mediacentre.advanced.textbooks.mine</i18n>
             <div class="cell right-magnet card horizontal-spacing"
                  style="text-transform: capitalize; display: flex"
-                 ng-click="vm.refreshTextBooks()">
+                 ng-click="vm.syncTextbooks(true)">
                 <i class="refresh horizontal-spacing"></i>
                 <i18n>mediacentre.textbooks.refresh</i18n>
             </div>
         </h2>
 
         <!--Content-->
-        <div class="textbooks-grid" ng-show="vm.textbooks.length > 0">
+        <div class="textbooks-grid" ng-show="vm.mainScope.mc.textbooks.length > 0">
             <resource-card
-                    ng-repeat="resource in vm.textbooks | orderBy:'title' track by $index"
+                    ng-repeat="resource in vm.mainScope.mc.textbooks | orderBy:'title' track by $index"
                     type="textbook"
                     ng-model="resource">
             </resource-card>
@@ -83,7 +83,7 @@
     </div>
 
     <!--Empty State-->
-    <div class="error" ng-if="vm.displayedResources.length + vm.textbooks.length + vm.publicSignets.length + vm.orientationSignets.length == 0">
+    <div class="error" ng-if="vm.displayedResources.length + vm.mainScope.mc.textbooks.length + vm.publicSignets.length + vm.orientationSignets.length == 0">
         <img src="/mediacentre/public/img/no-result.svg" class="img_mini"/>
         <h1><i18n>mediacentre.ressources.empty</i18n></h1>
     </div>
