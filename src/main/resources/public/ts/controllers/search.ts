@@ -4,7 +4,7 @@ import {Filter, Frame, Resource} from "../model";
 import {ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
-import {signetService} from "../services/SignetService";
+import {signetService} from "../services/signet.service";
 import {Utils} from "../utils/Utils";
 
 declare let window: any;

@@ -1,5 +1,3 @@
-import {Signet} from "./Signet";
-
 export interface IResourceResponse {
     authors: string[];
     date: number;
@@ -36,7 +34,7 @@ export class Resource {
     private _document_types: string[];
     private _editors: string[];
     private _hash: number;
-    private _id: string;
+    private _id_info: string;
     private _favorite?: boolean;
     private _image: string;
     private _levels: string[];
@@ -49,7 +47,7 @@ export class Resource {
     private _structure_uai: string;
     private _display_structure_name?: boolean;
     private _user?: string;
-    private _id_info: string;
+    private _id?: string;
 
     constructor() {
         this._id = null;

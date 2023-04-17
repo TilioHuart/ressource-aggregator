@@ -1,13 +1,14 @@
 import {idiom, model, ng, notify, template} from 'entcore';
 import {Signet, Signets} from "../model/Signet";
 import {FavoriteService} from "../services";
-import {signetService} from "../services/SignetService";
+import {signetService} from "../services/signet.service";
 import {Frame, IResourceBody, ResourceBody, Resource} from "../model";
 import {hashCode} from "../utils";
 import {ILocationService} from "angular";
 import * as Clipboard from "clipboard";
 import {ResourceCard} from "../directives";
 import {Utils} from "../utils/Utils";
+import {AxiosResponse} from "axios";
 
 interface ViewModel {
     signetPopUpSharing: boolean;
@@ -397,7 +398,8 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.removeFavorite = async (signet, event) : Promise<void> => {
             event.stopPropagation();
             let resourceBody: IResourceBody = new ResourceBody(signet).toJson();
-            let response = await FavoriteService.delete(resourceBody.id, resourceBody.source);
+            let signetId: string = resourceBody.id.toString();
+            let response: AxiosResponse = await FavoriteService.delete(signetId, resourceBody.source);
             if (response.status === 200) {
                 signet.favorite = false;
                 $scope.$emit('deleteFavorite', signet.id);

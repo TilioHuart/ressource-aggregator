@@ -116,6 +116,7 @@
   "mediacentre.error.info": "Vous devez remplir tous les champs, veuillez ressayer",
   "mediacentre.error.favorite.retrieval": "Erreur lors de la mise à jour des favoris.",
   "mediacentre.error.textbook.retrieval": "Erreur lors de la mise à jour des manuels.",
+  "mediacentre.error.signet.retrieval": "Erreur lors de la mise à jour des signets.",
 
   "mediacentre.success.signet.create": "Votre signet a bien été créé !",
   "mediacentre.success.signet.save": "Votre signet a bien été sauvegardé !",

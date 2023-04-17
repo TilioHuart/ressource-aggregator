@@ -1,6 +1,6 @@
 import {Mix, Selectable, Selection} from "entcore-toolkit";
 import {idiom, model, notify, Rights, Shareable} from "entcore";
-import {signetService} from "../services/SignetService";
+import {signetService} from "../services/signet.service";
 import {Label, Labels} from "./Label";
 import {Resource} from "./resource.model";
 

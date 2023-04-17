@@ -1,6 +1,6 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import {signetService} from "../SignetService";
+import {signetService} from "../signet.service";
 
 describe('Signet Service', () => {
 
