@@ -1,5 +1,5 @@
 import {_, idiom as i18n, model, ng, notify} from 'entcore';
-import {signetService} from "../../services/SignetService";
+import {signetService} from "../../services/signet.service";
 import {Label, Labels} from "../../model/Label";
 import {Utils} from "../../utils/Utils";
 

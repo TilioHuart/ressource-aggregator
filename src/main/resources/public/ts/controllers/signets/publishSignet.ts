@@ -1,7 +1,7 @@
 import {model, ng, notify, idiom as i18n, _, template} from "entcore";
 import {Utils} from "../../utils/Utils";
 import {Label, Labels} from "../../model/Label";
-import {signetService} from "../../services/SignetService";
+import {signetService} from "../../services/signet.service";
 
 export const publishSignetController = ng.controller('publishSignetController', ['$scope', '$timeout',
     ($scope) => {

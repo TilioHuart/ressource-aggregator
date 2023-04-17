@@ -1,6 +1,6 @@
 import {_, Behaviours, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
-import {Resource, Socket} from '../model';
+import {Resource} from '../model';
 import {Signet} from "../model/Signet";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
@@ -23,7 +23,7 @@ export interface MainScope extends IRootScopeService {
 	disciplines: Labels;
 	levels: Labels;
 	displayDate (dateToFormat: Date): string;
-	ws: Socket;
+	// ws: Socket;
 	loaders: any;
 	idiom: any;
 	signet: Signet;
@@ -90,7 +90,7 @@ class Controller implements MainController {
 	query: any;
 	disciplines: Labels;
 	levels: Labels;
-	ws: Socket;
+	// ws: Socket;
 	loaders: any;
 	idiom: any;
 	signet: Signet;
@@ -125,7 +125,7 @@ class Controller implements MainController {
 			}
 		};
 		this.idiom = idiom;
-		this.ws = new Socket();
+		// this.ws = new Socket();
 
 		this.screenWidthLimit = 600;
 		this.favoriteLimit = screen.width < this.screenWidthLimit ? 2 : 7;

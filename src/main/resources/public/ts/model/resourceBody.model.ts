@@ -1,4 +1,3 @@
-import {Resource} from "./resource.model";
 import {model} from "entcore";
 
 export interface IResourceBody {
@@ -6,21 +5,19 @@ export interface IResourceBody {
     date: number;
     description: string;
     disciplines: string[];
-    displayTitle: string;
     document_types: string[];
     editors: string[];
-    id: string;
+    _id?: string;
     image: string;
     levels: string[];
     link: string;
     plain_text: string[];
     source: string;
     title: string;
-    action: object;
-    structure_name: string;
-    structure_uai: string;
+    structure_name?: string;
+    structure_uai?: string;
     display_structure_name?: boolean;
-    _id: string;
+    id: number;
     user: string;
     hash: number;
 }
@@ -30,31 +27,28 @@ export class ResourceBody {
     private _date: number;
     private _description: string;
     private _disciplines: string[];
-    private _displayTitle: string;
     private _document_types: string[];
     private _editors: string[];
-    private _id: string;
+    private _id?: string;
     private _image: string;
     private _levels: string[];
     private _link: string;
     private _plain_text: string[];
     private _source: string;
     private _title: string;
-    private _action: object;
-    private _structure_name: string;
-    private _structure_uai: string;
+    private _structure_name?: string;
+    private _structure_uai?: string;
     private _display_structure_name?: boolean;
     private _user?: string;
-    private _id_info: string;
+    private _id_info: number;
     private _hash: number;
 
     constructor(data: any) {
-        this._id = (data.source == "fr.openent.mediacentre.source.Signet") ? data._id : data.id;
+        this._id = (data.source == "fr.openent.mediacentre.source.Signet") ? undefined : data._id;
         this._authors = data.authors ? data.authors : [];
         this._date = data.date;
-        this._description = data.description;
+        this._description = data.description ? data.description : null;
         this._disciplines = data.disciplines;
-        this._displayTitle = data.displayTitle;
         this._document_types = data.document_types;
         this._editors = data.editors ? data.editors : [model.me.username];
         this._image = data.image;
@@ -63,23 +57,21 @@ export class ResourceBody {
         this._plain_text = data.plain_text;
         this._source = data.source;
         this._title = data.title;
-        this._action = data.action;
-        this._structure_name = data.structure_name;
-        this._structure_uai = data.structure_uai;
-        this._display_structure_name = data.display_structure_name;
+        this._structure_name = data.structure_name ? data.structure_name : undefined;
+        this._structure_uai = data.structure_uai ? data.structure_uai : undefined;
+        this._display_structure_name = data.display_structure_name ? data.display_structure_name : undefined;
         this._user = data.user;
-        this._id_info = (data.source == "fr.openent.mediacentre.source.Signet") ? data.id : data.id_info;
+        this._id_info = data.id_info ? parseInt(data.id_info) : parseInt(data.id);
         this._hash = data.hash;
     }
 
     toJson(): IResourceBody {
         return {
-            _id: this.id,
+            _id: (this.source != "fr.openent.mediacentre.source.Signet" && this.id) ? this.id : undefined,
             authors: this.authors ? this.authors : [],
             date: this.date,
-            description: this.description,
+            description: this.description? this.description : null,
             disciplines: this.disciplines,
-            displayTitle: this.displayTitle,
             editors: this.editors,
             image: this.image,
             levels: this.levels,
@@ -87,10 +79,9 @@ export class ResourceBody {
             plain_text: this.plain_text,
             source: this.source,
             title: this.title,
-            action: this.action,
-            structure_name: this.structure_name,
-            structure_uai: this.structure_uai,
-            display_structure_name: this.display_structure_name,
+            structure_name: this.structure_name ? this.structure_name : undefined,
+            structure_uai: this.structure_uai ? this.structure_uai : undefined,
+            display_structure_name: this.display_structure_name ? this.display_structure_name : undefined,
             user: this.user,
             id: this.id_info,
             document_types: this.document_types ? this.document_types : ["Signet"],
@@ -128,14 +119,6 @@ export class ResourceBody {
 
     set disciplines(value: string[]) {
         this._disciplines = value;
-    }
-
-    get displayTitle(): string {
-        return this._displayTitle;
-    }
-
-    set displayTitle(value: string) {
-        this._displayTitle = value;
     }
 
     get document_types(): string[] {
@@ -210,14 +193,6 @@ export class ResourceBody {
         this._title = value;
     }
 
-    get action(): object {
-        return this._action;
-    }
-
-    set action(value: object) {
-        this._action = value;
-    }
-
     get structure_name(): string {
         return this._structure_name;
     }
@@ -250,11 +225,11 @@ export class ResourceBody {
         this._user = value;
     }
 
-    get id_info(): string {
+    get id_info(): number {
         return this._id_info;
     }
 
-    set id_info(value: string) {
+    set id_info(value: number) {
         this._id_info = value;
     }
 

@@ -1,10 +1,12 @@
-import {model, ng, toasts} from 'entcore';
+import {ng, toasts} from 'entcore';
 import {Frame, Resource} from '../model';
 import {IIntervalService, ILocationService} from "angular";
 import {Signet, Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {MainScope} from "./main";
-import {FavoriteService, ITextbookService} from "../services";
+import {FavoriteService, ITextbookService, SignetService} from "../services";
+import {Label} from "../model/Label";
+import {SignetBody} from "../model/signetBody.model";
 
 declare var mediacentreUpdateFrequency: number;
 
@@ -17,20 +19,18 @@ interface IHomeViewModel extends ng.IController {
     resources: Resource[];
     textbooks: Resource[];
     publicSignets: Resource[];
-    sharedSignets: Resource[];
     orientationSignets: Resource[];
     displayedResources: Resource[];
 
     updateFrequency: number;
 
+    syncSignets(): Promise<void>;
     syncTextbooks(): Promise<void>;
     seeMyExternalResource(): void;
     goSignet(): void;
     filterArchivedSignets(signet: any): boolean;
 
-    search_Result(frame: Frame): void;
-    signets_Result(frame: Frame): void;
-}
+    search_Result(frame: Frame): void;}
 
 interface IHomeScope extends ng.IScope {
     hc: IHomeViewModel;
@@ -46,7 +46,6 @@ class Controller implements IHomeViewModel {
     resources: Resource[];
     textbooks: Resource[];
     publicSignets: Resource[];
-    sharedSignets: Resource[];
     orientationSignets: Resource[];
     displayedResources: Resource[];
     mainScope: MainScope;
@@ -57,13 +56,13 @@ class Controller implements IHomeViewModel {
                 private $location: ILocationService,
                 private $interval: IIntervalService,
                 private favoriteService: FavoriteService,
-                private textbookService: ITextbookService) {
+                private textbookService: ITextbookService,
+                private signetService: SignetService) {
         this.$scope.hc = this;
         this.mainScope = (<MainScope> this.$scope.$parent);
 
         this.textbooks = [];
         this.publicSignets = [];
-        this.sharedSignets = [];
         this.signets = new Signets();
         this.displayedResources = [];
         this.mobile = screen.width < this.mainScope.mc.screenWidthLimit;
@@ -78,7 +77,8 @@ class Controller implements IHomeViewModel {
         try {
             await Promise.all([
                 this.syncFavoriteResources(),
-                this.syncTextbooks()
+                this.syncTextbooks(),
+                this.syncSignets()
             ])
             Utils.safeApply(this.$scope);
         } catch (e) {
@@ -86,8 +86,7 @@ class Controller implements IHomeViewModel {
         }
 
         // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
-        // this.$scope.ws.send(new Frame('signets', 'get', ['fr.openent.mediacentre.source.Signet'], {}));
-        //
+
         // this.$scope.vm.ws.onmessage = (message) => {
         //     const {event, state, data, status} = JSON.parse(message.data);
         //     if ("ok" !== status) {
@@ -107,10 +106,9 @@ class Controller implements IHomeViewModel {
         });
 
         this.$interval(async (): Promise<void> => {
-            await Promise.all([
-                this.syncFavoriteResources(),
-                this.syncTextbooks()
-            ]);
+                await this.syncFavoriteResources(),
+                await this.syncTextbooks(),
+                await this.syncSignets()
         }, this.updateFrequency, 0, false);
 
         Utils.safeApply(this.$scope);
@@ -134,18 +132,27 @@ class Controller implements IHomeViewModel {
         this.displayedResources = frame.data.resources;
         Utils.safeApply(this.$scope);
     }
-    signets_Result = async (frame) => {
-        this.signets.all = this.publicSignets = this.orientationSignets = this.sharedSignets = [];
-        await this.signets.sync();
-        this.signets.all = this.signets.all.filter((signet: Signet) => !signet.archived && signet.collab && signet.owner_id != model.me.userId);
-        this.signets.formatSharedSignets(this.sharedSignets);
-        this.publicSignets = frame.data.signets.resources.filter((el: Resource) => el.document_types[0] === "Signet");
-        this.publicSignets = this.publicSignets.concat(this.sharedSignets.filter((el: Resource) => el.document_types[0] === "Signet"));
-        this.orientationSignets = frame.data.signets.resources.filter(el => el.document_types[0] === "Orientation");
-        this.orientationSignets = this.orientationSignets.concat(this.sharedSignets.filter((el: Resource) => el.document_types[0] === "Orientation"));
-        Utils.safeApply(this.$scope);
+    async syncSignets(): Promise<void> {
+        this.publicSignets = this.orientationSignets = [];
+        try {
+            let signets: SignetBody[] = (await this.signetService.list()).data;
+            this.publicSignets = signets
+                .filter((signet: SignetBody) => signet.orientation == false)
+                .map((signet: SignetBody) => {
+                    return this.signetBodyToResource(signet);
+                });
+            this.orientationSignets = signets
+                .filter((signet: SignetBody) => signet.orientation == true)
+                .map((signet: SignetBody) => {
+                    return this.signetBodyToResource(signet);
+                })
+            this.setFavoriteResources();
+            Utils.safeApply(this.$scope);
+        } catch (e) {
+            console.error("An error has occurred during fetching signets ", e);
+            toasts.warning("mediacentre.error.signet.retrieval");
+        }
     }
-
 
     async syncTextbooks(isRefreshButton?: boolean): Promise<void> {
         try {
@@ -162,6 +169,10 @@ class Controller implements IHomeViewModel {
     private setFavoriteResources(): void {
         this.mainScope.mc.textbooks.forEach((resource: Resource) =>
             resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id == resource.id));
+        this.publicSignets.forEach((resource: Resource) =>
+            resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
+        this.orientationSignets.forEach((resource: Resource) =>
+            resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
     }
 
     seeMyExternalResource = (): void => {
@@ -177,10 +188,30 @@ class Controller implements IHomeViewModel {
         return !signet.archived;
     };
 
+    private signetBodyToResource(signet: SignetBody): Resource {
+        let resource = new Resource();
+        resource.id_info = signet.id.toString();
+        resource.disciplines = signet.disciplines.map((label: Label) => label[1]);
+        resource.authors = resource.editors = [signet.owner_name];
+        resource.date = new Date(signet.date_creation).valueOf();
+        resource.description = null;
+        resource.displayTitle = resource.title = signet.title;
+        resource.document_types = signet.orientation ? ["Orientation"] : ["Signet"];
+        resource.favorite = signet.favorite;
+        resource.image = signet.image;
+        resource.levels = signet.levels.map((label: Label) => label[1]);
+        resource.link = signet.url;
+        resource.plain_text = signet.plain_text.map((label: Label) => label[1]);
+        resource.source = "fr.openent.mediacentre.source.Signet";
+        resource.user = signet.owner_id;
+
+        return resource;
+    }
+
     $onDestroy(): void {
     }
 }
 
 export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location', '$interval',
-    'FavoriteService', 'TextbookService', Controller]);
+    'FavoriteService', 'TextbookService', 'SignetService', Controller]);
 

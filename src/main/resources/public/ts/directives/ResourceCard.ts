@@ -1,11 +1,10 @@
-import {idiom, ng, notify, toasts} from 'entcore';
+import {idiom, ng, toasts} from 'entcore';
 import http from 'axios';
 import {hashCode} from '../utils';
 
 import * as Clipboard from 'clipboard';
 
 import {FavoriteService} from "../services";
-import {idiom as i18n} from "entcore/types/src/ts/idiom";
 import {ResourceBody} from "../model";
 
 declare const window: Window;
@@ -142,10 +141,10 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.addFavorite = async function () {
-                    delete $scope.ngModel.favorite;
-                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' &&
-                    $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
-                    let response = await FavoriteService.create(new ResourceBody($scope.ngModel).toJson(), $scope.ngModel.id);
+                    $scope.ngModel.favorite = undefined;
+                    let resourceId: number = $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ?
+                        parseInt($scope.ngModel.id_info) : undefined;
+                    let response = await FavoriteService.create(new ResourceBody($scope.ngModel).toJson(), resourceId);
                     if (response.status === 200) {
                         $scope.$emit('addFavorite', $scope.ngModel);
                     }
@@ -153,9 +152,9 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
-                    $scope.ngModel.id = typeof $scope.ngModel.id == 'string' &&
-                    $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ? parseInt($scope.ngModel.id) : $scope.ngModel.id;
-                    let response = await FavoriteService.delete($scope.ngModel.id, $scope.ngModel.source);
+                    let resourceId: string = $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ?
+                        parseInt($scope.ngModel.id_info) : $scope.ngModel._id;
+                    let response = await FavoriteService.delete(resourceId, $scope.ngModel.source);
                     if (response.status === 200) {
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);
                     }
