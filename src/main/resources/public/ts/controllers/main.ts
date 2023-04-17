@@ -171,7 +171,6 @@ class Controller implements MainController {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);
 			this.$timeout(() => {
-				// this.ws.send(new Frame('search', state, sources, data));
 				this.$scope.$broadcast('search', {state, data});
 			}, 300);
 		};

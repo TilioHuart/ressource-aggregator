@@ -34,6 +34,8 @@
                                          combo-model="vm.filters.initial[filter]"
                                          search-on="name"
                                          order-by="name"
+                                         selection-event="vm.fetchSearch(vm.filters.filtered)"
+                                         deselection-event="vm.fetchSearch(vm.filters.filtered)"
                                          filtered-model="vm.filters.filtered[filter]">
                             </multi-combo>
                         </div>

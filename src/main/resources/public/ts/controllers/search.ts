@@ -1,21 +1,15 @@
 import {model, ng} from 'entcore';
-import {MainController} from './main'
+import {MainController, MainScope} from './main'
 import {Filter, Frame, Resource} from "../model";
-import {ILocationService} from "angular";
+import {IIntervalService, ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
 import {signetService} from "../services/signet.service";
 import {Utils} from "../utils/Utils";
+import {FavoriteService, ITextbookService} from "../services";
 
 declare let window: any;
-
-function initSources(value: boolean) {
-    const sources = {};
-    window.sources.forEach((source) => sources[source] = value);
-    return sources;
-}
-
-interface ViewModel {
+interface IViewModel extends ng.IController {
     signets: Signets;
     width: number;
     mobile: boolean;
@@ -31,144 +25,172 @@ interface ViewModel {
     filteredFields: string[];
 
     getSourcesLength(): number;
-
     formatClassName(className: string): string;
-
-    filter(item: Resource);
-
     isLoading(): boolean;
-
     getAdvancedSearchField(): string[];
-
     emptyAdvancedSearch(): boolean;
-
     showFilter(): void;
+    search_Result(frame: Frame): void;
+    initSources(value: boolean); //todo typage
 }
 
-interface EventResponses {
-    search_Result(frame: Frame): void;
+interface IHomeScope extends ng.IScope {
+    vm: IViewModel;
+    mainScope: MainScope;
+}
+
+class Controller implements IViewModel {
+    mainScope: MainScope;
+    displayFilter: boolean;
+    displayedResources: Resource[];
+    filteredFields: string[];
+    filters: { initial: { document_types: Filter[]; levels: Filter[]; source: Filter[] }; filtered: { document_types: Filter[]; levels: Filter[]; source: Filter[] } };
+    loaders: any;
+    mobile: boolean;
+    resources: Resource[];
+    signets: Signets;
+    sources: any;
+    width: number;
+
+    constructor(private $scope: IHomeScope,
+                private $location: ILocationService) {
+        this.$scope.vm = this;
+        this.mainScope = (<MainScope> this.$scope.$parent);
+    }
+
+    async $onInit() {
+        if (this.mainScope.mc.search.plain_text.text.trim().length === 0
+            && Object.keys(this.mainScope.mc.search.advanced.values).length === 0) {
+            this.$location.path('/');
+        }
+
+        this.mobile = screen.width < this.mainScope.mc.screenWidthLimit;
+        this.displayFilter = !this.mobile;
+        this.signets = new Signets();
+        this.filteredFields = ['document_types', 'levels', 'source'];
+
+        this.initSearch();
+        this.loaders = this.initSources(true);
+
+        this.$scope.$watch(() => this.filters.filtered.document_types.length, this.filter);
+        this.$scope.$watch(() => this.filters.filtered.levels.length, this.filter);
+        this.$scope.$watch(() => this.filters.filtered.source.length, this.filter);
+
+        let viewModel: IViewModel = this;
+        let mainScopeModel : MainScope = this.mainScope;
+        this.$scope.$on('search', function () {
+            viewModel.vm.initSearch();
+        });
+    }
+
+    initSources = (value: boolean) => {
+        const sources = {};
+        window.sources.forEach((source) => sources[source] = value);
+        return sources;
+    }
+
+    initSearch = async () => {
+        this.loaders = this.initSources(true);
+        this.sources = this.initSources(false);
+        this.displayedResources = [];
+
+        this.filters = {
+            initial: {document_types: [], levels: [], source: []},
+            filtered: {document_types: [], levels: [], source: []}
+        };
+
+        this.resources = [];
+        this.signets.all = [];
+        if(!!this.mainScope.mc.search.plain_text.text) {
+            let {data} = await signetService.searchMySignet(this.mainScope.mc.search.plain_text.text);
+            this.signets.formatSignets(data);
+            this.signets.formatSharedSignets(this.resources);
+        } else {
+            let {data} = await signetService.advancedSearchMySignet(this.mainScope.mc.search.advanced.values);
+            this.signets.formatSignets(data);
+            this.signets.formatSharedSignets(this.resources);
+        }
+        this.filter(this.resources);
+        Utils.safeApply(this.$scope);
+    };
+
+    fetchSearch = (filteredResources?: Resource[]) => {
+        try {
+            let favoriteResources: Array<Resource> = await this.favoriteService.get();
+            this.addFavoriteFilter(favoriteResources);
+            this.filter(favoriteResources);
+        } catch (e) {
+            console.error("An error has occurred during fetching favorite ", e);
+            toasts.warning(lang.translate("mediacentre.error.favorite.retrieval"));
+        }
+    }
+
+    private filter = (searchResources: Array<Resource>) => {
+        this.displayedResources = [];
+        searchResources.forEach((resource: Resource) => {
+            let match = true;
+            this.filteredFields.forEach((field: string) => {
+                let internalMatch = this.filters.filtered[field].length == 0;
+                this.filters.filtered[field].forEach(({name}: Filter) => {
+                    internalMatch = internalMatch || resource[field].includes(name);
+                });
+                match = match && internalMatch;
+            });
+            if (match) {
+                this.displayedResources.push(resource);
+            }
+        });
+
+        Utils.safeApply(this.$scope);
+    };
+
+    search_Result = (frame) => {
+        this.resources = [...this.resources, ...frame.data.resources];
+        this.resources = this.resources.sort((a, b) => a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
+        frame.data.resources.forEach((resource) => addFilters(this.filteredFields, this.filters.initial, resource));
+        this.filter(this.resources);
+        frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
+        this.loaders[frame.data.source] = false;
+        Utils.safeApply(this.$scope);
+    }
+
+    getSourcesLength = () => {
+        return Object.keys(this.loaders).length;
+    };
+
+    formatClassName = (className) => className.replace(new RegExp("\\.", 'g'), '-');
+
+    isLoading = () => {
+        let count = 0;
+        let loaders = Object.keys(this.loaders);
+        loaders.forEach((loader: string) => {
+            if (this.loaders[loader]) {
+                count++;
+            }
+        });
+        return count > 0;
+    };
+
+    getAdvancedSearchField = () => {
+        return Object.keys(this.mainScope.mc.search.advanced.values);
+    };
+
+    emptyAdvancedSearch = () => {
+        let empty = true;
+        Object.keys(this.mainScope.mc.search.advanced.values).forEach((field: string) => {
+            empty = empty && (this.mainScope.mc.search.advanced.values[field].value.trim().length === 0)
+        });
+
+        return empty;
+    };
+
+    showFilter = () => {
+        this.displayFilter = !this.displayFilter;
+    }
+
+    $onDestroy(): void {
+    }
 }
 
 export const searchController = ng.controller('SearchController', ['$scope', '$location',
-    function ($scope: MainController, $location: ILocationService) {
-        if ($scope.mc.search.plain_text.text.trim().length === 0
-            && Object.keys($scope.mc.search.advanced.values).length === 0) {
-            $location.path('/');
-        }
-        const vm: ViewModel = this;
-        vm.mobile = screen.width < $scope.mc.screenWidthLimit;
-        vm.displayFilter = !vm.mobile;
-        vm.signets = new Signets();
-        vm.filteredFields = ['document_types', 'levels', 'source'];
-
-        const initSearch = async function () {
-            vm.loaders = initSources(true);
-            vm.sources = initSources(false);
-            vm.displayedResources = [];
-
-            vm.filters = {
-                initial: {document_types: [], levels: [], source: []},
-                filtered: {document_types: [], levels: [], source: []}
-            };
-
-            vm.resources = [];
-            vm.signets.all = [];
-            if(!!$scope.mc.search.plain_text.text) {
-                let {data} = await signetService.searchMySignet($scope.mc.search.plain_text.text);
-                vm.signets.formatSignets(data);
-                vm.signets.formatSharedSignets(vm.resources);
-            } else {
-                let {data} = await signetService.advancedSearchMySignet($scope.mc.search.advanced.values);
-                vm.signets.formatSignets(data);
-                vm.signets.formatSharedSignets(vm.resources);
-            }
-            filter();
-        };
-
-        initSearch();
-        vm.loaders = initSources(true);
-
-        const filter = function () {
-            vm.displayedResources = [];
-            vm.resources.forEach(function (resource: Resource) {
-                let match = true;
-                vm.filteredFields.forEach(function (field: string) {
-                    let internalMatch = vm.filters.filtered[field].length == 0;
-                    vm.filters.filtered[field].forEach(function ({name}: Filter) {
-                        internalMatch = internalMatch || resource[field].includes(name);
-                    });
-                    match = match && internalMatch;
-                });
-                if (match) {
-                    vm.displayedResources.push(resource);
-                }
-            });
-
-            Utils.safeApply($scope);
-        };
-
-        $scope.$watch(() => vm.filters.filtered.document_types.length, filter);
-        $scope.$watch(() => vm.filters.filtered.levels.length, filter);
-        $scope.$watch(() => vm.filters.filtered.source.length, filter);
-
-
-        $scope.$on('search', function () {
-            initSearch();
-            Utils.safeApply($scope);
-        });
-
-        // $scope.ws.onmessage = (message) => {
-        //     const {event, state, data, status, error} = JSON.parse(message.data);
-        //     if ("ok" !== status) {
-        //         vm.loaders[error.source] = false;
-        //         Utils.safeApply($scope);
-        //         throw JSON.parse(message.data).error;
-        //     }
-        //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-        // };
-
-        const eventResponses: EventResponses = {
-            search_Result: function (frame) {
-                vm.resources = [...vm.resources, ...frame.data.resources];
-                vm.resources = vm.resources.sort((a, b) => a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
-                frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
-                filter();
-                frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
-                vm.loaders[frame.data.source] = false;
-                Utils.safeApply($scope);
-            }
-        };
-        vm.getSourcesLength = function () {
-            return Object.keys(vm.loaders).length;
-        };
-
-        vm.formatClassName = (className) => className.replace(new RegExp("\\.", 'g'), '-');
-
-        vm.isLoading = function () {
-            let count = 0;
-            let loaders = Object.keys(vm.loaders);
-            loaders.forEach((loader: string) => {
-                if (vm.loaders[loader]) {
-                    count++;
-                }
-            });
-            return count > 0;
-        };
-
-        vm.getAdvancedSearchField = function () {
-            return Object.keys($scope.mc.search.advanced.values);
-        };
-
-        vm.emptyAdvancedSearch = function () {
-            let empty = true;
-            Object.keys($scope.mc.search.advanced.values).forEach((field: string) => {
-                empty = empty && ($scope.mc.search.advanced.values[field].value.trim().length === 0)
-            });
-
-            return empty;
-        };
-
-        vm.showFilter = function () {
-            vm.displayFilter = !vm.displayFilter;
-        }
-    }]);
+    Controller]);
