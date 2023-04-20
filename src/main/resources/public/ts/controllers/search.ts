@@ -1,14 +1,16 @@
-import {model, ng} from 'entcore';
-import {MainController, MainScope} from './main'
+import {idiom as lang, ng, toasts} from 'entcore';
+import {MainScope} from './main'
 import {Filter, Frame, Resource} from "../model";
 import {IIntervalService, ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
 import {signetService} from "../services/signet.service";
 import {Utils} from "../utils/Utils";
-import {FavoriteService, ITextbookService} from "../services";
+import {ISearchService} from "../services/search.service";
 
 declare let window: any;
+declare var mediacentreUpdateFrequency: number;
+
 interface IViewModel extends ng.IController {
     signets: Signets;
     width: number;
@@ -23,6 +25,7 @@ interface IViewModel extends ng.IController {
         filtered: { document_types: Filter[], levels: Filter[], source: Filter[] }
     };
     filteredFields: string[];
+    // query: string;
 
     getSourcesLength(): number;
     formatClassName(className: string): string;
@@ -32,6 +35,7 @@ interface IViewModel extends ng.IController {
     showFilter(): void;
     search_Result(frame: Frame): void;
     initSources(value: boolean); //todo typage
+    fetchSearch(filteredResources?: Resource[]): Promise<void>;
 }
 
 interface IHomeScope extends ng.IScope {
@@ -41,6 +45,7 @@ interface IHomeScope extends ng.IScope {
 
 class Controller implements IViewModel {
     mainScope: MainScope;
+    updateFrequency: number;
     displayFilter: boolean;
     displayedResources: Resource[];
     filteredFields: string[];
@@ -51,14 +56,20 @@ class Controller implements IViewModel {
     signets: Signets;
     sources: any;
     width: number;
+    // query: string;
 
     constructor(private $scope: IHomeScope,
-                private $location: ILocationService) {
+                private $location: ILocationService,
+                private searchService : ISearchService,
+                private $interval: IIntervalService) {
         this.$scope.vm = this;
         this.mainScope = (<MainScope> this.$scope.$parent);
     }
 
     async $onInit() {
+        this.updateFrequency = mediacentreUpdateFrequency;
+        // this.query; //todo
+
         if (this.mainScope.mc.search.plain_text.text.trim().length === 0
             && Object.keys(this.mainScope.mc.search.advanced.values).length === 0) {
             this.$location.path('/');
@@ -72,15 +83,19 @@ class Controller implements IViewModel {
         this.initSearch();
         this.loaders = this.initSources(true);
 
-        this.$scope.$watch(() => this.filters.filtered.document_types.length, this.filter);
-        this.$scope.$watch(() => this.filters.filtered.levels.length, this.filter);
-        this.$scope.$watch(() => this.filters.filtered.source.length, this.filter);
+        // this.$scope.$watch(() => this.filters.filtered.document_types.length, this.filter);
+        // this.$scope.$watch(() => this.filters.filtered.levels.length, this.filter);
+        // this.$scope.$watch(() => this.filters.filtered.source.length, this.filter);
 
         let viewModel: IViewModel = this;
         let mainScopeModel : MainScope = this.mainScope;
         this.$scope.$on('search', function () {
             viewModel.vm.initSearch();
         });
+
+        this.$interval(async (): Promise<void> => {
+            await this.fetchSearch();
+        }, this.updateFrequency, 0, false);
     }
 
     initSources = (value: boolean) => {
@@ -101,27 +116,30 @@ class Controller implements IViewModel {
 
         this.resources = [];
         this.signets.all = [];
-        if(!!this.mainScope.mc.search.plain_text.text) {
-            let {data} = await signetService.searchMySignet(this.mainScope.mc.search.plain_text.text);
-            this.signets.formatSignets(data);
-            this.signets.formatSharedSignets(this.resources);
-        } else {
-            let {data} = await signetService.advancedSearchMySignet(this.mainScope.mc.search.advanced.values);
-            this.signets.formatSignets(data);
-            this.signets.formatSharedSignets(this.resources);
-        }
+        this.fetchSearch();
+        // if(!!this.mainScope.mc.search.plain_text.text) {
+            // let {data} = await signetService.searchMySignet(this.mainScope.mc.search.plain_text.text);
+            // this.signets.formatSignets(data);
+            // this.signets.formatSharedSignets(this.resources);
+        // } else {
+            // let {data} = await signetService.advancedSearchMySignet(this.mainScope.mc.search.advanced.values);
+            // this.signets.formatSignets(data);
+            // this.signets.formatSharedSignets(this.resources);
+        // }
         this.filter(this.resources);
         Utils.safeApply(this.$scope);
     };
 
-    fetchSearch = (filteredResources?: Resource[]) => {
+    fetchSearch = async (filteredResources?: Resource[]): Promise<void> => {
         try {
-            let favoriteResources: Array<Resource> = await this.favoriteService.get();
-            this.addFavoriteFilter(favoriteResources);
-            this.filter(favoriteResources);
+            let searchResources: Array<Resource> = await this.searchService.get(this.generatePlainTextSearchBody(this.mainScope.mc.search.plain_text.text));
+            console.log(searchResources);
+            // this.addFavoriteFilter(searchResources);
+            this.filter(searchResources);
+            Utils.safeApply(this.$scope);
         } catch (e) {
             console.error("An error has occurred during fetching favorite ", e);
-            toasts.warning(lang.translate("mediacentre.error.favorite.retrieval"));
+            toasts.warning(lang.translate("mediacentre.error.search.retrieval"));
         }
     }
 
@@ -140,13 +158,13 @@ class Controller implements IViewModel {
                 this.displayedResources.push(resource);
             }
         });
-
         Utils.safeApply(this.$scope);
     };
 
     search_Result = (frame) => {
         this.resources = [...this.resources, ...frame.data.resources];
-        this.resources = this.resources.sort((a, b) => a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
+        this.resources = this.resources.sort((a, b) => a.title.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
         frame.data.resources.forEach((resource) => addFilters(this.filteredFields, this.filters.initial, resource));
         this.filter(this.resources);
         frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
@@ -188,9 +206,21 @@ class Controller implements IViewModel {
         this.displayFilter = !this.displayFilter;
     }
 
+    private generatePlainTextSearchBody = (query: string): object => {
+        let plainTextBody = {
+            state: "PLAIN_TEXT",
+            data: {
+                query: query
+            },
+            event: "search",
+            sources: ["fr.openent.mediacentre.source.GAR", "fr.openent.mediacentre.source.Moodle", "fr.openent.mediacentre.source.PMB", "fr.openent.mediacentre.source.Signet"]
+        }
+        return plainTextBody;
+    };
+
     $onDestroy(): void {
     }
 }
 
-export const searchController = ng.controller('SearchController', ['$scope', '$location',
-    Controller]);
+export const searchController = ng.controller('SearchController', ['$scope', '$location', 'SearchService',
+    '$interval', Controller]);

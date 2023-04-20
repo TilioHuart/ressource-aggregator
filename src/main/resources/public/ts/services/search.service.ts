@@ -3,15 +3,15 @@ import http, {AxiosResponse} from 'axios';
 import {IResourceResponse, Resource} from "../model";
 
 export interface ISearchService {
-    get(): Promise<Array<Resource>>;
+    get(query: object): Promise<Array<Resource>>;
 }
 
 export const searchService: ISearchService = {
-    get: async (): Promise<Array<Resource>> => {
-        return http.get(`/mediacentre/textbooks`)
-            .then((response: AxiosResponse) => response.data.data.textbooks.map((resource: IResourceResponse) => new Resource().build(resource)));
+    get: async (query: object): Promise<Array<Resource>> => {
+        let body = {jsondata : query};
+        return http.post(`/mediacentre/search`, body)
+            .then((response: AxiosResponse) => response.data.data.map((resource: IResourceResponse) => new Resource().build(resource)));
     }
 };
 
-export const SearchService = ng.service('SearchService', (): ISearchService => export const searchService: ISearchService = {
-);
+export const SearchService = ng.service('SearchService', (): ISearchService => searchService);
