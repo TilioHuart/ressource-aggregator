@@ -34,7 +34,7 @@ interface IViewModel extends ng.IController {
     getAdvancedSearchField(): string[];
     emptyAdvancedSearch(): boolean;
     showFilter(): void;
-    search_Result(frame: Frame): void;
+    search_Result(resources: Resource[]): void;
     initSources(value: boolean); //todo typage
     fetchSearch(filteredResources?: Resource[]): Promise<void>;
 }
@@ -118,7 +118,7 @@ class Controller implements IViewModel {
 
         this.resources = [];
         this.signets.all = [];
-        this.fetchSearch();
+        await this.fetchSearch();
         // if(!!this.mainScope.mc.search.plain_text.text) {
             // let {data} = await signetService.searchMySignet(this.mainScope.mc.search.plain_text.text);
             // this.signets.formatSignets(data);
@@ -136,8 +136,8 @@ class Controller implements IViewModel {
         try {
             let searchResources: Array<Resource> = await this.searchService.get(this.generatePlainTextSearchBody(this.mainScope.mc.search.plain_text.text));
             console.log(searchResources);
-            // this.addFavoriteFilter(searchResources);
-            this.filter(searchResources);
+            // this.filter(searchResources);
+            this.search_Result(searchResources);
             Utils.safeApply(this.$scope);
         } catch (e) {
             console.error("An error has occurred during fetching favorite ", e);
@@ -163,14 +163,14 @@ class Controller implements IViewModel {
         Utils.safeApply(this.$scope);
     };
 
-    search_Result = (frame) => {
-        this.resources = [...this.resources, ...frame.data.resources];
+    search_Result = (resources: Resource[]) => {
+        this.resources = [...this.resources, ...resources];
         this.resources = this.resources.sort((a, b) => a.title.normalize('NFD')
             .replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
-        frame.data.resources.forEach((resource) => addFilters(this.filteredFields, this.filters.initial, resource));
+        resources.forEach((resource) => addFilters(this.filteredFields, this.filters.initial, resource));
         this.filter(this.resources);
-        frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
-        this.loaders[frame.data.source] = false;
+        resources = resources.sort((a, b) => a.title.localeCompare(b.title));
+        // this.loaders[frame.data.source] = false; //todo
         Utils.safeApply(this.$scope);
     }
 
@@ -213,6 +213,17 @@ class Controller implements IViewModel {
             state: "PLAIN_TEXT",
             data: {
                 query: query
+            },
+            event: "search",
+            sources: ["fr.openent.mediacentre.source.GAR", "fr.openent.mediacentre.source.Moodle", "fr.openent.mediacentre.source.PMB", "fr.openent.mediacentre.source.Signet"]
+        };
+    };
+
+    private generateAdvancedSearchBody = (query: {title, authors, editors, disciplines, levels}, sources: String[]): object => {
+        return {
+            state: "PLAIN_TEXT",
+            data: {
+
             },
             event: "search",
             sources: ["fr.openent.mediacentre.source.GAR", "fr.openent.mediacentre.source.Moodle", "fr.openent.mediacentre.source.PMB", "fr.openent.mediacentre.source.Signet"]
