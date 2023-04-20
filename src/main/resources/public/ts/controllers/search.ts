@@ -1,10 +1,9 @@
-import {idiom as lang, ng, toasts} from 'entcore';
+import {idiom, ng, toasts} from 'entcore';
 import {MainScope} from './main'
 import {Filter, Frame, Resource} from "../model";
 import {IIntervalService, ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
-import {signetService} from "../services/signet.service";
 import {Utils} from "../utils/Utils";
 import {ISearchService} from "../services/search.service";
 
@@ -26,6 +25,8 @@ interface IViewModel extends ng.IController {
     };
     filteredFields: string[];
     // query: string;
+
+    lang: typeof idiom;
 
     getSourcesLength(): number;
     formatClassName(className: string): string;
@@ -57,6 +58,7 @@ class Controller implements IViewModel {
     sources: any;
     width: number;
     // query: string;
+    lang: typeof idiom = idiom;
 
     constructor(private $scope: IHomeScope,
                 private $location: ILocationService,
@@ -93,9 +95,9 @@ class Controller implements IViewModel {
             viewModel.vm.initSearch();
         });
 
-        this.$interval(async (): Promise<void> => {
-            await this.fetchSearch();
-        }, this.updateFrequency, 0, false);
+        // this.$interval(async (): Promise<void> => {
+        //     await this.fetchSearch();
+        // }, this.updateFrequency, 0, false);
     }
 
     initSources = (value: boolean) => {
@@ -139,7 +141,7 @@ class Controller implements IViewModel {
             Utils.safeApply(this.$scope);
         } catch (e) {
             console.error("An error has occurred during fetching favorite ", e);
-            toasts.warning(lang.translate("mediacentre.error.search.retrieval"));
+            toasts.warning(this.lang.translate("mediacentre.error.search.retrieval"));
         }
     }
 
@@ -207,15 +209,14 @@ class Controller implements IViewModel {
     }
 
     private generatePlainTextSearchBody = (query: string): object => {
-        let plainTextBody = {
+        return {
             state: "PLAIN_TEXT",
             data: {
                 query: query
             },
             event: "search",
             sources: ["fr.openent.mediacentre.source.GAR", "fr.openent.mediacentre.source.Moodle", "fr.openent.mediacentre.source.PMB", "fr.openent.mediacentre.source.Signet"]
-        }
-        return plainTextBody;
+        };
     };
 
     $onDestroy(): void {
