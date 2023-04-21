@@ -114,7 +114,7 @@ class Controller implements IViewModel {
         this.signets.all = [];
         await this.fetchSearch();
 
-        this.filter(this.resources);
+        // this.filter(this.resources);
         Utils.safeApply(this.$scope);
     };
 
@@ -122,8 +122,8 @@ class Controller implements IViewModel {
         try {
             let searchResources: Array<Resource> = await this.searchService.get(this.generatePlainTextSearchBody(this.mainScope.mc.search.plain_text.text));
             console.log(searchResources);
-            // this.filter(searchResources);
             this.search_Result(searchResources);
+            this.filter(searchResources);
             Utils.safeApply(this.$scope);
         } catch (e) {
             console.error("An error has occurred during fetching favorite ", e);
@@ -155,8 +155,8 @@ class Controller implements IViewModel {
             .replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
         resources.forEach((resource) => addFilters(this.filteredFields, this.filters.initial, resource));
         this.filter(this.resources);
-        // this.resources = resources.sort((a, b) => a.title.localeCompare(b.title));
-        this.loaders.forEach((loader: any) => loader.data.source = false); //todo
+        this.initSources(false);
+        this.loaders = this.resources.length == 0 ? [] : this.initSources(true);
         Utils.safeApply(this.$scope);
     }
 
@@ -201,7 +201,7 @@ class Controller implements IViewModel {
                 query: query
             },
             event: "search",
-            sources: ["fr.openent.mediacentre.source.GAR", "fr.openent.mediacentre.source.Moodle", "fr.openent.mediacentre.source.PMB", "fr.openent.mediacentre.source.Signet"]
+            sources: window.sources
         };
     };
 
