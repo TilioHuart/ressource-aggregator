@@ -9,7 +9,7 @@
                 <div class="advanced-search-fields">
                     <div class="cell field" ng-repeat="field in vm.getAdvancedSearchField()">
                     <span ng-if="mc.search.advanced.values[field].value.trim() !== ''">
-                        <strong>[[ idiom.translate('mediacentre.advanced.name.' + field) ]]</strong> : [[ mc.search.advanced.values[field].value ]]
+                        <strong>[[ vm.lang.translate('mediacentre.advanced.name.' + field) ]]</strong> : [[ mc.search.advanced.values[field].value ]]
                     </span>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         <div class="row">
                             <multi-combo ng-repeat="filter in vm.filteredFields"
                                          ng-if="vm.filters.initial[filter].length > 0"
-                                         title="[[ idiom.translate('mediacentre.search.filter.' + filter) ]]"
+                                         title="[[ vm.lang.translate('mediacentre.search.filter.' + filter) ]]"
                                          combo-model="vm.filters.initial[filter]"
                                          search-on="name"
                                          order-by="name"
@@ -65,7 +65,7 @@
     </div>
     <div class="no-result eight centered horizontal-spacing" ng-show="!vm.isLoading() && vm.resources.length === 0">
         <div class="six">
-            <img src="/mediacentre/public/img/no-result.svg" alt="[[ idiom.translate('mediacentre.no-result.alt') ]]">
+            <img src="/mediacentre/public/img/no-result.svg" alt="[[ vm.lang.translate('mediacentre.no-result.alt') ]]">
         </div>
         <div class="six">
             <i18n>mediacentre.no-result</i18n>

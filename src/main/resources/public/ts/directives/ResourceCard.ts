@@ -36,8 +36,12 @@ export const ResourceCard = ng.directive('resourceCard',
                     return v.toString(16)
                 });
                 /*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
-                $scope.ngModel.hash = "fr.openent.mediacentre.source.Signet" === $scope.ngModel.source ? hashCode(signetId) :
-                    hashCode($scope.ngModel.id);
+                if ("fr.openent.mediacentre.source.Signet" === $scope.ngModel.source
+                    || !$scope.ngModel.hash && !$scope.ngModel.id) {
+                    $scope.ngModel.hash = hashCode(signetId);
+                } else if (!$scope.ngModel.hash) {
+                    hashCode($scope.ngModel.id)
+                }
                 $scope.show = {
                     toolip: false,
                     loader: true
