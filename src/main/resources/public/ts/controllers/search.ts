@@ -34,7 +34,7 @@ interface IViewModel extends ng.IController {
     emptyAdvancedSearch(): boolean;
     showFilter(): void;
     search_Result(resources: Resource[]): void;
-    initSources(value: boolean); //todo typage
+    initSources(value: boolean);
     fetchSearch(filteredResources?: Resource[]): Promise<void>;
     initSearch(): void;
 }
@@ -114,7 +114,6 @@ class Controller implements IViewModel {
         this.signets.all = [];
         await this.fetchSearch();
 
-        // this.filter(this.resources);
         Utils.safeApply(this.$scope);
     };
 
