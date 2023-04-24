@@ -1,11 +1,12 @@
 import {idiom, ng, toasts} from 'entcore';
 import {MainScope} from './main'
-import {Filter, Frame, Resource} from "../model";
+import {Filter, Resource} from "../model";
 import {IIntervalService, ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {ISearchService} from "../services/search.service";
+import {AdvancedSearchData, PlainTextSearchData} from "../model/searchData.models";
 
 declare let window: any;
 declare var mediacentreUpdateFrequency: number;
@@ -24,7 +25,7 @@ interface IViewModel extends ng.IController {
         filtered: { document_types: Filter[], levels: Filter[], source: Filter[] }
     };
     filteredFields: string[];
-
+    searchBody: AdvancedSearchData | PlainTextSearchData;
     lang: typeof idiom;
 
     getSourcesLength(): number;
@@ -36,7 +37,7 @@ interface IViewModel extends ng.IController {
     search_Result(resources: Resource[]): void;
     initSources(value: boolean);
     fetchSearch(filteredResources?: Resource[]): Promise<void>;
-    initSearch(): void;
+    initSearch(state?: string, data?: AdvancedSearchData|PlainTextSearchData, sources?: string[]): void;
 }
 
 interface IHomeScope extends ng.IScope {
@@ -57,6 +58,7 @@ class Controller implements IViewModel {
     signets: Signets;
     sources: any;
     width: number;
+    searchBody: AdvancedSearchData | PlainTextSearchData;
     lang: typeof idiom = idiom;
 
     constructor(private $scope: IHomeScope,
@@ -69,6 +71,7 @@ class Controller implements IViewModel {
 
     async $onInit() {
         this.updateFrequency = mediacentreUpdateFrequency;
+        this.searchBody = {};
 
         if (this.mainScope.mc.search.plain_text.text.trim().length === 0
             && Object.keys(this.mainScope.mc.search.advanced.values).length === 0) {
@@ -85,8 +88,8 @@ class Controller implements IViewModel {
 
         let viewModel: IViewModel = this;
         let mainScopeModel : MainScope = this.mainScope;
-        this.$scope.$on('search', function () {
-            viewModel.initSearch();
+        this.$scope.$on('search', function (state, source) {
+            viewModel.initSearch(source.state, source.data, source.sources);
         });
 
         this.$interval(async (): Promise<void> => {
@@ -100,7 +103,7 @@ class Controller implements IViewModel {
         return sources;
     }
 
-    initSearch = async () => {
+    initSearch = async (state?: string, data?: AdvancedSearchData|PlainTextSearchData, sources?: string[]) => {
         this.loaders = this.initSources(true);
         this.sources = this.initSources(false);
         this.displayedResources = [];
@@ -112,6 +115,17 @@ class Controller implements IViewModel {
 
         this.resources = [];
         this.signets.all = [];
+        switch (state) {
+            case ('PLAIN_TEXT'):
+                this.searchBody = data instanceof PlainTextSearchData ? this.generatePlainTextSearchBody(data) : {};
+                break;
+            case ('ADVANCED'):
+                this.searchBody = data instanceof AdvancedSearchData ? this.generateAdvancedSearchBody(data, sources) : {};
+                break;
+            default:
+                this.searchBody = {};
+                break;
+        }
         await this.fetchSearch();
 
         Utils.safeApply(this.$scope);
@@ -119,7 +133,7 @@ class Controller implements IViewModel {
 
     fetchSearch = async (filteredResources?: Resource[]): Promise<void> => {
         try {
-            let searchResources: Array<Resource> = await this.searchService.get(this.generatePlainTextSearchBody(this.mainScope.mc.search.plain_text.text));
+            let searchResources: Array<Resource> = await this.searchService.get(this.searchBody);
             console.log(searchResources);
             this.search_Result(searchResources);
             this.filter(searchResources);
@@ -193,25 +207,21 @@ class Controller implements IViewModel {
         this.displayFilter = !this.displayFilter;
     }
 
-    private generatePlainTextSearchBody = (query: string): object => {
+    private generatePlainTextSearchBody = (query: PlainTextSearchData): object => {
         return {
             state: "PLAIN_TEXT",
-            data: {
-                query: query
-            },
+            data: query,
             event: "search",
             sources: window.sources
         };
     };
 
-    private generateAdvancedSearchBody = (query: {title, authors, editors, disciplines, levels}, sources: String[]): object => {
+    private generateAdvancedSearchBody = (query: AdvancedSearchData, sources: String[]): object => {
         return {
-            state: "PLAIN_TEXT",
-            data: {
-
-            },
+            state: "ADVANCED",
+            data: query,
             event: "search",
-            sources: ["fr.openent.mediacentre.source.GAR", "fr.openent.mediacentre.source.Moodle", "fr.openent.mediacentre.source.PMB", "fr.openent.mediacentre.source.Signet"]
+            sources: sources
         };
     };
 

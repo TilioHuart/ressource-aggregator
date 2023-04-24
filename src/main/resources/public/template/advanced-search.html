@@ -8,14 +8,14 @@
             <div class="two centered-text twelve-mobile" ng-if="field.comparator">
                 <select ng-model="mc.search.advanced.values[field.name].comparator">
                     <option value="$or">
-                        [[ idiom.translate('mediacentre.or') ]]
+                        [[ mc.idiom.translate('mediacentre.or') ]]
                     </option>
                     <option value="$and">
-                        [[ idiom.translate('mediacentre.and') ]]
+                        [[ mc.idiom.translate('mediacentre.and') ]]
                     </option>
                 </select>
             </div>
-            <span class="two three-mobile">[[ idiom.translate('mediacentre.advanced.name.' + field.name) ]]:</span>
+            <span class="two three-mobile">[[ mc.idiom.translate('mediacentre.advanced.name.' + field.name) ]]:</span>
             <input class="eight nine-mobile"
                    type="text"
                    ng-enter="mc.advancedSearch()"

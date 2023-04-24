@@ -5,6 +5,7 @@ import {Signet} from "../model/Signet";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
 import {Utils} from "../utils/Utils";
+import {AdvancedSearchData} from "../model/searchData.models";
 
 declare const window: any;
 declare var mediacentreUpdateFrequency: number;
@@ -171,7 +172,7 @@ class Controller implements MainController {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);
 			this.$timeout(() => {
-				this.$scope.$broadcast('search', {state, data});
+				this.$scope.$broadcast('search', {state, data, sources: sources});
 			}, 300);
 		};
 
@@ -203,28 +204,38 @@ class Controller implements MainController {
 		};
 
 		advancedSearch = () => {
-			const {values} = this.search.advanced;
-			let data = {};
-			this.search.advanced.fields.forEach((field) => {
-				let t = {};
-				if (values[field.name].value.trim() !== '') {
-					t[field.name] = values[field.name];
-				}
-				data = {
-					...data,
-					...t
-				}
-			});
-			if (Object.keys(data).length === 0) return;
-			let sources: string[] = [];
-			Object.keys(this.search.advanced.sources).forEach(key => {
-				if (this.search.advanced.sources[key]) sources.push(key);
-			});
+			let data = this.getAdvancedSearchData();
+			let sources: string[] = this.getAdvancedSearchSources();
 			this.startResearch('ADVANCED', sources, data);
 			this.search.advanced.show = false;
 		};
 
-		initField = ({name, comparator}) => {
+	private getAdvancedSearchData(): AdvancedSearchData {
+		const {values} = this.search.advanced;
+		let data = {};
+		this.search.advanced.fields.forEach((field) => {
+			let t = {};
+			if (values[field.name].value.trim() !== '') {
+				t[field.name] = values[field.name];
+			}
+			data = {
+				...data,
+				...t
+			}
+		});
+		if (Object.keys(data).length === 0) return;
+		return data;
+	}
+
+	private getAdvancedSearchSources(): string[] {
+		let sources: string[] = [];
+		Object.keys(this.search.advanced.sources).forEach(key => {
+			if (this.search.advanced.sources[key]) sources.push(key);
+		});
+		return sources;
+	}
+
+	initField = ({name, comparator}) => {
 			this.search.advanced.values[name] = {
 				value: '',
 				...comparator ? {comparator: '$or'} : {}
