@@ -89,7 +89,6 @@ class Controller implements IViewModel {
         this.signets = new Signets();
         this.filteredFields = ['document_types', 'levels', 'source'];
 
-        await this.initSearch();
         this.loaders = this.initSources(true);
 
         let viewModel: IViewModel = this;
@@ -123,7 +122,6 @@ class Controller implements IViewModel {
         this.signets.all = [];
         switch (state) {
             case ('PLAIN_TEXT'):
-                console.log(data instanceof PlainTextSearchData);
                 this.searchBody = (new PlainTextSearchData(<IPlainTextSearchData>data) != new PlainTextSearchData({})) ?
                     this.generatePlainTextSearchBody(data) : {};
                 break;
