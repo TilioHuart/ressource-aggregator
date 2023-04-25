@@ -134,6 +134,7 @@ class Controller implements IViewModel {
                 break;
         }
         await this.fetchSearch();
+        this.loaders = this.initSources(false);
 
         Utils.safeApply(this.$scope);
     };
