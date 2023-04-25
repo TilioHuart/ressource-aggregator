@@ -142,7 +142,6 @@ class Controller implements IViewModel {
     fetchSearch = async (filteredResources?: Resource[]): Promise<void> => {
         try {
             let searchResources: Array<Resource> = await this.searchService.get(this.searchBody);
-            console.log(searchResources);
             this.search_Result(searchResources);
             this.filter(searchResources);
             Utils.safeApply(this.$scope);
