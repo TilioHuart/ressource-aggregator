@@ -6,7 +6,13 @@ import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {ISearchService} from "../services/search.service";
-import {AdvancedSearchData, PlainTextSearchData} from "../model/searchData.models";
+import {
+    AdvancedSearchData,
+    PlainTextSearchData,
+    FieldData,
+    IAdvancedSearchData,
+    IPlainTextSearchData
+} from "../model/searchData.models";
 
 declare let window: any;
 declare var mediacentreUpdateFrequency: number;
@@ -37,7 +43,7 @@ interface IViewModel extends ng.IController {
     search_Result(resources: Resource[]): void;
     initSources(value: boolean);
     fetchSearch(filteredResources?: Resource[]): Promise<void>;
-    initSearch(state?: string, data?: AdvancedSearchData|PlainTextSearchData, sources?: string[]): void;
+    initSearch(state?: string, data?: any, sources?: string[]): void;
 }
 
 interface IHomeScope extends ng.IScope {
@@ -83,13 +89,13 @@ class Controller implements IViewModel {
         this.signets = new Signets();
         this.filteredFields = ['document_types', 'levels', 'source'];
 
-        this.initSearch();
+        await this.initSearch();
         this.loaders = this.initSources(true);
 
         let viewModel: IViewModel = this;
         let mainScopeModel : MainScope = this.mainScope;
-        this.$scope.$on('search', function (state, source) {
-            viewModel.initSearch(source.state, source.data, source.sources);
+        this.$scope.$on('search', async function (state, source) {
+            await viewModel.initSearch(source.state, source.data, source.sources);
         });
 
         this.$interval(async (): Promise<void> => {
@@ -103,7 +109,7 @@ class Controller implements IViewModel {
         return sources;
     }
 
-    initSearch = async (state?: string, data?: AdvancedSearchData|PlainTextSearchData, sources?: string[]) => {
+    initSearch = async (state?: string, data?: any, sources?: string[]) => {
         this.loaders = this.initSources(true);
         this.sources = this.initSources(false);
         this.displayedResources = [];
@@ -117,10 +123,13 @@ class Controller implements IViewModel {
         this.signets.all = [];
         switch (state) {
             case ('PLAIN_TEXT'):
-                this.searchBody = data instanceof PlainTextSearchData ? this.generatePlainTextSearchBody(data) : {};
+                console.log(data instanceof PlainTextSearchData);
+                this.searchBody = (new PlainTextSearchData(<IPlainTextSearchData>data) != new PlainTextSearchData({})) ?
+                    this.generatePlainTextSearchBody(data) : {};
                 break;
             case ('ADVANCED'):
-                this.searchBody = data instanceof AdvancedSearchData ? this.generateAdvancedSearchBody(data, sources) : {};
+                this.searchBody = (new AdvancedSearchData(<IAdvancedSearchData>data) != new AdvancedSearchData({})) ?
+                    this.generateAdvancedSearchBody(data, sources) : {};
                 break;
             default:
                 this.searchBody = {};

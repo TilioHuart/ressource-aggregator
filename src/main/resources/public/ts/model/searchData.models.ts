@@ -1,5 +1,5 @@
 export interface IPlainTextSearchData {
-    query: string;
+    query?: string;
 }
 
 export class PlainTextSearchData {
