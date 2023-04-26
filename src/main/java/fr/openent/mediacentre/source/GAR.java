@@ -28,7 +28,6 @@ import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 public class GAR implements Source {
     private final FavoriteService favoriteService = new DefaultFavoriteService();
     private final FavoriteHelper favoriteHelper = new FavoriteHelper();
-    private static final String REGEXP_FORMAT = ".*%s.*";
 
     private final Logger log = LoggerFactory.getLogger(GAR.class);
     private EventBus eb;
@@ -138,12 +137,12 @@ public class GAR implements Source {
                 JsonObject resource = resources.getJsonObject(i);
                 if (checkDuplicateId(resources, ids, duplicateIds, resource)) continue;
                 Integer count = 0;
-                count += getOccurrenceCount(String.format(REGEXP_FORMAT, query.toLowerCase()), resource.getString("title"));
-                count += getOccurrenceCount(String.format(REGEXP_FORMAT, query.toLowerCase()), resource.getString("plain_text"));
-                count += getOccurrenceCount(String.format(REGEXP_FORMAT, query.toLowerCase()), resource.getJsonArray("levels"));
-                count += getOccurrenceCount(String.format(REGEXP_FORMAT, query.toLowerCase()), resource.getJsonArray("disciplines"));
-                count += getOccurrenceCount(String.format(REGEXP_FORMAT, query.toLowerCase()), resource.getJsonArray("editors"));
-                count += getOccurrenceCount(String.format(REGEXP_FORMAT, query.toLowerCase()), resource.getJsonArray("authors"));
+                count += getOccurrenceCount(query, resource.getString("title"));
+                count += getOccurrenceCount(query, resource.getString("plain_text"));
+                count += getOccurrenceCount(query, resource.getJsonArray("levels"));
+                count += getOccurrenceCount(query, resource.getJsonArray("disciplines"));
+                count += getOccurrenceCount(query, resource.getJsonArray("editors"));
+                count += getOccurrenceCount(query, resource.getJsonArray("authors"));
 
                 if (count > 0) {
                     if (!sortedMap.containsKey(count)) {
@@ -183,7 +182,7 @@ public class GAR implements Source {
 
     private Integer getOccurrenceCount(String query, String value) {
         Integer count = 0;
-        Pattern regexp = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+        Pattern regexp = Pattern.compile(query.replace("*", ".*"), Pattern.CASE_INSENSITIVE);
         Matcher matcher = regexp.matcher(value);
         while (matcher.find()) {
             count++;

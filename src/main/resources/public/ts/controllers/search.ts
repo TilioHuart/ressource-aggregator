@@ -219,7 +219,7 @@ class Controller implements IViewModel {
             state: "PLAIN_TEXT",
             data: query,
             event: "search",
-            sources: []
+            sources: window.sources
         };
     };
 
