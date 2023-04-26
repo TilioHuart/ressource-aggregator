@@ -25,7 +25,7 @@ export interface MainScope extends IRootScopeService {
 	displayDate (dateToFormat: Date): string;
 	// ws: Socket;
 	loaders: any;
-	idiom: any;
+	idiom: typeof idiom;
 	signet: Signet;
 	safeApply(): void;
 	redirectTo(path: string): void;
@@ -92,7 +92,7 @@ class Controller implements MainController {
 	levels: Labels;
 	// ws: Socket;
 	loaders: any;
-	idiom: any;
+	idiom: typeof idiom = idiom;
 	signet: Signet;
 
 
@@ -171,7 +171,6 @@ class Controller implements MainController {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);
 			this.$timeout(() => {
-				// this.ws.send(new Frame('search', state, sources, data));
 				this.$scope.$broadcast('search', {state, data});
 			}, 300);
 		};

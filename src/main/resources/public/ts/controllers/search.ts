@@ -1,21 +1,16 @@
-import {model, ng} from 'entcore';
-import {MainController} from './main'
+import {idiom, ng, toasts} from 'entcore';
+import {MainScope} from './main'
 import {Filter, Frame, Resource} from "../model";
-import {ILocationService} from "angular";
+import {IIntervalService, ILocationService} from "angular";
 import {addFilters} from "../utils";
 import {Signets} from "../model/Signet";
-import {signetService} from "../services/signet.service";
 import {Utils} from "../utils/Utils";
+import {ISearchService} from "../services/search.service";
 
 declare let window: any;
+declare var mediacentreUpdateFrequency: number;
 
-function initSources(value: boolean) {
-    const sources = {};
-    window.sources.forEach((source) => sources[source] = value);
-    return sources;
-}
-
-interface ViewModel {
+interface IViewModel extends ng.IController {
     signets: Signets;
     width: number;
     mobile: boolean;
@@ -30,145 +25,197 @@ interface ViewModel {
     };
     filteredFields: string[];
 
+    lang: typeof idiom;
+
     getSourcesLength(): number;
-
     formatClassName(className: string): string;
-
-    filter(item: Resource);
-
     isLoading(): boolean;
-
     getAdvancedSearchField(): string[];
-
     emptyAdvancedSearch(): boolean;
-
     showFilter(): void;
+    search_Result(resources: Resource[]): void;
+    initSources(value: boolean);
+    fetchSearch(filteredResources?: Resource[]): Promise<void>;
+    initSearch(): Promise<void>;
 }
 
-interface EventResponses {
-    search_Result(frame: Frame): void;
+interface IHomeScope extends ng.IScope {
+    vm: IViewModel;
+    mainScope: MainScope;
 }
 
-export const searchController = ng.controller('SearchController', ['$scope', '$location',
-    function ($scope: MainController, $location: ILocationService) {
-        if ($scope.mc.search.plain_text.text.trim().length === 0
-            && Object.keys($scope.mc.search.advanced.values).length === 0) {
-            $location.path('/');
+class Controller implements IViewModel {
+    mainScope: MainScope;
+    updateFrequency: number;
+    displayFilter: boolean;
+    displayedResources: Resource[];
+    filteredFields: string[];
+    filters: { initial: { document_types: Filter[]; levels: Filter[]; source: Filter[] }; filtered: { document_types: Filter[]; levels: Filter[]; source: Filter[] } };
+    loaders: any;
+    mobile: boolean;
+    resources: Resource[];
+    signets: Signets;
+    sources: any;
+    width: number;
+    lang: typeof idiom = idiom;
+
+    constructor(private $scope: IHomeScope,
+                private $location: ILocationService,
+                private searchService : ISearchService,
+                private $interval: IIntervalService) {
+        this.$scope.vm = this;
+        this.mainScope = (<MainScope> this.$scope.$parent);
+    }
+
+    async $onInit() {
+        this.updateFrequency = mediacentreUpdateFrequency;
+
+        if (this.mainScope.mc.search.plain_text.text.trim().length === 0
+            && Object.keys(this.mainScope.mc.search.advanced.values).length === 0) {
+            this.$location.path('/');
         }
-        const vm: ViewModel = this;
-        vm.mobile = screen.width < $scope.mc.screenWidthLimit;
-        vm.displayFilter = !vm.mobile;
-        vm.signets = new Signets();
-        vm.filteredFields = ['document_types', 'levels', 'source'];
 
-        const initSearch = async function () {
-            vm.loaders = initSources(true);
-            vm.sources = initSources(false);
-            vm.displayedResources = [];
+        this.mobile = screen.width < this.mainScope.mc.screenWidthLimit;
+        this.displayFilter = !this.mobile;
+        this.signets = new Signets();
+        this.filteredFields = ['document_types', 'levels', 'source'];
 
-            vm.filters = {
-                initial: {document_types: [], levels: [], source: []},
-                filtered: {document_types: [], levels: [], source: []}
-            };
+        this.initSearch();
 
-            vm.resources = [];
-            vm.signets.all = [];
-            if(!!$scope.mc.search.plain_text.text) {
-                let {data} = await signetService.searchMySignet($scope.mc.search.plain_text.text);
-                vm.signets.formatSignets(data);
-                vm.signets.formatSharedSignets(vm.resources);
-            } else {
-                let {data} = await signetService.advancedSearchMySignet($scope.mc.search.advanced.values);
-                vm.signets.formatSignets(data);
-                vm.signets.formatSharedSignets(vm.resources);
-            }
-            filter();
-        };
-
-        initSearch();
-        vm.loaders = initSources(true);
-
-        const filter = function () {
-            vm.displayedResources = [];
-            vm.resources.forEach(function (resource: Resource) {
-                let match = true;
-                vm.filteredFields.forEach(function (field: string) {
-                    let internalMatch = vm.filters.filtered[field].length == 0;
-                    vm.filters.filtered[field].forEach(function ({name}: Filter) {
-                        internalMatch = internalMatch || resource[field].includes(name);
-                    });
-                    match = match && internalMatch;
-                });
-                if (match) {
-                    vm.displayedResources.push(resource);
-                }
-            });
-
-            Utils.safeApply($scope);
-        };
-
-        $scope.$watch(() => vm.filters.filtered.document_types.length, filter);
-        $scope.$watch(() => vm.filters.filtered.levels.length, filter);
-        $scope.$watch(() => vm.filters.filtered.source.length, filter);
-
-
-        $scope.$on('search', function () {
-            initSearch();
-            Utils.safeApply($scope);
+        let viewModel: IViewModel = this;
+        let mainScopeModel : MainScope = this.mainScope;
+        this.$scope.$on('search', function () {
+            viewModel.initSearch();
         });
 
-        // $scope.ws.onmessage = (message) => {
-        //     const {event, state, data, status, error} = JSON.parse(message.data);
-        //     if ("ok" !== status) {
-        //         vm.loaders[error.source] = false;
-        //         Utils.safeApply($scope);
-        //         throw JSON.parse(message.data).error;
-        //     }
-        //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-        // };
+        this.$interval(async (): Promise<void> => {
+            await this.fetchSearch();
+        }, this.updateFrequency, 0, false);
+    }
 
-        const eventResponses: EventResponses = {
-            search_Result: function (frame) {
-                vm.resources = [...vm.resources, ...frame.data.resources];
-                vm.resources = vm.resources.sort((a, b) => a.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
-                frame.data.resources.forEach((resource) => addFilters(vm.filteredFields, vm.filters.initial, resource));
-                filter();
-                frame.data.resources = frame.data.resources.sort((a, b) => a.title.localeCompare(b.title));
-                vm.loaders[frame.data.source] = false;
-                Utils.safeApply($scope);
-            }
-        };
-        vm.getSourcesLength = function () {
-            return Object.keys(vm.loaders).length;
+    initSources = (value: boolean): object => {
+        const sources = {};
+        window.sources.forEach((source) => sources[source] = value);
+        return sources;
+    }
+
+    initSearch = async (): Promise<void> => {
+        this.loaders = this.initSources(true);
+        this.sources = this.initSources(false);
+        this.displayedResources = [];
+
+        this.filters = {
+            initial: {document_types: [], levels: [], source: []},
+            filtered: {document_types: [], levels: [], source: []}
         };
 
-        vm.formatClassName = (className) => className.replace(new RegExp("\\.", 'g'), '-');
+        this.resources = [];
+        this.signets.all = [];
+        await this.fetchSearch();
 
-        vm.isLoading = function () {
-            let count = 0;
-            let loaders = Object.keys(vm.loaders);
-            loaders.forEach((loader: string) => {
-                if (vm.loaders[loader]) {
-                    count++;
-                }
-            });
-            return count > 0;
-        };
+        Utils.safeApply(this.$scope);
+    };
 
-        vm.getAdvancedSearchField = function () {
-            return Object.keys($scope.mc.search.advanced.values);
-        };
-
-        vm.emptyAdvancedSearch = function () {
-            let empty = true;
-            Object.keys($scope.mc.search.advanced.values).forEach((field: string) => {
-                empty = empty && ($scope.mc.search.advanced.values[field].value.trim().length === 0)
-            });
-
-            return empty;
-        };
-
-        vm.showFilter = function () {
-            vm.displayFilter = !vm.displayFilter;
+    fetchSearch = async (filteredResources?: Resource[]): Promise<void> => {
+        try {
+            let searchResources: Array<Resource> = await this.searchService.get(this.generatePlainTextSearchBody(this.mainScope.mc.search.plain_text.text));
+            this.search_Result(searchResources);
+            this.filter(searchResources);
+            Utils.safeApply(this.$scope);
+        } catch (e) {
+            console.error("An error has occurred during fetching favorite ", e);
+            toasts.warning(this.lang.translate("mediacentre.error.search.retrieval"));
         }
-    }]);
+    }
+
+    private filter = (searchResources: Array<Resource>): void => {
+        this.displayedResources = [];
+        searchResources.forEach((resource: Resource) => {
+            let match = true;
+            this.filteredFields.forEach((field: string) => {
+                let internalMatch = this.filters.filtered[field].length == 0;
+                this.filters.filtered[field].forEach(({name}: Filter) => {
+                    internalMatch = internalMatch || resource[field].includes(name);
+                });
+                match = match && internalMatch;
+            });
+            if (match) {
+                this.displayedResources.push(resource);
+            }
+        });
+        Utils.safeApply(this.$scope);
+    };
+
+    search_Result = (resources: Resource[]): void => {
+        this.resources = resources;
+        this.resources = this.resources.sort((a: Resource, b: Resource) => a.title.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, "").localeCompare(b.title.normalize('NFD').replace(/[\u0300-\u036f]/g, "")));
+        resources.forEach((resource: Resource) => addFilters(this.filteredFields, this.filters.initial, resource));
+        this.filter(this.resources);
+        this.initSources(false);
+        this.loaders = this.resources.length == 0 ? [] : this.initSources(true);
+        Utils.safeApply(this.$scope);
+    }
+
+    getSourcesLength = (): number => {
+        return Object.keys(this.loaders).length;
+    };
+
+    formatClassName = (className: string) => className.replace(new RegExp("\\.", 'g'), '-');
+
+    isLoading = (): boolean => {
+        let count: number = 0;
+        let loaders: string[] = Object.keys(this.loaders);
+        loaders.forEach((loader: string) => {
+            if (this.loaders[loader]) {
+                count++;
+            }
+        });
+        return count > 0;
+    };
+
+    getAdvancedSearchField = (): string[] => {
+        return Object.keys(this.mainScope.mc.search.advanced.values);
+    };
+
+    emptyAdvancedSearch = (): boolean => {
+        let empty: boolean = true;
+        Object.keys(this.mainScope.mc.search.advanced.values).forEach((field: string) => {
+            empty = empty && (this.mainScope.mc.search.advanced.values[field].value.trim().length === 0)
+        });
+
+        return empty;
+    };
+
+    showFilter = (): void => {
+        this.displayFilter = !this.displayFilter;
+    }
+
+    private generatePlainTextSearchBody = (query: string): object => {
+        return {
+            state: "PLAIN_TEXT",
+            data: {
+                query: query
+            },
+            event: "search",
+            sources: window.sources
+        };
+    };
+
+    private generateAdvancedSearchBody = (query: {title, authors, editors, disciplines, levels}, sources: String[]): object => {
+        return {
+            state: "PLAIN_TEXT",
+            data: {
+
+            },
+            event: "search",
+            sources: sources
+        };
+    };
+
+    $onDestroy(): void {
+    }
+}
+
+export const searchController = ng.controller('SearchController', ['$scope', '$location', 'SearchService',
+    '$interval', Controller]);

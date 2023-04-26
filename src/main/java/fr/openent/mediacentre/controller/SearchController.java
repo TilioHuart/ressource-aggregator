@@ -1,13 +1,17 @@
 package fr.openent.mediacentre.controller;
 
+import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.helper.APIHelper;
 import fr.openent.mediacentre.helper.SearchHelper;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
+import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
+import fr.wseduc.webutils.http.Renders;
+import fr.wseduc.webutils.request.RequestUtils;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
@@ -34,24 +38,36 @@ public class SearchController extends ControllerHelper {
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getSearch(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> {
-            if (!request.params().contains("jsondata")) {
+            if (user == null) {
+                log.error("User not found in session.");
+                Renders.unauthorized(request);
+            }
+
+            if (!request.params().contains(Field.JSONDATA)) {
                 badRequest(request);
+                String message = String.format("[Mediacentre@%s::getSearch] An error has occurred" +
+                        " during research fetch: missing param in request", this.getClass().getSimpleName());
+                log.error(message);
                 return;
             }
-            JsonObject jsondata = new JsonObject(request.getParam("jsondata"));
 
-            if (       !jsondata.containsKey("data")
-                    || !jsondata.containsKey("state")
-                    || !jsondata.containsKey("event")
-                    || !jsondata.containsKey("sources")
+            JsonObject jsondata = new JsonObject(request.getParam(Field.JSONDATA));
+
+            if (       !jsondata.containsKey(Field.DATA)
+                    || !jsondata.containsKey(Field.STATE)
+                    || !jsondata.containsKey(Field.EVENT)
+                    || !jsondata.containsKey(Field.SOURCES)
             ) {
                 badRequest(request);
+                String message = String.format("[Mediacentre@%s::getSearch] An error has occurred" +
+                        " during research fetch: missing data in request param", this.getClass().getSimpleName());
+                log.error(message);
                 return;
             }
 
-            String state = jsondata.getString("state");
-            JsonArray expectedSources = new JsonArray(jsondata.getJsonArray("sources").toString());
-            JsonObject data = jsondata.getJsonObject("data");
+            String state = jsondata.getString(Field.STATE);
+            JsonArray expectedSources = new JsonArray(jsondata.getJsonArray(Field.SOURCES).toString());
+            JsonObject data = jsondata.getJsonObject(Field.DATA);
             searchHelper.search(state, sources, expectedSources, data, user, new APIHelper(request));
         });
 
