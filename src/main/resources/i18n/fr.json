@@ -116,7 +116,7 @@
   "mediacentre.error.favorite.retrieval": "Erreur lors de la mise à jour des favoris.",
   "mediacentre.error.textbook.retrieval": "Erreur lors de la mise à jour des manuels.",
   "mediacentre.error.signet.retrieval": "Erreur lors de la mise à jour des signets.",
-
+  "mediacentre.error.search.retrieval": "Erreur lors de la mise à jour de la recherche.",
 
   "mediacentre.success.signet.create": "Votre signet a bien été créé !",
   "mediacentre.success.signet.save": "Votre signet a bien été sauvegardé !",
