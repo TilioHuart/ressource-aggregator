@@ -7,7 +7,6 @@ import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
-import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.http.Renders;

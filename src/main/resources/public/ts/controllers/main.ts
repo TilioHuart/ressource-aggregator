@@ -5,6 +5,7 @@ import {Signet} from "../model/Signet";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
 import {Utils} from "../utils/Utils";
+import {AdvancedSearchData} from "../model/searchData.model";
 
 declare const window: any;
 declare var mediacentreUpdateFrequency: number;
@@ -171,7 +172,7 @@ class Controller implements MainController {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);
 			this.$timeout(() => {
-				this.$scope.$broadcast('search', {state, data});
+				this.$scope.$broadcast('search', {state, data, sources: sources});
 			}, 300);
 		};
 
