@@ -7,7 +7,8 @@ import {Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {ISearchService} from "../services/search.service";
 import {SEARCH_TYPE} from "../core/enum/search-type.enum";
-import {AdvancedSearchBody, IAdvancedSearchBody, IPlainTextSearchBody} from "../model/searchBody.model";
+import {AdvancedSearchBody, IAdvancedSearchBody} from "../model/advancedSearchBody.model";
+import {IPlainTextSearchBody, PlainTextSearchBody, PlainTextSearchData} from "../model/plainTextSearchBody.model";
 
 declare let window: any;
 declare var mediacentreUpdateFrequency: number;
@@ -118,11 +119,11 @@ class Controller implements IViewModel {
         switch (state) {
             case (SEARCH_TYPE.PLAIN_TEXT):
                 this.searchBody = !!data.query ?
-                    this.generatePlainTextSearchBody(data) : {};
+                    PlainTextSearchBody.generatePlainTextSearchParam(data, sources) : {};
                 break;
             case (SEARCH_TYPE.ADVANCED):
                 this.searchBody = AdvancedSearchBody.isIAdvancedSearchBody(data) ?
-                    this.generateAdvancedSearchBody(data, sources) : {};
+                    AdvancedSearchBody.generateAdvancedSearchParam(data, sources) : {};
                 break;
             default:
                 this.searchBody = {};
@@ -133,16 +134,18 @@ class Controller implements IViewModel {
     };
 
     fetchSearch = async (filteredResources?: Resource[]): Promise<void> => {
-        try {
-            let searchResources: Array<Resource> = await this.searchService.get(this.searchBody);
-            this.search_Result(searchResources);
-            this.filter(searchResources);
-            this.loaders = this.initSources(false);
-            Utils.safeApply(this.$scope);
-        } catch (e) {
-            console.error("An error has occurred during fetching favorite ", e);
-            this.loaders = this.initSources(false);
-            toasts.warning(this.lang.translate("mediacentre.error.search.retrieval"));
+        if (Object.keys(this.searchBody).length != 0) {
+            try {
+                let searchResources: Array<Resource> = await this.searchService.get(this.searchBody);
+                this.search_Result(searchResources);
+                this.filter(searchResources);
+                this.loaders = this.initSources(false);
+                Utils.safeApply(this.$scope);
+            } catch (e) {
+                console.error("An error has occurred during fetching favorite ", e);
+                this.loaders = this.initSources(false);
+                toasts.warning(this.lang.translate("mediacentre.error.search.retrieval"));
+            }
         }
     }
 
@@ -208,24 +211,6 @@ class Controller implements IViewModel {
     showFilter = (): void => {
         this.displayFilter = !this.displayFilter;
     }
-
-    private generatePlainTextSearchBody = (query: IPlainTextSearchBody): object => {
-        return {
-            state: SEARCH_TYPE.PLAIN_TEXT,
-            data: query,
-            event: "search",
-            sources: window.sources
-        };
-    };
-
-    private generateAdvancedSearchBody = (query: IAdvancedSearchBody, sources: String[]): object => {
-        return {
-            state: SEARCH_TYPE.ADVANCED,
-            data: query,
-            event: "search",
-            sources: sources
-        };
-    };
 
     $onDestroy(): void {
     }

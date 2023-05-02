@@ -1,12 +1,16 @@
 import {ng, toasts} from 'entcore';
 import {Frame, Resource} from '../model';
-import {IIntervalService, ILocationService} from "angular";
+import {IIntervalService, ILocationService, ITimeoutService} from "angular";
 import {Signet, Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {MainScope} from "./main";
-import {FavoriteService, ITextbookService, SignetService} from "../services";
+import {FavoriteService, ISearchService, ITextbookService, SignetService} from "../services";
 import {Label} from "../model/Label";
 import {SignetBody} from "../model/signetBody.model";
+import {SOURCES} from "../core/enum/sources.enum";
+import {SEARCH_TYPE} from "../core/enum/search-type.enum";
+import {IPlainTextSearchData, PlainTextSearchBody, PlainTextSearchData} from "../model/plainTextSearchBody.model";
+
 
 declare var mediacentreUpdateFrequency: number;
 
@@ -20,7 +24,7 @@ interface IHomeViewModel extends ng.IController {
     textbooks: Resource[];
     publicSignets: Resource[];
     orientationSignets: Resource[];
-    displayedResources: Resource[];
+    externalResources: Resource[];
 
     updateFrequency: number;
 
@@ -30,7 +34,7 @@ interface IHomeViewModel extends ng.IController {
     goSignet(): void;
     filterArchivedSignets(signet: any): boolean;
 
-    search_Result(frame: Frame): void;}
+    syncExternalResources(frame: Frame): void;}
 
 interface IHomeScope extends ng.IScope {
     hc: IHomeViewModel;
@@ -47,7 +51,7 @@ class Controller implements IHomeViewModel {
     textbooks: Resource[];
     publicSignets: Resource[];
     orientationSignets: Resource[];
-    displayedResources: Resource[];
+    externalResources: Resource[];
     mainScope: MainScope;
     updateFrequency: number;
 
@@ -55,16 +59,18 @@ class Controller implements IHomeViewModel {
                 private route,
                 private $location: ILocationService,
                 private $interval: IIntervalService,
+                private $timeout: ITimeoutService,
                 private favoriteService: FavoriteService,
                 private textbookService: ITextbookService,
-                private signetService: SignetService) {
+                private signetService: SignetService,
+                private searchService: ISearchService) {
         this.$scope.hc = this;
         this.mainScope = (<MainScope> this.$scope.$parent);
 
         this.textbooks = [];
         this.publicSignets = [];
         this.signets = new Signets();
-        this.displayedResources = [];
+        this.externalResources = [];
         this.mobile = screen.width < this.mainScope.mc.screenWidthLimit;
         this.resourceLimit = this.mobile ? 6 : 12;
         this.signetLimit = this.mobile ? 4 : 8;
@@ -78,22 +84,13 @@ class Controller implements IHomeViewModel {
             await Promise.all([
                 this.syncFavoriteResources(),
                 this.syncTextbooks(),
-                this.syncSignets()
+                this.syncSignets(),
+                this. syncExternalResources()
             ])
             Utils.safeApply(this.$scope);
         } catch (e) {
 
         }
-
-        // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
-
-        // this.$scope.vm.ws.onmessage = (message) => {
-        //     const {event, state, data, status} = JSON.parse(message.data);
-        //     if ("ok" !== status) {
-        //         throw data.error;
-        //     }
-        //     if (event in eventResponses) eventResponses[event](new Frame(event, state, [], data));
-        // };
 
         let viewModel: IHomeViewModel = this;
         let mainScopeModel : MainScope = this.mainScope;
@@ -108,7 +105,8 @@ class Controller implements IHomeViewModel {
         this.$interval(async (): Promise<void> => {
                 await this.syncFavoriteResources(),
                 await this.syncTextbooks(),
-                await this.syncSignets()
+                await this.syncSignets(),
+                await this.syncExternalResources()
         }, this.updateFrequency, 0, false);
 
         Utils.safeApply(this.$scope);
@@ -128,10 +126,16 @@ class Controller implements IHomeViewModel {
         }
     }
 
-    search_Result = (frame) => {
-        this.displayedResources = frame.data.resources;
+    async syncExternalResources(): Promise<void> {
+        this.externalResources = await this.searchService.get(this.generateExternalResourceRequestBody());
         Utils.safeApply(this.$scope);
     }
+
+    private generateExternalResourceRequestBody() {
+        let plainTextSearch: PlainTextSearchData = new PlainTextSearchData().build({query: ".*"});
+        return PlainTextSearchBody.generatePlainTextSearchParam(plainTextSearch.toJson(), [SOURCES.GAR]);
+    }
+
     async syncSignets(): Promise<void> {
         this.publicSignets = this.orientationSignets = [];
         try {
@@ -176,8 +180,12 @@ class Controller implements IHomeViewModel {
     }
 
     seeMyExternalResource = (): void => {
-        // this.$scope.ws.send(new Frame('search', 'PLAIN_TEXT', ['fr.openent.mediacentre.source.GAR'], {"query": ".*"}));
+        let state = SEARCH_TYPE.PLAIN_TEXT;
+        let data: object = this.generateExternalResourceRequestBody();
         this.$location.path(`/search/plain_text`);
+        this.$timeout(() => {
+            this.mainScope.$broadcast('search', {state, data, sources: [SOURCES.GAR]});
+        }, 300);
     };
 
     goSignet = (): void => {
@@ -212,6 +220,6 @@ class Controller implements IHomeViewModel {
     }
 }
 
-export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location', '$interval',
-    'FavoriteService', 'TextbookService', 'SignetService', Controller]);
+export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location', '$interval', '$timeout',
+    'FavoriteService', 'TextbookService', 'SignetService', 'SearchService', Controller]);
 

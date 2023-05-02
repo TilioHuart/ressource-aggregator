@@ -5,7 +5,6 @@ import {Signet} from "../model/Signet";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
 import {Utils} from "../utils/Utils";
-import {AdvancedSearchData} from "../model/searchData.model";
 
 declare const window: any;
 declare var mediacentreUpdateFrequency: number;
