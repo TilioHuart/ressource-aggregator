@@ -2,7 +2,7 @@
     <div ng-include="'/mediacentre/public/template/header.html'"></div>
 
     <!--External resources-->
-    <div class="external horizontal-spacing row vertical-spacing" ng-show="vm.displayedResources.length > 0">
+    <div class="external horizontal-spacing row vertical-spacing" ng-show="vm.externalResources.length > 0">
         <div class="title">
             <h2 class="cell">
                 <i18n>mediacentre.my.external.resources</i18n>
@@ -15,9 +15,9 @@
         </div>
 
         <!--Content-->
-        <div class="external-flex" ng-show="vm.displayedResources.length > 0">
+        <div class="external-flex" ng-show="vm.externalResources.length > 0">
             <div class="external-flex-card">
-                <resource-card ng-repeat="resource in vm.displayedResources | orderBy:'title' track by $index"
+                <resource-card ng-repeat="resource in vm.externalResources | orderBy:'title' track by $index"
                                ng-if="$index < vm.resourceLimit"
                                type="resource"
                                ng-model="resource">
@@ -83,7 +83,7 @@
     </div>
 
     <!--Empty State-->
-    <div class="error" ng-if="vm.displayedResources.length + vm.mainScope.mc.textbooks.length + vm.publicSignets.length + vm.orientationSignets.length == 0">
+    <div class="error" ng-if="vm.externalResources.length + vm.mainScope.mc.textbooks.length + vm.publicSignets.length + vm.orientationSignets.length == 0">
         <img src="/mediacentre/public/img/no-result.svg" class="img_mini"/>
         <h1><i18n>mediacentre.ressources.empty</i18n></h1>
     </div>
