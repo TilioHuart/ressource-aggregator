@@ -11,11 +11,18 @@ public class Field {
     public static final String ID = "id";
     public static final String USER = "user";
     public static final String SOURCE = "source";
+    public static final String SOURCES = "sources";
     public static final String JSONDATA = "jsondata";
     public static final String DATA = "data";
     public static final String STATE = "state";
+    public static final String STATUS = "status";
+    public static final String OK = "ok";
+    public static final String KO = "ko";
+    public static final String ERROR = "error";
     public static final String EVENT = "event";
-    public static final String SOURCES = "sources";
+    public static final String TEXTBOOKS = "textbooks";
+    public static final String TEXTBOOKS_RESULT = "textbooks_Result";
+
 
 }
 

@@ -98,10 +98,6 @@ public class Mediacentre extends BaseServer {
             }
         }
 
-        HttpServerOptions options = new HttpServerOptions().setMaxWebsocketFrameSize(1024 * 1024);
-        HttpServer server = vertx.createHttpServer(options).websocketHandler(new WebSocketController(eb, sources)).listen(wsPort);
-        log.info("Websocket server listening on port " + server.actualPort());
-
         try {
             AmassTask amassTask = new AmassTask(sources);
             new CronTrigger(vertx, config.getString("amass-cron", "0 1 * * * ? *")).schedule(amassTask);
