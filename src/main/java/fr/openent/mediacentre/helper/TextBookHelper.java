@@ -1,5 +1,6 @@
 package fr.openent.mediacentre.helper;
 
+import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.TextBookService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
@@ -45,10 +46,10 @@ public class TextBookHelper {
                 initUserTextBooks(state, user, sources, answer);
             } else {
                 answer.answerSuccess(HelperUtils.frameLoad(
-                        "textbooks_Result",
+                        Field.TEXTBOOKS_RESULT,
                         state,
-                        "ok",
-                        new JsonObject().put("textbooks", textBooks)
+                        Field.OK,
+                        new JsonObject().put(Field.TEXTBOOKS, textBooks)
                 ).encode());
             }
         });
@@ -70,10 +71,10 @@ public class TextBookHelper {
         sources = sources.stream().filter(source -> source instanceof GAR).collect(Collectors.toList());
         if (sources.isEmpty()) {
             answer.answerFailure(HelperUtils.frameLoad(
-                    "textbooks_Result",
+                    Field.TEXTBOOKS_RESULT,
                     state,
-                    "ko",
-                    new JsonObject().put("error", "[WebSocketController] Failed to retrieve GAR textbooks")
+                    Field.KO,
+                    new JsonObject().put(Field.ERROR, "[TextBookHelper] Failed to retrieve GAR textbooks")
             ).encode());
         } else {
             retrieveUserTextbooks(state, user, sources.get(0), answer);
@@ -89,29 +90,29 @@ public class TextBookHelper {
             }
             JsonArray textbooks = event.right().getValue();
             if (textbooks.isEmpty()) {
-                answer.answerSuccess(HelperUtils.frameLoad("textbooks_Result",
+                answer.answerSuccess(HelperUtils.frameLoad(Field.TEXTBOOKS_RESULT,
                         state,
-                        "ok",
-                        new JsonObject().put("textbooks", textbooks)).encode());
+                        Field.OK,
+                        new JsonObject().put(Field.TEXTBOOKS, textbooks)).encode());
                 return;
             }
             textBookService.insert(user.getUserId(), textbooks, either -> {
                 if (either.isLeft()) {
-                    log.error("[WebSocketController] Failed to insert user textbooks", either.left().getValue());
+                    log.error("[TextBookHelper] Failed to insert user textbooks", either.left().getValue());
                     answer.answerFailure(new JsonObject()
-                            .put("error", "Failed to insert GAR textbooks")
-                            .put("status", "ko")
+                            .put(Field.ERROR, "Failed to insert GAR textbooks")
+                            .put(Field.STATUS, Field.KO)
                             .encode());
                     return;
                 }
 
                 JsonObject frame = new JsonObject();
-                HelperUtils.frameLoad("textbooks_Result", "get", "ok");
-                frame.put("data", new JsonObject().put("textbooks", textbooks));
-                answer.answerSuccess(HelperUtils.frameLoad("textbooks_Result",
+                HelperUtils.frameLoad(Field.TEXTBOOKS_RESULT, "get", Field.OK);
+                frame.put(Field.DATA, new JsonObject().put(Field.TEXTBOOKS, textbooks));
+                answer.answerSuccess(HelperUtils.frameLoad(Field.TEXTBOOKS_RESULT,
                         state,
-                        "ok",
-                        new JsonObject().put("textbooks", textbooks)).encode()
+                        Field.OK,
+                        new JsonObject().put(Field.TEXTBOOKS, textbooks)).encode()
                 );
             });
         });
@@ -120,10 +121,10 @@ public class TextBookHelper {
     public void refreshTextBooks(String state,List<Source> sources, UserInfos user, ResponseHandlerHelper answer) {
         textBookService.delete(user.getUserId(), event -> {
             if (event.isLeft()) {
-                log.error("[WebSocketController@refreshTextBooks] Failed to delete user textbooks");
+                log.error("[TextBookHelper@refreshTextBooks] Failed to delete user textbooks");
                 answer.answerFailure(new JsonObject()
-                        .put("error", "Failed to delete user textbooks")
-                        .put("status", "ko").encode());
+                        .put(Field.ERROR, "Failed to delete user textbooks")
+                        .put(Field.STATUS, Field.KO).encode());
                 return;
             }
             retrieveTextBooks(state, user, sources, answer);

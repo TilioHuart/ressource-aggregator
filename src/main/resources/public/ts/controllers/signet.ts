@@ -407,11 +407,9 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
             Utils.safeApply($scope)
         };
 
-        // Websockets
 
         $scope.$on('deleteFavorite', function (event, id) {
             $scope.mc.favorites = $scope.mc.favorites.filter(el => el.id !== id);
-            // $scope.mc.textbooks[$scope.mc.textbooks.findIndex(el => el.id == id)].favorite = false;
         });
 
         $scope.$on('addFavorite', function (event, resource) {
