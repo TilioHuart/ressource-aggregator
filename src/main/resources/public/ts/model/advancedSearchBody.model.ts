@@ -3,7 +3,7 @@ import {IResourceBody} from "./resourceBody.model";
 
 export interface IAdvancedSearchBody {
     title?: IFieldData;
-    authors?: IFieldData
+    authors?: IFieldData;
     editors?: IFieldData;
     disciplines?: IFieldData;
     levels?: IFieldData;
@@ -11,7 +11,7 @@ export interface IAdvancedSearchBody {
 
 export class AdvancedSearchBody implements IAdvancedSearchBody{
     private _title?: IFieldData;
-    private _authors?: IFieldData
+    private _authors?: IFieldData;
     private _editors?: IFieldData;
     private _disciplines?: IFieldData;
     private _levels?: IFieldData;
