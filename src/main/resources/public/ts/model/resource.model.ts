@@ -22,10 +22,10 @@ export interface IResourceResponse {
     _id?: string;
 
     user?: string;
+    favoriteId?: string;
 }
 
 export class Resource {
-
     private _authors: string[];
     private _date: number;
     private _description: string;
@@ -48,6 +48,7 @@ export class Resource {
     private _display_structure_name?: boolean;
     private _user?: string;
     private _id?: string;
+    private _favoriteId?: string;
 
     constructor() {
         this._id = null;
@@ -72,6 +73,7 @@ export class Resource {
         this._display_structure_name = null;
         this._user = null;
         this._id_info = null;
+        this._favoriteId = null;
     }
 
     build(data: IResourceResponse): Resource {
@@ -97,6 +99,7 @@ export class Resource {
         this._display_structure_name = data.display_structure_name;
         this._user = data.user;
         this._id_info = data.id;
+        this._favoriteId = data.favoriteId;
 
         return this;
     }
@@ -275,5 +278,13 @@ export class Resource {
 
     set id_info(value: string) {
         this._id_info = value;
+    }
+
+    get favoriteId(): string {
+        return this._favoriteId;
+    }
+
+    set favoriteId(value: string) {
+        this._favoriteId = value;
     }
 }

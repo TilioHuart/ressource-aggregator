@@ -1,6 +1,8 @@
 package fr.openent.mediacentre.source;
 
+import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.enums.Comparator;
+import fr.openent.mediacentre.enums.SourceEnum;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.security.WorkflowActionUtils;
@@ -22,6 +24,7 @@ import org.entcore.common.user.UserInfos;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static fr.wseduc.webutils.Utils.handlerToAsyncHandler;
 
@@ -55,8 +58,6 @@ public class GAR implements Source {
                     formattedResources.add(format(getResourcesFuture.result().getJsonObject(i)));
                 }
 
-                /* Assign favorite to true if resources match with mongoDb's resources */
-                favoriteHelper.matchFavorite(getFavoritesResourcesFuture, formattedResources);
                 handler.handle(new Either.Right<>(formattedResources));
             }
         });
@@ -160,11 +161,46 @@ public class GAR implements Source {
                 filteredResources.addAll(sortedMap.get(key));
             }
 
-            JsonObject response = new JsonObject()
-                    .put("source", GAR.class.getName())
-                    .put("resources", filteredResources);
-            handler.handle(new Either.Right<>(response));
+            favoriteService.get(SourceEnum.GAR.method(), user.getUserId())
+                    .onSuccess(favorites -> {
+                        List<JsonObject> formattedResources = garResourcesWithFavoritesData(filteredResources, favorites);
+
+                        JsonObject response = new JsonObject()
+                                .put(Field.SOURCE, GAR.class.getName())
+                                .put(Field.RESOURCES, formattedResources);
+                        handler.handle(new Either.Right<>(response));
+                    })
+                    .onFailure(error -> {
+                        String message = String.format("[Mediacentre@%s::plainTextSearch] Error when fetching favorites: %s",
+                                this.getClass().getSimpleName(),error.getMessage());
+                        log.error(message);
+                        handler.handle(new Either.Left<>(new JsonObject().put(Field.SOURCE, GAR.class.getName()).put(Field.MESSAGE, "[GAR] " + event.cause().getMessage())));
+                    });
+
         });
+    }
+
+    private static List<JsonObject> garResourcesWithFavoritesData(JsonArray filteredResources, JsonArray favorites) {
+        return filteredResources
+                .stream()
+                .filter(JsonObject.class::isInstance)
+                .map(JsonObject.class::cast)
+                .map(resource -> {
+                    favorites.stream()
+                            .filter(JsonObject.class::isInstance)
+                            .map(JsonObject.class::cast)
+                            .forEach(favoriteItem -> {
+                                if (favoriteItem.containsKey(Field.STRUCTURE_UAI) && favoriteItem.getString(Field.STRUCTURE_UAI).equals(resource.getString(Field.STRUCTURE_UAI))
+                                        && favoriteItem.containsKey(Field.ID) && favoriteItem.getValue(Field.ID) != null && favoriteItem.getValue(Field.ID) instanceof String
+                                        && favoriteItem.getString(Field.ID, "").equals(resource.getString(Field.ID))
+                                        && favoriteItem.containsKey(Field.LINK) && favoriteItem.getString(Field.LINK).equals(resource.getString(Field.LINK))) {
+                                    resource.put(Field.FAVORITE, true);
+                                    resource.put(Field.FAVORITEID, favoriteItem.getString(Field._ID));
+                                }
+                            });
+                    return resource;
+                })
+                .collect(Collectors.toList());
     }
 
     private Integer getOccurrenceCount(String query, Object value) {

@@ -1,7 +1,13 @@
 package fr.openent.mediacentre.enums;
 
+import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.core.constants.SourceConstant;
+
 public enum SourceEnum {
-    SIGNET("fr.openent.mediacentre.source.Signet");
+    SIGNET(SourceConstant.SIGNET),
+    MOODLE(SourceConstant.MOODLE),
+    GAR(SourceConstant.GAR),
+    PMB(SourceConstant.PMB);
 
     private final String source;
 

@@ -1,6 +1,9 @@
 package fr.openent.mediacentre.helper;
 
+import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.core.constants.SourceConstant;
 import fr.openent.mediacentre.enums.Comparator;
+import fr.openent.mediacentre.enums.SourceEnum;
 import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
@@ -33,46 +36,82 @@ public class ElasticSearchHelper {
 
     private static void search(Class<?> source, String userId, JsonObject query, Handler<AsyncResult<JsonArray>> handler) {
         Future<JsonArray> esFuture = Future.future();
-        Future<List<String>> favoriteFuture = Future.future();
+        Future<List<JsonObject>> favoriteFuture = Future.future();
 
         executeEsSearch(source, query, esFuture);
         retrieveFavorites(source, userId, favoriteFuture);
 
-        CompositeFuture.all(esFuture, favoriteFuture).setHandler(ar -> {
-            if (ar.failed()) {
-                handler.handle(Future.failedFuture(ar.cause()));
-            } else {
-                List<JsonObject> resources = esFuture.result().getList();
-                List<String> favorites = favoriteFuture.result();
-                resources = resources
-                        .parallelStream()
-                        .map(resource -> {
-                            String id = resource.getString("id");
-                            if (favorites.contains(id)) resource.put("favorite", true);
-                            return resource;
-                        })
-                        .collect(Collectors.toList());
-
-                handler.handle(Future.succeededFuture(new JsonArray(resources)));
-            }
-        });
+        CompositeFuture.all(esFuture, favoriteFuture)
+                .onSuccess(ar -> {
+                    List<JsonObject> resources = esFuture.result().stream()
+                            .filter(JsonObject.class::isInstance)
+                            .map(JsonObject.class::cast)
+                            .collect(Collectors.toList());
+                    List<JsonObject> favorites = favoriteFuture.result();
+                    List<String> favoriteMatcher = getFavoriteMatcher(source.getName());
+                    resources = resourcesWithFavoritesData(resources, favorites, favoriteMatcher);
+                    handler.handle(Future.succeededFuture(new JsonArray(resources)));
+                })
+                .onFailure(error -> handler.handle(Future.failedFuture(error.getMessage())));
     }
 
-    private static void retrieveFavorites(Class<?> source, String userId, Handler<AsyncResult<List<String>>> handler) {
+    private static List<JsonObject> resourcesWithFavoritesData(List<JsonObject> resources, List<JsonObject> favorites, List<String> favoriteMatcher) {
+        resources = resources
+                .parallelStream()
+                .map(resource -> {
+                    JsonObject favorite = favorites.stream()
+                            .filter(favoriteItem ->
+                                    favoriteMatcher.stream().allMatch(favMatcher ->
+                                            // in each matched field favorite, we check if each field is present in favorite item and also in resource item
+                                            // we then check if their value matched together in order to consider this resource has one favorite
+                                            favoriteItem.containsKey(favMatcher) && resource.containsKey(favMatcher) &&
+                                                    favoriteItem.getValue(favMatcher).equals(resource.getValue(favMatcher)))
+                            )
+                            .findFirst()
+                            .orElse(new JsonObject());
+
+                    // if we found one favorite, assigning it
+                    if (!favorite.isEmpty()) {
+                        resource.put(Field.FAVORITE, true);
+                        resource.put(Field.FAVORITEID, favorite.getString(Field._ID));
+                    }
+                    return resource;
+                })
+                .collect(Collectors.toList());
+        return resources;
+    }
+
+    private static void retrieveFavorites(Class<?> source, String userId, Handler<AsyncResult<List<JsonObject>>> handler) {
         favoriteService.get(source.getName(), userId, ar -> {
             if (ar.isLeft()) {
                 handler.handle(Future.failedFuture(ar.left().getValue()));
             } else {
-                List<JsonObject> res = ar.right().getValue().getList();
-                for (int i = 0; i < res.size(); i++) {
-                    if(res.get(i).getString("source").equals("fr.openent.mediacentre.source.Signet")) {
-                        res.get(i).put("id", String.valueOf(res.get(i).getInteger("id")));
-                    }
+                List<JsonObject> favorites = ar.right().getValue().stream()
+                        .filter(JsonObject.class::isInstance)
+                        .map(JsonObject.class::cast)
+                        .collect(Collectors.toList());
+
+                for (JsonObject favorite : favorites) {
+                    String sourceValue = favorite.getString(Field.SOURCE, null);
+                    if (sourceValue.equals(SourceEnum.SIGNET.method()))
+                        favorite.put(Field.ID, String.valueOf(favorite.getInteger(Field.ID)));
                 }
-                List<String> favorites = res.stream().map(f -> f.getString("id")).collect(Collectors.toList());
                 handler.handle(Future.succeededFuture(favorites));
             }
         });
+    }
+
+    private static List<String> getFavoriteMatcher(String source) {
+        List<String> matcherList = new ArrayList<>();
+        switch (source) {
+            case SourceConstant.SIGNET:
+            case SourceConstant.MOODLE:
+            case SourceConstant.PMB:
+                matcherList.add(Field.ID);
+                break;
+            default:
+        }
+        return matcherList;
     }
 
     public static void plainTextSearch(Class<?> source, String query, String userId, List<String> structures, boolean myPublishedSignets, Handler<AsyncResult<JsonArray>> handler) {

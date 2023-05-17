@@ -22,6 +22,14 @@ public class Field {
     public static final String EVENT = "event";
     public static final String TEXTBOOKS = "textbooks";
     public static final String TEXTBOOKS_RESULT = "textbooks_Result";
+    public static final String STRUCTURE_UAI = "structure_uai";
+    public static final String STRUCTURE_NAME = "structure_name";
+    public static final String LINK = "link";
+    public static final String FAVORITE = "favorite";
+    public static final String FAVORITEID = "favoriteId";
+    public static final String RESOURCES = "resources";
+    public static final String MESSAGE = "message";
+
 
 
 }

@@ -1,6 +1,7 @@
 package fr.openent.mediacentre.service;
 
 import fr.wseduc.webutils.Either;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -21,6 +22,14 @@ public interface FavoriteService {
      * @param handler   function handler returning da
      */
     void get(String source, String userId, Handler<Either<String, JsonArray>> handler);
+
+    /**
+     * Get resource with favorite
+     * @param source    source parameter
+     * @param userId    User identifier
+     * @return {@link Future<JsonArray>} the favorites of the user
+     */
+    Future<JsonArray> get(String source, String userId);
 
     /**
      * Delete favorite
