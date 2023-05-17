@@ -2,12 +2,15 @@ package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.enums.ErrorEnum;
 import fr.openent.mediacentre.enums.SourceEnum;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.webutils.Either;
 import fr.wseduc.webutils.Utils;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -40,6 +43,23 @@ public class DefaultFavoriteService implements FavoriteService {
         JsonObject matcher = new JsonObject().put("user", userId);
         if (source != null) matcher.put("source", source);
         MongoDb.getInstance().find(TOKEN_COLLECTION, matcher, message -> handler.handle(Utils.validResults(message)));
+    }
+
+    @Override
+    public Future<JsonArray> get(String source, String userId) {
+        Promise<JsonArray> promise = Promise.promise();
+
+        get(source, userId, event -> {
+            if (event.isRight()) {
+                promise.complete(event.right().getValue());
+            } else {
+                String message = String.format("[Mediacentre@%s::get] Error when fetching favorites: %s", this.getClass().getSimpleName(), event.left().getValue());
+                log.error(message);
+                promise.fail(ErrorEnum.ERROR_FAVORITE_FETCH.method());
+            }
+        });
+
+        return promise.future();
     }
 
     @Override

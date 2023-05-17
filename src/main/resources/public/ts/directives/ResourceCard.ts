@@ -1,11 +1,11 @@
-import {idiom, ng, toasts} from 'entcore';
+import {idiom, angular, ng, toasts} from 'entcore';
 import http from 'axios';
 import {hashCode} from '../utils';
 
 import * as Clipboard from 'clipboard';
 
 import {FavoriteService} from "../services";
-import {ResourceBody} from "../model";
+import {Resource, ResourceBody} from "../model";
 
 declare const window: Window;
 
@@ -40,8 +40,9 @@ export const ResourceCard = ng.directive('resourceCard',
                     || !$scope.ngModel.hash && !$scope.ngModel.id) {
                     $scope.ngModel.hash = hashCode(signetId);
                 } else if (!$scope.ngModel.hash) {
-                    hashCode($scope.ngModel.id)
+                    $scope.ngModel.hash = hashCode($scope.ngModel.id);
                 }
+
                 $scope.show = {
                     toolip: false,
                     loader: true
@@ -156,8 +157,10 @@ export const ResourceCard = ng.directive('resourceCard',
                 };
 
                 $scope.removeFavorite = async function () {
-                    let resourceId: string = $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ?
+                    let resourceId: string;
+                    resourceId = $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ?
                         parseInt($scope.ngModel.id_info) : $scope.ngModel._id;
+                    if (!resourceId) resourceId = $scope.ngModel.favoriteId;
                     let response = await FavoriteService.delete(resourceId, $scope.ngModel.source);
                     if (response.status === 200) {
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);

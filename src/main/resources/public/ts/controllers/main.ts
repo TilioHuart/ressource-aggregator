@@ -63,6 +63,8 @@ export interface MainController extends ng.IController {
 	goFavorites(): void;
 	goSignet(): void;
 	getImgLink(imgId: string): Promise<boolean>;
+	startResearch(state: string, sources: string[], data: any): Promise<void>;
+
 }
 
 class Controller implements MainController {
@@ -164,7 +166,7 @@ class Controller implements MainController {
 	};
 
 
-		startResearch = async (state: string, sources: string[], data: any) => {
+		startResearch = async (state: string, sources: string[], data: any): Promise<void> => {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);
 			this.$timeout(() => {

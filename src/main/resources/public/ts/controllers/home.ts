@@ -30,10 +30,9 @@ interface IHomeViewModel extends ng.IController {
 
     syncSignets(): Promise<void>;
     syncTextbooks(): Promise<void>;
-    seeMyExternalResource(): void;
+    seeMyExternalResource(): Promise<void>;
     goSignet(): void;
     filterArchivedSignets(signet: any): boolean;
-
     syncExternalResources(frame: Frame): void;}
 
 interface IHomeScope extends ng.IScope {
@@ -96,10 +95,12 @@ class Controller implements IHomeViewModel {
         let mainScopeModel : MainScope = this.mainScope;
         this.$scope.$on('deleteFavorite', async (event, id) => {
             await this.syncFavoriteResources();
+            await this.syncExternalResources();
         });
 
         this.$scope.$on('addFavorite', async (event, resource) => {
             await this.syncFavoriteResources();
+            await this.syncExternalResources();
         });
 
         this.$interval(async (): Promise<void> => {
@@ -179,13 +180,10 @@ class Controller implements IHomeViewModel {
             resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
     }
 
-    seeMyExternalResource = (): void => {
-        let state = SEARCH_TYPE.PLAIN_TEXT;
-        let data: object = this.generateExternalResourceRequestBody();
+    seeMyExternalResource = async (): Promise<void> => {
+        let data: object = new PlainTextSearchData().build({query: ".*"}).toJson();
         this.$location.path(`/search/plain_text`);
-        this.$timeout(() => {
-            this.mainScope.$broadcast('search', {state, data, sources: [SOURCES.GAR]});
-        }, 300);
+        await this.mainScope.mc.startResearch(SEARCH_TYPE.PLAIN_TEXT, [SOURCES.GAR], data);
     };
 
     goSignet = (): void => {

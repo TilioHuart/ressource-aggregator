@@ -1,4 +1,5 @@
 import {model} from "entcore";
+import {number} from "yargs";
 
 export interface IResourceBody {
     authors: string[];
@@ -17,7 +18,7 @@ export interface IResourceBody {
     structure_name?: string;
     structure_uai?: string;
     display_structure_name?: boolean;
-    id: number;
+    id: string|number;
     user: string;
     hash: number;
 }
@@ -40,7 +41,7 @@ export class ResourceBody {
     private _structure_uai?: string;
     private _display_structure_name?: boolean;
     private _user?: string;
-    private _id_info: number;
+    private _id_info: string|number;
     private _hash: number;
 
     constructor(data: any) {
@@ -53,7 +54,7 @@ export class ResourceBody {
         this._editors = data.editors ? data.editors : [model.me.username];
         this._image = data.image;
         this._levels = data.levels;
-        this._link = (data.source == "fr.openent.mediacentre.source.Signet") ? data.link : data.url;
+        this._link = data.link;
         this._plain_text = data.plain_text;
         this._source = data.source;
         this._title = data.title;
@@ -61,8 +62,16 @@ export class ResourceBody {
         this._structure_uai = data.structure_uai ? data.structure_uai : undefined;
         this._display_structure_name = data.display_structure_name ? data.display_structure_name : undefined;
         this._user = data.user;
-        this._id_info = data.id_info ? parseInt(data.id_info) : parseInt(data.id);
+        this._id_info = this.getIdInfo(data);
         this._hash = data.hash;
+    }
+
+    private getIdInfo(data: any): string|number {
+        if (data.source == "fr.openent.mediacentre.source.Signet") {
+            return data.id_info ? parseInt(data.id_info) : parseInt(data.id);
+        } else {
+            return data.id_info ? data.id_info : data.id;
+        }
     }
 
     toJson(): IResourceBody {
@@ -225,11 +234,11 @@ export class ResourceBody {
         this._user = value;
     }
 
-    get id_info(): number {
+    get id_info(): string|number {
         return this._id_info;
     }
 
-    set id_info(value: number) {
+    set id_info(value: string|number) {
         this._id_info = value;
     }
 
