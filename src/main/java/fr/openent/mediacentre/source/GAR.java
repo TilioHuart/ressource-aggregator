@@ -301,21 +301,21 @@ public class GAR implements Source {
     }
 
     private boolean checkDuplicateId(JsonArray resources, HashMap<String, String> ids, List<String> duplicateIds, JsonObject resource) {
-        String ressourceId = resource.getString("id");
-        if (ids.containsKey(ressourceId)) {
-            if (ids.get(ressourceId).equals(resource.getString("structure_uai"))) {
+        String ressourceId = resource.getString("id", "");
+        if (ids.containsKey(ressourceId) && !Objects.isNull(ids.get(ressourceId))) {
+            if (ids.get(ressourceId).equals(resource.getString("structure_uai", ""))) {
                 return true;
             } else if (!duplicateIds.contains(ressourceId)) {
                 for (int j = 0; j < resources.size(); j++) {
                     JsonObject resource2 = resources.getJsonObject(j);
-                    if (ressourceId.equals(resource2.getString("id"))) {
+                    if (ressourceId.equals(resource2.getString("id", ""))) {
                         resource2.put("display_structure_name", true);
                     }
                 }
                 duplicateIds.add(ressourceId);
             }
         }
-        ids.put(ressourceId, resource.getString("structure_uai"));
+        ids.put(ressourceId, resource.getString("structure_uai", ""));
         return false;
     }
 
