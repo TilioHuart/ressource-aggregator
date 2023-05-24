@@ -16,12 +16,17 @@ import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ElasticSearchHelper {
+
+    private static final Logger log = LoggerFactory.getLogger(ElasticSearchHelper.class);
+
     private static final String REGEXP_FORMAT = ".*%s.*";
     private static final Integer PAGE_SIZE = 10000;
     private static final FavoriteService favoriteService = new DefaultFavoriteService();
@@ -52,7 +57,11 @@ public class ElasticSearchHelper {
                     resources = resourcesWithFavoritesData(resources, favorites, favoriteMatcher);
                     handler.handle(Future.succeededFuture(new JsonArray(resources)));
                 })
-                .onFailure(error -> handler.handle(Future.failedFuture(error.getMessage())));
+                .onFailure(error -> {
+                    handler.handle(Future.failedFuture(error.getMessage()));
+                    String message = String.format("[Mediacentre@%s::search] Error while getting structures data: %s", ElasticSearchHelper.class.getSimpleName(), error.getMessage());
+                    log.error(message);
+                });
     }
 
     private static List<JsonObject> resourcesWithFavoritesData(List<JsonObject> resources, List<JsonObject> favorites, List<String> favoriteMatcher) {
@@ -85,6 +94,8 @@ public class ElasticSearchHelper {
         favoriteService.get(source.getName(), userId, ar -> {
             if (ar.isLeft()) {
                 handler.handle(Future.failedFuture(ar.left().getValue()));
+                String message = String.format("[Mediacentre@%s::retrieveFavorites] Error retrieving favorites: %s", ElasticSearchHelper.class.getSimpleName(), ar.left().getValue());
+                log.error(message);
             } else {
                 List<JsonObject> favorites = ar.right().getValue().stream()
                         .filter(JsonObject.class::isInstance)
@@ -149,6 +160,9 @@ public class ElasticSearchHelper {
         ElasticSearch.getInstance().search(Source.RESOURCE_TYPE_NAME, query, search -> {
             if (search.failed()) {
                 handler.handle(Future.failedFuture(search.cause()));
+                String message = String.format("[Mediacentre@%s::executeEsSearch] Error while executingEsSearch: %s",
+                        ElasticSearchHelper.class.getSimpleName(), search.cause().getMessage());
+                log.error(message);
             } else {
                 List<JsonObject> resources = parseEsResponse(search.result(), source);
                 handler.handle(Future.succeededFuture(new JsonArray(resources)));

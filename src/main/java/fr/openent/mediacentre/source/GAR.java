@@ -118,65 +118,70 @@ public class GAR implements Source {
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
         List<Future> futures = new ArrayList<>();
         getStructuresData(user, futures, event -> {
-            JsonArray resources = new JsonArray();
-            for (Future future : futures) {
-                if (future.succeeded()) {
-                    resources.addAll((JsonArray) future.result());
-                }
-            }
-
-            if (resources.isEmpty()) {
-                log.error("[GarSource@plainTextSearch] resources are empty");
-                handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] resources are empty")));
-                return;
-            }
-
-            HashMap<String, String> ids = new HashMap<>();
-            List<String> duplicateIds = new ArrayList<>();
-            SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
-            for (int i = 0; i < resources.size(); i++) {
-                JsonObject resource = resources.getJsonObject(i);
-                if (checkDuplicateId(resources, ids, duplicateIds, resource)) continue;
-                Integer count = 0;
-                count += getOccurrenceCount(query, resource.getString("title"));
-                count += getOccurrenceCount(query, resource.getString("plain_text"));
-                count += getOccurrenceCount(query, resource.getJsonArray("levels"));
-                count += getOccurrenceCount(query, resource.getJsonArray("disciplines"));
-                count += getOccurrenceCount(query, resource.getJsonArray("editors"));
-                count += getOccurrenceCount(query, resource.getJsonArray("authors"));
-
-                if (count > 0) {
-                    if (!sortedMap.containsKey(count)) {
-                        sortedMap.put(count, new JsonArray());
+            if (event.failed()) {
+                String message = String.format("[Mediacentre@%s::plainTextSearch] Error while getting structures data: %s", this.getClass().getSimpleName(), event.cause().getMessage());
+                log.error(message);
+                handler.handle(new Either.Left<>(new JsonObject().put(Field.SOURCE, GAR.class.getName()).put(Field.MESSAGE, "[GAR] " + event.cause().getMessage())));
+            } else {
+                JsonArray resources = new JsonArray();
+                for (Future future : futures) {
+                    if (future.succeeded()) {
+                        resources.addAll((JsonArray) future.result());
                     }
-                    sortedMap.get(count).add(resource);
                 }
+
+                if (resources.isEmpty()) {
+                    log.error("[GarSource@plainTextSearch] resources are empty");
+                    handler.handle(new Either.Left<>(new JsonObject().put("source", GAR.class.getName()).put("message", "[GAR] resources are empty")));
+                    return;
+                }
+
+                HashMap<String, String> ids = new HashMap<>();
+                List<String> duplicateIds = new ArrayList<>();
+                SortedMap<Integer, JsonArray> sortedMap = new TreeMap<>();
+                for (int i = 0; i < resources.size(); i++) {
+                    JsonObject resource = resources.getJsonObject(i);
+                    if (checkDuplicateId(resources, ids, duplicateIds, resource)) continue;
+                    Integer count = 0;
+                    count += getOccurrenceCount(query, resource.getString("title"));
+                    count += getOccurrenceCount(query, resource.getString("plain_text"));
+                    count += getOccurrenceCount(query, resource.getJsonArray("levels"));
+                    count += getOccurrenceCount(query, resource.getJsonArray("disciplines"));
+                    count += getOccurrenceCount(query, resource.getJsonArray("editors"));
+                    count += getOccurrenceCount(query, resource.getJsonArray("authors"));
+
+                    if (count > 0) {
+                        if (!sortedMap.containsKey(count)) {
+                            sortedMap.put(count, new JsonArray());
+                        }
+                        sortedMap.get(count).add(resource);
+                    }
+                }
+
+                List<Integer> keys = new ArrayList<>(sortedMap.keySet());
+                Collections.reverse(keys);
+
+                JsonArray filteredResources = new JsonArray();
+                for (Integer key : keys) {
+                    filteredResources.addAll(sortedMap.get(key));
+                }
+
+                favoriteService.get(SourceEnum.GAR.method(), user.getUserId())
+                        .onSuccess(favorites -> {
+                            List<JsonObject> formattedResources = garResourcesWithFavoritesData(filteredResources, favorites);
+
+                            JsonObject response = new JsonObject()
+                                    .put(Field.SOURCE, GAR.class.getName())
+                                    .put(Field.RESOURCES, formattedResources);
+                            handler.handle(new Either.Right<>(response));
+                        })
+                        .onFailure(error -> {
+                            String message = String.format("[Mediacentre@%s::plainTextSearch] Error when fetching favorites: %s",
+                                    this.getClass().getSimpleName(),error.getMessage());
+                            log.error(message);
+                            handler.handle(new Either.Left<>(new JsonObject().put(Field.SOURCE, GAR.class.getName()).put(Field.MESSAGE, "[GAR] " + event.cause().getMessage())));
+                        });
             }
-
-            List<Integer> keys = new ArrayList<>(sortedMap.keySet());
-            Collections.reverse(keys);
-
-            JsonArray filteredResources = new JsonArray();
-            for (Integer key : keys) {
-                filteredResources.addAll(sortedMap.get(key));
-            }
-
-            favoriteService.get(SourceEnum.GAR.method(), user.getUserId())
-                    .onSuccess(favorites -> {
-                        List<JsonObject> formattedResources = garResourcesWithFavoritesData(filteredResources, favorites);
-
-                        JsonObject response = new JsonObject()
-                                .put(Field.SOURCE, GAR.class.getName())
-                                .put(Field.RESOURCES, formattedResources);
-                        handler.handle(new Either.Right<>(response));
-                    })
-                    .onFailure(error -> {
-                        String message = String.format("[Mediacentre@%s::plainTextSearch] Error when fetching favorites: %s",
-                                this.getClass().getSimpleName(),error.getMessage());
-                        log.error(message);
-                        handler.handle(new Either.Left<>(new JsonObject().put(Field.SOURCE, GAR.class.getName()).put(Field.MESSAGE, "[GAR] " + event.cause().getMessage())));
-                    });
-
         });
     }
 

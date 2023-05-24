@@ -20,6 +20,7 @@ import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SearchController extends ControllerHelper {
     private final SearchHelper searchHelper;
@@ -66,6 +67,16 @@ public class SearchController extends ControllerHelper {
 
             String state = jsondata.getString(Field.STATE);
             JsonArray expectedSources = new JsonArray(jsondata.getJsonArray(Field.SOURCES).toString());
+            // filter expectedSources with initialised sources
+            expectedSources = new JsonArray(expectedSources.stream()
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .filter(expectedSource -> sources.stream()
+                            .map(source -> source.getClass().getName())
+                            .collect(Collectors.toList())
+                            .contains(expectedSource)
+                    )
+                    .collect(Collectors.toList()));
             JsonObject data = jsondata.getJsonObject(Field.DATA);
             searchHelper.search(state, sources, expectedSources, data, user, new APIHelper(request));
         });
