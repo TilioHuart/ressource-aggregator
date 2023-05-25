@@ -153,6 +153,7 @@ export const ResourceCard = ng.directive('resourceCard',
                     if (response.status === 200) {
                         $scope.$emit('addFavorite', $scope.ngModel);
                     }
+                    $scope.ngModel.favorite = true;
                     $scope.safeApply();
                 };
 
@@ -165,6 +166,7 @@ export const ResourceCard = ng.directive('resourceCard',
                     if (response.status === 200) {
                         $scope.$emit('deleteFavorite', $scope.ngModel.id);
                     }
+                    $scope.ngModel.favorite = false;
                     $scope.safeApply();
                 };
 
