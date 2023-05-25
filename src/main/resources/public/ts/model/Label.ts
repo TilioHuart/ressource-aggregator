@@ -19,8 +19,9 @@ export class Labels extends Selection<Label> {
     constructor () {
         super([]);
     }
+
     async sync (type: string): Promise<void> {
         let { data } = await http.get(`/mediacentre/${type}`);
-        this.all = Mix.castArrayAs(Label, data);
+        this.all = data.map((dataItem) => new Label(dataItem.id, dataItem.label));
     }
 }

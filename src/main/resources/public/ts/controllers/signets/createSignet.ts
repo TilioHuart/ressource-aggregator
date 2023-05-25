@@ -1,4 +1,4 @@
-import {model, ng, notify, idiom as i18n, _, template, idiom, toasts} from "entcore";
+import {model, ng, notify, idiom as i18n, _, toasts, idiom} from "entcore";
 import {Utils} from "../../utils/Utils";
 import {Label, Labels} from "../../model/Label";
 import {signetService} from "../../services/signet.service";
@@ -6,6 +6,7 @@ import {signetService} from "../../services/signet.service";
 export const createSignetController = ng.controller('createSignetController', ['$scope', '$timeout',
     ($scope) => {
         $scope.signet.owner_id = model.me.userId;
+        $scope.i18n = i18n;
 
         /**
          * Create a signet

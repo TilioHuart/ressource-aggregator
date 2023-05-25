@@ -9,6 +9,7 @@ import * as Clipboard from "clipboard";
 import {ResourceCard} from "../directives";
 import {Utils} from "../utils/Utils";
 import {AxiosResponse} from "axios";
+import {Labels} from "../model/Label";
 
 interface ViewModel {
     signetPopUpSharing: boolean;
@@ -28,6 +29,8 @@ interface ViewModel {
     };
     loading: boolean;
     mobile: boolean;
+    levels: Labels;
+    disciplines: Labels;
 
     openFolder(folderName: string) : void;
     search(folderName: string, query: string) : void;
@@ -87,6 +90,11 @@ export const signetController = ng.controller('SignetController', ['$scope', 'Fa
         vm.mobile = screen.width < $scope.mc.screenWidthLimit;
 
         const init = async () : Promise<void> => {
+            vm.levels = new Labels();
+            await vm.levels.sync("levels");
+            vm.disciplines = new Labels();
+            await vm.disciplines.sync("disciplines");
+
             await vm.signets.sync();
             // Check if the folder is ok
             switch (vm.folder) {

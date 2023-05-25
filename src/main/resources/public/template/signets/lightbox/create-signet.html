@@ -18,7 +18,7 @@
                 </label>
             </div>
             <div class="row">
-                <multi-combo title="[[idiom.translate('mediacentre.levels')]]" class="eight cell" combo-model="levels.all"
+                <multi-combo title="[[i18n.translate('mediacentre.levels')]]" class="eight cell" combo-model="vm.levels.all"
                              search-on="label" order-by="label" filtered-model="signet.levels"></multi-combo>
                 <div class="twelve cell select-blocks">
                     <div ng-repeat="level in signet.levels"
@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="row">
-                <multi-combo title="[[idiom.translate('mediacentre.disciplines')]]" class="eight cell" combo-model="disciplines.all"
+                <multi-combo title="[[i18n.translate('mediacentre.disciplines')]]" class="eight cell" combo-model="vm.disciplines.all"
                              search-on="label"  order-by="label" filtered-model="signet.disciplines"></multi-combo>
                 <div class="twelve cell select-blocks">
                     <div ng-repeat="discipline in signet.disciplines"
