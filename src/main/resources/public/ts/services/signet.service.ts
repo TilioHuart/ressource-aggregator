@@ -1,13 +1,14 @@
-import {idiom, moment, ng, notify} from 'entcore';
+import {idiom, ng, notify} from 'entcore';
 import http, {AxiosResponse} from 'axios';
 import {Signet} from "../model/Signet";
+import {ISignetBody, SignetBody} from "../model/signetBody.model";
 
 export interface SignetService {
     list() : Promise<AxiosResponse>;
     get(signetId: number) : Promise<AxiosResponse>;
     save(signet: Signet) : Promise<AxiosResponse>;
     create(signet: Signet) : Promise<AxiosResponse>;
-    update(signet: Signet) : Promise<AxiosResponse>;
+    update(signet: ISignetBody) : Promise<AxiosResponse>;
     archive(signet: Signet) : Promise<AxiosResponse>;
     restore(signet: Signet) : Promise<AxiosResponse>;
     delete(signetId: number) : Promise<AxiosResponse>;
@@ -17,7 +18,7 @@ export interface SignetService {
     getMySignetRights(signetId: number) : Promise<AxiosResponse>;
     getAllMySignetRights() : Promise<AxiosResponse>;
     getInfoImage(signet: Signet) : Promise<AxiosResponse>;
-    publish(signet: Signet) : Promise<AxiosResponse>;
+    publish(signet: ISignetBody) : Promise<AxiosResponse>;
     getAllMySignetPublished() : Promise<AxiosResponse>
     deleteSignetPublished(signetId: number) : Promise<AxiosResponse>;
     searchMySignetPublished(query: string) : Promise<AxiosResponse>;
@@ -55,7 +56,7 @@ export const signetService: SignetService = {
         }
     },
 
-    async update(signet: Signet) : Promise<AxiosResponse> {
+    async update(signet: ISignetBody) : Promise<AxiosResponse> {
         try {
             return http.put(`/mediacentre/signets/${signet.id}`, signet);
         } catch (err) {
@@ -148,7 +149,7 @@ export const signetService: SignetService = {
         }
     },
 
-    async publish(signet: Signet) : Promise<AxiosResponse> {
+    async publish(signet: ISignetBody) : Promise<AxiosResponse> {
         try {
             return await http.post(`/mediacentre/signet/publish/${signet.id}`, signet);
         } catch (err) {

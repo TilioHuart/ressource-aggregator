@@ -5,15 +5,15 @@
                 <i18n>mediacentre.properties</i18n>
             </button>
             <button ng-click="vm.openShareSignet()" class="cell"
-                    ng-show="hasShareRightManager(vm.signets.selectedElements) && vm.signets.selected.length == 1">
+                    ng-show="mc.hasShareRightManager(vm.signets.selectedElements) && vm.signets.selected.length == 1">
                 <i18n>mediacentre.share</i18n>
             </button>
             <button ng-click="vm.openPublishSignet()" class="cell"
-                    ng-show="hasShareRightManager(vm.signets.selectedElements) && vm.signets.selected.length == 1">
+                    ng-show="mc.hasShareRightManager(vm.signets.selectedElements) && vm.signets.selected.length == 1">
                 <i18n>mediacentre.publish</i18n>
             </button>
             <button ng-click="vm.openArchiveSignets()" class="cell"
-                    ng-show="hasShareRightManager(vm.signets.selectedElements)">
+                    ng-show="mc.hasShareRightManager(vm.signets.selectedElements)">
                 <i18n>mediacentre.archive</i18n>
             </button>
         </div>
@@ -22,7 +22,7 @@
                 <i18n>mediacentre.delete</i18n>
             </button>
         </div>
-        <div class="row" ng-if="vm.folder == 'archived' && vm.signets.selected[0].archived && hasShareRightManager(vm.signets.selectedElements)">
+        <div class="row" ng-if="vm.folder == 'archived' && vm.signets.selected[0].archived && mc.hasShareRightManager(vm.signets.selectedElements)">
             <button ng-click="vm.restoreSignets()" class="cell">
                 <i18n>mediacentre.restore</i18n>
             </button>

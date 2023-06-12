@@ -1,6 +1,7 @@
 import {model} from "entcore";
 import {Selection} from "entcore-toolkit";
 import {Signet} from "./Signet";
+import {IResourceBody} from "./resourceBody.model";
 
 export interface ISignetBody {
     archived: boolean;
@@ -41,24 +42,46 @@ export class SignetBody {
     private _title: string;
     private _url: string;
 
-    constructor(data: ISignetBody) {
+    constructor(data: any) {
         this._archived = data.archived;
         this._collab = data.collab
         this._date_creation = data.date_creation;
         this._date_modification = data.date_modification;
-        this._disciplines = data.disciplines;
+        this._disciplines = !!data.disciplines.all ? data.disciplines.all : data.disciplines;
         this._favorite = data.favorite;
         this._id = data.id;
         this._image = data.image;
-        this._levels = data.levels;
+        this._levels = !!data.levels.all ? data.levels.all : data.levels;
         this._orientation = data.orientation;
         this._owner_id = data.owner_id;
         this._owner_name = data.owner_name;
-        this._plain_text = data.plain_text;
+        this._plain_text = !!data.plain_text.all ? data.plain_text.all : data.plain_text;
         this._published = data.published;
         this._resource_id = data.resource_id;
         this._title = data.title;
         this._url = data.url;
+    }
+
+    toJson(): ISignetBody {
+        return {
+            archived: this.archived,
+            collab: this.collab,
+            date_creation: this.date_creation,
+            date_modification: this.date_modification,
+            disciplines: this.disciplines,
+            favorite: this.favorite,
+            id: this.id,
+            image: this.image,
+            levels: this.levels,
+            orientation: this.orientation,
+            owner_id: this.owner_id,
+            owner_name: this.owner_name,
+            plain_text: this.plain_text,
+            published: this.published,
+            resource_id: this.resource_id,
+            title: this.title,
+            url: this.url
+        }
     }
 
     get archived(): boolean {

@@ -1,28 +1,28 @@
-<div class="horizontal-spacing" ng-controller="publishSignetController">
+<div class="horizontal-spacing" ng-controller="publishSignetController as vm">
     <h2><i18n>mediacentre.signets.publish</i18n></h2>
     <div class="twelve cell">
         <div>
             <span class="row twelve"><i18n>mediacentre.signets.publish.request</i18n>[[signet.title]]</span>
         </div>
         <div class="row">
-            <multi-combo title="[[idiom.translate('mediacentre.levels')]]" class="eight cell" combo-model="levels.all"
-                         search-on="label" order-by="label" filtered-model="filterChoice.levels"></multi-combo>
+            <multi-combo title="[[vm.idiom.translate('mediacentre.levels')]]" class="eight cell" combo-model="vm.mainScope.levels.all"
+                         search-on="label" order-by="label" filtered-model="vm.filterChoice.levels"></multi-combo>
             <div class="twelve cell select-blocks">
-                <div ng-repeat="level in filterChoice.levels"
-                     ng-click="removeLevelFromCourse(level)"
+                <div ng-repeat="level in vm.filterChoice.levels"
+                     ng-click="vm.removeLevelFromCourse(level)"
                      class="labels-in-ligne">
-                    <div > [[ level.label]] </div>
+                    <div > [[level.label]] </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <multi-combo title="[[idiom.translate('mediacentre.disciplines')]]" class="eight cell" combo-model="disciplines.all"
-                         search-on="label"  order-by="label" filtered-model="filterChoice.disciplines"></multi-combo>
+            <multi-combo title="[[vm.idiom.translate('mediacentre.disciplines')]]" class="eight cell" combo-model="vm.mainScope.disciplines.all"
+                         search-on="label"  order-by="label" filtered-model="vm.filterChoice.disciplines"></multi-combo>
             <div class="twelve cell select-blocks">
-                <div ng-repeat="discipline in filterChoice.disciplines"
-                     ng-click="removeDisciplineFromCourse(discipline)"
+                <div ng-repeat="discipline in vm.filterChoice.disciplines"
+                     ng-click="vm.removeDisciplineFromCourse(discipline)"
                      class="labels-in-ligne">
-                    <div> [[ discipline.label]] </div>
+                    <div> [[discipline.label]] </div>
                 </div>
             </div>
         </div>
@@ -30,21 +30,21 @@
             <label >
                 <i18n>mediacentre.keywords</i18n>
             </label>
-            <input type="text" ng-model="query.plain_text" ng-keyup="addKeyWord($event)"
+            <input type="text" ng-model="vm.query.plain_text" ng-keyup="vm.addKeyWord($event)"
                    class="twelve search_nav" i18n-placeholder="Veuillez renseigner les mots clés choisis" >
             <div class=" twelve cell select-blocks">
-                <div ng-repeat="word in signet.plain_text.all"
-                     ng-click="removeWordFromCourse(word)"
+                <div ng-repeat="word in vm.signet.plain_text.all"
+                     ng-click="vm.removeWordFromCourse(word)"
                      class="labels-in-ligne">
-                    <div><span ng-bind="word.label"></span> </div>
+                    <div>[[word.label]]</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="right-magnet">
-            <input type="button" class="cancel" i18n-value="cancel" ng-click="vm.closeSignetLightbox()"/>
-            <input type="submit" class="button" i18n-value="Valider" ng-click="publishSignet()"/>
+            <input type="button" class="cancel" i18n-value="cancel" ng-click="vm.signetScope.vm.closeSignetLightbox()"/>
+            <input type="submit" class="button" i18n-value="Valider" ng-click="vm.publishSignet()"/>
         </div>
     </div>
 </div>

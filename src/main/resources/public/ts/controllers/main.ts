@@ -1,7 +1,7 @@
 import {_, Behaviours, idiom, model, ng, template} from 'entcore';
 import {ILocationService, IRootScopeService} from "angular";
 import {Resource} from '../model';
-import {Signet} from "../model/Signet";
+import {Signet, Signets} from "../model/Signet";
 import {Label, Labels} from "../model/Label";
 import http, {AxiosResponse} from "axios";
 import {Utils} from "../utils/Utils";
