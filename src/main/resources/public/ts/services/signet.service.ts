@@ -2,6 +2,7 @@ import {idiom, ng, notify} from 'entcore';
 import http, {AxiosResponse} from 'axios';
 import {Signet} from "../model/Signet";
 import {ISignetBody, SignetBody} from "../model/signetBody.model";
+import {IResourceResponse, Resource} from "../model";
 
 export interface SignetService {
     list() : Promise<AxiosResponse>;
@@ -22,6 +23,7 @@ export interface SignetService {
     getAllMySignetPublished() : Promise<AxiosResponse>
     deleteSignetPublished(signetId: number) : Promise<AxiosResponse>;
     searchMySignetPublished(query: string) : Promise<AxiosResponse>;
+    getPublishedSignets() : Promise<SignetBody[]>;
 }
 
 export const signetService: SignetService = {
@@ -183,7 +185,13 @@ export const signetService: SignetService = {
             notify.error(idiom.translate('mediacentre.error.signetService.published'));
             throw err;
         }
+    },
+
+    async getPublishedSignets() : Promise<SignetBody[]> {
+        return http.get(`/mediacentre/signets`)
+            .then((response: AxiosResponse) => response.data.data.signets.resources);
     }
+
 };
 
 export const SignetService = ng.service('SignetService', (): SignetService => signetService);

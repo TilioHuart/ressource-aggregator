@@ -1,4 +1,4 @@
-import {ng, toasts} from 'entcore';
+import {model, ng, toasts} from 'entcore';
 import {Frame, Resource} from '../model';
 import {IIntervalService, ILocationService, ITimeoutService} from "angular";
 import {Signet, Signets} from "../model/Signet";
@@ -140,14 +140,14 @@ class Controller implements IHomeViewModel {
     async syncSignets(): Promise<void> {
         this.publicSignets = this.orientationSignets = [];
         try {
-            let signets: SignetBody[] = (await this.signetService.list()).data;
+            let signets: SignetBody[] = await this.signetService.getPublishedSignets();
             this.publicSignets = signets
-                .filter((signet: SignetBody) => signet.orientation == false)
+                .filter((signet: SignetBody) => signet.document_types[0] !== "Orientation")
                 .map((signet: SignetBody) => {
                     return this.signetBodyToResource(signet);
                 });
             this.orientationSignets = signets
-                .filter((signet: SignetBody) => signet.orientation == true)
+                .filter((signet: SignetBody) => signet.document_types[0] === "Orientation")
                 .map((signet: SignetBody) => {
                     return this.signetBodyToResource(signet);
                 })

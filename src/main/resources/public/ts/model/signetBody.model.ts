@@ -21,6 +21,7 @@ export interface ISignetBody {
     resource_id: string;
     title: string;
     url: string;
+    document_types: Array<string>;
 }
 
 export class SignetBody {
@@ -41,6 +42,7 @@ export class SignetBody {
     private _resource_id: string;
     private _title: string;
     private _url: string;
+    private _document_types: Array<string>;
 
     constructor(data: any) {
         this._archived = data.archived;
@@ -60,6 +62,7 @@ export class SignetBody {
         this._resource_id = data.resource_id;
         this._title = data.title;
         this._url = data.url;
+        this._document_types = data._document_types;
     }
 
     toJson(): ISignetBody {
@@ -80,7 +83,8 @@ export class SignetBody {
             published: this.published,
             resource_id: this.resource_id,
             title: this.title,
-            url: this.url
+            url: this.url,
+            document_types: this.document_types
         }
     }
 
@@ -218,5 +222,13 @@ export class SignetBody {
 
     set url(value: string) {
         this._url = value;
+    }
+
+    get document_types(): Array<string> {
+        return this._document_types;
+    }
+
+    set document_types(value: Array<string>) {
+        this._document_types = value;
     }
 }
