@@ -6,10 +6,12 @@ import {Utils} from "../utils/Utils";
 import {MainScope} from "./main";
 import {FavoriteService, ISearchService, ITextbookService, SignetService} from "../services";
 import {Label} from "../model/Label";
-import {SignetBody} from "../model/signetBody.model";
+import {ISignetBody, SignetBody} from "../model/signetBody.model";
 import {SOURCES} from "../core/enum/sources.enum";
 import {SEARCH_TYPE} from "../core/enum/search-type.enum";
-import {IPlainTextSearchData, PlainTextSearchBody, PlainTextSearchData} from "../model/plainTextSearchBody.model";
+import {PlainTextSearchBody, PlainTextSearchData} from "../model/plainTextSearchBody.model";
+import {IPublicSignetResponse, PublicSignetResponse} from "../model/publicSignetResponse.model";
+import {SIGNET_TYPE} from "../core/enum/signetType.enum";
 
 
 declare var mediacentreUpdateFrequency: number;
@@ -140,17 +142,13 @@ class Controller implements IHomeViewModel {
     async syncSignets(): Promise<void> {
         this.publicSignets = this.orientationSignets = [];
         try {
-            let signets: SignetBody[] = await this.signetService.getPublishedSignets();
+            let publishedSignets: Resource[] = (await this.signetService.getPublishedSignets()).map((signet: IPublicSignetResponse) => this.publishedSignetResponseToResource(new PublicSignetResponse().build(signet)));
+            let signetSharedWithMe: Resource[] = (await this.signetService.list()).data.filter((signet: SignetBody) => signet.owner_id != model.me.userId).map((signet: ISignetBody) => this.signetBodyToResource(signet));
+            let signets = [...publishedSignets, ...signetSharedWithMe];
             this.publicSignets = signets
-                .filter((signet: SignetBody) => signet.document_types[0] !== "Orientation")
-                .map((signet: SignetBody) => {
-                    return this.signetBodyToResource(signet);
-                });
+                .filter((signet: Resource) => signet.document_types && signet.document_types[0] != SIGNET_TYPE.ORIENTATION);
             this.orientationSignets = signets
-                .filter((signet: SignetBody) => signet.document_types[0] === "Orientation")
-                .map((signet: SignetBody) => {
-                    return this.signetBodyToResource(signet);
-                })
+                .filter((signet: Resource) => signet.document_types && signet.document_types[0] == SIGNET_TYPE.ORIENTATION);
             this.setFavoriteResources();
             Utils.safeApply(this.$scope);
         } catch (e) {
@@ -194,9 +192,9 @@ class Controller implements IHomeViewModel {
         return !signet.archived;
     };
 
-    private signetBodyToResource(signet: SignetBody): Resource {
+    private signetBodyToResource(signet: ISignetBody): Resource {
         let resource = new Resource();
-        resource.id_info = signet.id.toString();
+        resource.id_info = signet.id ? signet.id.toString() : signet.resource_id;
         resource.disciplines = signet.disciplines.map((label: Label) => label[1]);
         resource.authors = resource.editors = [signet.owner_name];
         resource.date = new Date(signet.date_creation).valueOf();
@@ -213,6 +211,27 @@ class Controller implements IHomeViewModel {
 
         return resource;
     }
+
+    private publishedSignetResponseToResource(signet: PublicSignetResponse): Resource {
+        let resource = new Resource();
+
+        resource.authors = signet.authors;
+        resource.description = signet.description;
+        resource.date = signet.date;
+        resource.displayTitle = resource.title = signet.title;
+        resource.disciplines = signet.disciplines;
+        resource.favorite = signet.favorite;
+        resource.image = signet.image;
+        resource.levels = signet.levels;
+        resource.document_types = signet.document_types;
+        resource.plain_text = signet.plain_text;
+        resource.id_info = signet.id_info;
+        resource.link = signet.link;
+        resource.source = "fr.openent.mediacentre.source.Signet";
+
+        return resource;
+    }
+
 
     $onDestroy(): void {
     }

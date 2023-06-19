@@ -1,8 +1,3 @@
-import {model} from "entcore";
-import {Selection} from "entcore-toolkit";
-import {Signet} from "./Signet";
-import {IResourceBody} from "./resourceBody.model";
-
 export interface ISignetBody {
     archived: boolean;
     collab: boolean

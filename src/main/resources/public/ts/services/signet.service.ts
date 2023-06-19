@@ -1,8 +1,8 @@
 import {idiom, ng, notify} from 'entcore';
 import http, {AxiosResponse} from 'axios';
 import {Signet} from "../model/Signet";
-import {ISignetBody, SignetBody} from "../model/signetBody.model";
-import {IResourceResponse, Resource} from "../model";
+import {ISignetBody} from "../model/signetBody.model";
+import {IPublicSignetResponse} from "../model/publicSignetResponse.model";
 
 export interface SignetService {
     list() : Promise<AxiosResponse>;
@@ -23,7 +23,7 @@ export interface SignetService {
     getAllMySignetPublished() : Promise<AxiosResponse>
     deleteSignetPublished(signetId: number) : Promise<AxiosResponse>;
     searchMySignetPublished(query: string) : Promise<AxiosResponse>;
-    getPublishedSignets() : Promise<SignetBody[]>;
+    getPublishedSignets() : Promise<IPublicSignetResponse[]>;
 }
 
 export const signetService: SignetService = {
@@ -187,7 +187,7 @@ export const signetService: SignetService = {
         }
     },
 
-    async getPublishedSignets() : Promise<SignetBody[]> {
+    async getPublishedSignets() : Promise<IPublicSignetResponse[]> {
         return http.get(`/mediacentre/signets`)
             .then((response: AxiosResponse) => response.data.data.signets.resources);
     }
