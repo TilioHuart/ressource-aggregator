@@ -317,7 +317,7 @@ class Controller implements ISignetViewModel {
         // Toaster
 
         selectSignet = (signet: Signet) : void => {
-            if (this.folder == "archived" && !this.mainScope.hasShareRightManager([signet])) {
+            if (this.folder == "archived" && !this.mainScope.mc.hasShareRightManager([signet])) {
                 return;
             }
 
@@ -337,7 +337,7 @@ class Controller implements ISignetViewModel {
 
         openSignet = (signet: Signet) : void => {
             this.mainScope.signet = signet;
-            this.mainScope.redirectTo(`/signet/${signet.id}/edit`);
+            this.mainScope.mc.redirectTo(`/signet/${signet.id}/edit`);
             Utils.safeApply(this.$scope)
         };
 
@@ -365,7 +365,7 @@ class Controller implements ISignetViewModel {
                         await signetService.deleteSignetPublished(signet.id);
                         this.signets.all = this.signets.all.filter(signetToRemove => signet.id !== signetToRemove.id);
                     } else {
-                        if (this.mainScope.isStatusXXX(await signetService.unshare(signet.id), 200)) {
+                        if (this.mainScope.mc.isStatusXXX(await signetService.unshare(signet.id), 200)) {
                             await signetService.delete(signet.id);
                             this.signets.all = this.signets.all.filter(signetToRemove => signet.id !== signetToRemove.id);
                         }
