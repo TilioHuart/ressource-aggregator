@@ -189,7 +189,8 @@ export const signetService: SignetService = {
 
     async getPublishedSignets() : Promise<IPublicSignetResponse[]> {
         return http.get(`/mediacentre/signets`)
-            .then((response: AxiosResponse) => response.data.data.signets.resources);
+            .then((response: AxiosResponse) => (response.data && response.data.data && response.data.data.signets && response.data.data.signets.resources
+            && response.data.data.signets.resources.length > 0 ? response.data.data.signets.resources : []));
     }
 
 };
