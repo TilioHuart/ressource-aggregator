@@ -159,9 +159,14 @@ class Controller implements IHomeViewModel {
 
     async syncTextbooks(isRefreshButton?: boolean): Promise<void> {
         try {
-            this.mainScope.mc.textbooks = await this.textbookService.get();
+            if (isRefreshButton) {
+                this.mainScope.mc.textbooks = await this.textbookService.refresh();
+                toasts.info("mediacentre.success.textbook.retrieval")
+            }
+            else {
+                this.mainScope.mc.textbooks = await this.textbookService.get();
+            }
             this.setFavoriteResources();
-            if (isRefreshButton) toasts.info("mediacentre.success.textbook.retrieval");
             Utils.safeApply(this.$scope);
         } catch (e) {
             console.error("An error has occurred during fetching textbooks ", e);
