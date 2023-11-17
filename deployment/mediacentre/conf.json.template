@@ -1,5 +1,5 @@
 {
-  "name": "fr.openent~mediacentre~3.4-SNAPSHOT-SNAPSHOT",
+  "name": "fr.openent~mediacentre~3.4-develop-pedago-SNAPSHOT",
   "config": {
     "main" : "fr.openent.mediacentre.Mediacentre",
     "port" : 8064,
