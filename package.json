@@ -1,13 +1,14 @@
 {
   "name": "Mediacentre",
-  "version": "0.1.0",
+  "version": "3.4.1",
   "description": "Mediacentre",
   "main": "gulpfile.js",
   "scripts": {
     "coverage": "./node_modules/.bin/jest --config jest.config.js --coverage",
     "test": "npm run coverage",
     "coverage:dev": "./node_modules/.bin/jest --config jest.config.js --coverage --watch --verbose false",
-    "test:dev": "npm run coverage:dev"
+    "test:dev": "npm run coverage:dev",
+    "build:sass": "sass --load-path=node_modules/ --no-source-map src/main/resources/public/sass/index.scss src/main/resources/public/css/mediacentre-specifics.css"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^2.0.34",
-    "@types/jest": "^22.2.0",
+    "@types/jest": "27.5.2",
     "@types/angular": "1.8.3",
     "@types/core-js": "0.9.42",
     "@types/babel__traverse": "7.14.2",
@@ -46,8 +47,17 @@
     "yargs": "^8.0.2",
     "core-js": "2.4.1",
     "@mdi/font": "^4.4.95",
-    "jest": "^24.7.1",
+    "jest": "26.6.3",
     "jest-environment-node": "^23.0.0",
-    "ts-jest": "^22.4.2"
+    "ts-jest": "26.4.2",
+    "sass": "^1.49.9",
+    "entcore-css-lib": "npm:ode-csslib@4.0.12"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.11"
+  },
+  "packageManager": "yarn@1.22.19",
+  "engines": {
+    "node": "16 || 18"
   }
 }
