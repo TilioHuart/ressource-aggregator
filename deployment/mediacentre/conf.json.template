@@ -32,7 +32,7 @@
     "elasticsearchConfig" : {
         "server-uri": "${elasticServerURI}",
         "index": "${elasticIndexName}",
-        "elasticsearch-ssl": "${elasticSearchSsl}",
+        "elasticsearch-ssl": ${elasticSearchSsl},
         "username": "${elasticSearchUsername}",
         "password": "${elasticSearchPassword}"
     }
