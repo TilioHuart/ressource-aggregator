@@ -1,6 +1,7 @@
 package fr.openent.mediacentre;
 
 import fr.openent.mediacentre.controller.*;
+import fr.openent.mediacentre.cron.NotifyCron;
 import fr.openent.mediacentre.helper.elasticsearch.ElasticSearch;
 import fr.openent.mediacentre.source.Source;
 import fr.openent.mediacentre.tasks.AmassTask;
@@ -10,6 +11,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.http.BaseServer;
+import org.entcore.common.notification.TimelineHelper;
 import org.entcore.common.service.impl.SqlCrudService;
 import org.entcore.common.share.impl.SqlShareService;
 import org.entcore.common.sql.SqlConf;
@@ -18,6 +20,8 @@ import org.entcore.common.sql.SqlConfs;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fr.openent.mediacentre.core.constants.Field.NOTIFY_CRON;
 
 public class Mediacentre extends BaseServer {
 
@@ -50,7 +54,6 @@ public class Mediacentre extends BaseServer {
     public void start() throws Exception {
         super.start();
 
-        EventBus eb = getEventBus(vertx);
         wsPort = config.getInteger("wsPort", 3000);
         mediacentreSchema = config.getString("db-schema");
         SIGNET_SHARES_TABLE = mediacentreSchema + ".signet_shares";
@@ -58,6 +61,9 @@ public class Mediacentre extends BaseServer {
         MEMBERS_TABLE = mediacentreSchema + ".members";
         FAVORITES_TABLE = mediacentreSchema + ".favorites";
         mediacentreConfig = config;
+
+        EventBus eb = getEventBus(vertx);
+        final TimelineHelper timelineHelper = new TimelineHelper(vertx, eb, config);
 
         /* Add All sources based on module configuration */
         List<Source> sources = new ArrayList<>();
@@ -98,6 +104,7 @@ public class Mediacentre extends BaseServer {
             }
         }
 
+        // CRON
         try {
             AmassTask amassTask = new AmassTask(sources);
             new CronTrigger(vertx, config.getString("amass-cron", "0 1 * * * ? *")).schedule(amassTask);
@@ -105,6 +112,9 @@ public class Mediacentre extends BaseServer {
             log.fatal("Unable to parse amass cron expression");
             throw e;
         }
+
+        NotifyCron notifyCron = new NotifyCron(timelineHelper);
+        new CronTrigger(vertx, config.getString(NOTIFY_CRON, "0 0 0 */1 * ? *")).schedule(notifyCron);
     }
 
 }

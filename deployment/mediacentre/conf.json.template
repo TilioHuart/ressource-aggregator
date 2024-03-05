@@ -35,6 +35,7 @@
         "elasticsearch-ssl": ${elasticSearchSsl},
         "username": "${elasticSearchUsername}",
         "password": "${elasticSearchPassword}"
-    }
+    },
+    "notify-cron": "${notifyCron}"
   }
 }

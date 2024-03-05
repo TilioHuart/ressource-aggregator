@@ -1,0 +1,13 @@
+{
+    "mediacentre": "Mediacentre",
+
+    "mediacentre.new_resources_notification": "Notification de nouvelles ressources sur Mediacentre",
+
+    "push.notif.mediacentre.newResource": "Nouvelle notification mediacentre",
+
+    "timeline.mediacentre.you.received": "Vous avez reçu ",
+    "timeline.mediacentre.new.resources": "nouvelles ressources. ",
+    "timeline.mediacentre.consult": "Consultez ",
+    "timeline.mediacentre.your.mediacentre": "votre Médiacentre ",
+    "timeline.mediacentre.to.discover": "pour les découvrir !"
+}

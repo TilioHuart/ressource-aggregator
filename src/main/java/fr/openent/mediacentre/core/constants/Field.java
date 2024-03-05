@@ -5,6 +5,14 @@ public class Field {
         throw new IllegalStateException("Utility class");
     }
 
+    // Config fields
+    public static final String NOTIFY_CRON = "notify_cron";
+
+    // URLs
+    public static final String MEDIACENTRE_URL = "/mediacentre";
+
+
+    // Other fields
     public static final String URL = "url";
     public static final String MEDIACENTREUPDATEFREQUENCY = "mediacentreUpdateFrequency";
     public static final String _ID = "_id";
@@ -29,8 +37,11 @@ public class Field {
     public static final String FAVORITEID = "favoriteId";
     public static final String RESOURCES = "resources";
     public static final String MESSAGE = "message";
-
-
-
+    public static final String TITLE = "title";
+    public static final String BODY = "body";
+    public static final String CAMEL_PUSH_NOTIF = "pushNotif";
+    public static final String CAMEL_REDIRECTION_URI = "redirectionUri";
+    public static final String CAMEL_NB_NEW_RESOURCES = "nbNewResources";
+    public static final String CAMEL_NEW_RESOURCES = "newResources";
 }
 
