@@ -6,11 +6,11 @@ public class Field {
     }
 
     // Config fields
-    public static final String NOTIFY_CRON = "notify_cron";
+    public static final String KEBAB_NOTIFY_CRON = "notify-cron";
+    public static final String KEBAB_LAST_CONNECTION_DELAY = "last-connection-delay";
 
     // URLs
     public static final String MEDIACENTRE_URL = "/mediacentre";
-
 
     // Other fields
     public static final String URL = "url";
@@ -39,9 +39,14 @@ public class Field {
     public static final String MESSAGE = "message";
     public static final String TITLE = "title";
     public static final String BODY = "body";
+    public static final String STRUCTURES = "structures";
+    public static final String PARENT = "Parent";
+    public static final String USER_ID = "user_id";
+    public static final String RESOURCES_IDS = "resources_ids";
     public static final String CAMEL_PUSH_NOTIF = "pushNotif";
     public static final String CAMEL_REDIRECTION_URI = "redirectionUri";
     public static final String CAMEL_NB_NEW_RESOURCES = "nbNewResources";
     public static final String CAMEL_NEW_RESOURCES = "newResources";
+    public static final String CAMEL_LAST_USED = "lastUsed";
 }
 

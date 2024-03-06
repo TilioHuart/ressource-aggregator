@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fr.openent.mediacentre.core.constants.Field.NOTIFY_CRON;
+import static fr.openent.mediacentre.core.constants.Field.*;
 
 public class Mediacentre extends BaseServer {
 
@@ -113,8 +113,9 @@ public class Mediacentre extends BaseServer {
             throw e;
         }
 
-        NotifyCron notifyCron = new NotifyCron(timelineHelper);
-        new CronTrigger(vertx, config.getString(NOTIFY_CRON, "0 0 0 */1 * ? *")).schedule(notifyCron);
+        Integer lastConnectionDelay = config.getInteger(KEBAB_LAST_CONNECTION_DELAY, 24);
+        NotifyCron notifyCron = new NotifyCron(timelineHelper, lastConnectionDelay);
+        new CronTrigger(vertx, config.getString(KEBAB_NOTIFY_CRON, "0 0 0 */1 * ? *")).schedule(notifyCron);
     }
 
 }

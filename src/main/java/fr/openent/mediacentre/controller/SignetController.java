@@ -6,11 +6,11 @@ import fr.openent.mediacentre.helper.SignetHelper;
 import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.security.ViewRight;
 import fr.openent.mediacentre.service.FavoriteService;
-import fr.openent.mediacentre.service.NeoService;
+import fr.openent.mediacentre.service.UserService;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.SignetSharesService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
-import fr.openent.mediacentre.service.impl.DefaultNeoService;
+import fr.openent.mediacentre.service.impl.DefaultUserService;
 import fr.openent.mediacentre.service.impl.DefaultSignetService;
 import fr.openent.mediacentre.service.impl.DefaultSignetSharesService;
 import fr.wseduc.rs.*;
@@ -45,7 +45,7 @@ public class SignetController extends ControllerHelper {
     private static final Logger log = LoggerFactory.getLogger(SignetController.class);
     private final SignetService signetService;
     private final SignetSharesService signetShareService;
-    private final NeoService neoService;
+    private final UserService userService;
     private final FavoriteService favoriteService;
     private final SignetHelper signetHelper;
 
@@ -54,7 +54,7 @@ public class SignetController extends ControllerHelper {
         this.eb = eb;
         this.signetService = new DefaultSignetService();
         this.signetShareService = new DefaultSignetSharesService();
-        this.neoService = new DefaultNeoService();
+        this.userService = new DefaultUserService();
         this.favoriteService = new DefaultFavoriteService();
         this.signetHelper = new SignetHelper();
     }
@@ -344,7 +344,7 @@ public class SignetController extends ControllerHelper {
                     JsonArray bookmarksIds = new JsonArray();
 
                     // Get group ids and users ids from bookmarks and add them to previous lists
-                    neoService.getIdsFromBookMarks(bookmarksIds, eventBookmarks -> {
+                    userService.getIdsFromBookMarks(bookmarksIds, eventBookmarks -> {
                         if (eventBookmarks.isRight()) {
                             JsonArray ids = eventBookmarks.right().getValue().getJsonObject(0)
                                     .getJsonArray("ids").getJsonObject(0).getJsonArray("ids");
@@ -389,7 +389,7 @@ public class SignetController extends ControllerHelper {
                                 groupsIds.add(String.valueOf(o));
                             }
                             JsonArray finalAllUsersIds = allUsersIds;
-                            neoService.getUsersInfosFromIds(groupsIds, event_user -> {
+                            userService.getUsersInfosFromIds(groupsIds, event_user -> {
                                 if(!event_user.right().getValue().isEmpty()) {
                                     JsonArray users_group = event_user.right().getValue().getJsonObject(0)
                                             .getJsonArray("users");

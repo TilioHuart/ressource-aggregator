@@ -36,6 +36,7 @@
         "username": "${elasticSearchUsername}",
         "password": "${elasticSearchPassword}"
     },
-    "notify-cron": "${notifyCron}"
+    "notify-cron": "${notifyCron}",
+    "last-connection-delay": "${lastConnectionDelay}"
   }
 }
