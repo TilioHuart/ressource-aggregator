@@ -40,6 +40,7 @@ public class Field {
     public static final String TITLE = "title";
     public static final String BODY = "body";
     public static final String STRUCTURES = "structures";
+    public static final String EXPORT = "EXPORT";
     public static final String PARENT = "Parent";
     public static final String USER_ID = "user_id";
     public static final String RESOURCES_IDS = "resources_ids";
