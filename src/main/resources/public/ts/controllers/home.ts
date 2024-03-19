@@ -1,10 +1,10 @@
-import {model, ng, toasts} from 'entcore';
+import {model, ng, idiom as i18n, toasts} from 'entcore';
 import {Frame, Resource} from '../model';
 import {IIntervalService, ILocationService, ITimeoutService} from "angular";
-import {Signet, Signets} from "../model/Signet";
+import {Signets} from "../model/Signet";
 import {Utils} from "../utils/Utils";
 import {MainScope} from "./main";
-import {FavoriteService, ISearchService, ITextbookService, SignetService} from "../services";
+import {FavoriteService, ISearchService, ITextbookService, SignetService, IGlobalService} from "../services";
 import {Label} from "../model/Label";
 import {ISignetBody, SignetBody} from "../model/signetBody.model";
 import {SOURCES} from "../core/enum/sources.enum";
@@ -64,7 +64,8 @@ class Controller implements IHomeViewModel {
                 private favoriteService: FavoriteService,
                 private textbookService: ITextbookService,
                 private signetService: SignetService,
-                private searchService: ISearchService) {
+                private searchService: ISearchService,
+                private globalService: IGlobalService) {
         this.$scope.hc = this;
         this.mainScope = (<MainScope> this.$scope.$parent);
 
@@ -86,7 +87,7 @@ class Controller implements IHomeViewModel {
                 this.syncFavoriteResources(),
                 this.syncTextbooks(),
                 this.syncSignets(),
-                this. syncExternalResources()
+                this.syncExternalResources()
             ])
             Utils.safeApply(this.$scope);
         } catch (e) {
@@ -130,7 +131,11 @@ class Controller implements IHomeViewModel {
     }
 
     async syncExternalResources(): Promise<void> {
-        this.externalResources = await this.searchService.get(this.generateExternalResourceRequestBody());
+        if (model.me.profiles.length === 1 && model.me.profiles[0] === i18n.translate("mediacentre.profile.relative")) {
+            this.externalResources = await this.globalService.get();
+        } else {
+            this.externalResources = await this.searchService.get(this.generateExternalResourceRequestBody());
+        }
         Utils.safeApply(this.$scope);
     }
 
@@ -243,5 +248,5 @@ class Controller implements IHomeViewModel {
 }
 
 export const homeController = ng.controller('HomeController', ['$scope', 'route', '$location', '$interval', '$timeout',
-    'FavoriteService', 'TextbookService', 'SignetService', 'SearchService', Controller]);
+    'FavoriteService', 'TextbookService', 'SignetService', 'SearchService', 'GlobalService', Controller]);
 

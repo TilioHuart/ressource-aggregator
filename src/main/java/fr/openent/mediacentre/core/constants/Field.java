@@ -29,8 +29,24 @@ public class Field {
     public static final String FAVORITEID = "favoriteId";
     public static final String RESOURCES = "resources";
     public static final String MESSAGE = "message";
-
-
-
+    public static final String GLOBAL_COLLECTION = "mediacentre.global";
+    public static final String TITLE = "title";
+    public static final String PLAIN_TEXT = "plain_text";
+    public static final String DATE = "date";
+    public static final String DISCIPLINES = "disciplines";
+    public static final String EDITORS = "editors";
+    public static final String AUTHORS = "authors";
+    public static final String IMAGE = "image";
+    public static final String LEVELS = "levels";
+    public static final String DOCUMENT_TYPES = "document_types";
+    public static final String DESCRIPTION = "description";
+    public static final String GLOBAL_RESOURCE = "fr.openent.mediacentre.GlobalResource";
+    public static final String DOCUMENT_TYPES_GLOBAL = "Global";
+    public static final String PROFILES = "profiles";
+    public static final String PROFILE = "profile";
+    public static final String GLOBAL_RESULT = "global_Result";
+    public static final String GET = "get";
+    public static final String GLOBAL = "global";
+    public static final String MONGO_SET = "$set";
 }
 

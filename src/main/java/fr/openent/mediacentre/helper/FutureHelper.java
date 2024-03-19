@@ -49,4 +49,14 @@ public class FutureHelper {
         };
     }
 
+    public static Handler<Either<String, JsonObject>> handlerJsonObject(Promise<JsonObject> promise) {
+        return event -> {
+            if (event.isRight()) {
+                promise.complete(event.right().getValue());
+            } else {
+                LOGGER.error(event.left().getValue());
+                promise.fail(event.left().getValue());
+            }
+        };
+    }
 }
