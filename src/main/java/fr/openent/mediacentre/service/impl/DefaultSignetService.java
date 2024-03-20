@@ -2,18 +2,26 @@ package fr.openent.mediacentre.service.impl;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.helper.ElasticSearchHelper;
+import fr.openent.mediacentre.helper.IModelHelper;
+import fr.openent.mediacentre.model.SignetResource;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.source.Signet;
 import fr.wseduc.webutils.Either;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import org.entcore.common.sql.Sql;
 import org.entcore.common.sql.SqlResult;
 import org.entcore.common.user.UserInfos;
 import java.util.List;
 
 public class DefaultSignetService implements SignetService {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultSignetService.class);
 
     @Override
     public void list(List<String> groupsAndUserIds, UserInfos user, Handler<Either<String, JsonArray>> handler) {
@@ -290,6 +298,16 @@ public class DefaultSignetService implements SignetService {
         ElasticSearchHelper.deletePublicSignets(signetId, ElasticSearchHelper.searchHandler(Signet.class, null, handler));
     }
 
+    public Future<List<SignetResource>> retrieveFavoriteSignets(UserInfos user) {
+        Promise<List<SignetResource>> promise = Promise.promise();
+        String query = "SELECT s.* FROM " + Mediacentre.FAVORITES_TABLE + " f " +
+                "INNER JOIN " + Mediacentre.SIGNET_TABLE + " s ON s.id = f.signet_id " +
+                "WHERE user_id = ? AND favorite = ?;";
+        JsonArray params = new JsonArray().add(user.getUserId()).add(true);
 
+        String errorMessage = "[Mediacentre@DefaultSignetService::retrieveFavoriteSignets] Failed to retrieve favorite signets : ";
+        Sql.getInstance().prepared(query, params, SqlResult.validResultHandler(IModelHelper.resultToIModel(promise, SignetResource.class, errorMessage)));
 
+        return promise.future();
+    }
 }

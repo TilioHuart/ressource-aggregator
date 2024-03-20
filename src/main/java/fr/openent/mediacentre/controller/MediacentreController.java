@@ -2,6 +2,10 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.helper.IModelHelper;
+import fr.openent.mediacentre.helper.TextBookHelper;
+import fr.openent.mediacentre.model.GarResource;
+import fr.openent.mediacentre.source.GAR;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.ApiDoc;
 import fr.wseduc.rs.Get;
@@ -16,6 +20,7 @@ import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.http.filter.SuperAdminFilter;
+import org.entcore.common.user.UserUtils;
 import org.vertx.java.core.http.RouteMatcher;
 
 import java.io.UnsupportedEncodingException;
@@ -24,12 +29,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import static fr.openent.mediacentre.core.constants.Field.*;
+
 public class MediacentreController extends ControllerHelper {
 
     private final List<Source> sources;
     private final JsonObject config;
     private EventStore eventStore;
     private enum MediacentreEvent { ACCESS }
+    private final TextBookHelper textBookHelper = new TextBookHelper();
 
     public MediacentreController(List<Source> sources, JsonObject config) {
         super();
@@ -38,8 +46,7 @@ public class MediacentreController extends ControllerHelper {
     }
 
     @Override
-    public void init(Vertx vertx, JsonObject config, RouteMatcher rm,
-                     Map<String, fr.wseduc.webutils.security.SecuredAction> securedActions) {
+    public void init(Vertx vertx, JsonObject config, RouteMatcher rm, Map<String, fr.wseduc.webutils.security.SecuredAction> securedActions) {
         super.init(vertx, config, rm, securedActions);
         eventStore = EventStoreFactory.getFactory().getEventStore(Mediacentre.class.getSimpleName());
     }
@@ -109,6 +116,39 @@ public class MediacentreController extends ControllerHelper {
         request.response().end();
     }
 
+    @Get("/resource/universalis")
+    @SecuredAction(value = "", type = ActionType.AUTHENTICATED)
+    public void getUniversalis(HttpServerRequest request) {
+        GAR garSource = this.sources.stream()
+                .filter(GAR.class::isInstance)
+                .map(GAR.class::cast)
+                .findFirst()
+                .orElse(null);
+
+        if (garSource == null) {
+            renderJson(request, (JsonObject) null);
+            return;
+        }
+
+        UserUtils.getAuthenticatedUserInfos(eb, request)
+            .compose(garSource::getAllUserResources)
+            .onSuccess(resources -> {
+                JsonObject universalisJson = resources.stream()
+                    .filter(JsonObject.class::isInstance)
+                    .map(JsonObject.class::cast)
+                    .filter(resource -> resource.getString(LINK).contains(UNIVERSALIS_URL))
+                    .findFirst()
+                    .orElse(null);
+                GarResource universalis = universalisJson != null ? IModelHelper.toModel(universalisJson, GarResource.class) : null;
+                renderJson(request, universalis != null ? universalis.toJson() : null);
+            })
+            .onFailure(err -> {
+                String errMessage = "[Mediacentre@MediacentreController::getUniversalis] Failed to get Universalis resource from GAR";
+                log.error(errMessage + err.getMessage());
+                renderError(request);
+            });
+    }
+
     @Get("/config")
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     @ResourceFilter(SuperAdminFilter.class)
@@ -139,7 +179,4 @@ public class MediacentreController extends ControllerHelper {
     @SecuredAction(Mediacentre.GAR_RIGHT)
     public void initGarResourceRight() {
     }
-
-
-
 }

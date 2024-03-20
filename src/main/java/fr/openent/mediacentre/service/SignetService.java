@@ -1,6 +1,8 @@
 package fr.openent.mediacentre.service;
 
+import fr.openent.mediacentre.model.SignetResource;
 import fr.wseduc.webutils.Either;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -96,4 +98,8 @@ public interface SignetService {
 
     void deleteMyPublishedSignet(String signetId, Handler<Either<JsonObject, JsonObject>> handler);
 
+    /**
+     * Get my favorites for all the signets
+     */
+    Future<List<SignetResource>> retrieveFavoriteSignets(UserInfos user);
 }

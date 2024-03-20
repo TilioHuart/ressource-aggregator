@@ -10,10 +10,7 @@ import fr.openent.mediacentre.security.WorkflowActions;
 import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.wseduc.webutils.Either;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.CompositeFuture;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
+import io.vertx.core.*;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -94,6 +91,36 @@ public class GAR implements Source {
         } else {
             handler.handle(new Either.Right<>(new JsonArray()));
         }
+    }
+
+    /**
+     * Retrieve all user GAR resources for all his structures
+     *
+     * @param user    User that needs resources
+     */
+    public Future<JsonArray> getAllUserResources(UserInfos user) {
+        Promise<JsonArray> promise = Promise.promise();
+
+        List<Future> futures = new ArrayList<>();
+        List<String> structures = user.getStructures();
+        for (String structure : structures) {
+            Future<JsonArray> future = Future.future();
+            futures.add(future);
+            getResources(user, structure, FutureHelper.handlerJsonArray(future));
+        }
+
+        CompositeFuture.join(futures).onComplete(event -> {
+            JsonArray resources = new JsonArray();
+            for (Future future : futures) {
+                if (future.succeeded()) {
+                    resources.addAll((JsonArray) future.result());
+                }
+            }
+
+            promise.complete(resources);
+        });
+
+        return promise.future();
     }
 
     /**

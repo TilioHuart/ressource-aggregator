@@ -2,6 +2,7 @@ package fr.openent.mediacentre.controller;
 
 import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.helper.APIHelper;
+import fr.openent.mediacentre.helper.IModelHelper;
 import fr.openent.mediacentre.helper.SignetHelper;
 import fr.openent.mediacentre.security.ShareAndOwner;
 import fr.openent.mediacentre.security.ViewRight;
@@ -503,4 +504,17 @@ public class SignetController extends ControllerHelper {
         });
     }
 
+    @Get("/signets/favorites")
+    @ResourceFilter(ViewRight.class)
+    @ApiDoc("Retrieve all the signets from favorites")
+    @SecuredAction(value = "", type = ActionType.RESOURCE)
+    public void getFavorites(HttpServerRequest request) {
+        UserUtils.getAuthenticatedUserInfos(eb, request)
+            .compose(signetService::retrieveFavoriteSignets)
+            .onSuccess(signets -> renderJson(request, IModelHelper.toJsonArray(signets)))
+            .onFailure(err -> {
+                log.error("[Mediacentre@SignetController::getFavorites] Failed to get signet favorites : " + err.getMessage());
+                renderError(request);
+            });
+    }
 }
