@@ -136,7 +136,7 @@ public class MediacentreController extends ControllerHelper {
                 JsonObject universalisJson = resources.stream()
                     .filter(JsonObject.class::isInstance)
                     .map(JsonObject.class::cast)
-                    .filter(resource -> resource.getString(LINK).contains(UNIVERSALIS_URL))
+                    .filter(resource -> resource.getString(LINK, "").contains(UNIVERSALIS_URL))
                     .findFirst()
                     .orElse(null);
                 GarResource universalis = universalisJson != null ? IModelHelper.toModel(universalisJson, GarResource.class) : null;
