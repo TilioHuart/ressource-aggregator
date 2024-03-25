@@ -1,5 +1,6 @@
 package fr.openent.mediacentre.controller;
 
+import fr.openent.mediacentre.core.constants.SourceConstant;
 import fr.openent.mediacentre.helper.APIHelper;
 import fr.openent.mediacentre.helper.FavoriteHelper;
 import fr.openent.mediacentre.security.ViewRight;
@@ -12,13 +13,15 @@ import fr.wseduc.rs.Post;
 import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.request.RequestUtils;
+import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.json.JsonObject;
 import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserUtils;
 
-import static fr.wseduc.webutils.http.response.DefaultResponseHandler.defaultResponseHandler;
+import static fr.openent.mediacentre.core.constants.Field.*;
 
 public class FavoriteController extends ControllerHelper {
 
@@ -48,23 +51,26 @@ public class FavoriteController extends ControllerHelper {
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void createFavorites(final HttpServerRequest request) {
-        UserUtils.getUserInfos(eb, request, user -> RequestUtils.bodyToJson(request, favorite -> {
-            favorite.put("user", user.getUserId());
-            int favoriteId = 0;
-            if(favorite.getString("source").equals("fr.openent.mediacentre.source.Signet")) {
-                favoriteId = Integer.parseInt(request.getParam("id"));
-                favoriteService.updateSQL(favoriteId, user.getUserId(), true, false, defaultResponseHandler(request));
-            }
-            favoriteService.create(favorite, event -> {
-                if(event.isRight()) {
-                    log.info("Favorite creation successful");
-                    request.response().setStatusCode(200).end();
-                } else {
-                    log.error("Favorite creation failed");
-                }
-            });
-
-        }));
+        RequestUtils.bodyToJson(request, favorite -> {
+            UserUtils.getAuthenticatedUserInfos(eb, request)
+                .compose(user -> {
+                    favorite.put(USER, user.getUserId());
+                    if (favorite.getString(SOURCE).equals(SourceConstant.SIGNET)) {
+                        int favoriteId = Integer.parseInt(request.getParam(ID));
+                        return favoriteService.updateSQL(favoriteId, user.getUserId(), true, false);
+                    }
+                    else {
+                        return Future.succeededFuture();
+                    }
+                })
+                .compose(SQLfavorite -> favoriteService.create(favorite))
+                .onSuccess(mongoFavorite -> render(request, mongoFavorite))
+                .onFailure(err -> {
+                    String errorMessage = "[Mediacentre@FavoriteController::createFavorites] Failed to create a new favorite for resource " + favorite;
+                    log.error(errorMessage + " : " + err.getMessage());
+                    renderError(request);
+                });
+        });
     }
 
     @Delete("/favorites")
@@ -72,27 +78,28 @@ public class FavoriteController extends ControllerHelper {
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void deleteFavorites(final HttpServerRequest request) {
-        UserUtils.getUserInfos(eb, request, user ->  {
-            if (!request.params().contains("id") && !request.params().contains("source")) {
-                badRequest(request);
-                return;
-            }
-            String favoriteId = request.getParam("id");
-            String source = request.getParam("source");
-            favoriteService.delete(favoriteId, source, user.getUserId(), event -> {
-                if(event.isRight()) {
-                    log.info("Favorite delete successful");
-                    request.response().setStatusCode(200).end();
-                } else {
-                    log.error("Favorite delete failed");
-                }
-            });
-            // Update sql for signet
-            if (source.equals("fr.openent.mediacentre.source.Signet")) {
-                favoriteService.updateSQL(Integer.parseInt(favoriteId), user.getUserId(), false, false,
-                        defaultResponseHandler(request));
-            }
+        if (!request.params().contains(ID) && !request.params().contains(SOURCE)) {
+            badRequest(request);
+            return;
+        }
 
-        });
+        String favoriteId = request.getParam(ID);
+        String source = request.getParam(SOURCE);
+        JsonObject composeInfos = new JsonObject();
+
+        UserUtils.getAuthenticatedUserInfos(eb, request)
+            .compose(user -> {
+                composeInfos.put(USER_ID, user.getUserId());
+                return favoriteService.delete(favoriteId, source, user.getUserId());
+            })
+            .compose(voidResult -> source.equals(SourceConstant.SIGNET) ?
+                favoriteService.updateSQL(Integer.parseInt(favoriteId), composeInfos.getString(USER_ID), false, false) :
+                Future.succeededFuture())
+            .onSuccess(voidResult -> ok(request))
+            .onFailure(err -> {
+                String errorMessage = "[Mediacentre@FavoriteController::deleteFavorites] Failed to delete favorite with id " + favoriteId;
+                log.error(errorMessage + " : " + err.getMessage());
+                renderError(request);
+            });
     }
 }

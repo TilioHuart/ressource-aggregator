@@ -1,7 +1,6 @@
 package fr.openent.mediacentre.service.test.impl;
 
 import fr.openent.mediacentre.enums.Profile;
-import fr.openent.mediacentre.model.GlobalResource;
 import fr.openent.mediacentre.service.GlobalResourceService;
 import fr.openent.mediacentre.service.impl.GlobalResourceServiceMongoImpl;
 import fr.wseduc.mongodb.MongoDb;
@@ -9,7 +8,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.entcore.common.user.UserInfos;

@@ -21,6 +21,8 @@ import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.http.filter.SuperAdminFilter;
 import org.entcore.common.user.UserUtils;
 
+import static fr.openent.mediacentre.core.constants.Field.ID;
+
 public class GlobalResourceController extends ControllerHelper {
 
     private final EventBus eb;
@@ -71,7 +73,7 @@ public class GlobalResourceController extends ControllerHelper {
     @ResourceFilter(SuperAdminFilter.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void updateResource(HttpServerRequest request) {
-        RequestUtils.bodyToJson(request, resource -> globalResourceService.updateGlobalChannel(request.getParam("id"), resource)
+        RequestUtils.bodyToJson(request, resource -> globalResourceService.updateGlobalChannel(request.getParam(ID), resource)
             .onSuccess(result -> ok(request))
             .onFailure(error -> {
                 String message = String.format("[GlobalResourceController@%s::updateResource] Failed to update resource : %s",
@@ -85,7 +87,7 @@ public class GlobalResourceController extends ControllerHelper {
     @ResourceFilter(SuperAdminFilter.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void deleteResource(HttpServerRequest request) {
-        globalResourceService.deleteGlobalChannel(request.getParam(Field.ID))
+        globalResourceService.deleteGlobalChannel(request.getParam(ID))
             .onSuccess(result -> ok(request))
             .onFailure(error -> {
                 String message = String.format("[GlobalResourceController@%s::deleteResource] Failed to delete resource : %s",

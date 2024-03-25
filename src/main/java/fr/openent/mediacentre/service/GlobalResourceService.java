@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject;
 import org.entcore.common.user.UserInfos;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GlobalResourceService {
     /**
@@ -35,5 +36,5 @@ public interface GlobalResourceService {
      * @param id   global ressource id
      * @param resource    Ressource to update
      */
-    public Future<GlobalResource> updateGlobalChannel(String id, JsonObject resource);
+    public Future<Optional<GlobalResource>> updateGlobalChannel(String id, JsonObject resource);
 }

@@ -8,6 +8,7 @@
 		<script src="/assets/js/entcore/ng-app.js?v=@@VERSION" type="text/javascript" id="context"></script>
 		<script src="/mediacentre/public/dist/application.js?v=@@VERSION" type="text/javascript"></script>
 		<script src="//code.angularjs.org/snapshot/angular.min.js"></script>
+		<link rel="stylesheet" href="mediacentre/public/css/mediacentre-specifics.css?v=@@VERSION">
 		<script>
 			wsPort = "{{wsPort}}";
 			mode = "{{mode}}";
@@ -21,7 +22,7 @@
 		<script type="text/ng-template" id="empty"></script>
 	</head>
 
-	<body ng-controller="MainController as mc" class="mediacentre-v2">
+	<body ng-controller="MainController as mc" class="mediacentre-module">
 		<portal>
 			<container template="main"></container>
 			<lightbox show="mc.search.advanced.show" on-close="mc.closeAdvancedSearch()" class="nopadding">

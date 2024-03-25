@@ -28,6 +28,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static fr.openent.mediacentre.core.constants.Field.*;
 
@@ -139,8 +140,8 @@ public class MediacentreController extends ControllerHelper {
                     .filter(resource -> resource.getString(LINK, "").contains(UNIVERSALIS_URL))
                     .findFirst()
                     .orElse(null);
-                GarResource universalis = universalisJson != null ? IModelHelper.toModel(universalisJson, GarResource.class) : null;
-                renderJson(request, universalis != null ? universalis.toJson() : null);
+                Optional<GarResource> universalis = universalisJson != null ? IModelHelper.toModel(universalisJson, GarResource.class) : Optional.empty();
+                renderJson(request, universalis.map(GarResource::toJson).orElse(null));
             })
             .onFailure(err -> {
                 String errMessage = "[Mediacentre@MediacentreController::getUniversalis] Failed to get Universalis resource from GAR";

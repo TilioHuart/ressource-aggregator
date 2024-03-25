@@ -22,6 +22,7 @@ import org.entcore.common.user.UserInfos;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implements GlobalResourceService {
 
@@ -75,8 +76,8 @@ public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implement
     }
 
     @Override
-    public Future<GlobalResource> updateGlobalChannel(String id, JsonObject resource) {
-        Promise<GlobalResource> promise = Promise.promise();
+    public Future<Optional<GlobalResource>> updateGlobalChannel(String id, JsonObject resource) {
+        Promise<Optional<GlobalResource>> promise = Promise.promise();
         JsonObject query = new JsonObject().put(Field._ID, id);
         JsonObject update = new JsonObject().put(Field.MONGO_SET, resource);
         mongo.update(collection, query, update, MongoDbResult.validResultHandler(IModelHelper.uniqueResultToIModel(promise, GlobalResource.class)));

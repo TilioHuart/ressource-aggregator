@@ -21,6 +21,7 @@ public class Field {
     public static final String _ID = "_id";
     public static final String ID = "id";
     public static final String USER = "user";
+    public static final String USER_ID = "user_id";
     public static final String SOURCE = "source";
     public static final String SOURCES = "sources";
     public static final String JSONDATA = "jsondata";

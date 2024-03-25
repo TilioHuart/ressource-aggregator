@@ -4,6 +4,7 @@ import fr.wseduc.webutils.Either;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -50,11 +51,26 @@ public class FutureHelper {
     }
 
     public static Handler<Either<String, JsonObject>> handlerJsonObject(Promise<JsonObject> promise) {
+        return handlerJsonObject(promise, null);
+    }
+
+    public static Handler<Either<String, JsonObject>> handlerJsonObject(Promise<JsonObject> promise, String errorMessage) {
         return event -> {
             if (event.isRight()) {
                 promise.complete(event.right().getValue());
             } else {
-                LOGGER.error(event.left().getValue());
+                LOGGER.error((errorMessage != null ? errorMessage : "") + event.left().getValue());
+                promise.fail(event.left().getValue());
+            }
+        };
+    }
+
+    public static Handler<Either<String, Void>> handlerVoid(Promise<Void> promise, String errorMessage) {
+        return event -> {
+            if (event.isRight()) {
+                promise.complete();
+            } else {
+                LOGGER.error((errorMessage != null ? errorMessage : "") + event.left().getValue());
                 promise.fail(event.left().getValue());
             }
         };

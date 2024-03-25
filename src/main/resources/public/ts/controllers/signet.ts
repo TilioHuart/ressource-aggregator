@@ -93,7 +93,7 @@ class Controller implements ISignetViewModel {
                 private $location: ILocationService,
                 private $timeout: ITimeoutService) {
         this.$scope.vm = this;
-        this.mainScope = (<MainScope> angular.element(document.getElementsByClassName("mediacentre-v2")).scope());
+        this.mainScope = (<MainScope> angular.element(document.getElementsByClassName("mediacentre-module")).scope());
 
         this.signets = new Signets();
         this.folder = "mine";
