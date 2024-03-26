@@ -88,7 +88,7 @@ class Controller implements IHomeViewModel {
                 this.syncTextbooks(),
                 this.syncSignets(),
                 this.syncExternalResources()
-            ])
+            ]);
             Utils.safeApply(this.$scope);
         } catch (e) {
 
@@ -131,9 +131,13 @@ class Controller implements IHomeViewModel {
     }
 
     async syncExternalResources(): Promise<void> {
-        if (model.me.profiles.length === 1 && model.me.profiles[0] === i18n.translate("mediacentre.profile.relative")) {
+        if (!model.me || !model.me.profiles) {
+            setTimeout(() => this.syncExternalResources(), 50);
+        }
+        else if (model.me.profiles.length === 1 && model.me.profiles[0] === i18n.translate("mediacentre.profile.relative")) {
             this.externalResources = await this.globalService.get();
-        } else {
+        }
+        else {
             this.externalResources = await this.searchService.get(this.generateExternalResourceRequestBody());
         }
         Utils.safeApply(this.$scope);
