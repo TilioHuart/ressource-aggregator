@@ -31,8 +31,6 @@ public abstract class Resource {
 
     private String source;
 
-    private String id;
-
     private boolean favorite;
 
     private JsonObject date;
@@ -52,7 +50,6 @@ public abstract class Resource {
         this.documentTypes = IModelHelper.toStringList(resource.getJsonArray(Field.DOCUMENT_TYPES, new JsonArray()));
         this.link = resource.getString(Field.LINK, null);
         this.source = resource.getString(Field.SOURCE, null);
-        this.id = resource.getString(Field.ID, null);
         this.favorite = resource.getBoolean(Field.FAVORITE, false);
         this.date = resource.getJsonObject(Field.DATE, MongoDb.now());
     }
@@ -156,15 +153,6 @@ public abstract class Resource {
         return this;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public Resource setId(String id) {
-        this.id = id;
-        return this;
-    }
-
     public boolean isFavorite() {
         return favorite;
     }
@@ -196,7 +184,6 @@ public abstract class Resource {
                 .put(Field.DOCUMENT_TYPES, new JsonArray(this.getDocumentTypes()))
                 .put(Field.LINK, this.getLink())
                 .put(Field.SOURCE, this.getSource())
-                .put(Field.ID, this.getId())
                 .put(Field.FAVORITE, this.isFavorite());
     }
 }

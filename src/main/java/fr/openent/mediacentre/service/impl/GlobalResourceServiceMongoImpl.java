@@ -2,6 +2,7 @@ package fr.openent.mediacentre.service.impl;
 
 import com.mongodb.QueryBuilder;
 import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.core.constants.SourceConstant;
 import fr.openent.mediacentre.enums.Profile;
 import fr.openent.mediacentre.helper.FutureHelper;
 import fr.openent.mediacentre.helper.IModelHelper;
@@ -15,7 +16,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import jdk.nashorn.internal.objects.Global;
 import org.entcore.common.mongodb.MongoDbResult;
 import org.entcore.common.service.impl.MongoDbCrudService;
 import org.entcore.common.user.UserInfos;
@@ -23,6 +23,8 @@ import org.entcore.common.user.UserInfos;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static fr.openent.mediacentre.core.constants.Field.*;
 
 public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implements GlobalResourceService {
 
@@ -39,16 +41,34 @@ public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implement
     @Override
     public Future<JsonObject> createGlobalResource(UserInfos user, JsonObject resource) {
         Promise<JsonObject> promise = Promise.promise();
+
         JsonObject now = MongoDb.now();
         resource.put(Field.DATE, now);
         resource.put(Field.AUTHORS, Collections.singletonList(user.getUsername()));
         GlobalResource globalResource = new GlobalResource(resource);
+
         if (globalResource.getProfiles().isEmpty()) {
-            log.error("[Mediacentre@GlobalResourceServiceMongoImpl::createGlobalResource] profiles can not empty");
-            promise.fail("profiles can not empty");
-        } else {
-            mongo.insert(collection, globalResource.toJson(), MongoDbResult.validResultHandler(FutureHelper.handlerJsonObject(promise)));
+            String errorMessage = "Profiles can not empty";
+            log.error("[Mediacentre@GlobalResourceServiceMongoImpl::createGlobalResource] " + errorMessage);
+            promise.fail(errorMessage);
+            return promise.future();
         }
+
+        this.getMaxIdValue()
+            .onSuccess(maxIdValueJson -> {
+                JsonArray firstBatch = maxIdValueJson.getJsonObject(CURSOR).getJsonArray(CAMEL_FIRST_BATCH);
+                int maxIdValue = firstBatch != null && !firstBatch.isEmpty() ? firstBatch.getJsonObject(0).getInteger(CAMEL_MAX_VALUE) : 0;
+                globalResource.setId(maxIdValue + 1);
+
+                String errorMessage = "[Mediacentre@GlobalResourceServiceMongoImpl::createGlobalResource] Failed to create global resource : ";
+                mongo.insert(collection, globalResource.toJson(), MongoDbResult.validResultHandler(FutureHelper.handlerJsonObject(promise, errorMessage)));
+            })
+            .onFailure(err -> {
+                String errorMessage = "[Mediacentre@GlobalResourceServiceMongoImpl::createGlobalResource] Failed to get max id value from mongo";
+                log.error(errorMessage + " : " + err.getMessage());
+                promise.fail(err.getMessage());
+            });
+
         return promise.future();
     }
 
@@ -81,6 +101,28 @@ public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implement
         JsonObject query = new JsonObject().put(Field._ID, id);
         JsonObject update = new JsonObject().put(Field.MONGO_SET, resource);
         mongo.update(collection, query, update, MongoDbResult.validResultHandler(IModelHelper.uniqueResultToIModel(promise, GlobalResource.class)));
+        return promise.future();
+    }
+
+    private Future<JsonObject> getMaxIdValue() {
+        Promise<JsonObject> promise = Promise.promise();
+
+        JsonObject matcher = new JsonObject().put(SOURCE, SourceConstant.GLOBAL);
+        JsonObject group = new JsonObject()
+                .put(_ID, (String) null)
+                .put(CAMEL_MAX_VALUE, new JsonObject().put(MONGO_MAX, MONGO_ID));
+        JsonArray pipeline = new JsonArray()
+                .add(new JsonObject().put(MONGO_MATCH, matcher))
+                .add(new JsonObject().put(MONGO_GROUP, group));
+        JsonObject request = new JsonObject()
+                .put(AGGREGATE, collection)
+                .put(CAMEL_ALLOW_DISK_USE, true)
+                .put(CURSOR, new JsonObject().put(CAMEL_BATCH_SIZE, 2147483647))
+                .put(PIPELINE, pipeline);
+
+        String errorMessage = "[Mediacentre@GlobalResourceServiceMongoImpl::getMaxIdValue] Failed to get max id value from mongo : ";
+        mongo.command(request.toString(), MongoDbResult.validResultHandler(FutureHelper.handlerJsonObject(promise, errorMessage)));
+
         return promise.future();
     }
 }

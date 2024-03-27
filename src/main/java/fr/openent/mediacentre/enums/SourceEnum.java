@@ -7,7 +7,8 @@ public enum SourceEnum {
     SIGNET(SourceConstant.SIGNET),
     MOODLE(SourceConstant.MOODLE),
     GAR(SourceConstant.GAR),
-    PMB(SourceConstant.PMB);
+    PMB(SourceConstant.PMB),
+    GLOBAL(SourceConstant.GLOBAL);
 
     private final String source;
 

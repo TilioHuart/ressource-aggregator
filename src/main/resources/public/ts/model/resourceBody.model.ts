@@ -1,5 +1,5 @@
 import {model} from "entcore";
-import {number} from "yargs";
+import {SOURCES} from "../core/enum/sources.enum";
 
 export interface IResourceBody {
     authors: string[];
@@ -45,7 +45,7 @@ export class ResourceBody {
     private _hash: number;
 
     constructor(data: any) {
-        this._id = (data.source == "fr.openent.mediacentre.source.Signet") ? undefined : data._id;
+        this._id = (data.source == SOURCES.SIGNET) ? undefined : data._id;
         this._authors = data.authors ? data.authors : [];
         this._date = data.date;
         this._description = data.description ? data.description : null;
@@ -67,7 +67,7 @@ export class ResourceBody {
     }
 
     private getIdInfo(data: any): string|number {
-        if (data.source == "fr.openent.mediacentre.source.Signet") {
+        if (data.source == SOURCES.SIGNET || data.source == SOURCES.GLOBAL) {
             return data.id_info ? parseInt(data.id_info) : parseInt(data.id);
         } else {
             return data.id_info ? data.id_info : data.id;
@@ -76,7 +76,7 @@ export class ResourceBody {
 
     toJson(): IResourceBody {
         return {
-            _id: (this.source != "fr.openent.mediacentre.source.Signet" && this.id) ? this.id : undefined,
+            _id: (this.source != SOURCES.SIGNET && this.id) ? this.id : undefined,
             authors: this.authors ? this.authors : [],
             date: this.date,
             description: this.description? this.description : null,

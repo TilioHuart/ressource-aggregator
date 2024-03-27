@@ -7,4 +7,5 @@ public class SourceConstant {
     public static final String MOODLE = ROUTE + ".source.Moodle";
     public static final String GAR = ROUTE + ".source.GAR";
     public static final String PMB = ROUTE + ".source.PMB";
+    public static final String GLOBAL = ROUTE + ".source.GlobalResource";
 }

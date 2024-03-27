@@ -1,11 +1,12 @@
-import {idiom, angular, ng, toasts} from 'entcore';
+import {idiom, ng, toasts} from 'entcore';
 import http from 'axios';
 import {hashCode} from '../utils';
 
 import * as Clipboard from 'clipboard';
 
 import {FavoriteService} from "../services";
-import {Resource, ResourceBody} from "../model";
+import {ResourceBody} from "../model";
+import {SOURCES} from "../core/enum/sources.enum";
 
 declare const window: Window;
 
@@ -36,7 +37,7 @@ export const ResourceCard = ng.directive('resourceCard',
                     return v.toString(16)
                 });
                 /*                $scope.background = `/mediacentre/public/img/random-background-${random}.svg`;*/
-                if ("fr.openent.mediacentre.source.Signet" === $scope.ngModel.source
+                if (SOURCES.SIGNET === $scope.ngModel.source
                     || !$scope.ngModel.hash && !$scope.ngModel.id) {
                     $scope.ngModel.hash = hashCode(signetId);
                 } else if (!$scope.ngModel.hash) {
@@ -61,7 +62,7 @@ export const ResourceCard = ng.directive('resourceCard',
                 }
 
                 $scope.$on("$includeContentLoaded", function () {
-                    if ("fr.openent.mediacentre.source.GAR" === $scope.ngModel.source) {
+                    if (SOURCES.GAR === $scope.ngModel.source) {
                         const crop = element.find('.resource-card .crop');
                         const image: HTMLImageElement = crop.children()[0];
 
@@ -147,7 +148,7 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.addFavorite = async function () {
                     $scope.ngModel.favorite = undefined;
-                    let resourceId: number = $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ?
+                    let resourceId: number = $scope.ngModel.source == SOURCES.SIGNET || $scope.ngModel.source == SOURCES.GLOBAL ?
                         parseInt($scope.ngModel.id_info) : undefined;
                     let response = await FavoriteService.create(new ResourceBody($scope.ngModel).toJson(), resourceId);
                     if (response.status === 200) {
@@ -159,7 +160,7 @@ export const ResourceCard = ng.directive('resourceCard',
 
                 $scope.removeFavorite = async function () {
                     let resourceId: string;
-                    resourceId = $scope.ngModel.source == "fr.openent.mediacentre.source.Signet" ?
+                    resourceId = $scope.ngModel.source == SOURCES.SIGNET || $scope.ngModel.source == SOURCES.GLOBAL ?
                         parseInt($scope.ngModel.id_info) : $scope.ngModel._id;
                     if (!resourceId) resourceId = $scope.ngModel.favoriteId;
                     let response = await FavoriteService.delete(resourceId, $scope.ngModel.source);

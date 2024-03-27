@@ -25,6 +25,7 @@ import org.entcore.common.sql.SqlResult;
 import java.util.Optional;
 
 import static fr.openent.mediacentre.core.constants.Field.ID;
+import static fr.openent.mediacentre.core.constants.Field._ID;
 
 public class DefaultFavoriteService implements FavoriteService {
 
@@ -56,8 +57,27 @@ public class DefaultFavoriteService implements FavoriteService {
     public Future<JsonObject> create(JsonObject favoritesBody) {
         Promise<JsonObject> promise = Promise.promise();
 
-        String errorMessage = "[Mediacentre@DefaultFavoriteService::create] Failed to create favorite in mongo database : ";
-        MongoDb.getInstance().insert(TOKEN_COLLECTION, favoritesBody, MongoDbResult.validResultHandler(FutureHelper.handlerJsonObject(promise, errorMessage)));
+        this.getByMongoId(favoritesBody.getString(_ID, null))
+            .onSuccess(result -> {
+                if (!result.isEmpty()) favoritesBody.remove(_ID);
+                String errorMessage = "[Mediacentre@DefaultFavoriteService::create] Failed to create favorite in mongo database : ";
+                MongoDb.getInstance().insert(TOKEN_COLLECTION, favoritesBody, MongoDbResult.validResultHandler(FutureHelper.handlerJsonObject(promise, errorMessage)));
+            })
+            .onFailure(err -> {
+                String errorMessage = "[Mediacentre@DefaultFavoriteService::create] Failed to check if favorite with same _id already existing in mongo database : ";
+                log.error(errorMessage + err.getMessage());
+                promise.fail(err.getMessage());
+            });
+
+        return promise.future();
+    }
+
+    private Future<JsonObject> getByMongoId(String mongoId) {
+        Promise<JsonObject> promise = Promise.promise();
+
+        JsonObject matcher = new JsonObject().put(_ID, mongoId);
+        String errorMessage = "[Mediacentre@DefaultFavoriteService::getByMongoId] Failed to get favorite with _id " + mongoId + " in mongo database : ";
+        MongoDb.getInstance().findOne(TOKEN_COLLECTION, matcher, MongoDbResult.validResultHandler(FutureHelper.handlerJsonObject(promise, errorMessage)));
 
         return promise.future();
     }
@@ -192,7 +212,7 @@ public class DefaultFavoriteService implements FavoriteService {
                 .put(Field.USER, userId)
                 .put(Field.SOURCE, source);
 
-        if (source.equals(SourceEnum.SIGNET.method())) {
+        if (source.equals(SourceEnum.SIGNET.method()) || source.equals(SourceEnum.GLOBAL.method())) {
             matcher.put(ID, Integer.parseInt(favoriteId));
         }
         else {

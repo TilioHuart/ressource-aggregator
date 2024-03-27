@@ -131,11 +131,13 @@ class Controller implements IHomeViewModel {
     }
 
     async syncExternalResources(): Promise<void> {
-        if (!model.me || !model.me.profiles) {
+        if (!model.me || !model.me.profiles || !this.mainScope.mc.favorites) {
             setTimeout(() => this.syncExternalResources(), 50);
         }
         else if (model.me.profiles.length === 1 && model.me.profiles[0] === i18n.translate("mediacentre.profile.relative")) {
             this.externalResources = await this.globalService.get();
+            this.externalResources.forEach((resource: Resource) =>
+                resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
         }
         else {
             this.externalResources = await this.searchService.get(this.generateExternalResourceRequestBody());
@@ -189,6 +191,8 @@ class Controller implements IHomeViewModel {
         this.publicSignets.forEach((resource: Resource) =>
             resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
         this.orientationSignets.forEach((resource: Resource) =>
+            resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
+        this.externalResources.forEach((resource: Resource) =>
             resource.favorite = !!this.mainScope.mc.favorites.find((favorite: Resource) => favorite.id_info == resource.id_info));
     }
 
