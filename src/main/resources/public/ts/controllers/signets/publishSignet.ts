@@ -47,7 +47,7 @@ class Controller implements IViewModel {
     constructor(private $scope: IPublishSignetScope,
                 private $timeout: ITimeoutService) {
         this.$scope.vm = this;
-        let mediacentreScope : any = angular.element(document.getElementsByClassName("mediacentre-v2")).scope();
+        let mediacentreScope : any = angular.element(document.getElementsByClassName("mediacentre-module")).scope();
         this.mainScope = (<MainScope> mediacentreScope['mc']);
         this.signet = mediacentreScope['signet'];
         this.signetScope = (<ISignetScope> angular.element(document.getElementById("signet-controller")).scope());

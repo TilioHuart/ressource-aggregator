@@ -5,7 +5,6 @@ import {Utils} from "../../utils/Utils";
 import {Signet} from "../../model/Signet";
 import {MainScope} from "../main";
 import {ISignetScope} from "../signet";
-import {ITimeoutService} from "angular";
 import {SignetBody} from "../../model/signetBody.model";
 
 interface IViewModel extends ng.IController {
@@ -51,7 +50,7 @@ class Controller implements IViewModel {
 
     constructor(private $scope: IPublishSignetScope) {
         this.$scope.vm = this;
-        let mediacentreScope : any = angular.element(document.getElementsByClassName("mediacentre-v2")).scope();
+        let mediacentreScope : any = angular.element(document.getElementsByClassName("mediacentre-module")).scope();
         this.mainScope = (<MainScope> mediacentreScope['mc']);
         this.signet = mediacentreScope['signet'];
         this.signetScope = (<ISignetScope>angular.element(document.getElementById("signet-controller")).scope());
