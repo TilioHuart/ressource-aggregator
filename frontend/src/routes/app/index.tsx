@@ -1,12 +1,8 @@
-import React from "react";
-
 import { ID } from "edifice-ts-client";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
-import { Card } from "~/components/card/Card.tsx";
-
-// const ExportModal = lazy(async () => await import("~/features/export-modal"));
+import { Header } from "~/components/header/Header.tsx";
+import { Sidebar } from "~/components/sidebar/Sidebar.tsx";
+import { Square } from "~/components/square/Square.tsx";
 
 export interface AppProps {
   _id: string;
@@ -21,16 +17,38 @@ export interface AppProps {
 }
 
 export const App = () => {
-  console.log("i am in app");
-  const { t } = useTranslation();
   return (
     <>
-      <div>root index principal</div>
-      <h1>{t("mediacentre.title")}</h1>
-      <Card title="Sample Card" content="This is a sample card component." />
-      <Link to={`/user`}>click to access user </Link>
-      <Link to={`/info`}>click to access info </Link>
-      <Link to={`/`}>click to access /</Link>
+      <Sidebar />
+      <div className="home-container">
+        <Header />
+        <div className="square-container">
+          <Square
+            width="60%"
+            height="300px"
+            color="#c3c3c3"
+            margin="0 5% 10px 0"
+          />
+          <Square
+            width="40%"
+            height="300px"
+            color="#d0d0d0"
+            margin="0 0 10px 0"
+          />
+        </div>
+        <Square
+          width="100%"
+          height="300px"
+          color="#afafaf"
+          margin="0 0 10px 0"
+        />
+        <Square
+          width="100%"
+          height="300px"
+          color="#414141"
+          margin="0 0 10px 0"
+        />
+      </div>
     </>
   );
 };
