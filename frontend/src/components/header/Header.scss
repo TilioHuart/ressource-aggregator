@@ -1,3 +1,17 @@
 .med-header {
   margin: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .med-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .med-header-button {
+      white-space: nowrap;
+      margin-left: 1rem;
+    }
+  }
 }
