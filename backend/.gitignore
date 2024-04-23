@@ -1,0 +1,5 @@
+/build
+/bin
+src/main/resources/i18n
+src/main/resources/public
+src/main/resources/view

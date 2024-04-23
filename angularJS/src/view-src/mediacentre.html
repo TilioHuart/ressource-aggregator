@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>{{#i18n}}mediacentre.title{{/i18n}}</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+		<script src="/assets/js/entcore/ng-app.js?v=@@VERSION" id="context" type="text/javascript"></script>
+		<script src="/mediacentre/public/js/application.js?v=@@VERSION" type="text/javascript"></script>
+		<link rel="stylesheet" href="/mediacentre/public/mediacentre-specifics.css?v=@@VERSION">
+
+		<script>
+			wsPort = "{{wsPort}}";
+			mode = "{{mode}}";
+			sources = [
+				{{#sources}}
+					"{{.}}",
+				{{/sources}}
+			];
+			mediacentreUpdateFrequency = {{mediacentreUpdateFrequency}};
+		</script>
+		<script type="text/ng-template" id="empty"></script>
+	</head>
+
+	<body ng-controller="MainController as mc" class="mediacentre-module">
+		<portal>
+			<container template="main"></container>
+			<lightbox show="mc.search.advanced.show" on-close="mc.closeAdvancedSearch()" class="nopadding">
+				<div class="advanced-search" ng-include="'/mediacentre/public/template/advanced-search.html'"></div>
+			</lightbox>
+		</portal>
+	</body>
+
+</html>

@@ -10,9 +10,15 @@ node_modules/
 src/main/resources/view
 src/main/resources/public/dist
 src/main/resources/public/js
+src/main/resources/public/css/
 src/main/resources/public/template/entcore
 rev-manifest.json
 /.idea
 cacerts
 /src/main/resources/public/font/
 coverage/
+/angularJS/src/css/
+/angularJS/src/dist/
+/angularJS/src/js/
+/package-lock.json
+/yarn.lock
