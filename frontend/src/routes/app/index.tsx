@@ -1,5 +1,6 @@
 import { ID } from "edifice-ts-client";
 
+import { Resource } from "~/components/resource/Resource.tsx";
 import { Header } from "~/components/header/Header.tsx";
 import { Sidebar } from "~/components/sidebar/Sidebar.tsx";
 import { Square } from "~/components/square/Square.tsx";
@@ -22,6 +23,10 @@ export const App = () => {
       <Sidebar />
       <div className="home-container">
         <Header />
+        <Resource 
+          title="My Card bnefbnue"
+          ownerName="John Doe"
+        />
         <div className="square-container">
           <Square
             width="60%"
