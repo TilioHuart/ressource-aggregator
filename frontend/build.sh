@@ -197,6 +197,9 @@ do
     runTest)
       runTest
       ;;
+    runDev)
+      runDev
+      ;;
     prettierDocker)
       prettierDocker
       ;;

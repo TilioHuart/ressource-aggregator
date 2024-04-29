@@ -2,3 +2,22 @@ body {
   min-width: inherit;
   width: auto;
 }
+
+main {
+  &.container-fluid {
+    max-width: none;
+    margin: 0;
+    --edifice-container-width: 100%;
+  }
+}
+
+.home-container {
+  width: calc(100% - 75px);
+  margin-left: 75px;
+
+  .square-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+}
