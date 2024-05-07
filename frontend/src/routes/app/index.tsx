@@ -22,6 +22,13 @@ export const App = () => {
       <Sidebar />
       <div className="home-container">
         <Header />
+        {/* <Resource
+          image="https://via.placeholder.com/150"
+          title="Resource Title"
+          subtitle="Resource Subtitle"
+          size="medium"
+          favorite={false}
+        /> */}
         <div className="square-container">
           <Square
             width="60%"

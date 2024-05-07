@@ -1,0 +1,67 @@
+.med-resource-card {
+  width: 100%;
+  height: auto;
+
+  &.medium {
+    .med-resource-image {
+      height: 12rem;
+    }
+
+    .med-resource-footer {
+      svg {
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+  }
+
+  &.small {
+    .med-resource-image {
+      height: 8rem;
+    }
+
+    .med-resource-footer {
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  .med-resource-body-text {
+    width: 100%;
+
+    .med-resource-card-text {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+
+  .med-resource-image {
+    align-self: center;
+    width: auto;
+  }
+
+  .med-resource-footer {
+    align-self: flex-end;
+
+    svg {
+      cursor: pointer;
+    }
+
+    .med-link {
+      cursor: pointer;
+      color: #4d54c5;
+    }
+
+    .med-pin {
+      cursor: pointer;
+      color: #ff656a;
+    }
+
+    .med-star {
+      color: #ffb549;
+    }
+  }
+}

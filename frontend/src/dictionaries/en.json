@@ -137,5 +137,9 @@
   "mediacentre.signets.orientation.decouverte.upperCase": "ORIENTATION / DÉCOUVERTE DES MÉTIERS",
 
   "mediacentre.link": "Lien",
-  "mediacentre.link.copy.success": "Le lien a bien été copié"
+  "mediacentre.link.copy.success": "Le lien a bien été copié",
+  "mediacentre.card.open": "Ouvrir",
+  "mediacentre.card.favorite": "Ajouter aux favoris",
+  "mediacentre.card.pin": "Epingler",
+  "mediacentre.card.copy": "Copier le lien"
 }
