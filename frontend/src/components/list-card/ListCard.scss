@@ -1,0 +1,97 @@
+@import "../../styles/_colors.scss";
+
+.list-card {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+
+  .manuals .favorites .util_links {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* LIST CARD HEADER */
+.list-card-header {
+  margin: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* LIST CARD TITLE */
+.title {
+  color: $med-dark-gray;
+  font-family: "Roboto";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18.75px;
+  text-align: left;
+}
+
+/* LIST CARD BUTTON */
+.right-button {
+  color: $med-red;
+  font-family: "Roboto";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.41px;
+  text-align: left;
+  height: 16px;
+  top: 523px;
+  left: 1448px;
+  gap: 0px;
+  border: none;
+  background: transparent;
+}
+
+.grid-1-scrollable {
+  --edifice-columns: 1;
+  width: 90%;
+}
+.grid-2-scrollable {
+  --edifice-columns: 2;
+  width: 90%;
+}
+.grid-3-scrollable {
+  --edifice-columns: 3;
+  width: 90%;
+}
+.grid-4-scrollable {
+  --edifice-columns: 4;
+  width: 90%;
+}
+.grid-5-scrollable {
+  --edifice-columns: 5;
+  width: 90%;
+}
+.grid-6-scrollable {
+  --edifice-columns: 6;
+  width: 90%;
+}
+.grid-7-scrollable {
+  --edifice-columns: 7;
+  width: 90%;
+}
+
+.grid-1 {
+  --edifice-columns: 1;
+}
+.grid-2 {
+  --edifice-columns: 2;
+}
+.grid-3 {
+  --edifice-columns: 3;
+}
+.grid-4 {
+  --edifice-columns: 4;
+}
+.grid-5 {
+  --edifice-columns: 5;
+}
+.grid-6 {
+  --edifice-columns: 6;
+}
+.grid-7 {
+  --edifice-columns: 7;
+}
