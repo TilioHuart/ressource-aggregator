@@ -3,5 +3,6 @@ export class ElementSize {
     public sm: number,
     public md: number,
     public lg: number,
+    public xl: number,
   ) {}
 }

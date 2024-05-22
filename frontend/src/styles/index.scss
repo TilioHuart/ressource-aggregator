@@ -10,10 +10,12 @@ main {
     max-width: none;
     margin: 0;
     --edifice-container-width: 100%;
+    padding-right: 0%;
+    padding-left: 0%;
   }
 }
 
-.home-container {
+.med-container {
   width: calc(100% - 75px);
   margin-left: 75px;
   background-color: $med-light-gray;
@@ -27,4 +29,9 @@ main {
 .file-card {
   width: 100%;
   height: 183px;
+}
+
+.pin {
+  width: 100%;
+  display: flex;
 }

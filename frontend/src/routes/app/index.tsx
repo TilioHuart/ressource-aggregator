@@ -1,15 +1,11 @@
+import React, { useState, useEffect } from "react";
+
 import { ID } from "edifice-ts-client";
 
 import { Header } from "~/components/header/Header.tsx";
 import { ListCard } from "~/components/list-card/ListCard.tsx";
 import { Resource } from "~/components/resource/Resource";
 import { Sidebar } from "~/components/sidebar/Sidebar.tsx";
-import { Square } from "~/components/square/Square.tsx";
-import {
-  NbColumnsListCard,
-  NbComponentsListCard,
-  TitleListCard,
-} from "~/core/const/home-element-list-sizes.const.ts";
 import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum.ts";
 
 export interface AppProps {
@@ -25,6 +21,21 @@ export interface AppProps {
 }
 
 export const App = () => {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Nettoyage du listener lors du démontage du composant
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const getResourceCard = () => {
     return (
       <Resource
@@ -36,55 +47,110 @@ export const App = () => {
       />
     );
   };
-  return (
-    <>
-      <Sidebar />
-      <div className="home-container">
-        <Header />
-        <div className="square-container">
-          <Square
-            width="60%"
-            height="300px"
-            color="#c3c3c3"
-            margin="0 5% 10px 0"
+  function getCards(nbCards: number) {
+    const cards = [];
+    for (let i = 0; i < nbCards; i++) {
+      cards.push(getResourceCard());
+    }
+    return cards;
+  }
+
+  if (windowWidth >= 1280) {
+    return (
+      <>
+        <Sidebar />
+        <div className="med-container">
+          <Header />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ width: "70%" }}>
+              <ListCard
+                scrollable={true}
+                type={ListCardTypeEnum.pinned_resources}
+                components={getCards(6)}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <ListCard
+                  scrollable={false}
+                  type={ListCardTypeEnum.manuals}
+                  components={getCards(8)}
+                />
+                <ListCard
+                  scrollable={false}
+                  type={ListCardTypeEnum.util_links}
+                  components={getCards(8)}
+                />
+              </div>
+            </div>
+            <div style={{ width: "30%" }}>
+              <ListCard
+                scrollable={false}
+                type={ListCardTypeEnum.favorites}
+                components={getCards(8)}
+              />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  } else if (windowWidth >= 768) {
+    return (
+      <>
+        <Sidebar />
+        <div className="med-container">
+          <Header />
+          <ListCard
+            scrollable={true}
+            type={ListCardTypeEnum.pinned_resources}
+            components={getCards(6)}
           />
-          <Square
-            width="40%"
-            height="300px"
-            color="#d0d0d0"
-            margin="0 0 10px 0"
+          <ListCard
+            scrollable={false}
+            type={ListCardTypeEnum.favorites}
+            components={getCards(8)}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <ListCard
+              scrollable={false}
+              type={ListCardTypeEnum.manuals}
+              components={getCards(8)}
+            />
+            <ListCard
+              scrollable={false}
+              type={ListCardTypeEnum.util_links}
+              components={getCards(8)}
+            />
+          </div>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Sidebar />
+        <div className="med-container">
+          <Header />
+          <ListCard
+            scrollable={true}
+            type={ListCardTypeEnum.pinned_resources}
+            components={getCards(6)}
+          />
+          <ListCard
+            scrollable={false}
+            type={ListCardTypeEnum.favorites}
+            components={getCards(8)}
+          />
+          <ListCard
+            scrollable={false}
+            type={ListCardTypeEnum.manuals}
+            components={getCards(8)}
+          />
+          <ListCard
+            scrollable={false}
+            type={ListCardTypeEnum.util_links}
+            components={getCards(8)}
           />
         </div>
-        <ListCard
-          scrollable={false}
-          type={ListCardTypeEnum.manuals}
-          title={TitleListCard[ListCardTypeEnum.manuals]}
-          nbColumns={NbColumnsListCard[ListCardTypeEnum.manuals]}
-          nbComponent={NbComponentsListCard[ListCardTypeEnum.manuals]}
-          components={[
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-          ]}
-        />
-        <ListCard
-          scrollable={false}
-          type={ListCardTypeEnum.util_links}
-          title={TitleListCard[ListCardTypeEnum.util_links]}
-          nbColumns={NbColumnsListCard[ListCardTypeEnum.util_links]}
-          nbComponent={NbComponentsListCard[ListCardTypeEnum.util_links]}
-          components={[
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-            getResourceCard(),
-          ]}
-        />
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 };
