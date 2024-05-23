@@ -6,14 +6,16 @@
   margin: 10px;
 
   &.pinned_resources {
-    padding: 10px;
-    background-color: white;
+    padding: 15px 10px;
+    background-color: $med-white;
     border-radius: 5px;
+    box-shadow: 0px 2px 3px 0px #0000001f;
   }
   &.favorites {
-    padding: 10px;
-    background-color: white;
+    padding: 15px 25px;
+    background-color: $med-white;
     border-radius: 5px;
+    box-shadow: 0px 2px 3px 0px #0000001f;
   }
   &.manuals {
     width: 100%;
@@ -25,18 +27,19 @@
   }
 
   .left-arrow {
-    color: $med-red;
+    color: $med-blue;
     font-size: 24px;
     margin-right: 10px;
   }
   .right-arrow {
-    color: $med-red;
-    font-size: 12px;
+    color: $med-blue;
+    font-size: 24px;
     margin-left: 10px;
   }
+
   .dots {
     .dot {
-      color: $med-red;
+      color: $med-blue;
       font-size: 8px;
     }
     margin-top: 10px;
@@ -61,14 +64,14 @@
     text-align: left;
 
     .icon {
-      color: $med-red;
+      color: $med-blue;
       font-size: 20px;
       margin-right: 5px;
     }
   }
 
   .right-button {
-    color: $med-red;
+    color: $med-blue;
     font-family: "Roboto";
     font-size: 14px;
   }
@@ -78,5 +81,9 @@
   .grid-#{$i} {
     --edifice-columns: #{$i};
     width: 100%;
+    gap: 10px;
+    @media (min-width: 1600px) {
+      gap: 15px;
+    }
   }
 }

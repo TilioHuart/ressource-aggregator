@@ -141,5 +141,10 @@
   "mediacentre.card.open": "Ouvrir",
   "mediacentre.card.favorite": "Ajouter aux favoris",
   "mediacentre.card.pin": "Epingler",
-  "mediacentre.card.copy": "Copier le lien"
+  "mediacentre.card.copy": "Copier le lien",
+
+  "mediacentre.list.card.pinned.resources": "Découvrez ces ressources !",
+  "mediacentre.list.card.favorites": "Mes favoris",
+  "mediacentre.list.card.manuals": "Manuels",
+  "mediacentre.list.card.book.mark": "Derniers signets ajoutés"
 }

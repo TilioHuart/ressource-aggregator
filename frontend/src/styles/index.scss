@@ -19,10 +19,26 @@ main {
   width: calc(100% - 75px);
   margin-left: 75px;
   background-color: $med-light-gray;
-  .square-container {
+  .list-container {
+    display: flex;
+    .left-container {
+      width: 70%;
+    }
+    .right-container {
+      width: 30%;
+    }
+  }
+  .bottom-container {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    justify-content: space-between;
+    gap: 20px;
+    .bottom-left-container {
+      width: 45%;
+    }
+    .bottom-right-container {
+      width: 55%;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 export enum ListCardTypeEnum {
   favorites = "favorites",
   manuals = "manuals",
-  util_links = "util_links",
+  book_mark = "book_mark",
   pinned_resources = "pinned_resources",
 }

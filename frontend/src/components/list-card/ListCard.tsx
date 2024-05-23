@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 
 import { Grid } from "@edifice-ui/react";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
 import Brightness1Icon from "@mui/icons-material/Brightness1";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import SchoolIcon from "@mui/icons-material/School";
-import StarIcon from "@mui/icons-material/Star";
-
 import "./ListCard.scss";
+import { useTranslation } from "react-i18next";
+
 import {
   NbColumnsListCard,
   NbComponentsListCard,
-  TitleListCard,
 } from "~/core/const/home-element-list-sizes.const";
+import { IconMapping } from "~/core/const/icon-mapping.const";
+import { TitleListCard } from "~/core/const/list-titles.const";
 import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum.ts";
 
 interface ListCardProps {
@@ -28,6 +27,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   components,
 }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,30 +62,14 @@ export const ListCard: React.FC<ListCardProps> = ({
   };
 
   const showTitle = (type: ListCardTypeEnum) => {
-    if (type === ListCardTypeEnum.favorites) {
-      return (
-        <span className="title">
-          <StarIcon className="icon" />
-          {TitleListCard[type]}
-        </span>
-      );
-    }
-    if (type === ListCardTypeEnum.manuals) {
-      return (
-        <span className="title">
-          <SchoolIcon className="icon" />
-          {TitleListCard[type]}
-        </span>
-      );
-    }
-    if (type === ListCardTypeEnum.util_links) {
-      return (
-        <span className="title">
-          <BookmarkIcon className="icon" />
-          {TitleListCard[type]}
-        </span>
-      );
-    }
+    const IconComponent = IconMapping[type];
+
+    return (
+      <span className="title">
+        <IconComponent className="icon" />
+        {t(TitleListCard[type])}
+      </span>
+    );
   };
 
   const showComponent = (component: any, index: number) => {
@@ -116,9 +100,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   } else {
     return (
       <div className={`list-card ${type}`}>
-        <div className="list-card-header">
-          <span className="title">{TitleListCard[type]}</span>
-        </div>
+        <div className="list-card-header">{showTitle(type)}</div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyboardArrowLeftIcon className="left-arrow" />
           <Grid className={`grid-${NbColumns(windowWidth)}`}>

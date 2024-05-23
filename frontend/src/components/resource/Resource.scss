@@ -1,67 +1,186 @@
+@import "../../styles/_colors.scss";
+
 .med-resource-card {
   width: 100%;
   height: auto;
 
-  &.medium {
+  .card-title {
+    font-size: 14px;
+  }
+
+  .card-body {
+    display: flex;
+    justify-content: center;
+
     .med-resource-image {
-      height: 12rem;
-    }
-
-    .med-resource-footer {
-      svg {
-        width: 2rem;
-        height: 2rem;
-      }
+      max-width: 100%;
+      max-height: 100%;
     }
   }
 
-  &.small {
-    .med-resource-image {
-      height: 8rem;
-    }
-
-    .med-resource-footer {
-      svg {
-        width: 1.5rem;
-        height: 1.5rem;
-      }
-    }
-  }
-
-  .med-resource-body-text {
-    width: 100%;
-
-    .med-resource-card-text {
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-  }
-
-  .med-resource-image {
-    align-self: center;
-    width: auto;
-  }
-
-  .med-resource-footer {
+  .card-footer {
     align-self: flex-end;
+    gap: 1px !important;
+    padding: 0rem;
+    margin: 6px;
+    background-color: transparent;
 
+    .med-footer-svg {
+      white-space: nowrap;
+    }
     svg {
+      height: 18px;
+      margin-right: 1px;
+      width: 18px;
       cursor: pointer;
     }
 
     .med-link {
       cursor: pointer;
-      color: #4d54c5;
+      color: $med-light-blue;
     }
 
     .med-pin {
       cursor: pointer;
-      color: #ff656a;
+      color: $med-red;
     }
 
     .med-star {
-      color: #ffb549;
+      color: $med-orange;
+    }
+  }
+
+  &.favorites {
+    .card-title {
+      margin: 6px;
+    }
+    .card-body {
+      margin: 0px 5px;
+      height: 94px;
+      @media (min-width: 1600px) {
+        height: 98px;
+      }
+    }
+  }
+
+  &.manuals {
+    .card-title {
+      margin: 6px 10px 0px 10px;
+    }
+    .card-text {
+      margin: 0px 10px;
+      font-size: 10px;
+      color: $med-gray;
+      line-height: normal;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-body {
+      height: 128px;
+      @media (min-width: 1600px) {
+        height: 133px;
+      }
+    }
+  }
+
+  &.book_mark {
+    display: flex;
+
+    .med-body {
+      display: flex;
+      flex-direction: row;
+      .card-body {
+        margin: 10px 15px;
+        height: 79px;
+        max-width: 79px;
+        @media (min-width: 1600px) {
+          height: 81px;
+          max-width: 81px;
+        }
+      }
+      .med-text-body {
+        align-content: center;
+        margin-right: 10px;
+        width: calc(100% - 109px);
+        .card-text {
+          font-size: 14px;
+          white-space: wrap;
+          color: $med-gray;
+          font-style: italic;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .card-footer {
+      width: 100%;
+      justify-content: space-between;
+      background-color: var(--edifice-card-cap-bg);
+      margin: 0px;
+      padding: 5px;
+      .med-resource-footer-image {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+      .med-footer-text {
+        align-items: center;
+        gap: 5px;
+        margin-left: 2px;
+        display: flex;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .med-footer-svg {
+        margin-left: 5px;
+      }
+    }
+  }
+
+  &.pinned_resources {
+    .card-title {
+      margin: 6px 10px 0px 10px;
+    }
+    .card-text {
+      margin: 0px 10px;
+      line-height: normal;
+      white-space: wrap;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+    .card-body {
+      margin-top: 6px;
+      height: 100px;
+      @media (min-width: 1600px) {
+        height: 116px;
+      }
+    }
+    .card-footer {
+      width: 100%;
+      justify-content: space-between;
+      margin: 0px;
+      padding: 5px;
+      .med-footer-text {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 12px;
+        font-weight: bold;
+        color: $med-gray;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .med-footer-svg {
+        margin-left: 5px;
+      }
+      .svg {
+        align-items: end;
+      }
     }
   }
 }

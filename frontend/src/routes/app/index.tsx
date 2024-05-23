@@ -27,30 +27,80 @@ export const App = () => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-
     window.addEventListener("resize", handleResize);
-
-    // Nettoyage du listener lors du démontage du composant
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  const getResourceCard = () => {
+  const getFavoriteCard = () => {
     return (
       <Resource
         image="https://via.placeholder.com/150"
-        title="Resource Title"
-        subtitle="Resource Subtitle"
-        size="medium"
+        title="Favorite Resource Title"
+        type={ListCardTypeEnum.favorites}
+        favorite={true}
+      />
+    );
+  };
+
+  const getManualCard = () => {
+    return (
+      <Resource
+        image="https://via.placeholder.com/150"
+        title="Ressource Histoire Géographie"
+        subtitle="Nathan"
+        type={ListCardTypeEnum.manuals}
         favorite={false}
       />
     );
   };
-  function getCards(nbCards: number) {
+
+  const getBookMarkCard = () => {
+    return (
+      <Resource
+        image="https://via.placeholder.com/150"
+        title="Parcours Sup"
+        subtitle="Modifié le 06/07/2024"
+        footerText="Lycée Connecté"
+        type={ListCardTypeEnum.book_mark}
+        favorite={false}
+      />
+    );
+  };
+
+  const getPinnedResourceCard = () => {
+    return (
+      <Resource
+        image="https://via.placeholder.com/150"
+        title="Universalis"
+        subtitle="Une encyclopédie en ligne pour tous vos exposés"
+        footerText="Offert par la Région"
+        type={ListCardTypeEnum.pinned_resources}
+        favorite={false}
+      />
+    );
+  };
+
+  function getCards(nbCards: number, type: ListCardTypeEnum) {
     const cards = [];
     for (let i = 0; i < nbCards; i++) {
-      cards.push(getResourceCard());
+      switch (type) {
+        case ListCardTypeEnum.favorites:
+          cards.push(getFavoriteCard());
+          break;
+        case ListCardTypeEnum.manuals:
+          cards.push(getManualCard());
+          break;
+        case ListCardTypeEnum.book_mark:
+          cards.push(getBookMarkCard());
+          break;
+        case ListCardTypeEnum.pinned_resources:
+          cards.push(getPinnedResourceCard());
+          break;
+        default:
+          break;
+      }
     }
     return cards;
   }
@@ -61,31 +111,35 @@ export const App = () => {
         <Sidebar />
         <div className="med-container">
           <Header />
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div style={{ width: "70%" }}>
+          <div className="list-container">
+            <div className="left-container">
               <ListCard
                 scrollable={true}
                 type={ListCardTypeEnum.pinned_resources}
-                components={getCards(6)}
+                components={getCards(6, ListCardTypeEnum.pinned_resources)}
               />
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <ListCard
-                  scrollable={false}
-                  type={ListCardTypeEnum.manuals}
-                  components={getCards(8)}
-                />
-                <ListCard
-                  scrollable={false}
-                  type={ListCardTypeEnum.util_links}
-                  components={getCards(8)}
-                />
+              <div className="bottom-container">
+                <div className="bottom-left-container">
+                  <ListCard
+                    scrollable={false}
+                    type={ListCardTypeEnum.manuals}
+                    components={getCards(8, ListCardTypeEnum.manuals)}
+                  />
+                </div>
+                <div className="bottom-right-container">
+                  <ListCard
+                    scrollable={false}
+                    type={ListCardTypeEnum.book_mark}
+                    components={getCards(8, ListCardTypeEnum.book_mark)}
+                  />
+                </div>
               </div>
             </div>
-            <div style={{ width: "30%" }}>
+            <div className="right-container">
               <ListCard
                 scrollable={false}
                 type={ListCardTypeEnum.favorites}
-                components={getCards(8)}
+                components={getCards(8, ListCardTypeEnum.favorites)}
               />
             </div>
           </div>
@@ -101,24 +155,28 @@ export const App = () => {
           <ListCard
             scrollable={true}
             type={ListCardTypeEnum.pinned_resources}
-            components={getCards(6)}
+            components={getCards(6, ListCardTypeEnum.pinned_resources)}
           />
           <ListCard
             scrollable={false}
             type={ListCardTypeEnum.favorites}
-            components={getCards(8)}
+            components={getCards(8, ListCardTypeEnum.favorites)}
           />
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <ListCard
-              scrollable={false}
-              type={ListCardTypeEnum.manuals}
-              components={getCards(8)}
-            />
-            <ListCard
-              scrollable={false}
-              type={ListCardTypeEnum.util_links}
-              components={getCards(8)}
-            />
+          <div className="bottom-container">
+            <div className="bottom-left-container">
+              <ListCard
+                scrollable={false}
+                type={ListCardTypeEnum.manuals}
+                components={getCards(8, ListCardTypeEnum.manuals)}
+              />
+            </div>
+            <div className="bottom-right-container">
+              <ListCard
+                scrollable={false}
+                type={ListCardTypeEnum.book_mark}
+                components={getCards(8, ListCardTypeEnum.book_mark)}
+              />
+            </div>
           </div>
         </div>
       </>
@@ -132,22 +190,22 @@ export const App = () => {
           <ListCard
             scrollable={true}
             type={ListCardTypeEnum.pinned_resources}
-            components={getCards(6)}
+            components={getCards(6, ListCardTypeEnum.pinned_resources)}
           />
           <ListCard
             scrollable={false}
             type={ListCardTypeEnum.favorites}
-            components={getCards(8)}
+            components={getCards(8, ListCardTypeEnum.favorites)}
           />
           <ListCard
             scrollable={false}
             type={ListCardTypeEnum.manuals}
-            components={getCards(8)}
+            components={getCards(8, ListCardTypeEnum.manuals)}
           />
           <ListCard
             scrollable={false}
-            type={ListCardTypeEnum.util_links}
-            components={getCards(8)}
+            type={ListCardTypeEnum.book_mark}
+            components={getCards(8, ListCardTypeEnum.book_mark)}
           />
         </div>
       </>
