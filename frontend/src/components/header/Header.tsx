@@ -4,6 +4,7 @@ import { Breadcrumb, SearchBar, Button } from "@edifice-ui/react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { redirect } from "react-router-dom";
 import "./Header.scss";
+import { AdvancedSearch } from "../advanced-search/AdvancedSearch";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -11,6 +12,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const [searchValue, setSearchValue] = React.useState("");
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const search = () => {
     console.log(searchValue);
@@ -36,6 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           }}
         />
       </div>
+      {isModalOpen && <AdvancedSearch isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
       <div className="med-header-container">
         <SearchBar
           isVariant={false}
@@ -51,6 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           type="button"
           variant="outline"
           className="med-header-button"
+          onClick={() => setIsModalOpen(true)}
         >
           Recherche avancée
         </Button>
