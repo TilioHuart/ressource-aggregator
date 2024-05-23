@@ -142,7 +142,11 @@
   "mediacentre.card.favorite": "Ajouter aux favoris",
   "mediacentre.card.pin": "Epingler",
   "mediacentre.card.copy": "Copier le lien",
-
+  "mediacentre.sidebar.home": "Accueil",
+  "mediacentre.sidebar.favorite": "Favoris",
+  "mediacentre.sidebar.textbooks": "Manuels",
+  "mediacentre.sidebar.resources": "Ressources",
+  "mediacentre.sidebar.signets": "Signets",
   "mediacentre.list.card.pinned.resources": "Découvrez ces ressources !",
   "mediacentre.list.card.favorites": "Mes favoris",
   "mediacentre.list.card.manuals": "Manuels",

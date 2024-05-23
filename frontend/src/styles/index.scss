@@ -10,14 +10,15 @@ main {
     max-width: none;
     margin: 0;
     --edifice-container-width: 100%;
-    padding-right: 0%;
-    padding-left: 0%;
+    padding-right: 0;
+    padding-left: 0;
   }
 }
 
 .med-container {
   width: calc(100% - 75px);
   margin-left: 75px;
+  padding: 0 15px;
   background-color: $med-light-gray;
   .list-container {
     display: flex;
@@ -39,6 +40,21 @@ main {
     .bottom-right-container {
       width: 55%;
     }
+  }
+}
+
+.container-fluid {
+  padding: 0;
+
+  &.bg-white {
+    background-color: $med-grey !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .med-container {
+    width: 100%;
+    margin-left: 0;
   }
 }
 

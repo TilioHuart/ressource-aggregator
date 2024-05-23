@@ -1,0 +1,33 @@
+@import "../../styles/_colors.scss";
+
+.sidebar-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 100%;
+
+  &:hover,
+  &.selected {
+    color: $med-red;
+    border-left: 5px solid $med-red;
+    width: calc(100% - 5px);
+    .sidebar-icon-img {
+      svg {
+        fill: $med-red;
+      }
+    }
+  }
+
+  .sidebar-icon-text {
+    font-size: 12px;
+  }
+
+  .sidebar-icon-img {
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+}

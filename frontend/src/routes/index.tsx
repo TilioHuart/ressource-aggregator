@@ -14,25 +14,6 @@ const routes = [
         index: true,
         async lazy() {
           const { App } = await import("./app");
-          console.log("router in app");
-          return {
-            Component: App,
-          };
-        },
-      },
-      {
-        path: "info",
-        async lazy() {
-          const { App } = await import("./info");
-          return {
-            Component: App,
-          };
-        },
-      },
-      {
-        path: "user",
-        async lazy() {
-          const { App } = await import("./user");
           return {
             Component: App,
           };

@@ -1,7 +1,40 @@
+@import "../../styles/_colors.scss";
+
 .sidebar {
+  transition: transform 0.3s ease;
+  transform: translateX(-100%);
   position: fixed;
   left: 0;
+  top: 0;
   width: 75px;
-  height: calc(100% - 67px);
-  background-color: #040404;
+  height: 100vh;
+  background-color: $med-white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 55;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  .icons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1.5rem;
+    width: 100%;
+  }
+}
+
+.header {
+  position: relative;
+  z-index: 100;
+}
+
+@media only screen and (min-width: 768px) {
+  .sidebar {
+    transform: translateX(0);
+  }
 }

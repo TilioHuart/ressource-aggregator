@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 
 import { ID } from "edifice-ts-client";
 
-import { Header } from "~/components/header/Header.tsx";
 import { ListCard } from "~/components/list-card/ListCard.tsx";
+import { MainLayout } from "~/components/main-layout/MainLayout";
 import { Resource } from "~/components/resource/Resource";
-import { Sidebar } from "~/components/sidebar/Sidebar.tsx";
 import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum.ts";
 
 export interface AppProps {
@@ -108,9 +107,8 @@ export const App = () => {
   if (windowWidth >= 1280) {
     return (
       <>
-        <Sidebar />
+        <MainLayout />
         <div className="med-container">
-          <Header />
           <div className="list-container">
             <div className="left-container">
               <ListCard
@@ -149,9 +147,8 @@ export const App = () => {
   } else if (windowWidth >= 768) {
     return (
       <>
-        <Sidebar />
+        <MainLayout />
         <div className="med-container">
-          <Header />
           <ListCard
             scrollable={true}
             type={ListCardTypeEnum.pinned_resources}
@@ -184,9 +181,8 @@ export const App = () => {
   } else {
     return (
       <>
-        <Sidebar />
+        <MainLayout />
         <div className="med-container">
-          <Header />
           <ListCard
             scrollable={true}
             type={ListCardTypeEnum.pinned_resources}
