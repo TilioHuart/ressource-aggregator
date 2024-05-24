@@ -21,6 +21,22 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/search",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { Search } = await import("./search");
+          return {
+            Component: Search,
+          };
+        },
+      },
+    ],
+  },
 ];
 
 export const router = createBrowserRouter(routes, {

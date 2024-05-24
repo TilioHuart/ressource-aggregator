@@ -1,5 +1,5 @@
 import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum.ts";
-import { ElementSize } from "~/model/elementSize.ts";
+import { ElementSize } from "~/model/ElementSize.ts";
 
 export const NbColumnsListCard = {
   [ListCardTypeEnum.pinned_resources]: new ElementSize(2, 3, 4, 4),

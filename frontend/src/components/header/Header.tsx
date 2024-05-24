@@ -3,6 +3,7 @@ import React from "react";
 import { Breadcrumb, SearchBar, Button } from "@edifice-ui/react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { redirect } from "react-router-dom";
+
 import "./Header.scss";
 import { AdvancedSearch } from "../advanced-search/AdvancedSearch";
 
@@ -38,7 +39,12 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           }}
         />
       </div>
-      {isModalOpen && <AdvancedSearch isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}/>}
+      {isModalOpen && (
+        <AdvancedSearch
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
       <div className="med-header-container">
         <SearchBar
           isVariant={false}
