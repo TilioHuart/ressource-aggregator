@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./Resource.scss";
 import { Card } from "@edifice-ui/react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import LinkIcon from "@mui/icons-material/Link";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -19,6 +19,7 @@ interface ResourceProps {
   favorite?: boolean;
   link: string;
   footerImage?: string;
+  setAlertText: (arg: string) => void;
 }
 
 export const Resource: React.FC<ResourceProps> = ({
@@ -30,11 +31,16 @@ export const Resource: React.FC<ResourceProps> = ({
   favorite = false,
   link,
   footerImage,
+  setAlertText,
 }) => {
   const [newLink, setNewLink] = useState<string>("");
-  const redirectLink = () => console.log("redirect");
   const copy = () => {
-    console.log("copy");
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(link);
+    } else {
+      console.error("Clipboard not available");
+    }
+    setAlertText("Le lien a bien été copié dans le presse-papier.");
   };
   const pin = () => {
     console.log("pin");
@@ -92,8 +98,8 @@ export const Resource: React.FC<ResourceProps> = ({
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <LinkIcon className="med-link" onClick={() => copy()} />
             <PushPinIcon className="med-pin" onClick={() => pin()} />
+            <ContentCopyIcon className="med-link" onClick={() => copy()} />
             {favorite ? (
               <StarIcon className="med-star" onClick={() => unfav()} />
             ) : (
@@ -127,8 +133,8 @@ export const Resource: React.FC<ResourceProps> = ({
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <LinkIcon className="med-link" onClick={() => redirectLink()} />
             <PushPinIcon className="med-pin" onClick={() => pin()} />
+            <ContentCopyIcon className="med-link" onClick={() => copy()} />
             {favorite ? (
               <StarIcon className="med-star" onClick={() => unfav()} />
             ) : (

@@ -67,3 +67,21 @@ main {
   width: 100%;
   display: flex;
 }
+
+.med-alert {
+  position: absolute;
+  right: 20px;
+  top: 75px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

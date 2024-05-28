@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+import { Alert } from "@edifice-ui/react";
 import { ID } from "edifice-ts-client";
 import { useTranslation } from "react-i18next";
 
@@ -28,6 +29,7 @@ export interface AppProps {
 
 export const App = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [alertText, setAlertText] = useState<string>("");
   const { favorites } = useFavorite();
   const { homeSignets } = useSignet();
   const { textbooks } = useTextbook();
@@ -41,7 +43,7 @@ export const App = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [alertText]);
 
   const getPinnedResourceCard = () => {
     return (
@@ -53,6 +55,7 @@ export const App = () => {
         type={ListCardTypeEnum.pinned_resources}
         favorite={false}
         link={"/"}
+        setAlertText={(arg: string) => setAlertText(arg)}
       />
     );
   };
@@ -75,6 +78,20 @@ export const App = () => {
     return (
       <>
         <MainLayout />
+        {alertText !== "" && (
+          <Alert
+            autoClose
+            autoCloseDelay={3000}
+            isDismissible
+            isToast
+            onClose={() => setAlertText("")}
+            position="top-right"
+            type="success"
+            className="med-alert"
+          >
+            {alertText}
+          </Alert>
+        )}
         <div className="med-container">
           <div className="list-container">
             <div className="left-container">
@@ -97,6 +114,7 @@ export const App = () => {
                         type={ListCardTypeEnum.manuals}
                         favorite={textbook.favorite}
                         link={textbook.link ?? textbook.url ?? "/"}
+                        setAlertText={(arg: string) => setAlertText(arg)}
                       />
                     ))}
                   />
@@ -128,6 +146,7 @@ export const App = () => {
                             ? signet.authors[0]
                             : " "
                         }
+                        setAlertText={(arg: string) => setAlertText(arg)}
                       />
                     ))}
                   />
@@ -147,6 +166,7 @@ export const App = () => {
                     type={ListCardTypeEnum.favorites}
                     favorite={favorite.favorite}
                     link={favorite.link ?? favorite.url ?? "/"}
+                    setAlertText={(arg: string) => setAlertText(arg)}
                   />
                 ))}
               />
@@ -159,6 +179,20 @@ export const App = () => {
     return (
       <>
         <MainLayout />
+        {alertText !== "" && (
+          <Alert
+            autoClose
+            autoCloseDelay={3000}
+            isDismissible
+            isToast
+            onClose={() => setAlertText("")}
+            position="top-right"
+            type="success"
+            className="med-alert"
+          >
+            {alertText}
+          </Alert>
+        )}
         <div className="med-container">
           <ListCard
             scrollable={true}
@@ -177,6 +211,7 @@ export const App = () => {
                 type={ListCardTypeEnum.favorites}
                 favorite={favorite.favorite}
                 link={favorite.link ?? favorite.url ?? "/"}
+                setAlertText={(arg: string) => setAlertText(arg)}
               />
             ))}
           />
@@ -194,6 +229,7 @@ export const App = () => {
                     type={ListCardTypeEnum.manuals}
                     favorite={textbook.favorite}
                     link={textbook.link ?? textbook.url ?? "/"}
+                    setAlertText={(arg: string) => setAlertText(arg)}
                   />
                 ))}
               />
@@ -225,6 +261,7 @@ export const App = () => {
                         ? signet.authors[0]
                         : " "
                     }
+                    setAlertText={(arg: string) => setAlertText(arg)}
                   />
                 ))}
               />
@@ -237,6 +274,20 @@ export const App = () => {
     return (
       <>
         <MainLayout />
+        {alertText !== "" && (
+          <Alert
+            autoClose
+            autoCloseDelay={3000}
+            isDismissible
+            isToast
+            onClose={() => setAlertText("")}
+            position="top-right"
+            type="success"
+            className="med-alert"
+          >
+            {alertText}
+          </Alert>
+        )}
         <div className="med-container">
           <ListCard
             scrollable={true}
@@ -255,6 +306,7 @@ export const App = () => {
                 type={ListCardTypeEnum.favorites}
                 favorite={favorite.favorite}
                 link={favorite.link ?? favorite.url ?? "/"}
+                setAlertText={(arg: string) => setAlertText(arg)}
               />
             ))}
           />
@@ -270,6 +322,7 @@ export const App = () => {
                 type={ListCardTypeEnum.manuals}
                 favorite={textbook.favorite}
                 link={textbook.link ?? textbook.url ?? "/"}
+                setAlertText={(arg: string) => setAlertText(arg)}
               />
             ))}
           />
@@ -295,6 +348,7 @@ export const App = () => {
                 footerText={
                   signet.owner_name ?? signet.authors ? signet.authors[0] : " "
                 }
+                setAlertText={(arg: string) => setAlertText(arg)}
               />
             ))}
           />
