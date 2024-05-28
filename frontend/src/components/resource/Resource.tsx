@@ -7,6 +7,7 @@ import LinkIcon from "@mui/icons-material/Link";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useNavigate } from "react-router-dom";
 
 import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum";
 
@@ -17,6 +18,8 @@ interface ResourceProps {
   footerText?: string;
   type?: ListCardTypeEnum;
   favorite?: boolean;
+  link: string;
+  footerImage?: string;
 }
 
 export const Resource: React.FC<ResourceProps> = ({
@@ -26,9 +29,12 @@ export const Resource: React.FC<ResourceProps> = ({
   footerText,
   type = ListCardTypeEnum.favorites,
   favorite = false,
+  link,
+  footerImage,
 }) => {
-  const link = () => {
-    console.log("link");
+  const navigate = useNavigate();
+  const redirectLink = () => {
+    return navigate(link);
   };
   const pin = () => {
     console.log("pin");
@@ -62,15 +68,19 @@ export const Resource: React.FC<ResourceProps> = ({
           {footerText ? (
             <div className="med-footer-text">
               <img
-                src={image}
+                src={footerImage}
                 alt="Resource"
                 className="med-resource-footer-image"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/img/no-avatar.svg";
+                }}
               />
               {footerText}
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <LinkIcon className="med-link" onClick={() => link()} />
+            <LinkIcon className="med-link" onClick={() => redirectLink()} />
             <PushPinIcon className="med-pin" onClick={() => pin()} />
             {favorite ? (
               <StarIcon className="med-star" onClick={() => unfav()} />
@@ -103,7 +113,7 @@ export const Resource: React.FC<ResourceProps> = ({
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <LinkIcon className="med-link" onClick={() => link()} />
+            <LinkIcon className="med-link" onClick={() => redirectLink()} />
             <PushPinIcon className="med-pin" onClick={() => pin()} />
             {favorite ? (
               <StarIcon className="med-star" onClick={() => unfav()} />
