@@ -5,7 +5,6 @@ export interface Signet extends Resource {
   collab: boolean;
   date_creation: string;
   date_modification: string;
-  url: string;
   published: boolean;
   orientation: boolean;
   resource_id: string;

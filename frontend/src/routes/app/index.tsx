@@ -90,12 +90,13 @@ export const App = () => {
                     type={ListCardTypeEnum.manuals}
                     components={textbooks.map((textbook: Textbook) => (
                       <Resource
+                        key={textbook.id}
                         image={textbook.image}
                         title={textbook.title}
                         subtitle={textbook.editors.join(", ")}
                         type={ListCardTypeEnum.manuals}
                         favorite={textbook.favorite}
-                        link={textbook.link ?? "/"}
+                        link={textbook.link ?? textbook.url ?? "/"}
                       />
                     ))}
                   />
@@ -116,13 +117,17 @@ export const App = () => {
                         }
                         type={ListCardTypeEnum.book_mark}
                         favorite={signet.favorite}
-                        link={signet.url ?? "/"}
+                        link={signet.link ?? signet.url ?? "/"}
                         footerImage={
                           signet.owner_id
                             ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
                             : `/img/no-avatar.svg`
                         }
-                        footerText={signet.owner_name ?? " "}
+                        footerText={
+                          signet.owner_name ?? signet.authors
+                            ? signet.authors[0]
+                            : " "
+                        }
                       />
                     ))}
                   />
@@ -135,13 +140,13 @@ export const App = () => {
                 type={ListCardTypeEnum.favorites}
                 components={favorites.map((favorite: Favorite) => (
                   <Resource
-                    key={favorite._id}
+                    key={favorite.id}
                     image={favorite.image}
                     title={favorite.title}
                     subtitle={favorite.description}
                     type={ListCardTypeEnum.favorites}
                     favorite={favorite.favorite}
-                    link={favorite.link ?? "/"}
+                    link={favorite.link ?? favorite.url ?? "/"}
                   />
                 ))}
               />
@@ -165,13 +170,13 @@ export const App = () => {
             type={ListCardTypeEnum.favorites}
             components={favorites.map((favorite: Favorite) => (
               <Resource
-                key={favorite._id}
+                key={favorite.id}
                 image={favorite.image}
                 title={favorite.title}
                 subtitle={favorite.description}
                 type={ListCardTypeEnum.favorites}
                 favorite={favorite.favorite}
-                link={favorite.link ?? "/"}
+                link={favorite.link ?? favorite.url ?? "/"}
               />
             ))}
           />
@@ -182,12 +187,13 @@ export const App = () => {
                 type={ListCardTypeEnum.manuals}
                 components={textbooks.map((textbook: Textbook) => (
                   <Resource
+                    key={textbook.id}
                     image={textbook.image}
                     title={textbook.title}
                     subtitle={textbook.editors.join(", ")}
                     type={ListCardTypeEnum.manuals}
                     favorite={textbook.favorite}
-                    link={textbook.link ?? "/"}
+                    link={textbook.link ?? textbook.url ?? "/"}
                   />
                 ))}
               />
@@ -208,13 +214,17 @@ export const App = () => {
                     }
                     type={ListCardTypeEnum.book_mark}
                     favorite={signet.favorite}
-                    link={signet.url ?? "/"}
+                    link={signet.link ?? signet.url ?? "/"}
                     footerImage={
                       signet.owner_id
                         ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
                         : `/img/no-avatar.svg`
                     }
-                    footerText={signet.owner_name ?? " "}
+                    footerText={
+                      signet.owner_name ?? signet.authors
+                        ? signet.authors[0]
+                        : " "
+                    }
                   />
                 ))}
               />
@@ -238,13 +248,13 @@ export const App = () => {
             type={ListCardTypeEnum.favorites}
             components={favorites.map((favorite: Favorite) => (
               <Resource
-                key={favorite._id}
+                key={favorite.id}
                 image={favorite.image}
                 title={favorite.title}
                 subtitle={favorite.description}
                 type={ListCardTypeEnum.favorites}
                 favorite={favorite.favorite}
-                link={favorite.link ?? "/"}
+                link={favorite.link ?? favorite.url ?? "/"}
               />
             ))}
           />
@@ -253,12 +263,13 @@ export const App = () => {
             type={ListCardTypeEnum.manuals}
             components={textbooks.map((textbook: Textbook) => (
               <Resource
+                key={textbook.id}
                 image={textbook.image}
                 title={textbook.title}
                 subtitle={textbook.editors.join(", ")}
                 type={ListCardTypeEnum.manuals}
                 favorite={textbook.favorite}
-                link={textbook.link ?? "/"}
+                link={textbook.link ?? textbook.url ?? "/"}
               />
             ))}
           />
@@ -275,13 +286,15 @@ export const App = () => {
                 }
                 type={ListCardTypeEnum.book_mark}
                 favorite={signet.favorite}
-                link={signet.url ?? "/"}
+                link={signet.link ?? signet.url ?? "/"}
                 footerImage={
                   signet.owner_id
                     ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
                     : `/img/no-avatar.svg`
                 }
-                footerText={signet.owner_name ?? " "}
+                footerText={
+                  signet.owner_name ?? signet.authors ? signet.authors[0] : " "
+                }
               />
             ))}
           />

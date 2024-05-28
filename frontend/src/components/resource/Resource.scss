@@ -4,6 +4,10 @@
   width: 100%;
   height: auto;
 
+  .med-link-card {
+    color: currentColor;
+  }
+
   .card-title {
     font-size: 14px;
   }
@@ -90,6 +94,9 @@
     .med-body {
       display: flex;
       flex-direction: row;
+      cursor: pointer;
+      color: currentColor;
+
       .card-body {
         margin: 10px 15px;
         height: 79px;

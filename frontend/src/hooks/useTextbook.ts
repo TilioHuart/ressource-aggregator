@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Textbook } from "../model/Textbook.model";
 import { useGetTextbooksQuery } from "../services/api/textbook.service";
+import { Textbook } from "~/model/Textbook.model";
 
 export const useTextbook = () => {
   const { data: textbook, error, isLoading } = useGetTextbooksQuery(null);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import "./Resource.scss";
 import { Card } from "@edifice-ui/react";
@@ -7,7 +7,6 @@ import LinkIcon from "@mui/icons-material/Link";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { useNavigate } from "react-router-dom";
 
 import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum";
 
@@ -32,9 +31,10 @@ export const Resource: React.FC<ResourceProps> = ({
   link,
   footerImage,
 }) => {
-  const navigate = useNavigate();
-  const redirectLink = () => {
-    return navigate(link);
+  const [newLink, setNewLink] = useState<string>("");
+  const redirectLink = () => console.log("redirect");
+  const copy = () => {
+    console.log("copy");
   };
   const pin = () => {
     console.log("pin");
@@ -46,6 +46,18 @@ export const Resource: React.FC<ResourceProps> = ({
     console.log("unfav");
   };
 
+  useEffect(() => {
+    if (
+      !link.startsWith("https://") &&
+      !link.startsWith("http://") &&
+      link !== "/"
+    ) {
+      setNewLink("https://" + link);
+    } else {
+      setNewLink(link);
+    }
+  }, [link]);
+
   if (type === ListCardTypeEnum.book_mark) {
     return (
       <Card
@@ -53,7 +65,7 @@ export const Resource: React.FC<ResourceProps> = ({
         isClickable={false}
         className={`med-resource-card ${type}`}
       >
-        <div className="med-body">
+        <a className="med-body" href={newLink !== "/" ? newLink : "/"}>
           <Card.Body space={"0"}>
             {image && (
               <img src={image} alt="Resource" className="med-resource-image" />
@@ -63,7 +75,7 @@ export const Resource: React.FC<ResourceProps> = ({
             <Card.Title>{title}</Card.Title>
             <Card.Text>{subtitle}</Card.Text>
           </div>
-        </div>
+        </a>
         <Card.Footer>
           {footerText ? (
             <div className="med-footer-text">
@@ -80,7 +92,7 @@ export const Resource: React.FC<ResourceProps> = ({
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <LinkIcon className="med-link" onClick={() => redirectLink()} />
+            <LinkIcon className="med-link" onClick={() => copy()} />
             <PushPinIcon className="med-pin" onClick={() => pin()} />
             {favorite ? (
               <StarIcon className="med-star" onClick={() => unfav()} />
@@ -98,13 +110,15 @@ export const Resource: React.FC<ResourceProps> = ({
         isClickable={false}
         className={`med-resource-card ${type}`}
       >
-        <Card.Title>{title}</Card.Title>
-        <Card.Text>{subtitle}</Card.Text>
-        <Card.Body space={"0"}>
-          {image && (
-            <img src={image} alt="Resource" className="med-resource-image" />
-          )}
-        </Card.Body>
+        <a href={newLink !== "/" ? newLink : "/"} className="med-link-card">
+          <Card.Title>{title}</Card.Title>
+          <Card.Text>{subtitle}</Card.Text>
+          <Card.Body space={"0"}>
+            {image && (
+              <img src={image} alt="Resource" className="med-resource-image" />
+            )}
+          </Card.Body>
+        </a>
         <Card.Footer>
           {footerText ? (
             <div className="med-footer-text">
