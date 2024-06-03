@@ -5,7 +5,24 @@ export const favoriteApi = emptySplitApi.injectEndpoints({
     getFavorite: builder.query({
       query: () => "favorites",
     }),
+    addFavorite: builder.mutation({
+      query: ({ id, resource }: { id: string; resource: any }) => ({
+        url: `favorites?id=${id}`,
+        method: "POST",
+        body: { ...resource },
+      }),
+    }),
+    removeFavorite: builder.mutation({
+      query: ({ id, source }: { id: string; source: string }) => ({
+        url: `favorites?id=${id}&source=${source}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
-export const { useGetFavoriteQuery } = favoriteApi;
+export const {
+  useGetFavoriteQuery,
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+} = favoriteApi;

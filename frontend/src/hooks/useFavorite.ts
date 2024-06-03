@@ -8,8 +8,14 @@ export const useFavorite = () => {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
 
   useEffect(() => {
-    setFavorites(favorite?.data ?? []);
+    let favoriteData: Favorite[] =
+      favorite?.data?.length > 0 ? favorite.data : [] ?? [];
+    favoriteData = favoriteData.map((favorite: Favorite) => ({
+      ...favorite,
+      favorite: true,
+    }));
+    setFavorites(favoriteData);
   }, [favorite]);
 
-  return { favorites, error, isLoading };
+  return { favorites, setFavorites, error, isLoading };
 };

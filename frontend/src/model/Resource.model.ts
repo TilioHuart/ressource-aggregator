@@ -11,5 +11,5 @@ export interface Resource {
   plain_text: string | string[] | string[][];
   source: string;
   title: string;
-  id?: string;
+  id: string;
 }

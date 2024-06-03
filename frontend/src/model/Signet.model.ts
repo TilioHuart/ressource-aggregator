@@ -10,4 +10,5 @@ export interface Signet extends Resource {
   resource_id: string;
   owner_id: string;
   owner_name: string;
+  _id?: string;
 }

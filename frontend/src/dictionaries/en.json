@@ -151,5 +151,8 @@
   "mediacentre.list.card.favorites": "Mes favoris",
   "mediacentre.list.card.manuals": "Manuels",
   "mediacentre.list.card.book.mark": "Derniers signets ajoutés",
-  "mediacentre.signet.orientation": "Orientation / découverte des métiers"
+  "mediacentre.signet.orientation": "Orientation / découverte des métiers",
+  "mediacentre.notification.copy": "Le lien a bien été copié dans le presse-papier.",
+  "mediacentre.notification.addFavorite": "La ressource a été ajoutée aux favoris.",
+  "mediacentre.notification.removeFavorite": "La ressource a été retiré des favoris."
 }
