@@ -1,48 +1,23 @@
 import React from "react";
 
-import {
-  Button,
-  Checkbox,
-  FormControl,
-  Grid,
-  Input,
-  Modal,
-  Select,
-} from "@edifice-ui/react";
+import { Button, Modal } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 import "./AdvancedSearch.scss";
 import { useNavigate } from "react-router-dom";
 
-import GAR from "~/../public/img/fr.openent.mediacentre.source.GAR.png";
-import Moodle from "~/../public/img/fr.openent.mediacentre.source.Moodle.png";
-import Signet from "~/../public/img/fr.openent.mediacentre.source.Signet.png";
+import { AdvancedSearchRow } from "../advanced-search-row/AdvancedSearchRow";
 import { AdvancedSearchSourcesEnum } from "~/core/enum/advanced-search-sources.enum";
 import { AdvancedSearchEnum } from "~/core/enum/advanced-search.enum";
-import {
-  createEmptyAdvancedSearchData,
-  addFieldData,
-  toJson,
-  generateAdvancedSearchParam,
-  isAdvancedSearchData,
-} from "~/services/utils/advancedSearch.service";
-import { createEmptyFieldData } from "~/services/utils/fieldData.service";
+import { SEARCH_TYPE } from "~/core/enum/search-type.enum";
+import { advancedSearchCheckbox } from "~/model/AdvancedSearchCheckbox";
+import { advancedSearchComparator } from "~/model/AdvancedSearchComparator";
+import { AdvancedSearchData } from "~/model/AdvancedSearchData";
+import { advancedSearchInput } from "~/model/AdvancedSearchInput";
 
 interface AdvancedSearchProps {
   isModalOpen: boolean;
   setIsModalOpen: (value: boolean) => void;
 }
-
-type checkbox = {
-  [key in AdvancedSearchSourcesEnum]: boolean;
-};
-
-type comparators = {
-  [key in AdvancedSearchEnum]?: "$or" | "$and";
-};
-
-type inputValues = {
-  [key in AdvancedSearchEnum]?: string;
-};
 
 export const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   isModalOpen,
@@ -51,26 +26,29 @@ export const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [enumCheckbox, setEnumCheckbox] = React.useState<checkbox>({
-    [AdvancedSearchSourcesEnum.GAR]: true,
-    [AdvancedSearchSourcesEnum.Moodle]: true,
-    [AdvancedSearchSourcesEnum.Signet]: true,
-  });
+  const [enumCheckbox, setEnumCheckbox] =
+    React.useState<advancedSearchCheckbox>({
+      [AdvancedSearchSourcesEnum.GAR]: true,
+      [AdvancedSearchSourcesEnum.Moodle]: true,
+      [AdvancedSearchSourcesEnum.Signet]: true,
+    });
 
-  const [enumComparators, setEnumComparators] = React.useState<comparators>({
-    [AdvancedSearchEnum.author]: "$or",
-    [AdvancedSearchEnum.editor]: "$or",
-    [AdvancedSearchEnum.discipline]: "$or",
-    [AdvancedSearchEnum.level]: "$or",
-  });
+  const [enumComparators, setEnumComparators] =
+    React.useState<advancedSearchComparator>({
+      [AdvancedSearchEnum.author]: "$or",
+      [AdvancedSearchEnum.editor]: "$or",
+      [AdvancedSearchEnum.discipline]: "$or",
+      [AdvancedSearchEnum.level]: "$or",
+    });
 
-  const [enumInputValues, setEnumInputValues] = React.useState<inputValues>({
-    [AdvancedSearchEnum.title]: "",
-    [AdvancedSearchEnum.author]: "",
-    [AdvancedSearchEnum.editor]: "",
-    [AdvancedSearchEnum.discipline]: "",
-    [AdvancedSearchEnum.level]: "",
-  });
+  const [enumInputValues, setEnumInputValues] =
+    React.useState<advancedSearchInput>({
+      [AdvancedSearchEnum.title]: "",
+      [AdvancedSearchEnum.author]: "",
+      [AdvancedSearchEnum.editor]: "",
+      [AdvancedSearchEnum.discipline]: "",
+      [AdvancedSearchEnum.level]: "",
+    });
 
   const allInputsAreEmpty = () => {
     return Object.values(enumInputValues).every((value) => value === "");
@@ -81,126 +59,33 @@ export const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   };
 
   const makeSearch = () => {
-    const advancedSearchBody = createEmptyAdvancedSearchData();
+    const advancedSearchData: AdvancedSearchData = {};
 
     Object.keys(enumInputValues).forEach((key) => {
-      const value = enumInputValues[key as keyof inputValues];
-      const comparator = enumComparators[key as keyof comparators];
+      const value = enumInputValues[key as keyof advancedSearchInput];
+      const comparator = enumComparators[key as keyof advancedSearchComparator];
 
       if (value && value !== "") {
-        const fieldData = createEmptyFieldData();
-        fieldData.value = value;
-        fieldData.comparator = comparator;
-        addFieldData(advancedSearchBody, fieldData, key as AdvancedSearchEnum);
+        advancedSearchData[key as keyof AdvancedSearchData] =
+          key === AdvancedSearchEnum.title ? { value } : { value, comparator };
       }
     });
-    const data = toJson(advancedSearchBody);
 
     const sources = Object.keys(enumCheckbox).filter(
-      (key) => enumCheckbox[key as keyof checkbox],
+      (key) => enumCheckbox[key as keyof advancedSearchCheckbox],
     );
 
-    if (isAdvancedSearchData(data)) {
-      const searchBody = generateAdvancedSearchParam(data, sources);
-      closeModal();
-      navigate("/search", { state: { searchBody } });
-    }
-  };
-
-  const showSelect = (type: AdvancedSearchEnum) => {
-    const shouldRenderSelect =
-      type !== AdvancedSearchEnum.source && type !== AdvancedSearchEnum.title;
-
-    return shouldRenderSelect ? (
-      <div className="med-selector-advanced-search">
-        <Select
-          onValueChange={(value) =>
-            setEnumComparators({ ...enumComparators, [type]: value })
-          }
-          options={[
-            { label: "OU", value: "$or" },
-            { label: "ET", value: "$and" },
-          ]}
-          placeholderOption="OU"
-        />
-      </div>
-    ) : (
-      <div className="med-selector-advanced-search"></div>
-    );
-  };
-
-  const showTitle = (type: AdvancedSearchEnum) => {
-    return (
-      <div className="med-title-advanced-search">
-        {t(`mediacentre.advanced.name.${type}`) + " :"}
-      </div>
-    );
-  };
-
-  const showInput = (type: AdvancedSearchEnum) => {
-    return (
-      <div className="med-input-advanced-search">
-        <FormControl id={`input-${type}`}>
-          <Input
-            placeholder={t(`mediacentre.advanced.placeholder.${type}`)}
-            size="md"
-            type="text"
-            onChange={(e) =>
-              setEnumInputValues({
-                ...enumInputValues,
-                [type]: e.target.value,
-              })
-            }
-          />
-        </FormControl>
-      </div>
-    );
-  };
-
-  const showCheckbox = () => {
-    const getCheckbox = (type: AdvancedSearchSourcesEnum) => {
-      const imagesMap = {
-        [AdvancedSearchSourcesEnum.GAR]: GAR,
-        [AdvancedSearchSourcesEnum.Moodle]: Moodle,
-        [AdvancedSearchSourcesEnum.Signet]: Signet,
-      };
-      return (
-        <div className="med-checkbox-container-advanced-search">
-          <img
-            src={imagesMap[type]}
-            alt={t(`mediacentre.advanced.name.${type}`)}
-            className="image"
-          />
-          <Checkbox
-            checked={enumCheckbox[type]}
-            onChange={(e) =>
-              setEnumCheckbox({ ...enumCheckbox, [type]: e.target.checked })
-            }
-          />
-        </div>
-      );
+    const searchBody = {
+      state: SEARCH_TYPE.ADVANCED,
+      data: advancedSearchData,
+      event: "search",
+      sources: sources,
     };
-    return (
-      <div className="med-source-advanced-search">
-        {getCheckbox(AdvancedSearchSourcesEnum.GAR)}
-        {getCheckbox(AdvancedSearchSourcesEnum.Moodle)}
-        {getCheckbox(AdvancedSearchSourcesEnum.Signet)}
-      </div>
-    );
-  };
 
-  const showRow = (type: AdvancedSearchEnum) => {
-    return (
-      <Grid>
-        <div className="med-left-col-advanced-search">{showSelect(type)}</div>
-        <div className="med-right-col-advanced-search">
-          {showTitle(type)}
-          {type === AdvancedSearchEnum.source
-            ? showCheckbox()
-            : showInput(type)}
-        </div>
-      </Grid>
-    );
+    console.log(searchBody);
+
+    closeModal();
+    navigate("/search", { state: { searchBody } });
   };
 
   return (
@@ -220,7 +105,17 @@ export const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         {t("mediacentre.source.search.advanced.subtitle")}
       </Modal.Subtitle>
       <Modal.Body>
-        {Object.values(AdvancedSearchEnum).map((type) => showRow(type))}
+        {Object.values(AdvancedSearchEnum).map((type) => (
+          <AdvancedSearchRow
+            type={type}
+            enumComparators={enumComparators}
+            setEnumComparators={setEnumComparators}
+            enumInputValues={enumInputValues}
+            setEnumInputValues={setEnumInputValues}
+            enumCheckbox={enumCheckbox}
+            setEnumCheckbox={setEnumCheckbox}
+          />
+        ))}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={closeModal} variant="outline">

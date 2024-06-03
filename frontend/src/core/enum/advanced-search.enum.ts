@@ -1,8 +1,8 @@
 export enum AdvancedSearchEnum {
   title = "title",
-  author = "authors",
-  editor = "editors",
-  discipline = "disciplines",
-  level = "levels",
-  source = "sources",
+  author = "author",
+  editor = "editor",
+  discipline = "discipline",
+  level = "level",
+  source = "source",
 }
