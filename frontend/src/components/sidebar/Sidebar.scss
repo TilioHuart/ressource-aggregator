@@ -25,6 +25,11 @@
     justify-content: center;
     gap: 1.5rem;
     width: 100%;
+
+    a {
+      width: 100%;
+      color: $med-dark-gray;
+    }
   }
 }
 

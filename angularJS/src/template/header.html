@@ -1,13 +1,12 @@
 <div class="header">
     <div class="header-main twelve">
         <div class="mediacentre-title">
-            <img ng-click="mc.goHome()"
-                 src="/mediacentre/public/img/logo-mediacentre.svg"
-                 alt="Logo"
-                 class="cell">
-            <h1 ng-click="mc.goHome()" class="cell">
-                <span class="horizontal-spacing"><i18n>mediacentre.title</i18n></span>
-            </h1>
+            <a href="/mediacentre" class="cell">
+                <img src="/mediacentre/public/img/logo-mediacentre.svg" alt="Logo" class="cell">
+                <h1 class="cell">
+                    <span class="horizontal-spacing"><i18n>mediacentre.title</i18n></span>
+                </h1>
+            </a>
         </div>
         <div class="search-block six twelve-mobile">
             <input type="text"
@@ -15,16 +14,10 @@
                    ng-model="mc.search.plain_text.text"
                    i18n-placeholder="mediacentre.resource.search"
                    class="search nine twelve-mobile"/>
-            <a class="advanced-search-link"
-               ng-click="mc.openAdvancedSearch()"
-               aria-label="[[ idiom.translate('mediacentre.source.search.advanced') ]]">
-                <i class="advanced-search"></i>
-                <i18n>mediacentre.source.search.advanced</i18n>
-            </a>
         </div>
         <div ng-show="mc.hasSignetRight()" class="mediacentre-button" ng-init="mc.initHeader()">
             <input type="radio" id="item_1" name="box" ng-click="mc.goHome()" style="display: none;" checked>
-            <label for="item_1" class="label label-left">Accueil</label>
+            <a href="/mediacentre" for="item_1" class="label label-left">Accueil</a>
             <input ng-click="mc.goSignet()" type="radio" id="item_2" name="box" style="display: none;">
             <label for="item_2" class="label label-right">Signets</label>
         </div>

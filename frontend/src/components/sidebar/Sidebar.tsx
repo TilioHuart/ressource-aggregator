@@ -4,7 +4,6 @@ import "./Sidebar.scss";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import HomeIcon from "@mui/icons-material/Home";
 import LaptopIcon from "@mui/icons-material/Laptop";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
 import SchoolIcon from "@mui/icons-material/School";
 import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
@@ -46,9 +45,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className={`sidebar ${sidebarOpen ? "open" : ""}`} ref={sidebarRef}>
-      {/* <a href="/mediacentre#/favorite">favorite</a>
-      <a href="/mediacentre#/search/plain_text">search</a>
-      <a href="/mediacentre#/signet">signet</a> */}
       <div className="icons-container">
         <SidebarIcon
           action={() => navigate("/")}
@@ -56,12 +52,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           name={`${t("mediacentre.sidebar.home")}`}
           selected={location.pathname === "/"}
         />
-        <SidebarIcon
-          action={() => navigate("/favorite")}
-          icon={<StarIcon />}
-          name={`${t("mediacentre.sidebar.favorite")}`}
-          selected={location.pathname === "/favorites"}
-        />
+        <a href="/mediacentre?view=angular#/favorite">
+          <SidebarIcon
+            action={() => {}}
+            icon={<StarIcon />}
+            name={`${t("mediacentre.sidebar.favorite")}`}
+            selected={location.pathname === "/favorites"}
+          />
+        </a>
         <SidebarIcon
           action={() => navigate("/search/plain_text")}
           icon={<SchoolIcon />}
@@ -80,17 +78,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             searchParams.get("type") === "resources"
           }
         />
-        <SidebarIcon
-          action={() => navigate("/signet")}
-          icon={<BookmarkIcon />}
-          name={`${t("mediacentre.sidebar.signets")}`}
-          selected={location.pathname === "/signet"}
-        />
-        <SidebarIcon
-          action={() => console.log(6)}
-          icon={<MenuBookIcon />}
-          name="CDI"
-        />
+        <a href="/mediacentre?view=angular#/signet">
+          <SidebarIcon
+            action={() => {}}
+            icon={<BookmarkIcon />}
+            name={`${t("mediacentre.sidebar.signets")}`}
+            selected={location.pathname === "/signet"}
+          />
+        </a>
       </div>
     </div>
   );
