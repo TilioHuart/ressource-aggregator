@@ -1,0 +1,15 @@
+.med-search-resource-description {
+  display: flex;
+  flex-direction: column;
+  .med-search-resource-description-title {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 5px;
+  }
+  .med-search-resource-description-content {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+}

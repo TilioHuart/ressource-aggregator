@@ -1,0 +1,16 @@
+@import "../../../styles/_colors.scss";
+
+.title {
+  color: $med-dark-gray;
+  font-family: "Roboto";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18.75px;
+  text-align: left;
+
+  .icon {
+    color: $med-blue;
+    font-size: 20px;
+    margin-right: 5px;
+  }
+}

@@ -9,7 +9,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useTranslation } from "react-i18next";
 
-import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum";
+import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 import { Favorite } from "~/model/Favorite.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
@@ -25,7 +25,7 @@ interface ResourceProps {
   title: string;
   subtitle?: string;
   footerText?: string;
-  type?: ListCardTypeEnum;
+  type?: CardTypeEnum;
   favorite?: boolean;
   link: string;
   footerImage?: string;
@@ -41,7 +41,7 @@ export const Resource: React.FC<ResourceProps> = ({
   title,
   subtitle,
   footerText,
-  type = ListCardTypeEnum.favorites,
+  type = CardTypeEnum.favorites,
   favorite = false,
   link,
   footerImage,
@@ -95,7 +95,7 @@ export const Resource: React.FC<ResourceProps> = ({
     }
   }, [link]);
 
-  if (type === ListCardTypeEnum.book_mark) {
+  if (type === CardTypeEnum.book_mark) {
     return (
       <Card
         isSelectable={false}

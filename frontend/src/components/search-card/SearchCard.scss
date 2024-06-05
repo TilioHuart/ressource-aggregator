@@ -1,0 +1,106 @@
+@import "../../styles/_colors.scss";
+
+.med-search-resource-card {
+  overflow: hidden;
+  transition: max-height 1s ease-in-out;
+
+  &.not-expanded {
+    max-height: 177px;
+  }
+  &.expanded {
+    max-height: 1000px;
+  }
+
+  .med-search-resource-top-container {
+    height: 177px;
+    display: flex;
+    flex-direction: row;
+    .med-search-resource-left-container {
+      padding: 15px;
+      height: 177px;
+      width: 177px;
+      display: flex;
+      justify-content: center;
+      .med-search-resource-image {
+        border-radius: 10px;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .med-search-resource-right-container {
+      padding: 15px;
+      width: calc(100% - 177px);
+      height: 177px;
+      display: flex;
+      flex-direction: column;
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: self-start;
+        padding: 5px 0px !important;
+        .card-title {
+          font-family: Roboto;
+          font-size: 19px;
+          font-weight: 500;
+          color: $med-blue;
+          margin-bottom: 0px;
+          width: 100%;
+        }
+        .card-text {
+          font-family: Roboto;
+          font-size: 14px;
+          color: $med-gray;
+          width: 100%;
+        }
+      }
+
+      .card-footer {
+        padding-left: 0px;
+        background-color: transparent;
+        .med-footer-details {
+          color: $med-blue;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          .med-footer-icon {
+            font-size: 20px;
+            margin-right: 5px;
+          }
+        }
+
+        .med-footer-svg {
+          svg {
+            height: 23px;
+            margin-left: 10px;
+            width: 23px;
+            cursor: pointer;
+          }
+
+          .med-link {
+            cursor: pointer;
+            color: $med-light-blue;
+          }
+
+          .med-pin {
+            cursor: pointer;
+            color: $med-red;
+          }
+
+          .med-star {
+            color: $med-orange;
+            height: 25px;
+            width: 25px;
+          }
+        }
+      }
+    }
+  }
+
+  .med-search-resource-bottom-container {
+    height: auto;
+    padding: 0px 15px 15px 15px;
+  }
+}

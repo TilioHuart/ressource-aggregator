@@ -1,0 +1,24 @@
+@import "../../../styles/_colors.scss";
+
+.med-search-resource-details-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 2px solid $med-light-gray;
+  border-radius: 15px;
+  margin-bottom: 5px;
+  padding: 5px;
+  .med-search-resource-details-icon {
+    margin-right: 5px;
+    font-size: 20px;
+    width: auto;
+  }
+  .med-search-resource-details-name {
+    width: 100px;
+    font-size: 14px;
+  }
+  .med-search-resource-details-value {
+    width: calc(100% - 100px);
+    font-size: 14px;
+  }
+}

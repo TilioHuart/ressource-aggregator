@@ -1,8 +1,9 @@
 import React from "react";
 
-import { Breadcrumb, SearchBar, Button } from "@edifice-ui/react";
+import { Breadcrumb, SearchBar } from "@edifice-ui/react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 import "./Header.scss";
 
 interface HeaderProps {
@@ -11,11 +12,22 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const [searchValue, setSearchValue] = React.useState("");
+  const navigate = useNavigate();
 
   const search = () => {
-    console.log(searchValue);
-    return redirect("/search");
-    // redirect to search page
+    const searchBody = {
+      state: "PLAIN_TEXT",
+      data: {
+        query: searchValue,
+      },
+      event: "search",
+      sources: [
+        "fr.openent.mediacentre.source.GAR",
+        "fr.openent.mediacentre.source.Moodle",
+        "fr.openent.mediacentre.source.Signet",
+      ],
+    };
+    navigate("/search", { state: { searchBody } });
   };
 
   return (
@@ -46,14 +58,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           placeholder="Rechercher une ressource"
           size="md"
         />
-        <Button
-          color="secondary"
-          type="button"
-          variant="outline"
-          className="med-header-button"
-        >
-          Recherche avancée
-        </Button>
       </div>
     </div>
   );

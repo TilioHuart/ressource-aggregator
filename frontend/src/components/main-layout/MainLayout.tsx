@@ -1,6 +1,6 @@
 import React from "react";
 
-import { breakpoints } from "../../core/constants/breakpoints";
+import { breakpoints } from "../../core/const/breakpoints.ts";
 import { Header } from "../header/Header";
 import { Sidebar } from "../sidebar/Sidebar";
 

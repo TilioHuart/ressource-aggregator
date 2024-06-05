@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { ListCard } from "~/components/list-card/ListCard.tsx";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { Resource } from "~/components/resource/Resource";
-import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum.ts";
+import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useSignet } from "~/hooks/useSignet";
 import { useTextbook } from "~/hooks/useTextbook";
@@ -87,7 +87,7 @@ export const App = () => {
         title="Universalis"
         subtitle="Une encyclopédie en ligne pour tous vos exposés"
         footerText="Offert par la Région"
-        type={ListCardTypeEnum.pinned_resources}
+        type={CardTypeEnum.pinned_resources}
         favorite={false}
         link={"/"}
         setAlertText={(arg: string, type: AlertTypes) => {
@@ -100,11 +100,11 @@ export const App = () => {
     );
   };
 
-  function getCards(nbCards: number, type: ListCardTypeEnum) {
+  function getCards(nbCards: number, type: CardTypeEnum) {
     const cards = [];
     for (let i = 0; i < nbCards; i++) {
       switch (type) {
-        case ListCardTypeEnum.pinned_resources:
+        case CardTypeEnum.pinned_resources:
           cards.push(getPinnedResourceCard());
           break;
         default:
@@ -140,15 +140,15 @@ export const App = () => {
             <div className="left-container">
               <ListCard
                 scrollable={true}
-                type={ListCardTypeEnum.pinned_resources}
-                components={getCards(6, ListCardTypeEnum.pinned_resources)}
+                type={CardTypeEnum.pinned_resources}
+                components={getCards(6, CardTypeEnum.pinned_resources)}
               />
               <div className="bottom-container">
                 <div className="bottom-left-container">
                   {textbooks && (
                     <ListCard
                       scrollable={false}
-                      type={ListCardTypeEnum.manuals}
+                      type={CardTypeEnum.manuals}
                       components={textbooks.map((textbook: Textbook) => (
                         <Resource
                           id={textbook.id}
@@ -156,7 +156,7 @@ export const App = () => {
                           image={textbook.image}
                           title={textbook.title}
                           subtitle={textbook.editors.join(", ")}
-                          type={ListCardTypeEnum.manuals}
+                          type={CardTypeEnum.manuals}
                           favorite={textbook.favorite}
                           link={textbook.link ?? textbook.url ?? "/"}
                           setAlertText={(arg: string, type: AlertTypes) => {
@@ -175,7 +175,7 @@ export const App = () => {
                   {homeSignets && (
                     <ListCard
                       scrollable={false}
-                      type={ListCardTypeEnum.book_mark}
+                      type={CardTypeEnum.book_mark}
                       components={homeSignets.map((signet: Signet) => (
                         <Resource
                           id={signet.id ?? signet._id}
@@ -187,7 +187,7 @@ export const App = () => {
                               ? t("mediacentre.signet.orientation")
                               : ""
                           }
-                          type={ListCardTypeEnum.book_mark}
+                          type={CardTypeEnum.book_mark}
                           favorite={signet.favorite}
                           link={signet.link ?? signet.url ?? "/"}
                           footerImage={
@@ -218,7 +218,7 @@ export const App = () => {
               {favorites && (
                 <ListCard
                   scrollable={false}
-                  type={ListCardTypeEnum.favorites}
+                  type={CardTypeEnum.favorites}
                   components={favorites.map((favorite: Favorite) => (
                     <Resource
                       id={favorite.id}
@@ -226,7 +226,7 @@ export const App = () => {
                       image={favorite.image}
                       title={favorite.title}
                       subtitle={favorite.description}
-                      type={ListCardTypeEnum.favorites}
+                      type={CardTypeEnum.favorites}
                       favorite={favorite.favorite}
                       link={favorite.link ?? favorite.url ?? "/"}
                       setAlertText={(arg: string, type: AlertTypes) => {
@@ -266,12 +266,12 @@ export const App = () => {
         <div className="med-container">
           <ListCard
             scrollable={true}
-            type={ListCardTypeEnum.pinned_resources}
-            components={getCards(6, ListCardTypeEnum.pinned_resources)}
+            type={CardTypeEnum.pinned_resources}
+            components={getCards(6, CardTypeEnum.pinned_resources)}
           />
           <ListCard
             scrollable={false}
-            type={ListCardTypeEnum.favorites}
+            type={CardTypeEnum.favorites}
             components={favorites.map((favorite: Favorite) => (
               <Resource
                 id={favorite.id}
@@ -279,7 +279,7 @@ export const App = () => {
                 image={favorite.image}
                 title={favorite.title}
                 subtitle={favorite.description}
-                type={ListCardTypeEnum.favorites}
+                type={CardTypeEnum.favorites}
                 favorite={favorite.favorite}
                 link={favorite.link ?? favorite.url ?? "/"}
                 setAlertText={(arg: string, type: AlertTypes) => {
@@ -296,7 +296,7 @@ export const App = () => {
             <div className="bottom-left-container">
               <ListCard
                 scrollable={false}
-                type={ListCardTypeEnum.manuals}
+                type={CardTypeEnum.manuals}
                 components={textbooks.map((textbook: Textbook) => (
                   <Resource
                     id={textbook.id}
@@ -304,7 +304,7 @@ export const App = () => {
                     image={textbook.image}
                     title={textbook.title}
                     subtitle={textbook.editors.join(", ")}
-                    type={ListCardTypeEnum.manuals}
+                    type={CardTypeEnum.manuals}
                     favorite={textbook.favorite}
                     link={textbook.link ?? textbook.url ?? "/"}
                     setAlertText={(arg: string, type: AlertTypes) => {
@@ -321,7 +321,7 @@ export const App = () => {
             <div className="bottom-right-container">
               <ListCard
                 scrollable={false}
-                type={ListCardTypeEnum.book_mark}
+                type={CardTypeEnum.book_mark}
                 components={homeSignets.map((signet: Signet) => (
                   <Resource
                     id={signet.id ?? signet._id}
@@ -333,7 +333,7 @@ export const App = () => {
                         ? t("mediacentre.signet.orientation")
                         : ""
                     }
-                    type={ListCardTypeEnum.book_mark}
+                    type={CardTypeEnum.book_mark}
                     favorite={signet.favorite}
                     link={signet.link ?? signet.url ?? "/"}
                     footerImage={
@@ -382,12 +382,12 @@ export const App = () => {
         <div className="med-container">
           <ListCard
             scrollable={true}
-            type={ListCardTypeEnum.pinned_resources}
-            components={getCards(6, ListCardTypeEnum.pinned_resources)}
+            type={CardTypeEnum.pinned_resources}
+            components={getCards(6, CardTypeEnum.pinned_resources)}
           />
           <ListCard
             scrollable={false}
-            type={ListCardTypeEnum.favorites}
+            type={CardTypeEnum.favorites}
             components={favorites.map((favorite: Favorite) => (
               <Resource
                 id={favorite.id}
@@ -395,7 +395,7 @@ export const App = () => {
                 image={favorite.image}
                 title={favorite.title}
                 subtitle={favorite.description}
-                type={ListCardTypeEnum.favorites}
+                type={CardTypeEnum.favorites}
                 favorite={favorite.favorite}
                 link={favorite.link ?? favorite.url ?? "/"}
                 setAlertText={(arg: string, type: AlertTypes) => {
@@ -410,7 +410,7 @@ export const App = () => {
           />
           <ListCard
             scrollable={false}
-            type={ListCardTypeEnum.manuals}
+            type={CardTypeEnum.manuals}
             components={textbooks.map((textbook: Textbook) => (
               <Resource
                 id={textbook.id}
@@ -418,7 +418,7 @@ export const App = () => {
                 image={textbook.image}
                 title={textbook.title}
                 subtitle={textbook.editors.join(", ")}
-                type={ListCardTypeEnum.manuals}
+                type={CardTypeEnum.manuals}
                 favorite={textbook.favorite}
                 link={textbook.link ?? textbook.url ?? "/"}
                 setAlertText={(arg: string, type: AlertTypes) => {
@@ -433,7 +433,7 @@ export const App = () => {
           />
           <ListCard
             scrollable={false}
-            type={ListCardTypeEnum.book_mark}
+            type={CardTypeEnum.book_mark}
             components={homeSignets.map((signet: Signet) => (
               <Resource
                 id={signet.id ?? signet._id}
@@ -443,7 +443,7 @@ export const App = () => {
                 subtitle={
                   signet.orientation ? t("mediacentre.signet.orientation") : ""
                 }
-                type={ListCardTypeEnum.book_mark}
+                type={CardTypeEnum.book_mark}
                 favorite={signet.favorite}
                 link={signet.link ?? signet.url ?? "/"}
                 footerImage={

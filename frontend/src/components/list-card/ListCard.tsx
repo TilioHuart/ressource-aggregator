@@ -5,29 +5,27 @@ import Brightness1Icon from "@mui/icons-material/Brightness1";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import "./ListCard.scss";
-import { useTranslation } from "react-i18next";
 
+import { ListCardTitle } from "./list-card-title/ListCardTitle";
+import { breakpoints } from "~/core/const/breakpoints.ts";
 import {
   NbColumnsListCard,
   NbComponentsListCard,
 } from "~/core/const/home-element-list-sizes.const";
-import { IconMapping } from "~/core/const/icon-mapping.const";
-import { TitleListCard } from "~/core/const/list-titles.const";
-import { ListCardTypeEnum } from "~/core/enum/list-card-type.enum.ts";
+import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 
 interface ListCardProps {
   scrollable: boolean;
-  type: ListCardTypeEnum;
+  type?: CardTypeEnum;
   components?: any[];
 }
 
 export const ListCard: React.FC<ListCardProps> = ({
   scrollable,
-  type,
+  type = CardTypeEnum.favorites,
   components,
 }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { t } = useTranslation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -43,17 +41,17 @@ export const ListCard: React.FC<ListCardProps> = ({
 
   const NbComponents = (windowWidth: number) => {
     const nbComponent = NbComponentsListCard[type];
-    if (windowWidth < 768) return nbComponent.sm;
-    if (windowWidth < 992) return nbComponent.md;
-    if (windowWidth < 1280) return nbComponent.lg;
+    if (windowWidth < breakpoints.md) return nbComponent.sm;
+    if (windowWidth < breakpoints.lg) return nbComponent.md;
+    if (windowWidth < breakpoints.xl) return nbComponent.lg;
     return nbComponent.xl;
   };
 
   const NbColumns = (windowWidth: number) => {
     const nbColumns = NbColumnsListCard[type];
-    if (windowWidth < 768) return nbColumns.sm;
-    if (windowWidth < 992) return nbColumns.md;
-    if (windowWidth < 1280) return nbColumns.lg;
+    if (windowWidth < breakpoints.md) return nbColumns.sm;
+    if (windowWidth < breakpoints.lg) return nbColumns.md;
+    if (windowWidth < breakpoints.xl) return nbColumns.lg;
     return nbColumns.xl;
   };
 
@@ -61,19 +59,9 @@ export const ListCard: React.FC<ListCardProps> = ({
     return components.length > NbComponents(windowWidth);
   };
 
-  const showTitle = (type: ListCardTypeEnum) => {
-    const IconComponent = IconMapping[type];
-
-    return (
-      <span className="title">
-        <IconComponent className="icon" />
-        {t(TitleListCard[type])}
-      </span>
-    );
-  };
-
   const showComponent = (component: any, index: number) => {
-    if (index < NbComponents(windowWidth)) {
+    const maxComponents = NbComponents(windowWidth);
+    if (maxComponents === -1 || index < maxComponents) {
       return component;
     }
   };
@@ -81,14 +69,16 @@ export const ListCard: React.FC<ListCardProps> = ({
   if (!scrollable) {
     return (
       <div className={`list-card ${type}`}>
-        <div className="list-card-header">
-          {showTitle(type)}
-          {components && tooMuchComponents(components) && (
-            <a href="/" className="right-button">
-              Voir plus
-            </a>
-          )}
-        </div>
+        {type !== CardTypeEnum.search && (
+          <div className="list-card-header">
+            <ListCardTitle type={type} />
+            {components && tooMuchComponents(components) && (
+              <a href="/" className="right-button">
+                Voir plus
+              </a>
+            )}
+          </div>
+        )}
         <Grid className={`grid-${NbColumns(windowWidth)}`}>
           {components &&
             components.map((component, index) =>
@@ -100,7 +90,9 @@ export const ListCard: React.FC<ListCardProps> = ({
   } else {
     return (
       <div className={`list-card ${type}`}>
-        <div className="list-card-header">{showTitle(type)}</div>
+        <div className="list-card-header">
+          <ListCardTitle type={type} />
+        </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyboardArrowLeftIcon className="left-arrow" />
           <Grid className={`grid-${NbColumns(windowWidth)}`}>

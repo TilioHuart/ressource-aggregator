@@ -1,0 +1,15 @@
+@import "../../../styles/_colors.scss";
+
+.med-search-resource-type {
+  display: flex;
+  align-items: center;
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 500;
+  color: $med-gray;
+  .med-search-resource-icon {
+    margin-right: 5px;
+    height: 14px;
+    width: auto;
+  }
+}
