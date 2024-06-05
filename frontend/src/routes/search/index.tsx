@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
+import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { ListCard } from "~/components/list-card/ListCard";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { SearchCard } from "~/components/search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";
-import { SearchResource } from "~/model/SearchResource.model";
+import { SearchResultData } from "~/model/SearchResultData.model";
 export interface SearchProps {
   searchBody: object;
 }
@@ -20,7 +21,9 @@ export const Search: React.FC = () => {
   const location = useLocation();
   const searchBody = location.state?.searchBody;
 
-  const { allResources } = useSearch(searchBody);
+  const { allResources, disciplines, levels, types } = useSearch(searchBody);
+  const [allResourcesDisplayed, setAllResourcesDisplayed] =
+    useState<SearchResultData>(allResources);
 
   const getTitleSearch = () => {
     const { title, query } = searchBody.data;
@@ -39,13 +42,27 @@ export const Search: React.FC = () => {
         </div>
         <div className="med-search-page-content">
           <div className="med-search-page-content-body">
-            <ListCard
-              scrollable={false}
-              type={CardTypeEnum.search}
-              components={allResources.map((searchResource: SearchResource) => (
-                <SearchCard searchResource={searchResource} />
-              ))}
+            <FilterLayout
+              resources={allResources}
+              disciplines={disciplines}
+              levels={levels}
+              setAllResourcesDisplayed={setAllResourcesDisplayed}
+              types={types}
             />
+            {allResourcesDisplayed && (
+              <ListCard
+                scrollable={false}
+                type={CardTypeEnum.search}
+                components={[
+                  ...allResourcesDisplayed.textbooks,
+                  ...allResourcesDisplayed.externals_resources,
+                  ...allResourcesDisplayed.signets,
+                  ...allResourcesDisplayed.moodle,
+                ].map((searchResource: any) => (
+                  <SearchCard searchResource={searchResource} />
+                ))}
+              />
+            )}
           </div>
         </div>
       </div>

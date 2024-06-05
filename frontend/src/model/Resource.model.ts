@@ -1,15 +1,19 @@
 export interface Resource {
-  disciplines: string[];
-  document_types: string[];
-  authors: string[];
-  editors: string[];
+  authors?: string[];
+  date?: number;
+  description?: string | null;
+  disciplines?: string[];
+  document_types?: string[];
+  editors?: string[];
   favorite?: boolean;
-  image: string;
-  url?: string;
+  id?: string;
+  image?: string;
+  levels?: string[];
   link?: string;
-  levels: string[];
-  plain_text: string | string[] | string[][];
-  source: string;
+  plain_text?: string[] | string;
+  source?: string;
   title: string;
-  id: string;
+  favoriteId?: string;
+  structure_name?: string;
+  structure_uai?: string;
 }

@@ -1,0 +1,4 @@
+export enum SEARCH_TYPE {
+  PLAIN_TEXT = "PLAIN_TEXT",
+  ADVANCED = "ADVANCED",
+}

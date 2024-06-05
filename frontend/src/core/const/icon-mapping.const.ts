@@ -7,8 +7,9 @@ import SchoolIcon from "@mui/icons-material/School";
 import StarIcon from "@mui/icons-material/Star";
 import StarsIcon from "@mui/icons-material/Stars";
 
+import Moodle from "/img/fr.openent.mediacentre.source.Moodle.png";
+
 import { ResourceDetailsEnum } from "../enum/resource-details.enum";
-import Moodle from "~/../public/img/fr.openent.mediacentre.source.Moodle.png";
 import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 import { SearchCardTypeEnum } from "~/core/enum/search-card-type.enum.ts";
 export const IconMapping: { [key in string]: any } = {

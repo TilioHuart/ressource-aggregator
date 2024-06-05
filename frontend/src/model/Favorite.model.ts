@@ -6,4 +6,5 @@ export interface Favorite extends Resource {
   user?: string;
   _id?: string;
   hash?: number;
+  url?: string;
 }

@@ -6,4 +6,5 @@ export interface Textbook extends Resource {
   structure_uai: string;
   user: string;
   _id: string;
+  url?: string;
 }

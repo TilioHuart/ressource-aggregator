@@ -34,7 +34,7 @@ export const useSignet = () => {
     const updatedPublicSignetsData: Signet[] = publicSignetsData.map(
       (signet: Signet) => ({
         ...signet,
-        orientation: signet.document_types.some((type) =>
+        orientation: signet?.document_types?.some((type) =>
           type.toLowerCase().includes("orientation"),
         ),
       }),
