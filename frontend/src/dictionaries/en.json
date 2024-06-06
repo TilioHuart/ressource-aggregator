@@ -147,6 +147,7 @@
   "mediacentre.link.copy.success": "Le lien a bien été copié",
   "mediacentre.card.open": "Ouvrir",
   "mediacentre.card.favorite": "Ajouter aux favoris",
+  "mediacentre.card.unfavorite": "Retirer des favoris",
   "mediacentre.card.pin": "Epingler",
   "mediacentre.card.copy": "Copier le lien",
   "mediacentre.sidebar.home": "Accueil",

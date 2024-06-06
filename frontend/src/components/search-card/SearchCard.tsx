@@ -1,7 +1,7 @@
 import "./SearchCard.scss";
 import React, { useState } from "react";
 
-import { Card } from "@edifice-ui/react";
+import { Card, Tooltip } from "@edifice-ui/react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -110,12 +110,20 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
               )}
             </div>
             <div className="med-footer-svg">
-              <PushPinIcon className="med-pin" onClick={() => pin()} />
-              <ContentCopyIcon className="med-link" onClick={() => copy()} />
+              <Tooltip message={t("mediacentre.card.pin")}>
+                <PushPinIcon className="med-pin" onClick={() => pin()} />
+              </Tooltip>
+              <Tooltip message={t("mediacentre.card.copy")}>
+                <ContentCopyIcon className="med-link" onClick={() => copy()} />
+              </Tooltip>
               {searchResource.favorite ? (
-                <StarIcon className="med-star" onClick={() => unfav()} />
+                <Tooltip message={t("mediacentre.card.unfavorite")}>
+                  <StarIcon className="med-star" onClick={() => unfav()} />
+                </Tooltip>
               ) : (
-                <StarBorderIcon className="med-star" onClick={() => fav()} />
+                <Tooltip message={t("mediacentre.card.favorite")}>
+                  <StarBorderIcon className="med-star" onClick={() => fav()} />
+                </Tooltip>
               )}
             </div>
           </Card.Footer>
