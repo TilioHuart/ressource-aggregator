@@ -165,5 +165,6 @@
   "mediacentre.search.card.manuals": "Manuel",
   "mediacentre.search.card.book.mark": "Signet",
   "mediacentre.search.card.moodle": "Parcours Moodle",
-  "mediacentre.search.card.external.resources": "Ressource"
+  "mediacentre.search.card.external.resources": "Ressource",
+  "mediacentre.load.more.items": "Chargement des éléments"
 }

@@ -167,9 +167,5 @@
   "mediacentre.notification.copy": "Le lien a bien été copié dans le presse-papier.",
   "mediacentre.notification.addFavorite": "La ressource a été ajouté aux favoris.",
   "mediacentre.notification.removeFavorite": "La ressource a été retiré des favoris.",
-
-  "mediacentre.search.card.manuals": "Manuel",
-  "mediacentre.search.card.book.mark": "Signet",
-  "mediacentre.search.card.moodle": "Parcours Moodle",
-  "mediacentre.search.card.external.resources": "Ressource"
+  "mediacentre.load.more.items": "Chargement des éléments"
 }
