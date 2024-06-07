@@ -15,7 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   const search = () => {
-    navigate("search?query=" + searchValue);
+    navigate("/search?query=" + searchValue);
   };
 
   return (
