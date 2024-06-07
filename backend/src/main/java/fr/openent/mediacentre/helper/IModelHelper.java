@@ -43,7 +43,23 @@ public class IModelHelper {
     }
 
     public static List<String> toStringList(JsonArray results) {
-        return results.stream()
+        // Collect strings in results (ex : ["", ""])
+        List<String> stringList = results.stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .collect(Collectors.toList());
+
+        // Collect strings in arrays in results (ex : [[""]])
+        results.stream()
+                .filter(JsonArray.class::isInstance)
+                .map(JsonArray.class::cast)
+                .forEach(array -> stringList.addAll(toStringList(array)));
+
+        return stringList;
+    }
+
+    public static List<String> toStringList(String results) {
+        return new JsonArray().add(results).stream()
                 .filter(String.class::isInstance)
                 .map(String.class::cast)
                 .collect(Collectors.toList());

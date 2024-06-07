@@ -11,7 +11,7 @@ public class Field {
 
     // URLs
     public static final String MEDIACENTRE_URL = "/mediacentre";
-    public static final String UNIVERSALIS_URL = "http://www.universalis-edu.com";
+    public static final String UNIVERSALIS_ARK = "ark:/34885/wr0000001";
 
     // Mongo fields
     public static final String MONGO_SET = "$set";

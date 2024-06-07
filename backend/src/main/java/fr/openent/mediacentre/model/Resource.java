@@ -5,10 +5,17 @@ import fr.openent.mediacentre.helper.IModelHelper;
 import fr.wseduc.mongodb.MongoDb;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import static fr.openent.mediacentre.core.constants.Field.*;
+
 public abstract class Resource {
+    protected static final Logger log = LoggerFactory.getLogger(Resource.class);
     private String _id;
 
     private String title;
@@ -39,19 +46,19 @@ public abstract class Resource {
     }
 
     public Resource(JsonObject resource) {
-        this._id = resource.getString(Field._ID, null);
-        this.title = resource.getString(Field.TITLE, null);
-        this.plainText = IModelHelper.toStringList(resource.getJsonArray(Field.PLAIN_TEXT, new JsonArray()));
-        this.levels = IModelHelper.toStringList(resource.getJsonArray(Field.LEVELS, new JsonArray()));
-        this.disciplines = IModelHelper.toStringList(resource.getJsonArray(Field.DISCIPLINES, new JsonArray()));
-        this.editors = IModelHelper.toStringList(resource.getJsonArray(Field.EDITORS, new JsonArray()));
-        this.authors = IModelHelper.toStringList(resource.getJsonArray(Field.AUTHORS, new JsonArray()));
-        this.image = resource.getString(Field.IMAGE, null);
-        this.documentTypes = IModelHelper.toStringList(resource.getJsonArray(Field.DOCUMENT_TYPES, new JsonArray()));
-        this.link = resource.getString(Field.LINK, null);
-        this.source = resource.getString(Field.SOURCE, null);
-        this.favorite = resource.getBoolean(Field.FAVORITE, false);
-        this.date = resource.getJsonObject(Field.DATE, MongoDb.now());
+        this._id = resource.getString(_ID, null);
+        this.title = resource.getString(TITLE, null);
+        this.plainText = this.getStringListFromField(resource, PLAIN_TEXT);
+        this.levels = this.getStringListFromField(resource, LEVELS);
+        this.disciplines = this.getStringListFromField(resource, DISCIPLINES);
+        this.editors = this.getStringListFromField(resource, EDITORS);
+        this.authors = this.getStringListFromField(resource, AUTHORS);
+        this.image = resource.getString(IMAGE, null);
+        this.documentTypes = IModelHelper.toStringList(resource.getJsonArray(DOCUMENT_TYPES, new JsonArray()));
+        this.link = resource.getString(LINK, null);
+        this.source = resource.getString(SOURCE, null);
+        this.favorite = resource.getBoolean(FAVORITE, false);
+        this.date = this.formatDate(resource);
     }
 
     public String get_id() {
@@ -185,5 +192,39 @@ public abstract class Resource {
                 .put(Field.LINK, this.getLink())
                 .put(Field.SOURCE, this.getSource())
                 .put(Field.FAVORITE, this.isFavorite());
+    }
+
+    // Utils
+
+    private List<String> getStringListFromField(JsonObject resource, String key) {
+        try {
+            // Case value is []
+            return IModelHelper.toStringList(resource.getJsonArray(key, new JsonArray()));
+        }
+        catch (Exception e1) {
+            try {
+                // Case value is "[]"
+                return IModelHelper.toStringList(new JsonArray(resource.getString(key, "")));
+            }
+            catch (Exception e2) {
+                try {
+                    // Case value is ""
+                    return IModelHelper.toStringList(resource.getString(key, ""));
+                }
+                catch (Exception e3) {
+                    log.error("[Mediacentre@Resource::getStringListFromField] error in converting data into list from key " + key);
+                    return new ArrayList<>();
+                }
+            }
+        }
+    }
+
+    private JsonObject formatDate(JsonObject resource) {
+        Object value = resource.getValue(DATE, null);
+        if (value == null) return MongoDb.now();
+
+        if (value instanceof Long) return MongoDb.toMongoDate(new Date((Long) value));
+        else if (value instanceof JsonObject) return (JsonObject) value;
+        else return null;
     }
 }
