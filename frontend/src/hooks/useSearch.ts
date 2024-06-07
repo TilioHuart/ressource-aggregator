@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
+import { useFavorite } from "./useFavorite";
 import { useSearchQuery } from "../services/api/search.service";
+import { Favorite } from "~/model/Favorite.model";
 import { Moodle } from "~/model/Moodle.model";
 import { Resource } from "~/model/Resource.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
@@ -18,6 +20,7 @@ export const useSearch = (query: any) => {
   const [disciplines, setDisciplines] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
+  const { favorites } = useFavorite();
   const { data, error, isLoading } = useSearchQuery(query);
 
   const selectDisciplines = (
@@ -92,7 +95,7 @@ export const useSearch = (query: any) => {
   useEffect(() => {
     if (!isLoading) {
       const searchResult: SearchResultCategory[] = data;
-      const searchResultData: SearchResultData = {
+      let searchResultData: SearchResultData = {
         signets: [],
         textbooks: [],
         externals_resources: [],
@@ -138,9 +141,37 @@ export const useSearch = (query: any) => {
               resource?.document_types?.includes("livre numérique"),
           ) ?? [];
       }
+      if (favorites) {
+        const updateFavoritesInCategory = (
+          categoryData: any[],
+          favorites: Favorite[],
+        ) => {
+          return categoryData.map((item) => ({
+            ...item,
+            favorite: favorites.some((fav) => fav.id === item.id),
+          }));
+        };
+
+        const updatedSearchResultData: SearchResultData = {
+          signets: updateFavoritesInCategory(
+            searchResultData.signets,
+            favorites,
+          ),
+          textbooks: updateFavoritesInCategory(
+            searchResultData.textbooks,
+            favorites,
+          ),
+          externals_resources: updateFavoritesInCategory(
+            searchResultData.externals_resources,
+            favorites,
+          ),
+          moodle: updateFavoritesInCategory(searchResultData.moodle, favorites),
+        };
+        searchResultData = updatedSearchResultData;
+      }
       setAllResources(searchResultData);
     }
-  }, [data, isLoading]);
+  }, [data, isLoading, favorites]);
 
   return { allResources, disciplines, levels, types, error, isLoading };
 };

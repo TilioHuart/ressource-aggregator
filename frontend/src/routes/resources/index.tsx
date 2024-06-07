@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import { Alert, AlertTypes } from "@edifice-ui/react";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useTranslation } from "react-i18next";
 
@@ -26,6 +27,8 @@ export const ResourcePage: React.FC = () => {
     sources: ["fr.openent.mediacentre.source.GAR"],
   };
 
+  const [alertText, setAlertText] = useState<string>("");
+  const [alertType, setAlertType] = useState<AlertTypes>("success");
   const { allResources, disciplines, levels, types } = useSearch(searchBody); // all resources
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>(allResources); // all resources after the filters
@@ -109,6 +112,23 @@ export const ResourcePage: React.FC = () => {
   return (
     <>
       <MainLayout />
+      {alertText !== "" && (
+        <Alert
+          autoClose
+          autoCloseDelay={3000}
+          isDismissible
+          isToast
+          onClose={() => {
+            setAlertText("");
+            setAlertType("success");
+          }}
+          position="top-right"
+          type={alertType}
+          className="med-alert"
+        >
+          {alertText}
+        </Alert>
+      )}
       <div className="med-container">
         <div className="med-search-page-header">
           <div className="med-search-page-title">
@@ -132,7 +152,10 @@ export const ResourcePage: React.FC = () => {
                 type={CardTypeEnum.search}
                 components={[...visibleResources.externals_resources].map(
                   (searchResource: any) => (
-                    <SearchCard searchResource={searchResource} />
+                    <SearchCard
+                      searchResource={searchResource}
+                      setAlertText={setAlertText}
+                    />
                   ),
                 )}
               />

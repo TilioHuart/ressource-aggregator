@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import { Alert, AlertTypes } from "@edifice-ui/react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { ListCard } from "~/components/list-card/ListCard";
@@ -18,6 +19,8 @@ import { Textbook } from "~/model/Textbook.model";
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
+  const [alertText, setAlertText] = useState<string>("");
+  const [alertType, setAlertType] = useState<AlertTypes>("success");
   const location = useLocation();
   const searchBody = location.state?.searchBody;
 
@@ -33,6 +36,7 @@ export const Search: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef(null);
+  const navigate = useNavigate();
 
   const flattenResources = (resources: SearchResultData) => [
     ...resources.textbooks,
@@ -118,6 +122,23 @@ export const Search: React.FC = () => {
   return (
     <>
       <MainLayout />
+      {alertText !== "" && (
+        <Alert
+          autoClose
+          autoCloseDelay={3000}
+          isDismissible
+          isToast
+          onClose={() => {
+            setAlertText("");
+            setAlertType("success");
+          }}
+          position="top-right"
+          type={alertType}
+          className="med-alert"
+        >
+          {alertText}
+        </Alert>
+      )}
       <div className="med-container">
         <div className="med-search-page-header">
           <div className="med-search-page-title">
@@ -144,8 +165,12 @@ export const Search: React.FC = () => {
                   ...visibleResources.signets,
                   ...visibleResources.moodle,
                 ].map((searchResource: any) => (
-                  <SearchCard searchResource={searchResource} />
+                  <SearchCard
+                    searchResource={searchResource}
+                    setAlertText={setAlertText}
+                  />
                 ))}
+                redirectLink={() => navigate("/search")}
               />
             )}
             <div ref={loaderRef} />

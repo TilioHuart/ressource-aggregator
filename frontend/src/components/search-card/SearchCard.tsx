@@ -1,12 +1,11 @@
 import "./SearchCard.scss";
 import React, { useState } from "react";
 
-import { Card, Tooltip } from "@edifice-ui/react";
+import { AlertTypes, Card, Tooltip } from "@edifice-ui/react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import PushPinIcon from "@mui/icons-material/PushPin";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useTranslation } from "react-i18next";
@@ -16,30 +15,36 @@ import { SearchCardDetails } from "./search-card-details/SearchCardDetails";
 import { SearchCardType } from "./search-card-type/SearchCardType";
 import { SearchCardTypeEnum } from "~/core/enum/search-card-type.enum";
 import { SearchResource } from "~/model/SearchResource.model";
+import {
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+} from "~/services/api/favorite.service";
 
 interface SearchResourceProps {
   searchResource: SearchResource;
+  setAlertText: (arg: string, type: AlertTypes) => void;
 }
 
 export const SearchCard: React.FC<SearchResourceProps> = ({
   searchResource,
+  setAlertText,
 }) => {
   const { t } = useTranslation();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeFavorite] = useRemoveFavoriteMutation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const type = (): SearchCardTypeEnum => {
-    if (
-      searchResource.document_types &&
-      searchResource.document_types.length > 0
-    ) {
-      switch (searchResource.document_types[0]) {
-        case "livre numerique":
-          return SearchCardTypeEnum.manuals;
-        case "Parcours Moodle":
+    if (searchResource?.source) {
+      switch (searchResource.source) {
+        case "fr.opentent.source.Moodle":
           return SearchCardTypeEnum.moodle;
-        case "Signet":
+        case "fr.opentent.source.Signet":
           return SearchCardTypeEnum.book_mark;
-        case "site Web":
+        case "fr.opentent.source.GAR":
+          if (searchResource?.document_types?.includes("livre numérique")) {
+            return SearchCardTypeEnum.manuals;
+          }
           return SearchCardTypeEnum.external_resources;
         default:
           return SearchCardTypeEnum.manuals;
@@ -50,16 +55,38 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   };
 
   const copy = () => {
-    console.log("copy");
+    if (navigator?.clipboard) {
+      navigator.clipboard.writeText(
+        searchResource?.link ?? searchResource?.url ?? "",
+      );
+      setAlertText(t("mediacentre.notification.copy"), "success");
+    } else {
+      console.error("Clipboard not available");
+    }
   };
-  const pin = () => {
-    console.log("pin");
+  const fav = async () => {
+    try {
+      await addFavorite({
+        id: searchResource?._id ?? searchResource?.id ?? "",
+        resource: searchResource,
+      });
+      setAlertText(t("mediacentre.notification.addFavorite"), "success");
+      searchResource.favorite = true;
+    } catch (e) {
+      console.error(e);
+    }
   };
-  const fav = () => {
-    console.log("fav");
-  };
-  const unfav = () => {
-    console.log("unfav");
+  const unfav = async () => {
+    try {
+      await removeFavorite({
+        id: searchResource?._id ?? searchResource?.id ?? "",
+        source: searchResource?.source ?? "",
+      });
+      setAlertText(t("mediacentre.notification.removeFavorite"), "success");
+      searchResource.favorite = false;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const toggleExpand = () => {
@@ -109,9 +136,6 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
               )}
             </div>
             <div className="med-footer-svg">
-              <Tooltip message={t("mediacentre.card.pin")}>
-                <PushPinIcon className="med-pin" onClick={() => pin()} />
-              </Tooltip>
               <Tooltip message={t("mediacentre.card.copy")}>
                 <ContentCopyIcon className="med-link" onClick={() => copy()} />
               </Tooltip>

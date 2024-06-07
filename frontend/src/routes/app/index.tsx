@@ -52,11 +52,11 @@ export const App = () => {
 
   const handleAddFavorite = (resource: any) => {
     resource.favorite = true;
-    setFavorites((prevFavorites) => [...prevFavorites, resource]);
+    setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
   };
 
   const handleRemoveFavorite = (id: string) => {
-    setFavorites((prevFavorites) =>
+    setFavorites((prevFavorites: Favorite[]) =>
       prevFavorites.filter((fav) => fav.id !== id),
     );
     updateFavoriteStatus(id, false);
