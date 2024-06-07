@@ -101,15 +101,15 @@ export const useSearch = (query: any) => {
         externals_resources: [],
         moodle: [],
       };
-      const signets = searchResult.find(
+      const signets = searchResult?.find(
         (result) =>
           result?.data?.source == "fr.openent.mediacentre.source.Signet",
       );
-      const moodle = searchResult.find(
+      const moodle = searchResult?.find(
         (result) =>
           result?.data?.source == "fr.openent.mediacentre.source.Moodle",
       );
-      const gar = searchResult.find(
+      const gar = searchResult?.find(
         (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
       );
       searchResultData.signets = signets?.data?.resources ?? [];
