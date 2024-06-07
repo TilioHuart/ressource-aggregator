@@ -56,6 +56,9 @@ cp -R ../angularJS/src/dist/* ./src/main/resources/public/js
 cp -R ../angularJS/src/template/* ./src/main/resources/public/template
 cp -R ../angularJS/src/img/* ./src/main/resources/public/img
 cp -R ../angularJS/src/i18n/* ./src/main/resources/i18n
+
+# Copy all public files from frontend into Backend
+cp -R ../frontend/public/* ./src/main/resources/public
 echo 'Files all copied !'
 
 # Build .

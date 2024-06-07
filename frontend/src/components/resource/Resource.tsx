@@ -106,10 +106,18 @@ export const Resource: React.FC<ResourceProps> = ({
         <a className="med-body" href={newLink !== "/" ? newLink : "/"}>
           <Card.Body space={"0"}>
             {image ? (
-              <img src={image} alt="Resource" className="med-resource-image" />
+              <img
+                src={image}
+                alt="Resource"
+                className="med-resource-image"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                }}
+              />
             ) : (
               <img
-                src="/img/no-avatar.svg"
+                src="/mediacentre/public/img/no-avatar.svg"
                 alt="Resource"
                 className="med-resource-image"
               />
@@ -129,7 +137,7 @@ export const Resource: React.FC<ResourceProps> = ({
                 className="med-resource-footer-image"
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null;
-                  currentTarget.src = "/img/no-avatar.svg";
+                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
                 }}
               />
               {footerText}

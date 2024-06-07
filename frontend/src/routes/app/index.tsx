@@ -153,7 +153,10 @@ export const App = () => {
                         <Resource
                           id={textbook?.id ?? ""}
                           key={textbook.id}
-                          image={textbook?.image ?? "/img/no-avatar.svg"}
+                          image={
+                            textbook?.image ??
+                            "/mediacentre/public/img/no-avatar.svg"
+                          }
                           title={textbook.title}
                           subtitle={textbook?.editors?.join(", ") ?? ""}
                           type={CardTypeEnum.manuals}
@@ -180,7 +183,10 @@ export const App = () => {
                         <Resource
                           id={signet?.id ?? signet?._id ?? ""}
                           key={signet.id ?? signet?._id ?? ""}
-                          image={signet?.image ?? "/img/no-avatar.svg"}
+                          image={
+                            signet?.image ??
+                            "/mediacentre/public/img/no-avatar.svg"
+                          }
                           title={signet.title}
                           subtitle={
                             signet.orientation
@@ -193,7 +199,7 @@ export const App = () => {
                           footerImage={
                             signet.owner_id
                               ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
-                              : `/img/no-avatar.svg`
+                              : `/mediacentre/public/img/no-avatar.svg`
                           }
                           footerText={
                             signet.owner_name ??
@@ -222,7 +228,10 @@ export const App = () => {
                     <Resource
                       id={favorite?.id ?? ""}
                       key={favorite?.id ?? ""}
-                      image={favorite?.image ?? "/img/no-avatar.svg"}
+                      image={
+                        favorite?.image ??
+                        "/mediacentre/public/img/no-avatar.svg"
+                      }
                       title={favorite.title}
                       subtitle={favorite.description}
                       type={CardTypeEnum.favorites}
@@ -275,7 +284,9 @@ export const App = () => {
               <Resource
                 id={favorite?.id ?? ""}
                 key={favorite.id}
-                image={favorite?.image ?? "/img/no-avatar.svg"}
+                image={
+                  favorite?.image ?? "/mediacentre/public/img/no-avatar.svg"
+                }
                 title={favorite.title}
                 subtitle={favorite.description}
                 type={CardTypeEnum.favorites}
@@ -300,7 +311,9 @@ export const App = () => {
                   <Resource
                     id={textbook?.id ?? ""}
                     key={textbook.id}
-                    image={textbook?.image ?? "/img/no-avatar.svg"}
+                    image={
+                      textbook?.image ?? "/mediacentre/public/img/no-avatar.svg"
+                    }
                     title={textbook.title}
                     subtitle={textbook?.editors?.join(", ") ?? ""}
                     type={CardTypeEnum.manuals}
@@ -325,7 +338,9 @@ export const App = () => {
                   <Resource
                     id={signet?.id ?? signet?._id ?? ""}
                     key={signet.id ?? signet._id}
-                    image={signet?.image ?? "/img/no-avatar.svg"}
+                    image={
+                      signet?.image ?? "/mediacentre/public/img/no-avatar.svg"
+                    }
                     title={signet.title}
                     subtitle={
                       signet.orientation
@@ -338,7 +353,7 @@ export const App = () => {
                     footerImage={
                       signet.owner_id
                         ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
-                        : `/img/no-avatar.svg`
+                        : `/mediacentre/public/img/no-avatar.svg`
                     }
                     footerText={
                       signet.owner_name ??
@@ -390,7 +405,9 @@ export const App = () => {
               <Resource
                 id={favorite?.id ?? ""}
                 key={favorite.id}
-                image={favorite?.image ?? "/img/no-avatar.svg"}
+                image={
+                  favorite?.image ?? "/mediacentre/public/img/no-avatar.svg"
+                }
                 title={favorite.title}
                 subtitle={favorite.description}
                 type={CardTypeEnum.favorites}
@@ -413,7 +430,9 @@ export const App = () => {
               <Resource
                 id={textbook?.id ?? ""}
                 key={textbook?.id ?? ""}
-                image={textbook?.image ?? "/img/no-avatar.svg"}
+                image={
+                  textbook?.image ?? "/mediacentre/public/img/no-avatar.svg"
+                }
                 title={textbook.title}
                 subtitle={textbook?.editors?.join(", ") ?? ""}
                 type={CardTypeEnum.manuals}
@@ -436,7 +455,7 @@ export const App = () => {
               <Resource
                 id={signet?.id ?? signet?._id ?? ""}
                 key={signet?.id ?? signet?._id ?? ""}
-                image={signet?.image ?? "/img/no-avatar.svg"}
+                image={signet?.image ?? "/mediacentre/public/img/no-avatar.svg"}
                 title={signet.title}
                 subtitle={
                   signet.orientation ? t("mediacentre.signet.orientation") : ""
@@ -447,7 +466,7 @@ export const App = () => {
                 footerImage={
                   signet.owner_id
                     ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
-                    : `/img/no-avatar.svg`
+                    : `/mediacentre/public/img/no-avatar.svg`
                 }
                 footerText={
                   signet.owner_name ?? (signet.authors ? signet.authors[0] : "")
