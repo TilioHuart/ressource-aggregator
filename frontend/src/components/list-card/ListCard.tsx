@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  MouseEventHandler,
+  KeyboardEventHandler,
+} from "react";
 
 import { Grid } from "@edifice-ui/react";
 import Brightness1Icon from "@mui/icons-material/Brightness1";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import "./ListCard.scss";
+import { NavigateFunction } from "react-router-dom";
 
 import { ListCardTitle } from "./list-card-title/ListCardTitle";
 import { breakpoints } from "~/core/const/breakpoints.ts";
@@ -18,12 +24,14 @@ interface ListCardProps {
   scrollable: boolean;
   type?: CardTypeEnum;
   components?: any[];
+  redirectLink: string | NavigateFunction;
 }
 
 export const ListCard: React.FC<ListCardProps> = ({
   scrollable,
   type = CardTypeEnum.favorites,
   components,
+  redirectLink,
 }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -72,11 +80,21 @@ export const ListCard: React.FC<ListCardProps> = ({
         {type !== CardTypeEnum.search && (
           <div className="list-card-header">
             <ListCardTitle type={type} />
-            {components && tooMuchComponents(components) && (
-              <a href="/" className="right-button">
-                Voir plus
-              </a>
-            )}
+            {components &&
+              tooMuchComponents(components) &&
+              (typeof redirectLink === "string" ? (
+                <a href={redirectLink as string} className="right-button">
+                  Voir plus
+                </a>
+              ) : (
+                <button
+                  onClick={redirectLink as MouseEventHandler}
+                  onKeyDown={redirectLink as KeyboardEventHandler}
+                  className="right-button list-card-button"
+                >
+                  Voir plus
+                </button>
+              ))}
           </div>
         )}
         <Grid className={`grid-${NbColumns(windowWidth)}`}>

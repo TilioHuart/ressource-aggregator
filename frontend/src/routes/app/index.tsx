@@ -3,6 +3,7 @@ import { useState, useEffect, useReducer } from "react";
 import { Alert, AlertTypes } from "@edifice-ui/react";
 import { ID } from "edifice-ts-client";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import { ListCard } from "~/components/list-card/ListCard.tsx";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -36,6 +37,7 @@ export const App = () => {
   const { homeSignets, setHomeSignets } = useSignet();
   const { textbooks, setTextbooks } = useTextbook();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -142,6 +144,7 @@ export const App = () => {
                 scrollable={true}
                 type={CardTypeEnum.pinned_resources}
                 components={getCards(6, CardTypeEnum.pinned_resources)}
+                redirectLink="/"
               />
               <div className="bottom-container">
                 <div className="bottom-left-container">
@@ -171,6 +174,7 @@ export const App = () => {
                           handleRemoveFavorite={handleRemoveFavorite}
                         />
                       ))}
+                      redirectLink={() => navigate("/textbook")}
                     />
                   )}
                 </div>
@@ -214,6 +218,7 @@ export const App = () => {
                           handleRemoveFavorite={handleRemoveFavorite}
                         />
                       ))}
+                      redirectLink="/mediacentre?view=angular#/signet"
                     />
                   )}
                 </div>
@@ -246,6 +251,7 @@ export const App = () => {
                       handleRemoveFavorite={handleRemoveFavorite}
                     />
                   ))}
+                  redirectLink="/mediacentre?view=angular#/favorite"
                 />
               )}
             </div>
@@ -276,6 +282,7 @@ export const App = () => {
             scrollable={true}
             type={CardTypeEnum.pinned_resources}
             components={getCards(6, CardTypeEnum.pinned_resources)}
+            redirectLink="/"
           />
           <ListCard
             scrollable={false}
@@ -301,6 +308,7 @@ export const App = () => {
                 handleRemoveFavorite={handleRemoveFavorite}
               />
             ))}
+            redirectLink="/mediacentre?view=angular#/favorite"
           />
           <div className="bottom-container">
             <div className="bottom-left-container">
@@ -328,6 +336,7 @@ export const App = () => {
                     handleRemoveFavorite={handleRemoveFavorite}
                   />
                 ))}
+                redirectLink={() => navigate("/textbook")}
               />
             </div>
             <div className="bottom-right-container">
@@ -368,6 +377,7 @@ export const App = () => {
                     handleRemoveFavorite={handleRemoveFavorite}
                   />
                 ))}
+                redirectLink="/mediacentre?view=angular#/signet"
               />
             </div>
           </div>
@@ -397,6 +407,7 @@ export const App = () => {
             scrollable={true}
             type={CardTypeEnum.pinned_resources}
             components={getCards(6, CardTypeEnum.pinned_resources)}
+            redirectLink="/"
           />
           <ListCard
             scrollable={false}
@@ -422,6 +433,7 @@ export const App = () => {
                 handleRemoveFavorite={handleRemoveFavorite}
               />
             ))}
+            redirectLink="/mediacentre?view=angular#/favorite"
           />
           <ListCard
             scrollable={false}
@@ -447,6 +459,7 @@ export const App = () => {
                 handleRemoveFavorite={handleRemoveFavorite}
               />
             ))}
+            redirectLink={() => navigate("/textbook")}
           />
           <ListCard
             scrollable={false}
@@ -480,6 +493,7 @@ export const App = () => {
                 handleRemoveFavorite={handleRemoveFavorite}
               />
             ))}
+            redirectLink="/mediacentre?view=angular#/signet"
           />
         </div>
       </>

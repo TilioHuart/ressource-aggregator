@@ -47,7 +47,7 @@ root.render(
     <Provider store={store}>
       <OdeClientProvider
         params={{
-          app: "myApp",
+          app: "Mediacentre",
         }}
       >
         <ThemeProvider>
