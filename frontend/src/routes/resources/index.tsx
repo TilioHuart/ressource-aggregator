@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, AlertTypes } from "@edifice-ui/react";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { ListCard } from "~/components/list-card/ListCard";
@@ -41,6 +42,7 @@ export const ResourcePage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef(null);
+  const navigate = useNavigate();
 
   const flattenResources = (resources: SearchResultData) => [
     ...resources.externals_resources,
@@ -158,6 +160,7 @@ export const ResourcePage: React.FC = () => {
                     />
                   ),
                 )}
+                redirectLink={() => navigate("/resource")}
               />
             )}
             <div ref={loaderRef} />

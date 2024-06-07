@@ -37,11 +37,11 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const type = (): SearchCardTypeEnum => {
     if (searchResource?.source) {
       switch (searchResource.source) {
-        case "fr.opentent.source.Moodle":
+        case "fr.openent.mediacentre.source.Moodle":
           return SearchCardTypeEnum.moodle;
-        case "fr.opentent.source.Signet":
+        case "fr.openent.mediacentre.source.Signet":
           return SearchCardTypeEnum.book_mark;
-        case "fr.opentent.source.GAR":
+        case "fr.openent.mediacentre.source.GAR":
           if (searchResource?.document_types?.includes("livre numérique")) {
             return SearchCardTypeEnum.manuals;
           }
@@ -66,10 +66,17 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   };
   const fav = async () => {
     try {
-      await addFavorite({
-        id: searchResource?._id ?? searchResource?.id ?? "",
-        resource: searchResource,
-      });
+      if (searchResource.source === "fr.openent.mediacentre.source.GAR") {
+        await addFavorite({
+          id: searchResource._id ?? searchResource.id ?? "",
+          resource: searchResource,
+        });
+      } else {
+        await addFavorite({
+          id: searchResource.id ?? searchResource._id ?? "",
+          resource: searchResource,
+        });
+      }
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
       searchResource.favorite = true;
     } catch (e) {
@@ -78,10 +85,17 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   };
   const unfav = async () => {
     try {
-      await removeFavorite({
-        id: searchResource?._id ?? searchResource?.id ?? "",
-        source: searchResource?.source ?? "",
-      });
+      if (searchResource.source === "fr.openent.mediacentre.source.GAR") {
+        await removeFavorite({
+          id: searchResource?._id ?? searchResource?.id ?? "",
+          source: searchResource?.source ?? "",
+        });
+      } else {
+        await removeFavorite({
+          id: searchResource?.id ?? searchResource?._id ?? "",
+          source: searchResource?.source ?? "",
+        });
+      }
       setAlertText(t("mediacentre.notification.removeFavorite"), "success");
       searchResource.favorite = false;
     } catch (e) {
