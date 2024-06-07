@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import SearchIcon from "@mui/icons-material/Search";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { ListCard } from "~/components/list-card/ListCard";
@@ -16,10 +15,16 @@ import { SearchResultData } from "~/model/SearchResultData.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 
-export const Search: React.FC = () => {
+export const TextbookPage: React.FC = () => {
   const { t } = useTranslation();
-  const location = useLocation();
-  const searchBody = location.state?.searchBody;
+  const searchBody = {
+    state: "PLAIN_TEXT",
+    data: {
+      query: ".*",
+    },
+    event: "search",
+    sources: ["fr.openent.mediacentre.source.GAR"],
+  };
 
   const { allResources, disciplines, levels, types } = useSearch(searchBody); // all resources
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
@@ -36,9 +41,6 @@ export const Search: React.FC = () => {
 
   const flattenResources = (resources: SearchResultData) => [
     ...resources.textbooks,
-    ...resources.externals_resources,
-    ...resources.signets,
-    ...resources.moodle,
   ];
 
   const redistributeResources = (
@@ -55,14 +57,6 @@ export const Search: React.FC = () => {
     items.forEach((item) => {
       if (allResourcesDisplayed.textbooks.includes(item as Textbook)) {
         newVisibleResources.textbooks.push(item as Textbook);
-      } else if (
-        allResourcesDisplayed.externals_resources.includes(item as Textbook)
-      ) {
-        newVisibleResources.externals_resources.push(item as Textbook);
-      } else if (allResourcesDisplayed.signets.includes(item as Signet)) {
-        newVisibleResources.signets.push(item as Signet);
-      } else if (allResourcesDisplayed.moodle.includes(item as Moodle)) {
-        newVisibleResources.moodle.push(item as Moodle);
       }
     });
 
@@ -110,19 +104,14 @@ export const Search: React.FC = () => {
     };
   }, [handleObserver]); // for infinite scroll
 
-  const getTitleSearch = () => {
-    const { title, query } = searchBody.data;
-    return title?.value ? `"${title.value}"` : query ? `"${query}"` : "";
-  };
-
   return (
     <>
       <MainLayout />
       <div className="med-container">
         <div className="med-search-page-header">
           <div className="med-search-page-title">
-            <SearchIcon className="med-search-icon" />
-            {t("mediacentre.search.title") + getTitleSearch()}
+            <BookmarkIcon className="med-search-icon" />
+            {t("mediacentre.list.card.manuals")}
           </div>
         </div>
         <div className="med-search-page-content">
@@ -133,19 +122,17 @@ export const Search: React.FC = () => {
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
               types={types}
+              type="textbook"
             />
             {visibleResources && (
               <ListCard
                 scrollable={false}
                 type={CardTypeEnum.search}
-                components={[
-                  ...visibleResources.textbooks,
-                  ...visibleResources.externals_resources,
-                  ...visibleResources.signets,
-                  ...visibleResources.moodle,
-                ].map((searchResource: any) => (
-                  <SearchCard searchResource={searchResource} />
-                ))}
+                components={[...visibleResources.textbooks].map(
+                  (searchResource: any) => (
+                    <SearchCard searchResource={searchResource} />
+                  ),
+                )}
               />
             )}
             <div ref={loaderRef} />

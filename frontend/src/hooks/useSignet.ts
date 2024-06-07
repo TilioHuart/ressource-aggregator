@@ -44,8 +44,8 @@ export const useSignet = () => {
       ...signet,
       favorite: favorites.some((fav: Favorite) =>
         signet?.id
-          ? fav.id.toString() === signet?.id
-          : fav.id.toString() === signet?._id,
+          ? fav?.id?.toString() === signet?.id
+          : fav?.id?.toString() === signet?._id,
       ),
     }));
     return signetsData;

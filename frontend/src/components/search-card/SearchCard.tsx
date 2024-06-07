@@ -63,7 +63,6 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   };
 
   const toggleExpand = () => {
-    console.log("test");
     setIsExpanded(!isExpanded);
   };
 

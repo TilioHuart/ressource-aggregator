@@ -6,7 +6,7 @@ export interface Signet extends Resource {
   date_creation: string;
   date_modification: string;
   published: boolean;
-  orientation: boolean;
+  orientation?: boolean;
   resource_id: string;
   owner_id: string;
   owner_name: string;

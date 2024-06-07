@@ -37,6 +37,38 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/textbook",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { TextbookPage } = await import("./textbook");
+          return {
+            Component: TextbookPage,
+          };
+        },
+      },
+    ],
+  },
+  {
+    path: "/resources",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { ResourcePage } = await import("./resources");
+          return {
+            Component: ResourcePage,
+          };
+        },
+      },
+    ],
+  },
 ];
 
 export const router = createBrowserRouter(routes, {

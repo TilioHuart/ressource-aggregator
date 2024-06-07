@@ -7,7 +7,7 @@ import LaptopIcon from "@mui/icons-material/Laptop";
 import SchoolIcon from "@mui/icons-material/School";
 import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
-import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { SidebarIcon } from "../sidebar-icon/SidebarIcon";
 
@@ -20,7 +20,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
   toggleSidebar,
 }) => {
-  const [searchParams] = useSearchParams();
   const location = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate(); // uniquement pour routes react, utiliser des <a> pour rediriger vers angular
@@ -61,22 +60,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           />
         </a>
         <SidebarIcon
-          action={() => navigate("/search/plain_text")}
+          action={() => navigate("/textbook")}
           icon={<SchoolIcon />}
           name={`${t("mediacentre.sidebar.textbooks")}`}
-          selected={
-            location.pathname === "/search" &&
-            searchParams.get("type") === "manuals"
-          }
+          selected={location.pathname === "/textbook"}
         />
         <SidebarIcon
-          action={() => navigate("/search/plain_text")}
+          action={() => navigate("/resources")}
           icon={<LaptopIcon />}
           name={`${t("mediacentre.sidebar.resources")}`}
-          selected={
-            location.pathname === "/search" &&
-            searchParams.get("type") === "resources"
-          }
+          selected={location.pathname === "/resources"}
         />
         <a href="/mediacentre?view=angular#/signet">
           <SidebarIcon
