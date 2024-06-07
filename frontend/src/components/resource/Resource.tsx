@@ -143,15 +143,18 @@ export const Resource: React.FC<ResourceProps> = ({
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <Tooltip message={t("mediacentre.card.copy")}>
+            <Tooltip message={t("mediacentre.card.copy")} placement="top">
               <ContentCopyIcon className="med-link" onClick={() => copy()} />
             </Tooltip>
             {favorite ? (
-              <Tooltip message={t("mediacentre.card.unfavorite")}>
+              <Tooltip
+                message={t("mediacentre.card.unfavorite")}
+                placement="top"
+              >
                 <StarIcon className="med-star" onClick={() => unfav()} />
               </Tooltip>
             ) : (
-              <Tooltip message={t("mediacentre.card.favorite")}>
+              <Tooltip message={t("mediacentre.card.favorite")} placement="top">
                 <StarBorderIcon className="med-star" onClick={() => fav()} />
               </Tooltip>
             )}
@@ -170,8 +173,22 @@ export const Resource: React.FC<ResourceProps> = ({
           <Card.Title>{title}</Card.Title>
           <Card.Text>{subtitle}</Card.Text>
           <Card.Body space={"0"}>
-            {image && (
-              <img src={image} alt="Resource" className="med-resource-image" />
+            {image ? (
+              <img
+                src={image}
+                alt="Resource"
+                className="med-resource-image"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                }}
+              />
+            ) : (
+              <img
+                src="/mediacentre/public/img/no-avatar.svg"
+                alt="Resource"
+                className="med-resource-image"
+              />
             )}
           </Card.Body>
         </a>
@@ -183,15 +200,18 @@ export const Resource: React.FC<ResourceProps> = ({
             </div>
           ) : null}
           <div className="med-footer-svg">
-            <Tooltip message={t("mediacentre.card.copy")}>
+            <Tooltip message={t("mediacentre.card.copy")} placement="top">
               <ContentCopyIcon className="med-link" onClick={() => copy()} />
             </Tooltip>
             {favorite ? (
-              <Tooltip message={t("mediacentre.card.unfavorite")}>
+              <Tooltip
+                message={t("mediacentre.card.unfavorite")}
+                placement="top"
+              >
                 <StarIcon className="med-star" onClick={() => unfav()} />
               </Tooltip>
             ) : (
-              <Tooltip message={t("mediacentre.card.favorite")}>
+              <Tooltip message={t("mediacentre.card.favorite")} placement="top">
                 <StarBorderIcon className="med-star" onClick={() => fav()} />
               </Tooltip>
             )}
