@@ -166,6 +166,12 @@ class Controller implements MainController {
 	};
 
 
+		redirectToReactSearch = () => {
+			if(this.search.plain_text.text.trim() !== ''){
+				window.location.href = "/mediacentre#/search?query=" + encodeURIComponent(this.search.plain_text.text);
+			}
+		};
+
 		startResearch = async (state: string, sources: string[], data: any): Promise<void> => {
 			this.limitTo = this.pageSize;
 			this.$location.path(`/search/${state.toLowerCase()}`);

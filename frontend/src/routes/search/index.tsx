@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, AlertTypes } from "@edifice-ui/react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { ListCard } from "~/components/list-card/ListCard";
@@ -23,8 +23,28 @@ export const Search: React.FC = () => {
   const [alertType, setAlertType] = useState<AlertTypes>("success");
   const location = useLocation();
   const searchBody = location.state?.searchBody;
+  const [searchParams] = useSearchParams();
+  const searchQuery =
+    searchParams.get("query") ?? searchBody?.data?.query ?? ".*"; // .* for all resources
 
-  const { allResources, disciplines, levels, types } = useSearch(searchBody); // all resources
+  const createSearchBody = (searchValue: string) => {
+    return {
+      state: "PLAIN_TEXT",
+      data: {
+        query: searchValue,
+      },
+      event: "search",
+      sources: [
+        "fr.openent.mediacentre.source.GAR",
+        "fr.openent.mediacentre.source.Moodle",
+        "fr.openent.mediacentre.source.Signet",
+      ],
+    };
+  };
+
+  const { allResources, disciplines, levels, types } = useSearch(
+    createSearchBody(searchQuery),
+  );
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>(allResources); // all resources after the filters
   const [visibleResources, setVisibleResources] = useState<SearchResultData>({
@@ -114,11 +134,6 @@ export const Search: React.FC = () => {
     };
   }, [handleObserver]); // for infinite scroll
 
-  const getTitleSearch = () => {
-    const { title, query } = searchBody.data;
-    return title?.value ? `"${title.value}"` : query ? `"${query}"` : "";
-  };
-
   return (
     <>
       <MainLayout />
@@ -143,7 +158,8 @@ export const Search: React.FC = () => {
         <div className="med-search-page-header">
           <div className="med-search-page-title">
             <SearchIcon className="med-search-icon" />
-            {t("mediacentre.search.title") + getTitleSearch()}
+            {t("mediacentre.search.title")}
+            {searchQuery == ".*" ? "" : searchQuery}
           </div>
         </div>
         <div className="med-search-page-content">

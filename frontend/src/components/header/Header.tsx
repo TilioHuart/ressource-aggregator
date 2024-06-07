@@ -15,19 +15,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   const search = () => {
-    const searchBody = {
-      state: "PLAIN_TEXT",
-      data: {
-        query: searchValue,
-      },
-      event: "search",
-      sources: [
-        "fr.openent.mediacentre.source.GAR",
-        "fr.openent.mediacentre.source.Moodle",
-        "fr.openent.mediacentre.source.Signet",
-      ],
-    };
-    navigate("/search", { state: { searchBody } });
+    navigate("search?query=" + searchValue);
   };
 
   return (
