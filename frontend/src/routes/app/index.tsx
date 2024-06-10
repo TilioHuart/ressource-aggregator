@@ -80,42 +80,6 @@ export const App = () => {
     forceUpdate(); // List are not re-rendering without this
   };
 
-  const getPinnedResourceCard: any = () => {
-    return (
-      <Resource
-        resource={{} as Signet}
-        id="1"
-        image="https://via.placeholder.com/150"
-        title="Universalis"
-        subtitle="Une encyclopédie en ligne pour tous vos exposés"
-        footerText="Offert par la Région"
-        type={CardTypeEnum.pinned_resources}
-        favorite={false}
-        link={"/"}
-        setAlertText={(arg: string, type: AlertTypes) => {
-          setAlertText(arg);
-          setAlertType(type);
-        }}
-        handleAddFavorite={handleAddFavorite}
-        handleRemoveFavorite={handleRemoveFavorite}
-      />
-    );
-  };
-
-  function getCards(nbCards: number, type: CardTypeEnum) {
-    const cards = [];
-    for (let i = 0; i < nbCards; i++) {
-      switch (type) {
-        case CardTypeEnum.pinned_resources:
-          cards.push(getPinnedResourceCard());
-          break;
-        default:
-          break;
-      }
-    }
-    return cards;
-  }
-
   if (windowWidth >= 1280) {
     return (
       <>
@@ -140,12 +104,6 @@ export const App = () => {
         <div className="med-container">
           <div className="list-container">
             <div className="left-container">
-              <ListCard
-                scrollable={true}
-                type={CardTypeEnum.pinned_resources}
-                components={getCards(6, CardTypeEnum.pinned_resources)}
-                redirectLink="/"
-              />
               <div className="bottom-container">
                 <div className="bottom-left-container">
                   {textbooks && (
@@ -279,12 +237,6 @@ export const App = () => {
         )}
         <div className="med-container">
           <ListCard
-            scrollable={true}
-            type={CardTypeEnum.pinned_resources}
-            components={getCards(6, CardTypeEnum.pinned_resources)}
-            redirectLink="/"
-          />
-          <ListCard
             scrollable={false}
             type={CardTypeEnum.favorites}
             components={favorites.map((favorite: Favorite) => (
@@ -403,12 +355,6 @@ export const App = () => {
           </Alert>
         )}
         <div className="med-container">
-          <ListCard
-            scrollable={true}
-            type={CardTypeEnum.pinned_resources}
-            components={getCards(6, CardTypeEnum.pinned_resources)}
-            redirectLink="/"
-          />
           <ListCard
             scrollable={false}
             type={CardTypeEnum.favorites}
