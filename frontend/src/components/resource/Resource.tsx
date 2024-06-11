@@ -29,6 +29,7 @@ interface ResourceProps {
   favorite?: boolean;
   link: string;
   footerImage?: string;
+  shared?: boolean;
   setAlertText: (arg: string, type: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
   handleRemoveFavorite: (id: string | number) => void;
@@ -43,6 +44,7 @@ export const Resource: React.FC<ResourceProps> = ({
   footerText,
   type = CardTypeEnum.favorites,
   favorite = false,
+  shared = false,
   link,
   footerImage,
   setAlertText,
@@ -145,18 +147,29 @@ export const Resource: React.FC<ResourceProps> = ({
         </a>
         <Card.Footer>
           {footerText ? (
-            <div className="med-footer-text">
-              <img
-                src={footerImage}
-                alt="Resource"
-                className="med-resource-footer-image"
-                onError={({ currentTarget }) => {
-                  currentTarget.onerror = null;
-                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
-                }}
-              />
-              {footerText}
-            </div>
+            shared ? (
+              <div className="med-footer-text">
+                <img
+                  src="/mediacentre/public/img/no-avatar.svg"
+                  alt="Resource"
+                  className="med-resource-footer-image"
+                />
+                Signet de la plateforme
+              </div>
+            ) : (
+              <div className="med-footer-text">
+                <img
+                  src={footerImage}
+                  alt="Resource"
+                  className="med-resource-footer-image"
+                  onError={({ currentTarget }) => {
+                    currentTarget.onerror = null;
+                    currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                  }}
+                />
+                {footerText}
+              </div>
+            )
           ) : null}
           <div className="med-footer-svg">
             <Tooltip message={t("mediacentre.card.copy")} placement="top">

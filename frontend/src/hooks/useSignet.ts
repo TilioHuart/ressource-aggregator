@@ -31,15 +31,25 @@ export const useSignet = () => {
     const mySignetsData: Signet[] = mySignets
       ? mySignets.filter((signet: Signet) => signet.owner_id != user?.userId)
       : [];
+    const updatedMySignetsData: Signet[] = mySignetsData.map(
+      (signet: Signet) => ({
+        ...signet,
+        shared: false,
+      }),
+    );
     const updatedPublicSignetsData: Signet[] = publicSignetsData.map(
       (signet: Signet) => ({
         ...signet,
         orientation: signet?.document_types?.some((type) =>
           type.toLowerCase().includes("orientation"),
         ),
+        shared: true,
       }),
     );
-    let signetsData: Signet[] = [...updatedPublicSignetsData, ...mySignetsData];
+    let signetsData: Signet[] = [
+      ...updatedPublicSignetsData,
+      ...updatedMySignetsData,
+    ];
     signetsData = signetsData.map((signet: Signet) => ({
       ...signet,
       favorite: favorites.some((fav: Favorite) =>

@@ -158,6 +158,7 @@ export const App = () => {
                           type={CardTypeEnum.book_mark}
                           favorite={signet.favorite}
                           link={signet.link ?? signet.url ?? "/"}
+                          shared={signet?.shared ?? false}
                           footerImage={
                             signet.owner_id
                               ? `/userbook/avatar/${signet.owner_id}?thumbnail=48x48`
@@ -320,6 +321,7 @@ export const App = () => {
                       signet.owner_name ??
                       (signet.authors ? signet.authors[0] : "")
                     }
+                    shared={signet?.shared ?? false}
                     setAlertText={(arg: string, type: AlertTypes) => {
                       setAlertText(arg);
                       setAlertType(type);
@@ -430,6 +432,7 @@ export const App = () => {
                 footerText={
                   signet.owner_name ?? (signet.authors ? signet.authors[0] : "")
                 }
+                shared={signet?.shared ?? false}
                 setAlertText={(arg: string, type: AlertTypes) => {
                   setAlertText(arg);
                   setAlertType(type);
