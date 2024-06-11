@@ -72,6 +72,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
           resource: searchResource,
         });
       } else {
+        searchResource.id = parseInt(searchResource.id as string);
         await addFavorite({
           id: searchResource.id ?? searchResource._id ?? "",
           resource: searchResource,
@@ -87,12 +88,15 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
     try {
       if (searchResource.source === "fr.openent.mediacentre.source.GAR") {
         await removeFavorite({
-          id: searchResource?._id ?? searchResource?.id ?? "",
+          id: searchResource._id ?? searchResource.id ?? "",
           source: searchResource?.source ?? "",
         });
       } else {
+        searchResource.id = searchResource.id
+          ? parseInt(searchResource.id.toString())
+          : searchResource.id;
         await removeFavorite({
-          id: searchResource?.id ?? searchResource?._id ?? "",
+          id: searchResource.id ?? "",
           source: searchResource?.source ?? "",
         });
       }

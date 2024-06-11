@@ -20,7 +20,7 @@ import {
 
 interface ResourceProps {
   resource: Signet | Favorite | Textbook;
-  id: string;
+  id: string | number;
   image: string;
   title: string;
   subtitle?: string;
@@ -31,7 +31,7 @@ interface ResourceProps {
   footerImage?: string;
   setAlertText: (arg: string, type: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
-  handleRemoveFavorite: (id: string) => void;
+  handleRemoveFavorite: (id: string | number) => void;
 }
 
 export const Resource: React.FC<ResourceProps> = ({
@@ -66,8 +66,10 @@ export const Resource: React.FC<ResourceProps> = ({
       if (resource.source === "fr.openent.mediacentre.source.GAR") {
         await addFavorite({ id: resource._id ?? resource.id ?? "", resource });
       } else {
+        resource.id = parseInt(resource.id as string);
         await addFavorite({ id: resource.id ?? resource._id ?? "", resource });
       }
+
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
       handleAddFavorite(resource);
     } catch (e) {
@@ -82,8 +84,11 @@ export const Resource: React.FC<ResourceProps> = ({
           source: resource?.source ?? "",
         });
       } else {
+        resource.id = resource.id
+          ? parseInt(resource.id.toString())
+          : resource.id;
         await removeFavorite({
-          id: resource.id ?? resource._id ?? "",
+          id: resource.id ?? "",
           source: resource?.source ?? "",
         });
       }

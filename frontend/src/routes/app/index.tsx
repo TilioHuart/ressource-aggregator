@@ -55,14 +55,14 @@ export const App = () => {
     setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
   };
 
-  const handleRemoveFavorite = (id: string) => {
+  const handleRemoveFavorite = (id: string | number) => {
     setFavorites((prevFavorites: Favorite[]) =>
-      prevFavorites.filter((fav) => fav.id !== id),
+      prevFavorites.filter((fav) => fav.id != id),
     );
     updateFavoriteStatus(id, false);
   };
 
-  const updateFavoriteStatus = (id: string, isFavorite: boolean) => {
+  const updateFavoriteStatus = (id: string | number, isFavorite: boolean) => {
     let newSignets: Signet[] = [...homeSignets];
     newSignets = newSignets.map((signet: Signet) =>
       signet?.id?.toString() == id.toString()

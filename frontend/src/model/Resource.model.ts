@@ -6,7 +6,7 @@ export interface Resource {
   document_types?: string[];
   editors?: string[];
   favorite?: boolean;
-  id?: string;
+  id?: string | number;
   image?: string;
   levels?: string[];
   link?: string;

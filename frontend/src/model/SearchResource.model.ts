@@ -6,7 +6,7 @@ export interface SearchResource {
   document_types?: string[];
   editors?: string[];
   favorite?: boolean;
-  id?: string;
+  id?: string | number;
   _id?: string;
   image?: string;
   levels?: string[];
