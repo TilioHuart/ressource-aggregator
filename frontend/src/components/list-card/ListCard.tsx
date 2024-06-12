@@ -6,6 +6,7 @@ import React, {
 } from "react";
 
 import { Grid } from "@edifice-ui/react";
+import { isActionAvailable } from "@edifice-ui/react";
 import Brightness1Icon from "@mui/icons-material/Brightness1";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -19,6 +20,7 @@ import {
   NbComponentsListCard,
 } from "~/core/const/home-element-list-sizes.const";
 import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
+import { useActions } from "~/services/queries";
 
 interface ListCardProps {
   scrollable: boolean;
@@ -34,6 +36,8 @@ export const ListCard: React.FC<ListCardProps> = ({
   redirectLink,
 }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { data: actions } = useActions();
+  const canAccessSignet = isActionAvailable("signets", actions);
 
   useEffect(() => {
     const handleResize = () => {
@@ -82,6 +86,7 @@ export const ListCard: React.FC<ListCardProps> = ({
             <ListCardTitle type={type} />
             {components &&
               tooMuchComponents(components) &&
+              (type !== CardTypeEnum.book_mark || canAccessSignet) &&
               (typeof redirectLink === "string" ? (
                 <a href={redirectLink as string} className="right-button">
                   Voir plus

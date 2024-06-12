@@ -1,8 +1,6 @@
 export const workflows = {
-  view: "fr.cgi.todoapp.controllers.TodoappController|view",
-  list: "fr.cgi.todoapp.controllers.TodoappController|list",
-  create: "fr.cgi.todoapp.controllers.TodoappController|create",
-  publish: "fr.cgi.todoapp.controllers.TodoappController|publish",
+  signets:
+    "fr.openent.mediacentre.controller.MediacentreController|initSignetResourceRight",
 };
 
 export const rights = {
