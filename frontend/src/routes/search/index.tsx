@@ -183,6 +183,7 @@ export const Search: React.FC = () => {
                 ].map((searchResource: any) => (
                   <SearchCard
                     searchResource={searchResource}
+                    link={searchResource.link ?? searchResource.url ?? "/"}
                     setAlertText={setAlertText}
                   />
                 ))}

@@ -1,5 +1,5 @@
 import "./SearchCard.scss";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { AlertTypes, Card, Tooltip } from "@edifice-ui/react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -22,13 +22,16 @@ import {
 
 interface SearchResourceProps {
   searchResource: SearchResource;
+  link: string;
   setAlertText: (arg: string, type: AlertTypes) => void;
 }
 
 export const SearchCard: React.FC<SearchResourceProps> = ({
   searchResource,
+  link,
   setAlertText,
 }) => {
+  const [newLink, setNewLink] = useState<string>("");
   const { t } = useTranslation();
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
@@ -111,6 +114,18 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
     setIsExpanded(!isExpanded);
   };
 
+  useEffect(() => {
+    if (
+      !link.startsWith("https://") &&
+      !link.startsWith("http://") &&
+      link !== "/"
+    ) {
+      setNewLink("https://" + link);
+    } else {
+      setNewLink(link);
+    }
+  }, [link]);
+
   return (
     <Card
       isSelectable={false}
@@ -120,22 +135,30 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       }`}
     >
       <div className="med-search-resource-top-container">
-        <div className="med-search-resource-left-container">
-          {searchResource.image && (
-            <img
-              src={searchResource.image}
-              alt="Resource"
-              className="med-search-resource-image"
-            />
-          )}
-        </div>
+        <a href={newLink !== "/" ? newLink : "/"} target="_blank">
+          <div className="med-search-resource-left-container">
+            {searchResource.image && (
+              <img
+                src={searchResource.image}
+                alt="Resource"
+                className="med-search-resource-image"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                }}
+              />
+            )}
+          </div>
+        </a>
         <div className="med-search-resource-right-container">
           <Card.Body space={"0"}>
-            <SearchCardType type={type()} />
-            <Card.Title>{searchResource.title}</Card.Title>
-            <Card.Text>
-              {searchResource.editors && searchResource.editors[0]}
-            </Card.Text>
+            <a href={newLink !== "/" ? newLink : "/"} target="_blank">
+              <SearchCardType type={type()} />
+              <Card.Title>{searchResource.title}</Card.Title>
+              <Card.Text>
+                {searchResource.editors && searchResource.editors[0]}
+              </Card.Text>
+            </a>
           </Card.Body>
           <Card.Footer>
             <div

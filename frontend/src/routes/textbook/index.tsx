@@ -153,6 +153,7 @@ export const TextbookPage: React.FC = () => {
                   (searchResource: any) => (
                     <SearchCard
                       searchResource={searchResource}
+                      link={searchResource.link ?? searchResource.url ?? "/"}
                       setAlertText={setAlertText}
                     />
                   ),

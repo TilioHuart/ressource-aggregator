@@ -120,7 +120,11 @@ export const Resource: React.FC<ResourceProps> = ({
         isClickable={false}
         className={`med-resource-card ${type}`}
       >
-        <a className="med-body" href={newLink !== "/" ? newLink : "/"}>
+        <a
+          className="med-body"
+          href={newLink !== "/" ? newLink : "/"}
+          target="_blank"
+        >
           <Card.Body space={"0"}>
             {image ? (
               <img
@@ -198,7 +202,11 @@ export const Resource: React.FC<ResourceProps> = ({
         isClickable={false}
         className={`med-resource-card ${type}`}
       >
-        <a href={newLink !== "/" ? newLink : "/"} className="med-link-card">
+        <a
+          href={newLink !== "/" ? newLink : "/"}
+          target="_blank"
+          className="med-link-card"
+        >
           <Card.Title>{title}</Card.Title>
           <Card.Text>{subtitle}</Card.Text>
           <Card.Body space={"0"}>
