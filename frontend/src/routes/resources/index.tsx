@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Alert, AlertTypes } from "@edifice-ui/react";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import LaptopIcon from "@mui/icons-material/Laptop";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -138,7 +138,7 @@ export const ResourcePage: React.FC = () => {
       <div className="med-container">
         <div className="med-search-page-header">
           <div className="med-search-page-title">
-            <BookmarkIcon className="med-search-icon" />
+            <LaptopIcon className="med-search-icon" />
             {t("mediacentre.sidebar.resources")}
           </div>
         </div>

@@ -1,9 +1,9 @@
-import { SearchCardTypeEnum } from "../enum/search-card-type.enum";
+import { CardTypeEnum } from "../enum/card-type.enum";
 
 export const SearchCardTitle = {
-  [SearchCardTypeEnum.manuals]: "mediacentre.search.card.manuals",
-  [SearchCardTypeEnum.book_mark]: "mediacentre.search.card.book.mark",
-  [SearchCardTypeEnum.external_resources]:
+  [CardTypeEnum.manuals]: "mediacentre.search.card.manuals",
+  [CardTypeEnum.book_mark]: "mediacentre.search.card.book.mark",
+  [CardTypeEnum.external_resources]:
     "mediacentre.search.card.external.resources",
-  [SearchCardTypeEnum.moodle]: "mediacentre.search.card.moodle",
+  [CardTypeEnum.moodle]: "mediacentre.search.card.moodle",
 };

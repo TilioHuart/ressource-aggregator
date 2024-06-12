@@ -212,8 +212,9 @@ export const Resource: React.FC<ResourceProps> = ({
           target="_blank"
           className="med-link-card"
         >
+          {type != CardTypeEnum.favorites && <Card.Text>{subtitle}</Card.Text>}
           <Card.Title>{title}</Card.Title>
-          <Card.Text>{subtitle}</Card.Text>
+          {type != CardTypeEnum.favorites && <Card.Text>{subtitle}</Card.Text>}
           <Card.Body space={"0"}>
             {image ? (
               <img

@@ -8,15 +8,22 @@
     .med-search-page-title {
       display: flex;
       align-items: center;
+      margin-left: 10px;
+
       .med-search-icon {
         color: $med-dark-gray;
         font-size: 30px;
-        margin-bottom: 3px;
+        margin: 0 1rem 3px 0;
       }
+
       font-family: Comfortaa;
       font-size: 26px;
       font-weight: 700;
       color: $med-dark-gray;
+
+      @media (max-width: 1280px) {
+        font-size: 20px;
+      }
     }
   }
   .med-search-page-content {
@@ -24,8 +31,14 @@
       margin-right: 30px;
     }
     width: 1100px;
+
     @media (max-width: 1280px) {
       width: 800px;
+    }
+
+    @media (max-width: 800px) {
+      width: 100%;
+      margin: 0;
     }
   }
 }

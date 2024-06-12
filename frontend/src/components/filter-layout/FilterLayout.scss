@@ -5,6 +5,31 @@
   margin: 20px;
   gap: 20px;
   width: 100%;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    div:nth-child(1) {
+      order: 1; /* Move item 1 to the first position */
+    }
+    div:nth-child(5) {
+      order: 2; /* Move item 5 to the second position */
+    }
+    div:nth-child(6) {
+      order: 3; /* Move item 6 to the third position */
+    }
+    div:nth-child(2) {
+      order: 4; /* Move item 2 to the fourth position */
+    }
+    div:nth-child(3) {
+      order: 5; /* Move item 3 to the fifth position */
+    }
+    div:nth-child(4) {
+      order: 6; /* Move item 4 to the sixth position */
+    }
+  }
 }
 
 .dropdown-toggle {

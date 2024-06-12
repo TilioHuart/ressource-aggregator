@@ -22,6 +22,7 @@ main {
   background-color: $med-light-gray;
   .list-container {
     display: flex;
+    width: 100%;
     .left-container {
       width: 70%;
     }
@@ -69,7 +70,7 @@ main {
 }
 
 .med-alert {
-  position: absolute;
+  position: fixed;
   right: 20px;
   top: 75px;
   z-index: 1000;
@@ -84,4 +85,8 @@ main {
   100% {
     opacity: 1;
   }
+}
+
+.color-app-mediacentre {
+  color: $med-blue !important;
 }

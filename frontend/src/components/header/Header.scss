@@ -4,13 +4,25 @@
   align-items: center;
   width: calc(100% - 100px);
   margin-left: 100px;
-  padding: 1rem 15px;
+  padding: 1rem 0;
   background-color: #edeff2;
 
   .med-header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    &.med-search-bar {
+      margin-right: 25px;
+      max-width: 500px;
+      width: 40%;
+      margin-left: 1rem;
+    }
+
+    &.med-menu {
+      display: flex;
+      align-items: center;
+    }
 
     .med-burger-icon {
       margin-right: 1rem;
@@ -30,14 +42,14 @@
 
 @media screen and (max-width: 768px) {
   .med-header {
-    flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    margin-left: 0;
+    margin-left: 25px;
+    margin-right: 25px;
 
     .med-header-container:last-child {
-      margin-top: 1rem;
-      width: 100%;
+      margin-right: 50px;
+      width: 80%;
     }
   }
 }

@@ -6,6 +6,13 @@
 
   .med-link-card {
     color: currentColor;
+
+    .med-header-card {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-left: 5px;
+    }
   }
 
   .card-title {

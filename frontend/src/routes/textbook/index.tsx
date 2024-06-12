@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Alert, AlertTypes } from "@edifice-ui/react";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import SchoolIcon from "@mui/icons-material/School";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -135,7 +135,7 @@ export const TextbookPage: React.FC = () => {
       <div className="med-container">
         <div className="med-search-page-header">
           <div className="med-search-page-title">
-            <BookmarkIcon className="med-search-icon" />
+            <SchoolIcon className="med-search-icon" />
             {t("mediacentre.list.card.manuals")}
           </div>
         </div>

@@ -10,12 +10,12 @@
 
   &:hover,
   &.selected {
-    color: $med-red;
-    border-left: 5px solid $med-red;
+    color: $med-blue;
+    border-left: 5px solid $med-blue;
     width: calc(100% - 5px);
     .sidebar-icon-img {
       svg {
-        fill: $med-red;
+        fill: $med-blue;
       }
     }
   }

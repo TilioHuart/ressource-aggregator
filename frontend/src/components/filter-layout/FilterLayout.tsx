@@ -193,11 +193,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
         {type !== "textbook" && type !== "externals_resources" && (
           <>
             <Checkbox
-              checked={checkboxTextbook}
-              label="Manuels"
-              onChange={() => setCheckboxTextbook((isChecked) => !isChecked)}
-            />
-            <Checkbox
               checked={checkboxResource}
               label="Ressources"
               onChange={() => setCheckboxResource((isChecked) => !isChecked)}

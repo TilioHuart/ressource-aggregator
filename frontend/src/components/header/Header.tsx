@@ -20,21 +20,23 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
   return (
     <div className="med-header">
-      <div className="med-header-container">
+      <div className="med-header-container med-menu">
         <div className="med-burger-icon sidebar-toggle">
           <MenuIcon onClick={toggleSidebar} />
         </div>
-        <Breadcrumb
-          app={{
-            address: "/mediacentre",
-            display: false,
-            displayName: "Médiacentre",
-            icon: "mediacentre",
-            isExternal: false,
-            name: "",
-            scope: [],
-          }}
-        />
+        <a href="/">
+          <Breadcrumb
+            app={{
+              address: "/mediacentre",
+              display: false,
+              displayName: "Médiacentre",
+              icon: "mediacentre",
+              isExternal: false,
+              name: "",
+              scope: [],
+            }}
+          />
+        </a>
       </div>
       <div
         role="button"
@@ -44,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             search();
           }
         }}
-        className="med-header-container"
+        className="med-header-container med-search-bar"
       >
         <SearchBar
           isVariant={false}
