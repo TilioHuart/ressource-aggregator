@@ -67,17 +67,21 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       console.error("Clipboard not available");
     }
   };
+
   const fav = async () => {
     try {
-      if (searchResource.source === "fr.openent.mediacentre.source.GAR") {
-        await addFavorite({
-          id: searchResource._id ?? searchResource.id ?? "",
-          resource: searchResource,
-        });
-      } else {
+      if (
+        searchResource.source === "fr.openent.mediacentre.source.Signet" ||
+        searchResource.source === "fr.openent.mediacentre.source.GlobalResource"
+      ) {
         searchResource.id = parseInt(searchResource.id as string);
         await addFavorite({
           id: searchResource.id ?? searchResource._id ?? "",
+          resource: searchResource,
+        });
+      } else {
+        await addFavorite({
+          id: searchResource._id ?? searchResource.id ?? "",
           resource: searchResource,
         });
       }
@@ -87,19 +91,23 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       console.error(e);
     }
   };
+
   const unfav = async () => {
     try {
-      if (searchResource.source === "fr.openent.mediacentre.source.GAR") {
-        await removeFavorite({
-          id: searchResource._id ?? searchResource.id ?? "",
-          source: searchResource?.source ?? "",
-        });
-      } else {
+      if (
+        searchResource.source === "fr.openent.mediacentre.source.Signet" ||
+        searchResource.source === "fr.openent.mediacentre.source.GlobalResource"
+      ) {
         searchResource.id = searchResource.id
           ? parseInt(searchResource.id.toString())
           : searchResource.id;
         await removeFavorite({
           id: searchResource.id ?? "",
+          source: searchResource?.source ?? "",
+        });
+      } else {
+        await removeFavorite({
+          id: searchResource._id ?? searchResource.id ?? "",
           source: searchResource?.source ?? "",
         });
       }

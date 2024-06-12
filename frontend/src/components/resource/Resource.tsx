@@ -65,13 +65,15 @@ export const Resource: React.FC<ResourceProps> = ({
   };
   const fav = async () => {
     try {
-      if (resource.source === "fr.openent.mediacentre.source.GAR") {
-        await addFavorite({ id: resource._id ?? resource.id ?? "", resource });
-      } else {
+      if (
+        resource.source === "fr.openent.mediacentre.source.Signet" ||
+        resource.source === "fr.openent.mediacentre.source.GlobalResource"
+      ) {
         resource.id = parseInt(resource.id as string);
         await addFavorite({ id: resource.id ?? resource._id ?? "", resource });
+      } else {
+        await addFavorite({ id: resource._id ?? resource.id ?? "", resource });
       }
-
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
       handleAddFavorite(resource);
     } catch (e) {
@@ -80,17 +82,20 @@ export const Resource: React.FC<ResourceProps> = ({
   };
   const unfav = async () => {
     try {
-      if (resource.source === "fr.openent.mediacentre.source.GAR") {
-        await removeFavorite({
-          id: resource._id ?? resource.id ?? "",
-          source: resource?.source ?? "",
-        });
-      } else {
+      if (
+        resource.source === "fr.openent.mediacentre.source.Signet" ||
+        resource.source === "fr.openent.mediacentre.source.GlobalResource"
+      ) {
         resource.id = resource.id
           ? parseInt(resource.id.toString())
           : resource.id;
         await removeFavorite({
           id: resource.id ?? "",
+          source: resource?.source ?? "",
+        });
+      } else {
+        await removeFavorite({
+          id: resource._id ?? resource.id ?? "",
           source: resource?.source ?? "",
         });
       }
