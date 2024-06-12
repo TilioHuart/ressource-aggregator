@@ -5,13 +5,13 @@ import SchoolIcon from "@mui/icons-material/School";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import { FilterLayout } from "../../components/filter-layout/FilterLayout";
+import { FilterTextbookLayout } from "~/components/filter-textbook-layout/FilterTextbookLayout";
 import { ListCard } from "~/components/list-card/ListCard";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { SearchCard } from "~/components/search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
-import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";
+import { useTextbook } from "~/hooks/useTextbook";
 import { Moodle } from "~/model/Moodle.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
 import { Signet } from "~/model/Signet.model";
@@ -19,21 +19,16 @@ import { Textbook } from "~/model/Textbook.model";
 
 export const TextbookPage: React.FC = () => {
   const { t } = useTranslation();
-  const searchBody = {
-    state: "PLAIN_TEXT",
-    data: {
-      query: ".*",
-    },
-    event: "search",
-    sources: ["fr.openent.mediacentre.source.GAR"],
-  };
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
-  const { allResources, disciplines, levels, types } = useSearch(searchBody); // all resources
+  const { textbooks, disciplines, levels } = useTextbook();
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
-    useState<SearchResultData>(allResources); // all resources after the filters
+    useState<SearchResultData>({
+      signets: [],
+      moodle: [],
+      externals_resources: textbooks,
+    }); // all resources after the filters
   const [visibleResources, setVisibleResources] = useState<SearchResultData>({
-    textbooks: [],
     externals_resources: [],
     signets: [],
     moodle: [],
@@ -44,7 +39,7 @@ export const TextbookPage: React.FC = () => {
   const navigate = useNavigate();
 
   const flattenResources = (resources: SearchResultData) => [
-    ...resources.textbooks,
+    ...resources.externals_resources,
   ];
 
   const redistributeResources = (
@@ -52,15 +47,16 @@ export const TextbookPage: React.FC = () => {
     allResourcesDisplayed: SearchResultData,
   ): SearchResultData => {
     const newVisibleResources: SearchResultData = {
-      textbooks: [],
       externals_resources: [],
       signets: [],
       moodle: [],
     };
 
     items.forEach((item) => {
-      if (allResourcesDisplayed.textbooks.includes(item as Textbook)) {
-        newVisibleResources.textbooks.push(item as Textbook);
+      if (
+        allResourcesDisplayed.externals_resources.includes(item as Textbook)
+      ) {
+        newVisibleResources.externals_resources.push(item as Textbook);
       }
     });
 
@@ -141,19 +137,17 @@ export const TextbookPage: React.FC = () => {
         </div>
         <div className="med-search-page-content">
           <div className="med-search-page-content-body">
-            <FilterLayout
-              resources={allResources}
+            <FilterTextbookLayout
+              resources={textbooks}
               disciplines={disciplines}
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
-              types={types}
-              type="textbook"
             />
             {visibleResources && (
               <ListCard
                 scrollable={false}
                 type={CardTypeEnum.search}
-                components={[...visibleResources.textbooks].map(
+                components={[...visibleResources.externals_resources].map(
                   (searchResource: any) => (
                     <SearchCard
                       searchResource={searchResource}

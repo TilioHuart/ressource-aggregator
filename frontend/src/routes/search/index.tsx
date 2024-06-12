@@ -12,10 +12,10 @@ import { SearchCard } from "~/components/search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";
+import { ExternalResource } from "~/model/ExternalResource.model";
 import { Moodle } from "~/model/Moodle.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
 import { Signet } from "~/model/Signet.model";
-import { Textbook } from "~/model/Textbook.model";
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
@@ -48,7 +48,6 @@ export const Search: React.FC = () => {
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>(allResources); // all resources after the filters
   const [visibleResources, setVisibleResources] = useState<SearchResultData>({
-    textbooks: [],
     externals_resources: [],
     signets: [],
     moodle: [],
@@ -59,30 +58,28 @@ export const Search: React.FC = () => {
   const navigate = useNavigate();
 
   const flattenResources = (resources: SearchResultData) => [
-    ...resources.textbooks,
     ...resources.externals_resources,
     ...resources.signets,
     ...resources.moodle,
   ];
 
   const redistributeResources = (
-    items: (Signet | Moodle | Textbook)[],
+    items: (Signet | Moodle | ExternalResource)[],
     allResourcesDisplayed: SearchResultData,
   ): SearchResultData => {
     const newVisibleResources: SearchResultData = {
-      textbooks: [],
       externals_resources: [],
       signets: [],
       moodle: [],
     };
 
     items.forEach((item) => {
-      if (allResourcesDisplayed.textbooks.includes(item as Textbook)) {
-        newVisibleResources.textbooks.push(item as Textbook);
-      } else if (
-        allResourcesDisplayed.externals_resources.includes(item as Textbook)
+      if (
+        allResourcesDisplayed.externals_resources.includes(
+          item as ExternalResource,
+        )
       ) {
-        newVisibleResources.externals_resources.push(item as Textbook);
+        newVisibleResources.externals_resources.push(item as ExternalResource);
       } else if (allResourcesDisplayed.signets.includes(item as Signet)) {
         newVisibleResources.signets.push(item as Signet);
       } else if (allResourcesDisplayed.moodle.includes(item as Moodle)) {
@@ -180,7 +177,6 @@ export const Search: React.FC = () => {
                 scrollable={false}
                 type={CardTypeEnum.search}
                 components={[
-                  ...visibleResources.textbooks,
                   ...visibleResources.externals_resources,
                   ...visibleResources.signets,
                   ...visibleResources.moodle,

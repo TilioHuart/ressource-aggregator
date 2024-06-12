@@ -6,9 +6,43 @@ import { Favorite } from "~/model/Favorite.model";
 import { Textbook } from "~/model/Textbook.model";
 
 export const useTextbook = () => {
+  const [disciplines, setDisciplines] = useState<string[]>([]);
+  const [levels, setLevels] = useState<string[]>([]);
   const { data: textbook, error, isLoading } = useGetTextbooksQuery(null);
   const [textbooks, setTextbooks] = useState<Textbook[]>([]);
   const { favorites } = useFavorite();
+
+  const selectDisciplines = (textbooks: Textbook[]) => {
+    const disciplines: string[] = [];
+
+    textbooks.forEach((textbook) => {
+      if (textbook.disciplines) {
+        textbook.disciplines.forEach((discipline) => {
+          if (!disciplines.includes(discipline)) {
+            disciplines.push(discipline);
+          }
+        });
+      }
+    });
+
+    setDisciplines(disciplines);
+  };
+
+  const selectLevels = (textbooks: Textbook[]) => {
+    const levels: string[] = [];
+
+    textbooks.forEach((textbook) => {
+      if (textbook.levels) {
+        textbook.levels.forEach((level) => {
+          if (!levels.includes(level)) {
+            levels.push(level);
+          }
+        });
+      }
+    });
+
+    setLevels(levels);
+  };
 
   useEffect(() => {
     if (favorites) {
@@ -17,6 +51,9 @@ export const useTextbook = () => {
         ...textbook,
         favorite: favorites.some((fav: Favorite) => fav.id === textbook.id),
       }));
+      selectDisciplines(textbookData);
+      selectLevels(textbookData);
+
       setTextbooks(textbookData);
     }
   }, [textbook, favorites]);
@@ -24,6 +61,8 @@ export const useTextbook = () => {
   return {
     textbooks,
     setTextbooks,
+    disciplines,
+    levels,
     error,
     isLoading,
   };

@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { Checkbox, Dropdown } from "@edifice-ui/react";
-
 import "./FilterLayout.scss";
+import { useTranslation } from "react-i18next";
+
 import { SearchResultData } from "~/model/SearchResultData.model";
 
 interface FilterLayoutProps {
@@ -24,9 +25,7 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   setAllResourcesDisplayed,
   type,
 }) => {
-  const [checkboxTextbook, setCheckboxTextbook] = useState<boolean>(
-    resources?.textbooks?.length > 0 ?? false,
-  );
+  const { t } = useTranslation();
   const [checkboxResource, setCheckboxResource] = useState<boolean>(
     resources?.externals_resources?.length > 0 ?? false,
   );
@@ -64,20 +63,16 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   };
 
   const isGarSelected = useCallback(() => {
-    return checkboxTextbook || checkboxResource;
-  }, [checkboxTextbook, checkboxResource]);
+    return checkboxResource;
+  }, [checkboxResource]);
 
   const fetchFilters = useCallback(() => {
     const filteredResources: SearchResultData = {
       signets: [],
-      textbooks: [],
       externals_resources: [],
       moodle: [],
     };
     if (type !== "textbook" && type !== "externals_resources") {
-      if (checkboxTextbook) {
-        filteredResources.textbooks = resources.textbooks;
-      }
       if (checkboxResource) {
         filteredResources.externals_resources = resources.externals_resources;
       }
@@ -88,9 +83,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
         filteredResources.moodle = resources.moodle;
       }
     } else {
-      if (type === "textbook") {
-        filteredResources.textbooks = resources.textbooks;
-      }
       if (type === "externals_resources") {
         filteredResources.externals_resources = resources.externals_resources;
       }
@@ -117,12 +109,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
       });
     };
     if (isGarSelected()) {
-      filteredResources.textbooks = filterByCriteria(
-        filteredResources.textbooks,
-        selectedCheckboxesDiscipline,
-        selectedCheckboxesLevels,
-        selectedCheckboxesTypes,
-      );
       filteredResources.externals_resources = filterByCriteria(
         filteredResources.externals_resources,
         selectedCheckboxesDiscipline,
@@ -146,7 +132,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   }, [
     checkboxSignet,
     checkboxMoodle,
-    checkboxTextbook,
     checkboxResource,
     selectedCheckboxesDiscipline,
     selectedCheckboxesLevels,
@@ -166,9 +151,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   const countType = selectedCheckboxesTypes.length;
 
   useEffect(() => {
-    if (resources?.textbooks?.length > 0) {
-      setCheckboxTextbook(true);
-    }
     if (resources?.externals_resources?.length > 0) {
       setCheckboxResource(true);
     }
@@ -216,8 +198,8 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
                   }
                 >
                   {selectedCheckboxesTypes.length === checkboxOptionsType.length
-                    ? "Tout désélectionner"
-                    : "Tout sélectionner"}
+                    ? t("mediacentre.combo.selectAll")
+                    : t("mediacentre.combo.deselectAll")}
                 </Dropdown.Item>
                 <Dropdown.Separator />
                 {checkboxOptionsType.map((option, index) => (

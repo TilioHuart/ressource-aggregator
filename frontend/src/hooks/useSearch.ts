@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 import { useFavorite } from "./useFavorite";
 import { useSearchQuery } from "../services/api/search.service";
+import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
 import { Moodle } from "~/model/Moodle.model";
-import { Resource } from "~/model/Resource.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
 import { SearchResultData } from "~/model/SearchResultData.model";
 import { Signet } from "~/model/Signet.model";
@@ -13,7 +13,6 @@ import { Textbook } from "~/model/Textbook.model";
 export const useSearch = (query: any) => {
   const [allResources, setAllResources] = useState<SearchResultData>({
     signets: [],
-    textbooks: [],
     externals_resources: [],
     moodle: [],
   });
@@ -26,7 +25,7 @@ export const useSearch = (query: any) => {
   const selectDisciplines = (
     signets: Signet[],
     moodle: Moodle[],
-    gar: Textbook[],
+    gar: ExternalResource[],
   ) => {
     const disciplines: string[] = [];
 
@@ -49,7 +48,7 @@ export const useSearch = (query: any) => {
   const selectLevels = (
     signets: Signet[],
     moodle: Moodle[],
-    gar: Textbook[],
+    gar: ExternalResource[],
   ) => {
     const levels: string[] = [];
 
@@ -97,7 +96,6 @@ export const useSearch = (query: any) => {
       const searchResult: SearchResultCategory[] = data;
       let searchResultData: SearchResultData = {
         signets: [],
-        textbooks: [],
         externals_resources: [],
         moodle: [],
       };
@@ -114,6 +112,7 @@ export const useSearch = (query: any) => {
       );
       searchResultData.signets = signets?.data?.resources ?? [];
       searchResultData.moodle = moodle?.data?.resources ?? [];
+      searchResultData.externals_resources = gar?.data?.resources ?? [];
       selectDisciplines(
         searchResultData.signets,
         searchResultData.moodle,
@@ -129,18 +128,6 @@ export const useSearch = (query: any) => {
         searchResultData.moodle,
         gar?.data?.resources ?? [],
       );
-      if (gar) {
-        searchResultData.externals_resources =
-          gar?.data?.resources.filter(
-            (resource: Resource) =>
-              !resource?.document_types?.includes("livre numérique"),
-          ) ?? [];
-        searchResultData.textbooks =
-          gar?.data?.resources.filter(
-            (resource: Resource) =>
-              resource?.document_types?.includes("livre numérique"),
-          ) ?? [];
-      }
       if (favorites) {
         const updateFavoritesInCategory = (
           categoryData: any[],
@@ -155,10 +142,6 @@ export const useSearch = (query: any) => {
         const updatedSearchResultData: SearchResultData = {
           signets: updateFavoritesInCategory(
             searchResultData.signets,
-            favorites,
-          ),
-          textbooks: updateFavoritesInCategory(
-            searchResultData.textbooks,
             favorites,
           ),
           externals_resources: updateFavoritesInCategory(
