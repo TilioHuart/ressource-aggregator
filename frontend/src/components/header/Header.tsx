@@ -36,7 +36,16 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           }}
         />
       </div>
-      <div className="med-header-container">
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            search();
+          }
+        }}
+        className="med-header-container"
+      >
         <SearchBar
           isVariant={false}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

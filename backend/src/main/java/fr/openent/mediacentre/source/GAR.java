@@ -41,7 +41,7 @@ public class GAR implements Source {
      * @param handler     Function handler returning data
      */
     private void getData(UserInfos user, String structureId, Handler<Either<String, JsonArray>> handler) {
-
+        
         Future<JsonArray> getResourcesFuture = Future.future();
         Future<JsonArray> getFavoritesResourcesFuture = Future.future();
 
@@ -50,7 +50,6 @@ public class GAR implements Source {
                 handler.handle(new Either.Left<>(event.cause().getMessage()));
             } else {
                 JsonArray formattedResources = new JsonArray();
-
                 for (int i = 0; i < getResourcesFuture.result().size(); i++) {
                     formattedResources.add(format(getResourcesFuture.result().getJsonObject(i)));
                 }
@@ -77,7 +76,7 @@ public class GAR implements Source {
                     .put("structure", structureId)
                     .put("user", user.getUserId())
                     .put("hostname", config.getString("host").split("//")[1]);
-
+                    
             String GAR_ADDRESS = "openent.mediacentre";
             eb.send(GAR_ADDRESS, action, handlerToAsyncHandler(event -> {
                 if (!"ok".equals(event.body().getString("status"))) {
@@ -230,6 +229,7 @@ public class GAR implements Source {
     }
 
     private Integer getOccurrenceCount(String query, Object value) {
+        if (value == null) return 0;
         return value instanceof JsonArray ? getOccurrenceCount(query, (JsonArray) value) : getOccurrenceCount(query, (String) value);
     }
 
@@ -243,6 +243,7 @@ public class GAR implements Source {
     }
 
     private Integer getOccurrenceCount(String query, String value) {
+        if (value == null) return 0;
         Integer count = 0;
         Pattern regexp = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
         Matcher matcher = regexp.matcher(value);
@@ -388,19 +389,19 @@ public class GAR implements Source {
                 .put("id", resource.getString("idRessource"))
                 .put("favorite", false)
                 .put("date", System.currentTimeMillis())
-                .put("structure_name",resource.getString("structure_name"))
-                .put("structure_uai",resource.getString("structure_uai"));
+                .put("structure_name", resource.getString("structure_name"))
+                .put("structure_uai", resource.getString("structure_uai"));
     }
 
     private String createPlainText(JsonObject resource) {
         StringBuilder plain = new StringBuilder();
-        JsonArray domaineEnseignement = resource.getJsonArray("domaineEnseignement");
+        JsonArray domaineEnseignement = resource.getJsonArray("domaineEnseignement", new JsonArray());
         for (int i = 0; i < domaineEnseignement.size(); i++) {
             plain.append(domaineEnseignement.getJsonObject(i).getString("nom"))
                     .append(" ");
         }
 
-        JsonArray typePedagogique = resource.getJsonArray("typePedagogique");
+        JsonArray typePedagogique = resource.getJsonArray("typePedagogique", new JsonArray());
         for (int i = 0; i < typePedagogique.size(); i++) {
             plain.append(typePedagogique.getJsonObject(i).getString("nom"))
                     .append(" ");
@@ -411,8 +412,8 @@ public class GAR implements Source {
 
     private JsonArray getNames(String key, JsonObject resource) {
         JsonArray names = new JsonArray();
-        JsonArray values = resource.getJsonArray(key);
-
+        JsonArray values = resource.getJsonArray(key, new JsonArray());
+    
         for (int i = 0; i < values.size(); i++) {
             names.add(values.getJsonObject(i).getString("nom"));
         }
