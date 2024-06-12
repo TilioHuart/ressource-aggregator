@@ -111,6 +111,10 @@ export const ResourcePage: React.FC = () => {
     };
   }, [handleObserver]); // for infinite scroll
 
+  useEffect(() => {
+    loadMoreResources();
+  }, [allResourcesDisplayed, loadMoreResources]);
+
   return (
     <>
       <MainLayout />

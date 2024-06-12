@@ -134,6 +134,10 @@ export const Search: React.FC = () => {
     };
   }, [handleObserver]); // for infinite scroll
 
+  useEffect(() => {
+    loadMoreResources();
+  }, [allResourcesDisplayed, loadMoreResources]);
+
   return (
     <>
       <MainLayout />
