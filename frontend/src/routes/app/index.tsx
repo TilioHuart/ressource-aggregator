@@ -9,6 +9,7 @@ import { HomeExternalResourcesList } from "~/components/home-lists/HomeExternalR
 import { HomeFavoritesList } from "~/components/home-lists/HomeFavoritesList";
 import { HomeManualsList } from "~/components/home-lists/HomeManualsList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
+import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useSignet } from "~/hooks/useSignet";
 import { useTextbook } from "~/hooks/useTextbook";
@@ -37,8 +38,8 @@ export const App = () => {
   const { favorites, setFavorites } = useFavorite();
   const { homeSignets, setHomeSignets } = useSignet();
 
-  const { textbooks, setTextbooks, externalResources, setExternalResources } =
-    useTextbook();
+  const { textbooks, setTextbooks } = useTextbook();
+  const { externalResources, setExternalResources } = useExternalResource();
   const { t } = useTranslation();
   useEffect(() => {
     const handleResize = () => {

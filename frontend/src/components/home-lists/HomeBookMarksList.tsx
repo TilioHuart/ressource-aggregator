@@ -11,7 +11,7 @@ interface HomeBookMarksListProps {
   setAlertText: (arg: string) => void;
   setAlertType: (arg: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
-  handleRemoveFavorite: (id: string) => void;
+  handleRemoveFavorite: (id: string | number) => void;
   double?: boolean;
 }
 
