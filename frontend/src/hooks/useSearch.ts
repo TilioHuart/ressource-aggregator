@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useFavorite } from "./useFavorite";
 import { useSearchQuery } from "../services/api/search.service";
 import { ExternalResource } from "~/model/ExternalResource.model";
-import { Favorite } from "~/model/Favorite.model";
 import { Moodle } from "~/model/Moodle.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
 import { SearchResultData } from "~/model/SearchResultData.model";
@@ -94,7 +93,7 @@ export const useSearch = (query: any) => {
   useEffect(() => {
     if (!isLoading) {
       const searchResult: SearchResultCategory[] = data;
-      let searchResultData: SearchResultData = {
+      const searchResultData: SearchResultData = {
         signets: [],
         externals_resources: [],
         moodle: [],
@@ -128,30 +127,6 @@ export const useSearch = (query: any) => {
         searchResultData.moodle,
         gar?.data?.resources ?? [],
       );
-      if (favorites) {
-        const updateFavoritesInCategory = (
-          categoryData: any[],
-          favorites: Favorite[],
-        ) => {
-          return categoryData.map((item) => ({
-            ...item,
-            favorite: favorites.some((fav) => fav.id === item.id),
-          }));
-        };
-
-        const updatedSearchResultData: SearchResultData = {
-          signets: updateFavoritesInCategory(
-            searchResultData.signets,
-            favorites,
-          ),
-          externals_resources: updateFavoritesInCategory(
-            searchResultData.externals_resources,
-            favorites,
-          ),
-          moodle: updateFavoritesInCategory(searchResultData.moodle, favorites),
-        };
-        searchResultData = updatedSearchResultData;
-      }
       setAllResources(searchResultData);
     }
   }, [data, isLoading, favorites]);

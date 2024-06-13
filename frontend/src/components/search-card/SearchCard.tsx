@@ -34,6 +34,9 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const [newLink, setNewLink] = useState<string>("");
   const { t } = useTranslation();
   const [addFavorite] = useAddFavoriteMutation();
+  const [isFavorite, setIsFavorite] = useState<boolean>(
+    searchResource?.favorite ?? false,
+  );
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -74,19 +77,25 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         searchResource.source === "fr.openent.mediacentre.source.Signet" ||
         searchResource.source === "fr.openent.mediacentre.source.GlobalResource"
       ) {
-        searchResource.id = parseInt(searchResource.id as string);
+        const newId = searchResource.id
+          ? parseInt(searchResource.id.toString())
+          : searchResource.id;
+        const newSearchResource = {
+          ...searchResource,
+          id: newId,
+        };
         await addFavorite({
-          id: searchResource.id ?? searchResource._id ?? "",
-          resource: searchResource,
+          id: newId,
+          resource: newSearchResource,
         });
       } else {
         await addFavorite({
-          id: searchResource._id ?? searchResource.id ?? "",
+          id: searchResource._id,
           resource: searchResource,
         });
       }
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
-      searchResource.favorite = true;
+      setIsFavorite(true);
     } catch (e) {
       console.error(e);
     }
@@ -98,21 +107,21 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         searchResource.source === "fr.openent.mediacentre.source.Signet" ||
         searchResource.source === "fr.openent.mediacentre.source.GlobalResource"
       ) {
-        searchResource.id = searchResource.id
+        const newId = searchResource.id
           ? parseInt(searchResource.id.toString())
           : searchResource.id;
         await removeFavorite({
-          id: searchResource.id ?? "",
-          source: searchResource?.source ?? "",
+          id: newId,
+          source: searchResource?.source,
         });
       } else {
         await removeFavorite({
-          id: searchResource._id ?? searchResource.id ?? "",
-          source: searchResource?.source ?? "",
+          id: searchResource._id,
+          source: searchResource?.source,
         });
       }
       setAlertText(t("mediacentre.notification.removeFavorite"), "success");
-      searchResource.favorite = false;
+      setIsFavorite(false);
     } catch (e) {
       console.error(e);
     }
@@ -188,9 +197,9 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
               <Tooltip message={t("mediacentre.card.copy")} placement="top">
                 <ContentCopyIcon className="med-link" onClick={() => copy()} />
               </Tooltip>
-              {searchResource.source ==
-              "fr.openent.meadiacentre.source.GlobalResource" ? (
-                searchResource.favorite ? (
+              {searchResource.source !=
+              "fr.openent.mediacentre.source.GlobalResource" ? (
+                isFavorite ? (
                   <Tooltip
                     message={t("mediacentre.card.unfavorite")}
                     placement="top"

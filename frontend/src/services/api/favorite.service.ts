@@ -6,14 +6,26 @@ export const favoriteApi = emptySplitApi.injectEndpoints({
       query: () => "favorites",
     }),
     addFavorite: builder.mutation({
-      query: ({ id, resource }: { id: string | number; resource: any }) => ({
+      query: ({
+        id,
+        resource,
+      }: {
+        id: string | number | undefined;
+        resource: any;
+      }) => ({
         url: `favorites?id=${id}`,
         method: "POST",
         body: { ...resource },
       }),
     }),
     removeFavorite: builder.mutation({
-      query: ({ id, source }: { id: string | number; source: string }) => ({
+      query: ({
+        id,
+        source,
+      }: {
+        id: string | number | undefined;
+        source: string | undefined;
+      }) => ({
         url: `favorites?id=${id}&source=${source}`,
         method: "DELETE",
       }),
