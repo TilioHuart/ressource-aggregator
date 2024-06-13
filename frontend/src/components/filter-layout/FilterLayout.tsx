@@ -198,8 +198,8 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
                   }
                 >
                   {selectedCheckboxesTypes.length === checkboxOptionsType.length
-                    ? t("mediacentre.combo.selectAll")
-                    : t("mediacentre.combo.deselectAll")}
+                    ? t("mediacentre.combo.deselectAll")
+                    : t("mediacentre.combo.selectAll")}
                 </Dropdown.Item>
                 <Dropdown.Separator />
                 {checkboxOptionsType.map((option, index) => (
@@ -237,8 +237,8 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
                 >
                   {selectedCheckboxesLevels.length ===
                   checkboxOptionsLevels.length
-                    ? "Tout désélectionner"
-                    : "Tout sélectionner"}
+                    ? t("mediacentre.combo.deselectAll")
+                    : t("mediacentre.combo.selectAll")}
                 </Dropdown.Item>
                 <Dropdown.Separator />
                 {checkboxOptionsLevels.map((option, index) => (
@@ -278,8 +278,8 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
                 >
                   {selectedCheckboxesDiscipline.length ===
                   checkboxOptionsDiscipline.length
-                    ? "Tout désélectionner"
-                    : "Tout sélectionner"}
+                    ? t("mediacentre.combo.deselectAll")
+                    : t("mediacentre.combo.selectAll")}
                 </Dropdown.Item>
                 <Dropdown.Separator />
                 {checkboxOptionsDiscipline.map((option, index) => (
