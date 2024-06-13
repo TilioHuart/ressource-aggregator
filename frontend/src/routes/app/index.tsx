@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 
-import { Alert, AlertTypes } from "@edifice-ui/react";
+import { Alert, AlertTypes, useUser } from "@edifice-ui/react";
 import { ID } from "edifice-ts-client";
 import { useTranslation } from "react-i18next";
 
@@ -11,10 +11,12 @@ import { HomeManualsList } from "~/components/home-lists/HomeManualsList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
+import { useGlobal } from "~/hooks/useGlobal";
 import { useSignet } from "~/hooks/useSignet";
 import { useTextbook } from "~/hooks/useTextbook";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
+import { GlobalResource } from "~/model/GlobalResource";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 
@@ -31,6 +33,7 @@ export interface AppProps {
 }
 
 export const App = () => {
+  const { user } = useUser();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
@@ -40,7 +43,12 @@ export const App = () => {
 
   const { textbooks, setTextbooks } = useTextbook();
   const { externalResources, setExternalResources } = useExternalResource();
+  const { globals } = useGlobal();
+  const [externalsResourcesData, setExternalResourcesData] = useState<
+    ExternalResource[] | GlobalResource[]
+  >([]);
   const { t } = useTranslation();
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -51,6 +59,16 @@ export const App = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [alertText]);
+
+  useEffect(() => {
+    if (user?.type.length === 1 && user.type.includes("Relative")) {
+      if (globals) {
+        setExternalResourcesData(globals);
+      }
+    } else {
+      setExternalResourcesData(externalResources);
+    }
+  }, [user, externalResources, globals]);
 
   const handleAddFavorite = (resource: any) => {
     resource.favorite = true;
@@ -79,9 +97,11 @@ export const App = () => {
         : textbook,
     );
     setTextbooks(newTextbooks);
-    let newExternalResources: ExternalResource[] = [...externalResources];
+    let newExternalResources: ExternalResource[] | GlobalResource[] = [
+      ...externalsResourcesData,
+    ];
     newExternalResources = newExternalResources.map(
-      (externalResource: ExternalResource) =>
+      (externalResource: ExternalResource | GlobalResource) =>
         externalResource?.id?.toString() == id.toString()
           ? { ...externalResource, favorite: isFavorite }
           : externalResource,
@@ -95,10 +115,10 @@ export const App = () => {
   }
 
   const leftContainer = () => {
-    // case 1: textbooks and externalResources are empty and homeSignets is not empty
+    // case 1: textbooks and externalResourcesData are empty and homeSignets is not empty
     if (
       isArrayEmpty(textbooks) &&
-      isArrayEmpty(externalResources) &&
+      isArrayEmpty(externalsResourcesData) &&
       !isArrayEmpty(homeSignets)
     ) {
       return (
@@ -116,11 +136,11 @@ export const App = () => {
     else if (
       isArrayEmpty(textbooks) &&
       isArrayEmpty(homeSignets) &&
-      !isArrayEmpty(externalResources)
+      !isArrayEmpty(externalsResourcesData)
     ) {
       return (
         <HomeExternalResourcesList
-          externalResources={externalResources}
+          externalResources={externalsResourcesData}
           setAlertText={setAlertText}
           setAlertType={setAlertType}
           handleAddFavorite={handleAddFavorite}
@@ -131,7 +151,7 @@ export const App = () => {
     }
     // case 3: externalResources and homeSignets are empty and textbooks is not empty
     else if (
-      isArrayEmpty(externalResources) &&
+      isArrayEmpty(externalsResourcesData) &&
       isArrayEmpty(homeSignets) &&
       !isArrayEmpty(textbooks)
     ) {
@@ -150,7 +170,7 @@ export const App = () => {
     else if (
       isArrayEmpty(textbooks) &&
       isArrayEmpty(homeSignets) &&
-      isArrayEmpty(externalResources)
+      isArrayEmpty(externalsResourcesData)
     ) {
       return (
         <div className="empty-state">
@@ -173,7 +193,7 @@ export const App = () => {
           <>
             <div className="bottom-left-container">
               <HomeExternalResourcesList
-                externalResources={externalResources}
+                externalResources={externalsResourcesData}
                 setAlertText={setAlertText}
                 setAlertType={setAlertType}
                 handleAddFavorite={handleAddFavorite}
@@ -207,7 +227,7 @@ export const App = () => {
             </div>
             <div className="bottom-right-container">
               <HomeExternalResourcesList
-                externalResources={externalResources}
+                externalResources={externalsResourcesData}
                 setAlertText={setAlertText}
                 setAlertType={setAlertType}
                 handleAddFavorite={handleAddFavorite}

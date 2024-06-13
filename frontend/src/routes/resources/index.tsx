@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Alert, AlertTypes } from "@edifice-ui/react";
+import { Alert, AlertTypes, useUser } from "@edifice-ui/react";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -12,22 +12,42 @@ import { SearchCard } from "~/components/search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import "~/styles/page/search.scss";
 import { useExternalResource } from "~/hooks/useExternalResource";
+import { useGlobal } from "~/hooks/useGlobal";
 import { ExternalResource } from "~/model/ExternalResource.model";
+import { GlobalResource } from "~/model/GlobalResource";
 import { Moodle } from "~/model/Moodle.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
 import { Signet } from "~/model/Signet.model";
 
 export const ResourcePage: React.FC = () => {
+  const { user } = useUser();
   const { t } = useTranslation();
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
-  const { externalResources, disciplines, levels, types } =
-    useExternalResource();
+  const {
+    globals,
+    disciplines: disciplinesGlobal,
+    levels: levelsGlobal,
+    types: typesGlobal,
+  } = useGlobal();
+  const {
+    externalResources,
+    disciplines: disciplinesExternal,
+    levels: levelsExternal,
+    types: typesExternal,
+  } = useExternalResource();
+  const [disciplines, setDisciplines] = useState<string[]>([]);
+  const [levels, setLevels] = useState<string[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [externalsResourcesData, setExternalResourcesData] = useState<
+    ExternalResource[] | GlobalResource[]
+  >([]);
+
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>({
       signets: [],
       moodle: [],
-      externals_resources: externalResources,
+      externals_resources: externalsResourcesData,
     }); // all resources after the filters
   const [visibleResources, setVisibleResources] = useState<SearchResultData>({
     externals_resources: [],
@@ -38,6 +58,32 @@ export const ResourcePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.type.length === 1 && user.type.includes("Relative")) {
+      if (globals) {
+        setDisciplines(disciplinesGlobal);
+        setLevels(levelsGlobal);
+        setTypes(typesGlobal);
+        setExternalResourcesData(globals);
+      }
+    } else {
+      setDisciplines(disciplinesExternal);
+      setLevels(levelsExternal);
+      setTypes(typesExternal);
+      setExternalResourcesData(externalResources);
+    }
+  }, [
+    user,
+    externalResources,
+    globals,
+    disciplinesExternal,
+    disciplinesGlobal,
+    levelsGlobal,
+    levelsExternal,
+    typesExternal,
+    typesGlobal,
+  ]);
 
   const flattenResources = (resources: SearchResultData) => [
     ...resources.externals_resources,
@@ -111,6 +157,14 @@ export const ResourcePage: React.FC = () => {
     loadMoreResources();
   }, [allResourcesDisplayed, loadMoreResources]);
 
+  useEffect(() => {
+    setAllResourcesDisplayed({
+      signets: [],
+      moodle: [],
+      externals_resources: externalsResourcesData,
+    });
+  }, [externalsResourcesData]);
+
   return (
     <>
       <MainLayout />
@@ -141,7 +195,7 @@ export const ResourcePage: React.FC = () => {
         <div className="med-search-page-content">
           <div className="med-search-page-content-body">
             <FilterResourceLayout
-              resources={externalResources}
+              resources={externalsResourcesData}
               disciplines={disciplines}
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}

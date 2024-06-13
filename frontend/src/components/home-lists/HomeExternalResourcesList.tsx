@@ -5,9 +5,10 @@ import { ListCard } from "../list-card/ListCard";
 import { Resource } from "../resource/Resource";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { ExternalResource } from "~/model/ExternalResource.model";
+import { GlobalResource } from "~/model/GlobalResource";
 
 interface HomeExternalResourcesListProps {
-  externalResources: ExternalResource[];
+  externalResources: ExternalResource[] | GlobalResource[];
   setAlertText: (arg: string) => void;
   setAlertType: (arg: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
@@ -31,7 +32,7 @@ export const HomeExternalResourcesList: React.FC<
       scrollable={false}
       type={CardTypeEnum.external_resources}
       components={externalResources.map(
-        (externalResource: ExternalResource) => (
+        (externalResource: ExternalResource | GlobalResource) => (
           <Resource
             id={externalResource?.id ?? ""}
             key={externalResource.id}

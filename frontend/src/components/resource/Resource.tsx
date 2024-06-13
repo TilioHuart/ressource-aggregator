@@ -10,7 +10,9 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useTranslation } from "react-i18next";
 
 import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
+import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
+import { GlobalResource } from "~/model/GlobalResource";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 import {
@@ -19,7 +21,7 @@ import {
 } from "~/services/api/favorite.service";
 
 interface ResourceProps {
-  resource: Signet | Favorite | Textbook;
+  resource: Signet | Favorite | Textbook | ExternalResource | GlobalResource;
   id: string | number;
   image: string;
   title: string;
@@ -184,18 +186,24 @@ export const Resource: React.FC<ResourceProps> = ({
             <Tooltip message={t("mediacentre.card.copy")} placement="top">
               <ContentCopyIcon className="med-link" onClick={() => copy()} />
             </Tooltip>
-            {favorite ? (
-              <Tooltip
-                message={t("mediacentre.card.unfavorite")}
-                placement="top"
-              >
-                <StarIcon className="med-star" onClick={() => unfav()} />
-              </Tooltip>
-            ) : (
-              <Tooltip message={t("mediacentre.card.favorite")} placement="top">
-                <StarBorderIcon className="med-star" onClick={() => fav()} />
-              </Tooltip>
-            )}
+            {resource.source !==
+            "fr.openent.mediacentre.source.GlobalResource" ? (
+              favorite ? (
+                <Tooltip
+                  message={t("mediacentre.card.unfavorite")}
+                  placement="top"
+                >
+                  <StarIcon className="med-star" onClick={() => unfav()} />
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  message={t("mediacentre.card.favorite")}
+                  placement="top"
+                >
+                  <StarBorderIcon className="med-star" onClick={() => fav()} />
+                </Tooltip>
+              )
+            ) : null}
           </div>
         </Card.Footer>
       </Card>
@@ -212,7 +220,6 @@ export const Resource: React.FC<ResourceProps> = ({
           target="_blank"
           className="med-link-card"
         >
-          {type != CardTypeEnum.favorites && <Card.Text>{subtitle}</Card.Text>}
           <Card.Title>{title}</Card.Title>
           {type != CardTypeEnum.favorites && <Card.Text>{subtitle}</Card.Text>}
           <Card.Body space={"0"}>
@@ -246,18 +253,24 @@ export const Resource: React.FC<ResourceProps> = ({
             <Tooltip message={t("mediacentre.card.copy")} placement="top">
               <ContentCopyIcon className="med-link" onClick={() => copy()} />
             </Tooltip>
-            {favorite ? (
-              <Tooltip
-                message={t("mediacentre.card.unfavorite")}
-                placement="top"
-              >
-                <StarIcon className="med-star" onClick={() => unfav()} />
-              </Tooltip>
-            ) : (
-              <Tooltip message={t("mediacentre.card.favorite")} placement="top">
-                <StarBorderIcon className="med-star" onClick={() => fav()} />
-              </Tooltip>
-            )}
+            {resource.source !==
+            "fr.openent.mediacentre.source.GlobalResource" ? (
+              favorite ? (
+                <Tooltip
+                  message={t("mediacentre.card.unfavorite")}
+                  placement="top"
+                >
+                  <StarIcon className="med-star" onClick={() => unfav()} />
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  message={t("mediacentre.card.favorite")}
+                  placement="top"
+                >
+                  <StarBorderIcon className="med-star" onClick={() => fav()} />
+                </Tooltip>
+              )
+            ) : null}
           </div>
         </Card.Footer>
       </Card>
