@@ -24,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         <div className="med-burger-icon sidebar-toggle">
           <MenuIcon onClick={toggleSidebar} />
         </div>
-        <a href="/">
+        <a href="/mediacentre">
           <Breadcrumb
             app={{
               address: "/mediacentre",
