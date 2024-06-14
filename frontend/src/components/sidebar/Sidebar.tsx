@@ -52,7 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="icons-container">
         <a href="/mediacentre">
           <SidebarIcon
-            action={() => navigate("/")}
+            action={() => {}}
             icon={<HomeIcon />}
             name={`${t("mediacentre.sidebar.home")}`}
             selected={location.pathname === "/"}

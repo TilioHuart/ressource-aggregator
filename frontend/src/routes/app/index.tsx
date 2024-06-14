@@ -403,20 +403,6 @@ export const App = () => {
             handleAddFavorite={handleAddFavorite}
             handleRemoveFavorite={handleRemoveFavorite}
           />
-          <HomeManualsList
-            textbooks={textbooksData}
-            setAlertText={setAlertText}
-            setAlertType={setAlertType}
-            handleAddFavorite={handleAddFavorite}
-            handleRemoveFavorite={handleRemoveFavorite}
-          />
-          <HomeBookMarksList
-            homeSignets={homeSignets}
-            setAlertText={setAlertText}
-            setAlertType={setAlertType}
-            handleAddFavorite={handleAddFavorite}
-            handleRemoveFavorite={handleRemoveFavorite}
-          />
           {leftContainer()}
         </div>
       </>
