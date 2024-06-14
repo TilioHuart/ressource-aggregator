@@ -67,6 +67,8 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
             return SearchCardTypeEnum.manuals;
           }
           return SearchCardTypeEnum.external_resources;
+        case "fr.openent.mediacentre.source.GlobalResource":
+          return SearchCardTypeEnum.external_resources;
         default:
           return SearchCardTypeEnum.manuals;
       }
