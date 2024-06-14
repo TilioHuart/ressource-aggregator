@@ -50,12 +50,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className={`sidebar ${sidebarOpen ? "open" : ""}`} ref={sidebarRef}>
       <div className="icons-container">
-        <SidebarIcon
-          action={() => navigate("/")}
-          icon={<HomeIcon />}
-          name={`${t("mediacentre.sidebar.home")}`}
-          selected={location.pathname === "/"}
-        />
+        <a href="/mediacentre">
+          <SidebarIcon
+            action={() => navigate("/")}
+            icon={<HomeIcon />}
+            name={`${t("mediacentre.sidebar.home")}`}
+            selected={location.pathname === "/"}
+          />
+        </a>
         <a href="/mediacentre?view=angular#/favorite">
           <SidebarIcon
             action={() => {}}
