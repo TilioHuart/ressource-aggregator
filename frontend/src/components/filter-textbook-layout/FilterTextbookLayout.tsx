@@ -49,7 +49,6 @@ export const FilterTextbookLayout: React.FC<FilterTextbookLayoutProps> = ({
   };
 
   const fetchFilters = useCallback(() => {
-    console.log("fetchFilters");
     const filteredResources: SearchResultData = {
       signets: [],
       externals_resources: resources,

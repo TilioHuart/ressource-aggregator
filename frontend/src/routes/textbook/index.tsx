@@ -12,16 +12,14 @@ import { SearchCard } from "~/components/search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import "~/styles/page/search.scss";
 import { useTextbook } from "~/hooks/useTextbook";
-import { Moodle } from "~/model/Moodle.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
-import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 
 export const TextbookPage: React.FC = () => {
   const { t } = useTranslation();
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
-  const { textbooks, disciplines, levels } = useTextbook();
+  const { textbooks, disciplines, levels, refetchTextbooks } = useTextbook();
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>({
       signets: [],
@@ -43,7 +41,7 @@ export const TextbookPage: React.FC = () => {
   ];
 
   const redistributeResources = (
-    items: (Signet | Moodle | Textbook)[],
+    items: Textbook[],
     allResourcesDisplayed: SearchResultData,
   ): SearchResultData => {
     const newVisibleResources: SearchResultData = {
@@ -54,7 +52,9 @@ export const TextbookPage: React.FC = () => {
 
     items.forEach((item) => {
       if (
-        allResourcesDisplayed.externals_resources.includes(item as Textbook)
+        allResourcesDisplayed.externals_resources.some(
+          (resource: Textbook) => resource.id === item.id,
+        )
       ) {
         newVisibleResources.externals_resources.push(item as Textbook);
       }
@@ -67,6 +67,14 @@ export const TextbookPage: React.FC = () => {
     setLoading(true);
     const limit = 10; // items to load per scroll
     setVisibleResources((prevVisibleResources) => {
+      if (
+        flattenResources(allResourcesDisplayed).slice(
+          0,
+          flattenResources(allResourcesDisplayed).length,
+        ) !== flattenResources(prevVisibleResources)
+      ) {
+        prevVisibleResources = allResourcesDisplayed;
+      }
       const allItems = flattenResources(prevVisibleResources);
       const newItems = [
         ...allItems,
@@ -153,6 +161,7 @@ export const TextbookPage: React.FC = () => {
                       searchResource={searchResource}
                       link={searchResource.link ?? searchResource.url ?? "/"}
                       setAlertText={setAlertText}
+                      refetchSearch={refetchTextbooks}
                     />
                   ),
                 )}

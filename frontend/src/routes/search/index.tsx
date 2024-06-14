@@ -42,7 +42,7 @@ export const Search: React.FC = () => {
     };
   };
 
-  const { allResources, disciplines, levels, types } = useSearch(
+  const { allResources, disciplines, levels, types, refetchSearch } = useSearch(
     createSearchBody(searchQuery),
   );
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
@@ -75,14 +75,22 @@ export const Search: React.FC = () => {
 
     items.forEach((item) => {
       if (
-        allResourcesDisplayed.externals_resources.includes(
-          item as ExternalResource,
+        allResourcesDisplayed.externals_resources.some(
+          (resource: ExternalResource) => resource.id === item.id,
         )
       ) {
         newVisibleResources.externals_resources.push(item as ExternalResource);
-      } else if (allResourcesDisplayed.signets.includes(item as Signet)) {
+      } else if (
+        allResourcesDisplayed.signets.some(
+          (resource: Signet) => resource.id === item.id,
+        )
+      ) {
         newVisibleResources.signets.push(item as Signet);
-      } else if (allResourcesDisplayed.moodle.includes(item as Moodle)) {
+      } else if (
+        allResourcesDisplayed.moodle.some(
+          (resource: Moodle) => resource.id === item.id,
+        )
+      ) {
         newVisibleResources.moodle.push(item as Moodle);
       }
     });
@@ -94,6 +102,14 @@ export const Search: React.FC = () => {
     setLoading(true);
     const limit = 10; // items to load per scroll
     setVisibleResources((prevVisibleResources) => {
+      if (
+        flattenResources(allResourcesDisplayed).slice(
+          0,
+          flattenResources(allResourcesDisplayed).length,
+        ) !== flattenResources(prevVisibleResources)
+      ) {
+        prevVisibleResources = allResourcesDisplayed;
+      }
       const allItems = flattenResources(prevVisibleResources);
       const newItems = [
         ...allItems,
@@ -171,6 +187,7 @@ export const Search: React.FC = () => {
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
               types={types}
+              refetchSearch={refetchSearch}
             />
             {visibleResources && (
               <ListCard
@@ -185,6 +202,7 @@ export const Search: React.FC = () => {
                     searchResource={searchResource}
                     link={searchResource.link ?? searchResource.url ?? "/"}
                     setAlertText={setAlertText}
+                    refetchSearch={refetchSearch}
                   />
                 ))}
                 redirectLink={() => navigate("/search")}

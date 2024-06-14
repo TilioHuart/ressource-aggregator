@@ -14,7 +14,7 @@ interface FilterLayoutProps {
   setAllResourcesDisplayed: React.Dispatch<
     React.SetStateAction<SearchResultData>
   >;
-  type?: string;
+  refetchSearch: () => void;
 }
 
 export const FilterLayout: React.FC<FilterLayoutProps> = ({
@@ -23,7 +23,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   levels,
   types,
   setAllResourcesDisplayed,
-  type,
 }) => {
   const { t } = useTranslation();
   const [checkboxResource, setCheckboxResource] = useState<boolean>(
@@ -41,6 +40,7 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
     useState<string[]>(types);
   const [selectedCheckboxesDiscipline, setSelectedCheckboxesDiscipline] =
     useState<string[]>(disciplines);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const handleMultiCheckbox = (
     selectedCheckboxes: string[],
@@ -72,21 +72,16 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
       externals_resources: [],
       moodle: [],
     };
-    if (type !== "textbook" && type !== "externals_resources") {
-      if (checkboxResource) {
-        filteredResources.externals_resources = resources.externals_resources;
-      }
-      if (checkboxSignet) {
-        filteredResources.signets = resources.signets;
-      }
-      if (checkboxMoodle) {
-        filteredResources.moodle = resources.moodle;
-      }
-    } else {
-      if (type === "externals_resources") {
-        filteredResources.externals_resources = resources.externals_resources;
-      }
+    if (checkboxResource) {
+      filteredResources.externals_resources = resources.externals_resources;
     }
+    if (checkboxSignet) {
+      filteredResources.signets = resources.signets;
+    }
+    if (checkboxMoodle) {
+      filteredResources.moodle = resources.moodle;
+    }
+
     const filterByCriteria = (
       resourceArray: any[],
       disciplines: string[],
@@ -139,7 +134,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
     isGarSelected,
     resources,
     setAllResourcesDisplayed,
-    type,
   ]);
 
   const checkboxOptionsDiscipline = disciplines ?? [];
@@ -150,20 +144,38 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   const countDisciplines = selectedCheckboxesDiscipline.length;
   const countType = selectedCheckboxesTypes.length;
 
+  const resourcesNotEmpty = useCallback(() => {
+    return (
+      resources?.externals_resources?.length > 0 ||
+      resources?.signets?.length > 0 ||
+      resources?.moodle?.length > 0
+    );
+  }, [resources]);
+
   useEffect(() => {
-    if (resources?.externals_resources?.length > 0) {
-      setCheckboxResource(true);
+    if (!initialLoadDone && resourcesNotEmpty()) {
+      if (resources?.externals_resources?.length > 0) {
+        setCheckboxResource(true);
+      }
+      if (resources?.signets?.length > 0) {
+        setCheckboxSignet(true);
+      }
+      if (resources?.moodle?.length > 0) {
+        setCheckboxMoodle(true);
+      }
+      setSelectedCheckboxesDiscipline(disciplines);
+      setSelectedCheckboxesLevels(levels);
+      setSelectedCheckboxesTypes(types);
+      setInitialLoadDone(true);
     }
-    if (resources?.signets?.length > 0) {
-      setCheckboxSignet(true);
-    }
-    if (resources?.moodle?.length > 0) {
-      setCheckboxMoodle(true);
-    }
-    setSelectedCheckboxesDiscipline(disciplines);
-    setSelectedCheckboxesLevels(levels);
-    setSelectedCheckboxesTypes(types);
-  }, [resources, disciplines, levels, types]);
+  }, [
+    resources,
+    disciplines,
+    levels,
+    types,
+    initialLoadDone,
+    resourcesNotEmpty,
+  ]);
 
   useEffect(() => {
     fetchFilters();
@@ -172,18 +184,12 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   return (
     <>
       <div className="med-filters">
-        {type !== "textbook" && type !== "externals_resources" && (
-          <>
-            <Checkbox
-              checked={checkboxResource}
-              label="Ressources"
-              onChange={() => setCheckboxResource((isChecked) => !isChecked)}
-            />
-          </>
-        )}
-        {(isGarSelected() ||
-          type === "textbook" ||
-          type === "externals_resources") && (
+        <Checkbox
+          checked={checkboxResource}
+          label="Ressources"
+          onChange={() => setCheckboxResource((isChecked) => !isChecked)}
+        />
+        {isGarSelected() && (
           <>
             <Dropdown>
               <Dropdown.Trigger label="Type" badgeContent={countType || 0} />
@@ -302,20 +308,16 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
             </Dropdown>
           </>
         )}
-        {type !== "textbook" && type !== "externals_resources" && (
-          <>
-            <Checkbox
-              checked={checkboxSignet}
-              label="Signets"
-              onChange={() => setCheckboxSignet((isChecked) => !isChecked)}
-            />
-            <Checkbox
-              checked={checkboxMoodle}
-              label="Moodle"
-              onChange={() => setCheckboxMoodle((isChecked) => !isChecked)}
-            />
-          </>
-        )}
+        <Checkbox
+          checked={checkboxSignet}
+          label="Signets"
+          onChange={() => setCheckboxSignet((isChecked) => !isChecked)}
+        />
+        <Checkbox
+          checked={checkboxMoodle}
+          label="Moodle"
+          onChange={() => setCheckboxMoodle((isChecked) => !isChecked)}
+        />
       </div>
     </>
   );

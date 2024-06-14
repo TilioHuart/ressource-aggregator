@@ -76,7 +76,7 @@ export const Resource: React.FC<ResourceProps> = ({
           ...resource,
           id: newId,
         };
-        await addFavorite({ id: newId, newResource });
+        await addFavorite({ id: newId, resource: newResource });
       } else {
         await addFavorite({ id: resource._id, resource });
       }
@@ -101,7 +101,7 @@ export const Resource: React.FC<ResourceProps> = ({
         });
       } else {
         await removeFavorite({
-          id: resource._id,
+          id: resource.favoriteId ?? resource._id,
           source: resource?.source,
         });
       }

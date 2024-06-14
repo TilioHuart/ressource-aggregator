@@ -4,7 +4,12 @@ import { Favorite } from "./../model/Favorite.model";
 import { useGetFavoriteQuery } from "./../services/api/favorite.service";
 
 export const useFavorite = () => {
-  const { data: favorite, error, isLoading } = useGetFavoriteQuery(null);
+  const {
+    data: favorite,
+    error,
+    isLoading,
+    refetch: refetchFavorite,
+  } = useGetFavoriteQuery(null);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
 
   useEffect(() => {
@@ -17,5 +22,5 @@ export const useFavorite = () => {
     setFavorites(favoriteData);
   }, [favorite]);
 
-  return { favorites, setFavorites, error, isLoading };
+  return { favorites, setFavorites, refetchFavorite, error, isLoading };
 };

@@ -20,7 +20,12 @@ export const useExternalResource = () => {
   const [levels, setLevels] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
 
-  const { data, error, isLoading } = useSearchQuery(query);
+  const {
+    data,
+    error,
+    isLoading,
+    refetch: refetchSearch,
+  } = useSearchQuery(query);
 
   const [externalResources, setExternalResources] = useState<
     ExternalResource[]
@@ -101,6 +106,7 @@ export const useExternalResource = () => {
   return {
     externalResources,
     setExternalResources,
+    refetchSearch,
     disciplines,
     levels,
     types,

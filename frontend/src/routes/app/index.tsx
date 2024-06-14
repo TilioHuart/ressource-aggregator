@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useCallback } from "react";
 
 import { Alert, AlertTypes, useUser } from "@edifice-ui/react";
 import { ID } from "edifice-ts-client";
@@ -38,15 +38,16 @@ export const App = () => {
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const { favorites, setFavorites } = useFavorite();
+  const { favorites, setFavorites, refetchFavorite } = useFavorite();
   const { homeSignets, setHomeSignets } = useSignet();
 
-  const { textbooks, setTextbooks } = useTextbook();
+  const { textbooks, setTextbooks, refetchTextbooks } = useTextbook();
   const { externalResources, setExternalResources } = useExternalResource();
   const { globals } = useGlobal();
   const [externalsResourcesData, setExternalResourcesData] = useState<
     ExternalResource[] | GlobalResource[]
   >([]);
+  const [textbooksData, setTextbooksData] = useState<Textbook[]>([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -61,18 +62,54 @@ export const App = () => {
   }, [alertText]);
 
   useEffect(() => {
+    let newExternalResourcesData: ExternalResource[] = [];
     if (user?.type.length === 1 && user.type.includes("Relative")) {
       if (globals) {
-        setExternalResourcesData(globals);
+        newExternalResourcesData = globals;
       }
     } else {
-      setExternalResourcesData(externalResources);
+      newExternalResourcesData = externalResources;
     }
-  }, [user, externalResources, globals]);
+
+    // Avoid unnecessary state update to prevent infinite loop
+    if (
+      JSON.stringify(newExternalResourcesData) !==
+      JSON.stringify(externalsResourcesData)
+    ) {
+      setExternalResourcesData(newExternalResourcesData);
+    }
+  }, [user, externalResources, globals, externalsResourcesData]);
+
+  const fetchFavoriteTextbook = useCallback(() => {
+    if (textbooks && favorites) {
+      return textbooks.map((textbook: Textbook) => {
+        const favorite = favorites.find(
+          (fav: Favorite) => fav.id === textbook.id,
+        );
+        if (favorite) {
+          return { ...textbook, favoriteId: favorite._id };
+        }
+        return textbook;
+      });
+    } else {
+      return textbooks;
+    }
+  }, [textbooks, favorites]);
+
+  useEffect(() => {
+    const updated: Textbook[] = fetchFavoriteTextbook();
+    setTextbooksData(updated);
+  }, [textbooks, fetchFavoriteTextbook]);
 
   const handleAddFavorite = (resource: any) => {
     resource.favorite = true;
     setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
+    refetchAll();
+  };
+
+  const refetchAll = () => {
+    refetchFavorite();
+    refetchTextbooks();
   };
 
   const handleRemoveFavorite = (id: string | number) => {
@@ -157,7 +194,7 @@ export const App = () => {
     ) {
       return (
         <HomeManualsList
-          textbooks={textbooks}
+          textbooks={textbooksData}
           setAlertText={setAlertText}
           setAlertType={setAlertType}
           handleAddFavorite={handleAddFavorite}
@@ -218,7 +255,7 @@ export const App = () => {
           <>
             <div className="bottom-left-container">
               <HomeManualsList
-                textbooks={textbooks}
+                textbooks={textbooksData}
                 setAlertText={setAlertText}
                 setAlertType={setAlertType}
                 handleAddFavorite={handleAddFavorite}
@@ -243,7 +280,7 @@ export const App = () => {
           <>
             <div className="bottom-left-container">
               <HomeManualsList
-                textbooks={textbooks}
+                textbooks={textbooksData}
                 setAlertText={setAlertText}
                 setAlertType={setAlertType}
                 handleAddFavorite={handleAddFavorite}
@@ -361,6 +398,20 @@ export const App = () => {
         <div className="med-container">
           <HomeFavoritesList
             favorites={favorites}
+            setAlertText={setAlertText}
+            setAlertType={setAlertType}
+            handleAddFavorite={handleAddFavorite}
+            handleRemoveFavorite={handleRemoveFavorite}
+          />
+          <HomeManualsList
+            textbooks={textbooksData}
+            setAlertText={setAlertText}
+            setAlertType={setAlertType}
+            handleAddFavorite={handleAddFavorite}
+            handleRemoveFavorite={handleRemoveFavorite}
+          />
+          <HomeBookMarksList
+            homeSignets={homeSignets}
             setAlertText={setAlertText}
             setAlertType={setAlertType}
             handleAddFavorite={handleAddFavorite}

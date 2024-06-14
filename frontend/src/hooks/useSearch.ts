@@ -19,7 +19,12 @@ export const useSearch = (query: any) => {
   const [levels, setLevels] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
   const { favorites } = useFavorite();
-  const { data, error, isLoading } = useSearchQuery(query);
+  const {
+    data,
+    error,
+    isLoading,
+    refetch: refetchSearch,
+  } = useSearchQuery(query);
 
   const selectDisciplines = (
     signets: Signet[],
@@ -131,5 +136,13 @@ export const useSearch = (query: any) => {
     }
   }, [data, isLoading, favorites]);
 
-  return { allResources, disciplines, levels, types, error, isLoading };
+  return {
+    allResources,
+    disciplines,
+    levels,
+    types,
+    error,
+    isLoading,
+    refetchSearch,
+  };
 };

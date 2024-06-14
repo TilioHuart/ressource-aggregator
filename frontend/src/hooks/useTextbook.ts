@@ -8,7 +8,12 @@ import { Textbook } from "~/model/Textbook.model";
 export const useTextbook = () => {
   const [disciplines, setDisciplines] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
-  const { data: textbook, error, isLoading } = useGetTextbooksQuery(null);
+  const {
+    data: textbook,
+    error,
+    isLoading,
+    refetch: refetchTextbooks,
+  } = useGetTextbooksQuery(null);
   const [textbooks, setTextbooks] = useState<Textbook[]>([]);
   const { favorites } = useFavorite();
 
@@ -53,7 +58,6 @@ export const useTextbook = () => {
       }));
       selectDisciplines(textbookData);
       selectLevels(textbookData);
-
       setTextbooks(textbookData);
     }
   }, [textbook, favorites]);
@@ -61,6 +65,7 @@ export const useTextbook = () => {
   return {
     textbooks,
     setTextbooks,
+    refetchTextbooks,
     disciplines,
     levels,
     error,

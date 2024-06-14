@@ -35,6 +35,7 @@ export const ResourcePage: React.FC = () => {
     disciplines: disciplinesExternal,
     levels: levelsExternal,
     types: typesExternal,
+    refetchSearch,
   } = useExternalResource();
   const [disciplines, setDisciplines] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
@@ -101,8 +102,8 @@ export const ResourcePage: React.FC = () => {
 
     items.forEach((item) => {
       if (
-        allResourcesDisplayed.externals_resources.includes(
-          item as ExternalResource,
+        allResourcesDisplayed.externals_resources.some(
+          (resource: ExternalResource) => resource.id === item.id,
         )
       ) {
         newVisibleResources.externals_resources.push(item as ExternalResource);
@@ -116,6 +117,14 @@ export const ResourcePage: React.FC = () => {
     setLoading(true);
     const limit = 10; // items to load per scroll
     setVisibleResources((prevVisibleResources) => {
+      if (
+        flattenResources(allResourcesDisplayed).slice(
+          0,
+          flattenResources(allResourcesDisplayed).length,
+        ) !== flattenResources(prevVisibleResources)
+      ) {
+        prevVisibleResources = allResourcesDisplayed;
+      }
       const allItems = flattenResources(prevVisibleResources);
       const newItems = [
         ...allItems,
@@ -211,6 +220,7 @@ export const ResourcePage: React.FC = () => {
                       searchResource={searchResource}
                       link={searchResource.link ?? searchResource.url ?? "/"}
                       setAlertText={setAlertText}
+                      refetchSearch={refetchSearch}
                     />
                   ),
                 )}
