@@ -8,7 +8,7 @@ import LaptopIcon from "@mui/icons-material/Laptop";
 import SchoolIcon from "@mui/icons-material/School";
 import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import { SidebarIcon } from "../sidebar-icon/SidebarIcon";
 import { useActions } from "~/services/queries";
@@ -24,7 +24,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const { t } = useTranslation();
-  const navigate = useNavigate(); // uniquement pour routes react, utiliser des <a> pour rediriger vers angular
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const { data: actions } = useActions();
@@ -66,18 +65,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
             selected={location.pathname === "/favorites"}
           />
         </a>
-        <SidebarIcon
-          action={() => navigate("/textbook")}
-          icon={<SchoolIcon />}
-          name={`${t("mediacentre.sidebar.textbooks")}`}
-          selected={location.pathname === "/textbook"}
-        />
-        <SidebarIcon
-          action={() => navigate("/resources")}
-          icon={<LaptopIcon />}
-          name={`${t("mediacentre.sidebar.resources")}`}
-          selected={location.pathname === "/resources"}
-        />
+        <a href="/mediacentre#/textbook">
+          <SidebarIcon
+            action={() => {}}
+            icon={<SchoolIcon />}
+            name={`${t("mediacentre.sidebar.textbooks")}`}
+            selected={location.pathname === "/textbook"}
+          />
+        </a>
+        <a href="/mediacentre#/resources">
+          <SidebarIcon
+            action={() => {}}
+            icon={<LaptopIcon />}
+            name={`${t("mediacentre.sidebar.resources")}`}
+            selected={location.pathname === "/resources"}
+          />
+        </a>
         {canAccessSignet && (
           <a href="/mediacentre?view=angular#/signet">
             <SidebarIcon
