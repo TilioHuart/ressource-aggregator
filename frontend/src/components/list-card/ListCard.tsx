@@ -58,7 +58,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   const NbComponents = (windowWidth: number) => {
     const nbComponent = NbComponentsListCard[type];
     const double = homeDouble ? 2 : 1;
-    if (windowWidth < breakpoints.md) return nbComponent.sm;
+    if (windowWidth < breakpoints.md) return nbComponent.sm * double;
     if (windowWidth < breakpoints.lg) return nbComponent.md * double;
     if (windowWidth < breakpoints.xl) return nbComponent.lg * double;
     return nbComponent.xl * double;
@@ -68,7 +68,7 @@ export const ListCard: React.FC<ListCardProps> = ({
     const nbColumns = NbColumnsListCard[type];
     const double = homeDouble ? 2 : 1;
     if (windowWidth < breakpoints.md) return nbColumns.sm;
-    if (windowWidth < breakpoints.lg) return nbColumns.md * double;
+    if (windowWidth < breakpoints.lg) return nbColumns.md;
     if (windowWidth < breakpoints.xl) return nbColumns.lg * double;
     return nbColumns.xl * double;
   };

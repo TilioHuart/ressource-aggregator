@@ -169,7 +169,9 @@ export const Resource: React.FC<ResourceProps> = ({
                   alt="Resource"
                   className="med-resource-footer-image"
                 />
-                Signet de la plateforme
+                <span className="med-footer-text-text">
+                  Signet de la plateforme
+                </span>
               </div>
             ) : (
               <div className="med-footer-text">
@@ -182,7 +184,7 @@ export const Resource: React.FC<ResourceProps> = ({
                     currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
                   }}
                 />
-                {footerText}
+                <span className="med-footer-text-text">{footerText}</span>
               </div>
             )
           ) : null}
