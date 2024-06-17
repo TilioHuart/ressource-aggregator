@@ -23,7 +23,7 @@ export const TextbookPage: React.FC = () => {
   const [alertType, setAlertType] = useState<AlertTypes>("success");
   const { textbooks, disciplines, levels, refetchTextbooks } = useTextbook();
   const [textbooksData, setTextbooksData] = useState<Textbook[]>([]);
-  const { favorites } = useFavorite();
+  const { favorites, refetchFavorite } = useFavorite();
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>({
       signets: [],
@@ -119,9 +119,10 @@ export const TextbookPage: React.FC = () => {
   }, [textbooks, favorites]);
 
   useEffect(() => {
+    refetchFavorite();
     const updated: Textbook[] = fetchFavoriteTextbook();
     setTextbooksData(updated);
-  }, [textbooks, fetchFavoriteTextbook]);
+  }, [textbooks, fetchFavoriteTextbook, refetchFavorite]);
 
   useEffect(() => {
     const option = {

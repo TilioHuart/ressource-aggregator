@@ -42,7 +42,8 @@ export const ResourcePage: React.FC = () => {
   const [types, setTypes] = useState<string[]>([]);
   const [externalsResourcesData, setExternalResourcesData] = useState<
     ExternalResource[] | GlobalResource[]
-  >([]);
+  >(externalResources ?? []);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>({
@@ -61,6 +62,10 @@ export const ResourcePage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!initialLoadDone) {
+      refetchSearch();
+      setInitialLoadDone(true);
+    }
     if (user?.type.length === 1 && user.type.includes("Relative")) {
       if (globals) {
         setDisciplines(disciplinesGlobal);
@@ -84,6 +89,8 @@ export const ResourcePage: React.FC = () => {
     levelsExternal,
     typesExternal,
     typesGlobal,
+    initialLoadDone,
+    refetchSearch,
   ]);
 
   const flattenResources = (resources: SearchResultData) => [
