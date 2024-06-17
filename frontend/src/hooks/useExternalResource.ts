@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { useFavorite } from "./useFavorite";
 import { useSearchQuery } from "../services/api/search.service";
 import { ExternalResource } from "~/model/ExternalResource.model";
-import { Favorite } from "~/model/Favorite.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
 
 export const useExternalResource = () => {
@@ -30,7 +28,6 @@ export const useExternalResource = () => {
   const [externalResources, setExternalResources] = useState<
     ExternalResource[]
   >([]);
-  const { favorites } = useFavorite();
 
   const selectDisciplines = (externalResources: ExternalResource[]) => {
     const disciplines: string[] = [];
@@ -81,27 +78,17 @@ export const useExternalResource = () => {
   };
 
   useEffect(() => {
-    if (favorites) {
-      const searchResult: SearchResultCategory[] = data;
-      const gar = searchResult?.find(
-        (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
-      );
-      let externalResourcesData: ExternalResource[] =
-        gar?.data?.resources || [];
-      externalResourcesData = externalResourcesData.map(
-        (externalResource: ExternalResource) => ({
-          ...externalResource,
-          favorite: favorites.some(
-            (fav: Favorite) => fav.id === externalResource.id,
-          ),
-        }),
-      );
-      selectDisciplines(externalResourcesData);
-      selectLevels(externalResourcesData);
-      selectTypes(externalResourcesData);
-      setExternalResources(externalResourcesData);
-    }
-  }, [favorites, data]);
+    const searchResult: SearchResultCategory[] = data;
+    const gar = searchResult?.find(
+      (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
+    );
+    const externalResourcesData: ExternalResource[] =
+      gar?.data?.resources || [];
+    selectDisciplines(externalResourcesData);
+    selectLevels(externalResourcesData);
+    selectTypes(externalResourcesData);
+    setExternalResources(externalResourcesData);
+  }, [data]);
 
   return {
     externalResources,

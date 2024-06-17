@@ -58,6 +58,7 @@ export const useTextbook = () => {
       }));
       selectDisciplines(textbookData);
       selectLevels(textbookData);
+
       setTextbooks(textbookData);
     }
   }, [textbook, favorites]);

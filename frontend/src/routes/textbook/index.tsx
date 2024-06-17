@@ -11,7 +11,9 @@ import { MainLayout } from "~/components/main-layout/MainLayout";
 import { SearchCard } from "~/components/search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import "~/styles/page/search.scss";
+import { useFavorite } from "~/hooks/useFavorite";
 import { useTextbook } from "~/hooks/useTextbook";
+import { Favorite } from "~/model/Favorite.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
 import { Textbook } from "~/model/Textbook.model";
 
@@ -20,6 +22,8 @@ export const TextbookPage: React.FC = () => {
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
   const { textbooks, disciplines, levels, refetchTextbooks } = useTextbook();
+  const [textbooksData, setTextbooksData] = useState<Textbook[]>([]);
+  const { favorites } = useFavorite();
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
     useState<SearchResultData>({
       signets: [],
@@ -98,6 +102,27 @@ export const TextbookPage: React.FC = () => {
     [loadMoreResources],
   ); // for infinite scroll
 
+  const fetchFavoriteTextbook: () => Textbook[] = useCallback(() => {
+    if (textbooks && favorites) {
+      return textbooks.map((textbook: Textbook) => {
+        const favorite = favorites.find(
+          (fav: Favorite) => fav.id === textbook.id,
+        );
+        if (favorite) {
+          return { ...textbook, favoriteId: favorite._id };
+        }
+        return textbook;
+      });
+    } else {
+      return textbooks;
+    }
+  }, [textbooks, favorites]);
+
+  useEffect(() => {
+    const updated: Textbook[] = fetchFavoriteTextbook();
+    setTextbooksData(updated);
+  }, [textbooks, fetchFavoriteTextbook]);
+
   useEffect(() => {
     const option = {
       root: null,
@@ -146,7 +171,7 @@ export const TextbookPage: React.FC = () => {
         <div className="med-search-page-content">
           <div className="med-search-page-content-body">
             <FilterTextbookLayout
-              resources={textbooks}
+              resources={textbooksData}
               disciplines={disciplines}
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}

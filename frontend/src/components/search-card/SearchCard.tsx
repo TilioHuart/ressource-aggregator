@@ -36,9 +36,6 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const [newLink, setNewLink] = useState<string>("");
   const { t } = useTranslation();
   const [addFavorite] = useAddFavoriteMutation();
-  const [isFavorite, setIsFavorite] = useState<boolean>(
-    searchResource?.favorite ?? false,
-  );
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -113,7 +110,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       }
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
       refetchSearch();
-      setIsFavorite(true);
+      searchResource.favorite = true;
     } catch (e) {
       console.error(e);
     }
@@ -140,7 +137,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       }
       setAlertText(t("mediacentre.notification.removeFavorite"), "success");
       refetchSearch();
-      setIsFavorite(false);
+      searchResource.favorite = false;
     } catch (e) {
       console.error(e);
     }
@@ -223,7 +220,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
                 </Tooltip>
                 {searchResource.source !=
                 "fr.openent.mediacentre.source.GlobalResource" ? (
-                  isFavorite ? (
+                  searchResource.favorite ? (
                     <Tooltip
                       message={t("mediacentre.card.unfavorite")}
                       placement="top"
@@ -301,7 +298,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
                 </Tooltip>
                 {searchResource.source !=
                 "fr.openent.mediacentre.source.GlobalResource" ? (
-                  isFavorite ? (
+                  searchResource.favorite ? (
                     <Tooltip
                       message={t("mediacentre.card.unfavorite")}
                       placement="top"
