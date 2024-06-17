@@ -172,14 +172,16 @@ export const Search: React.FC = () => {
         </Alert>
       )}
       <div className="med-container">
-        <div className="med-search-page-header">
-          <div className="med-search-page-title">
-            <SearchIcon className="med-search-icon" />
-            {t("mediacentre.search.title")}
-            {searchQuery == ".*" ? "" : searchQuery}
-          </div>
-        </div>
         <div className="med-search-page-content">
+          <div className="med-search-page-header">
+            <div className="med-search-page-title">
+              <SearchIcon className="med-search-icon" />
+              <h1 className="med-search-title">
+                {t("mediacentre.search.title")}
+                {searchQuery == ".*" ? "" : searchQuery}
+              </h1>
+            </div>
+          </div>
           <div className="med-search-page-content-body">
             <FilterLayout
               resources={allResources}
