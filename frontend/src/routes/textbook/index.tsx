@@ -35,6 +35,7 @@ export const TextbookPage: React.FC = () => {
     signets: [],
     moodle: [],
   }); // resources visible (load more with infinite scroll)
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const loaderRef = useRef(null);
@@ -119,10 +120,20 @@ export const TextbookPage: React.FC = () => {
   }, [textbooks, favorites]);
 
   useEffect(() => {
-    refetchFavorite();
+    if (!initialLoadDone) {
+      refetchFavorite();
+      refetchTextbooks();
+      setInitialLoadDone(true);
+    }
     const updated: Textbook[] = fetchFavoriteTextbook();
     setTextbooksData(updated);
-  }, [textbooks, fetchFavoriteTextbook, refetchFavorite]);
+  }, [
+    textbooks,
+    fetchFavoriteTextbook,
+    refetchFavorite,
+    refetchTextbooks,
+    initialLoadDone,
+  ]);
 
   useEffect(() => {
     const option = {
@@ -166,7 +177,9 @@ export const TextbookPage: React.FC = () => {
         <div className="med-search-page-header">
           <div className="med-search-page-title">
             <SchoolIcon className="med-search-icon" />
-            {t("mediacentre.list.card.manuals")}
+            <h1 className="med-search-title">
+              {t("mediacentre.list.card.manuals")}
+            </h1>
           </div>
         </div>
         <div className="med-search-page-content">
@@ -187,7 +200,10 @@ export const TextbookPage: React.FC = () => {
                       searchResource={searchResource}
                       link={searchResource.link ?? searchResource.url ?? "/"}
                       setAlertText={setAlertText}
-                      refetchSearch={refetchTextbooks}
+                      refetchSearch={() => {
+                        refetchFavorite();
+                        refetchTextbooks();
+                      }}
                     />
                   ),
                 )}

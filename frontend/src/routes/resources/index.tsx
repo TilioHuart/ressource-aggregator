@@ -205,7 +205,9 @@ export const ResourcePage: React.FC = () => {
         <div className="med-search-page-header">
           <div className="med-search-page-title">
             <LaptopIcon className="med-search-icon" />
-            {t("mediacentre.sidebar.resources")}
+            <h1 className="med-search-title">
+              {t("mediacentre.sidebar.resources")}
+            </h1>
           </div>
         </div>
         <div className="med-search-page-content">
