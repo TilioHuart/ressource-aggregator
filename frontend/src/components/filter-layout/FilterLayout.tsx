@@ -40,7 +40,6 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
     useState<string[]>(types);
   const [selectedCheckboxesDiscipline, setSelectedCheckboxesDiscipline] =
     useState<string[]>(disciplines);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const handleMultiCheckbox = (
     selectedCheckboxes: string[],
@@ -153,29 +152,25 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   }, [resources]);
 
   useEffect(() => {
-    if (!initialLoadDone && resourcesNotEmpty()) {
-      if (resources?.externals_resources?.length > 0) {
-        setCheckboxResource(true);
-      }
-      if (resources?.signets?.length > 0) {
-        setCheckboxSignet(true);
-      }
-      if (resources?.moodle?.length > 0) {
-        setCheckboxMoodle(true);
-      }
-      setSelectedCheckboxesDiscipline(disciplines);
-      setSelectedCheckboxesLevels(levels);
-      setSelectedCheckboxesTypes(types);
-      setInitialLoadDone(true);
+    if (resources?.externals_resources?.length > 0) {
+      setCheckboxResource(true);
+    } else {
+      setCheckboxResource(false);
     }
-  }, [
-    resources,
-    disciplines,
-    levels,
-    types,
-    initialLoadDone,
-    resourcesNotEmpty,
-  ]);
+    if (resources?.signets?.length > 0) {
+      setCheckboxSignet(true);
+    } else {
+      setCheckboxSignet(false);
+    }
+    if (resources?.moodle?.length > 0) {
+      setCheckboxMoodle(true);
+    } else {
+      setCheckboxMoodle(false);
+    }
+    setSelectedCheckboxesDiscipline(disciplines);
+    setSelectedCheckboxesLevels(levels);
+    setSelectedCheckboxesTypes(types);
+  }, [resources, disciplines, levels, types, resourcesNotEmpty]);
 
   useEffect(() => {
     fetchFilters();
