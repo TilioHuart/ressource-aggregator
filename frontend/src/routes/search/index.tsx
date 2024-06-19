@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { ListCard } from "~/components/list-card/ListCard";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { SearchCard } from "~/components/search-card/SearchCard";
@@ -191,7 +192,10 @@ export const Search: React.FC = () => {
               types={types}
               refetchSearch={refetchSearch}
             />
-            {visibleResources && (
+            {visibleResources &&
+            (visibleResources.externals_resources.length !== 0 ||
+              visibleResources.signets.length !== 0 ||
+              visibleResources.moodle.length !== 0) ? (
               <ListCard
                 scrollable={false}
                 type={CardTypeEnum.search}
@@ -209,6 +213,8 @@ export const Search: React.FC = () => {
                 ))}
                 redirectLink={() => navigate("/search")}
               />
+            ) : (
+              <EmptyState title="mediacentre.search.empty" />
             )}
             <div ref={loaderRef} />
             {loading && <p>{t("mediacentre.load.more.items")}</p>}

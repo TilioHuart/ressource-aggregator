@@ -5,6 +5,7 @@ import LaptopIcon from "@mui/icons-material/Laptop";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { FilterResourceLayout } from "~/components/filter-resource-layout/FilterResourceLayout";
 import { ListCard } from "~/components/list-card/ListCard";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -219,7 +220,8 @@ export const ResourcePage: React.FC = () => {
               setAllResourcesDisplayed={setAllResourcesDisplayed}
               types={types}
             />
-            {visibleResources && (
+            {visibleResources &&
+            visibleResources.externals_resources.length !== 0 ? (
               <ListCard
                 scrollable={false}
                 type={CardTypeEnum.search}
@@ -235,6 +237,8 @@ export const ResourcePage: React.FC = () => {
                 )}
                 redirectLink={() => navigate("/resource")}
               />
+            ) : (
+              <EmptyState title="mediacentre.ressources.empty" />
             )}
             <div ref={loaderRef} />
             {loading && <p>{t("mediacentre.load.more.items")}</p>}

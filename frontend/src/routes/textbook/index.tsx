@@ -5,6 +5,7 @@ import SchoolIcon from "@mui/icons-material/School";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { FilterTextbookLayout } from "~/components/filter-textbook-layout/FilterTextbookLayout";
 import { ListCard } from "~/components/list-card/ListCard";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -190,7 +191,8 @@ export const TextbookPage: React.FC = () => {
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
             />
-            {visibleResources && (
+            {visibleResources &&
+            visibleResources.externals_resources.length !== 0 ? (
               <ListCard
                 scrollable={false}
                 type={CardTypeEnum.search}
@@ -209,6 +211,8 @@ export const TextbookPage: React.FC = () => {
                 )}
                 redirectLink={() => navigate("/textbook")}
               />
+            ) : (
+              <EmptyState title="mediacentre.ressources.empty" />
             )}
             <div ref={loaderRef} />
             {loading && <p>{t("mediacentre.load.more.items")}</p>}
