@@ -6,6 +6,16 @@
     <title>Médiacentre</title>
     <link rel="icon" id="favicon" href="" />
     <link rel="stylesheet" href="/assets/themes/edifice-bootstrap/index.css" />
+    <script>
+      wsPort = "";
+      mode = "prod";
+      sources = [
+        "fr.openent.mediacentre.source.GAR",
+        "fr.openent.mediacentre.source.Moodle",
+        "fr.openent.mediacentre.source.Signet",
+      ];
+      mediacentreUpdateFrequency = 60000;
+    </script>
   </head>
   <body>
     <div id="root"></div>
