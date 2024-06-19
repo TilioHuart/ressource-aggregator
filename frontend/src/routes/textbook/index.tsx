@@ -73,22 +73,22 @@ export const TextbookPage: React.FC = () => {
     setLoading(true);
     const limit = 10; // items to load per scroll
     setVisibleResources((prevVisibleResources) => {
+      const prevItems = flattenResources(prevVisibleResources);
+      const allItems = flattenResources(allResourcesDisplayed);
+
       if (
-        flattenResources(allResourcesDisplayed).slice(
-          0,
-          flattenResources(allResourcesDisplayed).length,
-        ) !== flattenResources(prevVisibleResources)
+        JSON.stringify(prevItems) !==
+        JSON.stringify(allItems.slice(0, prevItems.length))
       ) {
+        // If the displayed resources have changed
         prevVisibleResources = allResourcesDisplayed;
       }
-      const allItems = flattenResources(prevVisibleResources);
+
       const newItems = [
-        ...allItems,
-        ...flattenResources(allResourcesDisplayed).slice(
-          allItems.length,
-          allItems.length + limit,
-        ),
+        ...prevItems,
+        ...allItems.slice(prevItems.length, prevItems.length + limit),
       ];
+
       return redistributeResources(newItems, allResourcesDisplayed);
     });
     setLoading(false);
@@ -151,6 +151,11 @@ export const TextbookPage: React.FC = () => {
   }, [handleObserver]); // for infinite scroll
 
   useEffect(() => {
+    setVisibleResources({
+      externals_resources: [],
+      signets: [],
+      moodle: [],
+    });
     loadMoreResources();
   }, [allResourcesDisplayed, loadMoreResources]);
 
