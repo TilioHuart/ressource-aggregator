@@ -26,8 +26,8 @@ export const useExternalResource = () => {
   } = useSearchQuery(query);
 
   const [externalResources, setExternalResources] = useState<
-    ExternalResource[]
-  >([]);
+    ExternalResource[] | null
+  >(null);
 
   const selectDisciplines = (externalResources: ExternalResource[]) => {
     const disciplines: string[] = [];
@@ -78,16 +78,18 @@ export const useExternalResource = () => {
   };
 
   useEffect(() => {
-    const searchResult: SearchResultCategory[] = data;
-    const gar = searchResult?.find(
-      (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
-    );
-    const externalResourcesData: ExternalResource[] =
-      gar?.data?.resources || [];
-    selectDisciplines(externalResourcesData);
-    selectLevels(externalResourcesData);
-    selectTypes(externalResourcesData);
-    setExternalResources(externalResourcesData);
+    if (data) {
+      const searchResult: SearchResultCategory[] = data;
+      const gar = searchResult?.find(
+        (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
+      );
+      const externalResourcesData: ExternalResource[] =
+        gar?.data?.resources || [];
+      selectDisciplines(externalResourcesData);
+      selectLevels(externalResourcesData);
+      selectTypes(externalResourcesData);
+      setExternalResources(externalResourcesData);
+    }
   }, [data]);
 
   return {

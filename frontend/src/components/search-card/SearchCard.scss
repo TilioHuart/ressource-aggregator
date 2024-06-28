@@ -1,4 +1,5 @@
 @import "../../styles/_colors.scss";
+@import "../../styles/_breakpoints.scss";
 
 .med-search-resource-card {
   overflow: hidden;
@@ -19,7 +20,7 @@
       padding: 15px;
       height: 177px;
       width: 177px;
-      @media (max-width: 515px) {
+      @media (max-width: $sm) {
         width: 150px;
       }
       display: flex;
@@ -35,7 +36,7 @@
     .med-search-resource-right-container {
       padding: 15px;
       width: calc(100% - 177px);
-      @media (max-width: 515px) {
+      @media (max-width: $sm) {
         width: calc(100% - 150px);
       }
       height: 177px;
@@ -70,9 +71,9 @@
         background-color: transparent;
         padding-right: 0px;
         gap: 0px !important;
-        @media (max-width: 480px) {
+        @media (max-width: $sm) {
           display: flex;
-          flex-direction: column;
+          flex-direction: column-reverse;
           gap: 5px !important;
           align-items: flex-start;
         }
@@ -84,8 +85,13 @@
           .med-footer-icon {
             font-size: 20px;
             margin-right: 5px;
-            @media (max-width: 480px) {
+            @media (max-width: $sm) {
               margin-right: 0px;
+            }
+          }
+          .med-info-icon {
+            @media (max-width: $sm) {
+              display: none;
             }
           }
         }
@@ -99,7 +105,7 @@
           }
 
           .med-link {
-            @media (max-width: 480px) {
+            @media (max-width: $sm) {
               margin-left: 0px;
             }
             cursor: pointer;

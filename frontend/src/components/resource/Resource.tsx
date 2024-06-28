@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import "./Resource.scss";
 import { AlertTypes, Card } from "@edifice-ui/react";
 import { Tooltip } from "@edifice-ui/react";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
@@ -124,162 +123,97 @@ export const Resource: React.FC<ResourceProps> = ({
     }
   }, [link]);
 
-  if (type === CardTypeEnum.book_mark) {
-    return (
-      <Card
-        isSelectable={false}
-        isClickable={false}
-        className={`med-resource-card ${type}`}
+  const isBookMark = () => type === CardTypeEnum.book_mark;
+  const isFavorite = () => type === CardTypeEnum.favorites;
+
+  return (
+    <Card
+      isSelectable={false}
+      isClickable={false}
+      className={`med-resource-card ${type}`}
+    >
+      <a
+        className={isBookMark() ? "med-body" : "med-link-card"}
+        href={newLink !== "/" ? newLink : "/"}
+        target="_blank"
       >
-        <a
-          className="med-body"
-          href={newLink !== "/" ? newLink : "/"}
-          target="_blank"
-        >
-          <Card.Body space={"0"}>
-            {image ? (
-              <img
-                src={image}
-                alt="Resource"
-                className="med-resource-image"
-                onError={({ currentTarget }) => {
-                  currentTarget.onerror = null;
-                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
-                }}
-              />
-            ) : (
-              <img
-                src="/mediacentre/public/img/no-avatar.svg"
-                alt="Resource"
-                className="med-resource-image"
-              />
-            )}
-          </Card.Body>
+        {!isBookMark() && <Card.Title>{title}</Card.Title>}
+        {!isBookMark() && !isFavorite() && <Card.Text>{subtitle}</Card.Text>}
+        <Card.Body space={"0"}>
+          {image ? (
+            <img
+              src={image}
+              alt="Resource"
+              className="med-resource-image"
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null;
+                currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+              }}
+            />
+          ) : (
+            <img
+              src="/mediacentre/public/img/no-avatar.svg"
+              alt="Resource"
+              className="med-resource-image"
+            />
+          )}
+        </Card.Body>
+        {isBookMark() && (
           <div className="med-text-body">
             <Card.Title>{title}</Card.Title>
             <Card.Text>{subtitle}</Card.Text>
           </div>
-        </a>
-        <Card.Footer>
-          {footerText ? (
-            shared ? (
-              <div className="med-footer-text">
-                <img
-                  src="/mediacentre/public/img/no-avatar.svg"
-                  alt="Resource"
-                  className="med-resource-footer-image"
-                />
-                <span className="med-footer-text-text">
-                  Signet de la plateforme
-                </span>
-              </div>
-            ) : (
-              <div className="med-footer-text">
-                <img
-                  src={footerImage}
-                  alt="Resource"
-                  className="med-resource-footer-image"
-                  onError={({ currentTarget }) => {
-                    currentTarget.onerror = null;
-                    currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
-                  }}
-                />
-                <span className="med-footer-text-text">{footerText}</span>
-              </div>
-            )
-          ) : null}
-          <div className="med-footer-svg">
-            <Tooltip message={t("mediacentre.card.copy")} placement="top">
-              <ContentCopyIcon className="med-link" onClick={() => copy()} />
-            </Tooltip>
-            {resource.source !==
-            "fr.openent.mediacentre.source.GlobalResource" ? (
-              favorite ? (
-                <Tooltip
-                  message={t("mediacentre.card.unfavorite")}
-                  placement="top"
-                >
-                  <StarIcon className="med-star" onClick={() => unfav()} />
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  message={t("mediacentre.card.favorite")}
-                  placement="top"
-                >
-                  <StarBorderIcon className="med-star" onClick={() => fav()} />
-                </Tooltip>
-              )
-            ) : null}
-          </div>
-        </Card.Footer>
-      </Card>
-    );
-  } else {
-    return (
-      <Card
-        isSelectable={false}
-        isClickable={false}
-        className={`med-resource-card ${type}`}
-      >
-        <a
-          href={newLink !== "/" ? newLink : "/"}
-          target="_blank"
-          className="med-link-card"
-        >
-          <Card.Title>{title}</Card.Title>
-          {type != CardTypeEnum.favorites && <Card.Text>{subtitle}</Card.Text>}
-          <Card.Body space={"0"}>
-            {image ? (
+        )}
+      </a>
+      <Card.Footer>
+        {footerText ? (
+          shared ? (
+            <div className="med-footer-text">
               <img
-                src={image}
+                src="/mediacentre/public/img/no-avatar.svg"
                 alt="Resource"
-                className="med-resource-image"
+                className="med-resource-footer-image"
+              />
+              <span className="med-footer-text-text">
+                Signet de la plateforme
+              </span>
+            </div>
+          ) : (
+            <div className="med-footer-text">
+              <img
+                src={footerImage}
+                alt="Resource"
+                className="med-resource-footer-image"
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null;
                   currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
                 }}
               />
-            ) : (
-              <img
-                src="/mediacentre/public/img/no-avatar.svg"
-                alt="Resource"
-                className="med-resource-image"
-              />
-            )}
-          </Card.Body>
-        </a>
-        <Card.Footer>
-          {footerText ? (
-            <div className="med-footer-text">
-              <AutoAwesomeIcon />
-              {footerText}
+              <span className="med-footer-text-text">{footerText}</span>
             </div>
+          )
+        ) : null}
+        <div className="med-footer-svg">
+          <Tooltip message={t("mediacentre.card.copy")} placement="top">
+            <ContentCopyIcon className="med-link" onClick={() => copy()} />
+          </Tooltip>
+          {resource.source !==
+          "fr.openent.mediacentre.source.GlobalResource" ? (
+            favorite ? (
+              <Tooltip
+                message={t("mediacentre.card.unfavorite")}
+                placement="top"
+              >
+                <StarIcon className="med-star" onClick={() => unfav()} />
+              </Tooltip>
+            ) : (
+              <Tooltip message={t("mediacentre.card.favorite")} placement="top">
+                <StarBorderIcon className="med-star" onClick={() => fav()} />
+              </Tooltip>
+            )
           ) : null}
-          <div className="med-footer-svg">
-            <Tooltip message={t("mediacentre.card.copy")} placement="top">
-              <ContentCopyIcon className="med-link" onClick={() => copy()} />
-            </Tooltip>
-            {resource.source !==
-            "fr.openent.mediacentre.source.GlobalResource" ? (
-              favorite ? (
-                <Tooltip
-                  message={t("mediacentre.card.unfavorite")}
-                  placement="top"
-                >
-                  <StarIcon className="med-star" onClick={() => unfav()} />
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  message={t("mediacentre.card.favorite")}
-                  placement="top"
-                >
-                  <StarBorderIcon className="med-star" onClick={() => fav()} />
-                </Tooltip>
-              )
-            ) : null}
-          </div>
-        </Card.Footer>
-      </Card>
-    );
-  }
+        </div>
+      </Card.Footer>
+    </Card>
+  );
 };

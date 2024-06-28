@@ -10,16 +10,18 @@ export const useFavorite = () => {
     isLoading,
     refetch: refetchFavorite,
   } = useGetFavoriteQuery(null);
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [favorites, setFavorites] = useState<Favorite[] | null>(null);
 
   useEffect(() => {
-    let favoriteData: Favorite[] =
-      favorite?.data?.length > 0 ? favorite.data : [] ?? [];
-    favoriteData = favoriteData.map((favorite: Favorite) => ({
-      ...favorite,
-      favorite: true,
-    }));
-    setFavorites(favoriteData);
+    if (favorite) {
+      let favoriteData: Favorite[] =
+        favorite?.data?.length > 0 ? favorite.data : [] ?? [];
+      favoriteData = favoriteData.map((favorite: Favorite) => ({
+        ...favorite,
+        favorite: true,
+      }));
+      setFavorites(favoriteData);
+    }
   }, [favorite]);
 
   return { favorites, setFavorites, refetchFavorite, error, isLoading };

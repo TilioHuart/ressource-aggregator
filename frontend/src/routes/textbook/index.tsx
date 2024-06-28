@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Alert, AlertTypes } from "@edifice-ui/react";
+import { Alert, AlertTypes, LoadingScreen } from "@edifice-ui/react";
 import SchoolIcon from "@mui/icons-material/School";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import "~/styles/page/search.scss";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useTextbook } from "~/hooks/useTextbook";
+import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
 import { Textbook } from "~/model/Textbook.model";
@@ -23,46 +24,40 @@ export const TextbookPage: React.FC = () => {
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
   const { textbooks, disciplines, levels, refetchTextbooks } = useTextbook();
-  const [textbooksData, setTextbooksData] = useState<Textbook[]>([]);
+  const [textbooksData, setTextbooksData] = useState<Textbook[] | null>(null);
   const { favorites, refetchFavorite } = useFavorite();
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
-    useState<SearchResultData>({
-      signets: [],
-      moodle: [],
-      externals_resources: textbooks,
-    }); // all resources after the filters
-  const [visibleResources, setVisibleResources] = useState<SearchResultData>({
-    externals_resources: [],
-    signets: [],
-    moodle: [],
-  }); // resources visible (load more with infinite scroll)
+    useState<SearchResultData | null>(null); // all resources after the filters
+  const [visibleResources, setVisibleResources] =
+    useState<SearchResultData | null>(null); // resources visible (load more with infinite scroll)
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [limit, setLimit] = useState(0);
   const loaderRef = useRef(null);
   const navigate = useNavigate();
 
   const flattenResources = (resources: SearchResultData) => [
-    ...resources.externals_resources,
+    ...resources.external_resources,
   ];
 
   const redistributeResources = (
-    items: Textbook[],
+    items: Textbook[] | ExternalResource[],
     allResourcesDisplayed: SearchResultData,
   ): SearchResultData => {
     const newVisibleResources: SearchResultData = {
-      externals_resources: [],
+      external_resources: [],
       signets: [],
       moodle: [],
     };
 
     items.forEach((item) => {
       if (
-        allResourcesDisplayed.externals_resources.some(
-          (resource: Textbook) => resource.id === item.id,
+        allResourcesDisplayed.external_resources.some(
+          (resource: Textbook | ExternalResource) => resource.id === item.id,
         )
       ) {
-        newVisibleResources.externals_resources.push(item as Textbook);
+        newVisibleResources.external_resources.push(item as Textbook);
       }
     });
 
@@ -70,9 +65,18 @@ export const TextbookPage: React.FC = () => {
   };
 
   const loadMoreResources = useCallback(() => {
-    setLoading(true);
-    const limit = 10; // items to load per scroll
+    if (!allResourcesDisplayed) {
+      return;
+    }
     setVisibleResources((prevVisibleResources) => {
+      if (!prevVisibleResources) {
+        prevVisibleResources = {
+          external_resources: [],
+          signets: [],
+          moodle: [],
+        };
+      }
+      setLimit((prevLimit) => prevLimit + 10); // add 10 items each scroll
       const prevItems = flattenResources(prevVisibleResources);
       const allItems = flattenResources(allResourcesDisplayed);
 
@@ -91,8 +95,8 @@ export const TextbookPage: React.FC = () => {
 
       return redistributeResources(newItems, allResourcesDisplayed);
     });
-    setLoading(false);
-  }, [allResourcesDisplayed]); // for infinite scroll
+    setIsLoading(false);
+  }, [allResourcesDisplayed, limit]); // for infinite scroll
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -104,7 +108,7 @@ export const TextbookPage: React.FC = () => {
     [loadMoreResources],
   ); // for infinite scroll
 
-  const fetchFavoriteTextbook: () => Textbook[] = useCallback(() => {
+  const fetchFavoriteTextbook: () => Textbook[] | null = useCallback(() => {
     if (textbooks && favorites) {
       return textbooks.map((textbook: Textbook) => {
         const favorite = favorites.find(
@@ -126,7 +130,7 @@ export const TextbookPage: React.FC = () => {
       refetchTextbooks();
       setInitialLoadDone(true);
     }
-    const updated: Textbook[] = fetchFavoriteTextbook();
+    const updated: Textbook[] | null = fetchFavoriteTextbook();
     setTextbooksData(updated);
   }, [
     textbooks,
@@ -151,11 +155,7 @@ export const TextbookPage: React.FC = () => {
   }, [handleObserver]); // for infinite scroll
 
   useEffect(() => {
-    setVisibleResources({
-      externals_resources: [],
-      signets: [],
-      moodle: [],
-    });
+    setIsLoading(true);
     loadMoreResources();
   }, [allResourcesDisplayed, loadMoreResources]);
 
@@ -179,7 +179,7 @@ export const TextbookPage: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <div className="med-container">
+      <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">
             <div className="med-search-page-title">
@@ -196,31 +196,38 @@ export const TextbookPage: React.FC = () => {
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
             />
-            {visibleResources &&
-            visibleResources.externals_resources.length !== 0 ? (
-              <ListCard
-                scrollable={false}
-                type={CardTypeEnum.search}
-                components={[...visibleResources.externals_resources].map(
-                  (searchResource: any) => (
-                    <SearchCard
-                      searchResource={searchResource}
-                      link={searchResource.link ?? searchResource.url ?? "/"}
-                      setAlertText={setAlertText}
-                      refetchSearch={() => {
-                        refetchFavorite();
-                        refetchTextbooks();
-                      }}
-                    />
-                  ),
-                )}
-                redirectLink={() => navigate("/textbook")}
-              />
+            {isLoading ? (
+              <LoadingScreen position={false} />
             ) : (
-              <EmptyState title="mediacentre.ressources.empty" />
+              <>
+                {visibleResources &&
+                visibleResources.external_resources.length !== 0 ? (
+                  <ListCard
+                    scrollable={false}
+                    type={CardTypeEnum.search}
+                    components={[...visibleResources.external_resources].map(
+                      (searchResource: any) => (
+                        <SearchCard
+                          searchResource={searchResource}
+                          link={
+                            searchResource.link ?? searchResource.url ?? "/"
+                          }
+                          setAlertText={setAlertText}
+                          refetchSearch={() => {
+                            refetchFavorite();
+                            refetchTextbooks();
+                          }}
+                        />
+                      ),
+                    )}
+                    redirectLink={() => navigate("/textbook")}
+                  />
+                ) : (
+                  <EmptyState title="mediacentre.ressources.empty" />
+                )}
+              </>
             )}
             <div ref={loaderRef} />
-            {loading && <p>{t("mediacentre.load.more.items")}</p>}
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Alert, AlertTypes, useUser } from "@edifice-ui/react";
+import { Alert, AlertTypes, LoadingScreen, useUser } from "@edifice-ui/react";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -41,24 +41,18 @@ export const ResourcePage: React.FC = () => {
   const [disciplines, setDisciplines] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
-  const [externalsResourcesData, setExternalResourcesData] = useState<
-    ExternalResource[] | GlobalResource[]
-  >(externalResources ?? []);
+  const [externalResourcesData, setExternalResourcesData] = useState<
+    ExternalResource[] | GlobalResource[] | null
+  >(null);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
-    useState<SearchResultData>({
-      signets: [],
-      moodle: [],
-      externals_resources: externalsResourcesData,
-    }); // all resources after the filters
-  const [visibleResources, setVisibleResources] = useState<SearchResultData>({
-    externals_resources: [],
-    signets: [],
-    moodle: [],
-  }); // resources visible (load more with infinite scroll)
+    useState<SearchResultData | null>(null); // all resources after the filters
+  const [visibleResources, setVisibleResources] =
+    useState<SearchResultData | null>(null); // resources visible (load more with infinite scroll)
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [limit, setLimit] = useState(0);
   const loaderRef = useRef(null);
   const navigate = useNavigate();
 
@@ -95,7 +89,7 @@ export const ResourcePage: React.FC = () => {
   ]);
 
   const flattenResources = (resources: SearchResultData) => [
-    ...resources.externals_resources,
+    ...resources.external_resources,
   ];
 
   const redistributeResources = (
@@ -103,18 +97,18 @@ export const ResourcePage: React.FC = () => {
     allResourcesDisplayed: SearchResultData,
   ): SearchResultData => {
     const newVisibleResources: SearchResultData = {
-      externals_resources: [],
+      external_resources: [],
       signets: [],
       moodle: [],
     };
 
     items.forEach((item) => {
       if (
-        allResourcesDisplayed.externals_resources.some(
+        allResourcesDisplayed.external_resources.some(
           (resource: ExternalResource) => resource.id === item.id,
         )
       ) {
-        newVisibleResources.externals_resources.push(item as ExternalResource);
+        newVisibleResources.external_resources.push(item as ExternalResource);
       }
     });
 
@@ -122,9 +116,18 @@ export const ResourcePage: React.FC = () => {
   };
 
   const loadMoreResources = useCallback(() => {
-    setLoading(true);
-    const limit = 10; // items to load per scroll
+    if (!allResourcesDisplayed) {
+      return;
+    }
     setVisibleResources((prevVisibleResources) => {
+      if (!prevVisibleResources) {
+        prevVisibleResources = {
+          external_resources: [],
+          signets: [],
+          moodle: [],
+        };
+      }
+      setLimit((prevLimit) => prevLimit + 10); // add 10 items each scroll
       const prevItems = flattenResources(prevVisibleResources);
       const allItems = flattenResources(allResourcesDisplayed);
 
@@ -143,8 +146,8 @@ export const ResourcePage: React.FC = () => {
 
       return redistributeResources(newItems, allResourcesDisplayed);
     });
-    setLoading(false);
-  }, [allResourcesDisplayed]); // for infinite scroll
+    setIsLoading(false);
+  }, [allResourcesDisplayed, limit]); // for infinite scroll
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -171,21 +174,19 @@ export const ResourcePage: React.FC = () => {
   }, [handleObserver]); // for infinite scroll
 
   useEffect(() => {
-    setVisibleResources({
-      externals_resources: [],
-      signets: [],
-      moodle: [],
-    });
+    setIsLoading(true);
     loadMoreResources();
   }, [allResourcesDisplayed, loadMoreResources]);
 
   useEffect(() => {
-    setAllResourcesDisplayed({
-      signets: [],
-      moodle: [],
-      externals_resources: externalsResourcesData,
-    });
-  }, [externalsResourcesData]);
+    if (externalResourcesData) {
+      setAllResourcesDisplayed({
+        signets: [],
+        moodle: [],
+        external_resources: externalResourcesData,
+      });
+    }
+  }, [externalResourcesData]);
 
   return (
     <>
@@ -207,7 +208,7 @@ export const ResourcePage: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <div className="med-container">
+      <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">
             <div className="med-search-page-title">
@@ -219,34 +220,41 @@ export const ResourcePage: React.FC = () => {
           </div>
           <div className="med-search-page-content-body">
             <FilterResourceLayout
-              resources={externalsResourcesData}
+              resources={externalResourcesData}
               disciplines={disciplines}
               levels={levels}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
               types={types}
             />
-            {visibleResources &&
-            visibleResources.externals_resources.length !== 0 ? (
-              <ListCard
-                scrollable={false}
-                type={CardTypeEnum.search}
-                components={[...visibleResources.externals_resources].map(
-                  (searchResource: any) => (
-                    <SearchCard
-                      searchResource={searchResource}
-                      link={searchResource.link ?? searchResource.url ?? "/"}
-                      setAlertText={setAlertText}
-                      refetchSearch={refetchSearch}
-                    />
-                  ),
-                )}
-                redirectLink={() => navigate("/resource")}
-              />
+            {isLoading ? (
+              <LoadingScreen position={false} />
             ) : (
-              <EmptyState title="mediacentre.ressources.empty" />
+              <>
+                {visibleResources &&
+                visibleResources.external_resources.length !== 0 ? (
+                  <ListCard
+                    scrollable={false}
+                    type={CardTypeEnum.search}
+                    components={[...visibleResources.external_resources].map(
+                      (searchResource: any) => (
+                        <SearchCard
+                          searchResource={searchResource}
+                          link={
+                            searchResource.link ?? searchResource.url ?? "/"
+                          }
+                          setAlertText={setAlertText}
+                          refetchSearch={refetchSearch}
+                        />
+                      ),
+                    )}
+                    redirectLink={() => navigate("/resource")}
+                  />
+                ) : (
+                  <EmptyState title="mediacentre.ressources.empty" />
+                )}
+              </>
             )}
             <div ref={loaderRef} />
-            {loading && <p>{t("mediacentre.load.more.items")}</p>}
           </div>
         </div>
       </div>

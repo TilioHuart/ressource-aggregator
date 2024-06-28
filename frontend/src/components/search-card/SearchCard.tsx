@@ -38,19 +38,6 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   const type = (): SearchCardTypeEnum => {
     if (searchResource?.source) {
@@ -110,7 +97,6 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       }
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
       refetchSearch();
-      searchResource.favorite = true;
     } catch (e) {
       console.error(e);
     }
@@ -137,7 +123,6 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       }
       setAlertText(t("mediacentre.notification.removeFavorite"), "success");
       refetchSearch();
-      searchResource.favorite = false;
     } catch (e) {
       console.error(e);
     }
@@ -159,190 +144,91 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
     }
   }, [link]);
 
-  // case of large screen
-  if (windowWidth > 480) {
-    return (
-      <Card
-        isSelectable={false}
-        isClickable={false}
-        className={`med-search-resource-card ${
-          isExpanded ? "expanded" : "not-expanded"
-        }`}
-      >
-        <div className="med-search-resource-top-container">
-          <a href={newLink !== "/" ? newLink : "/"} target="_blank">
-            <div className="med-search-resource-left-container">
-              {searchResource.image && (
-                <img
-                  src={searchResource.image}
-                  alt="Resource"
-                  className="med-search-resource-image"
-                  onError={({ currentTarget }) => {
-                    currentTarget.onerror = null;
-                    currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
-                  }}
-                />
+  return (
+    <Card
+      isSelectable={false}
+      isClickable={false}
+      className={`med-search-resource-card ${
+        isExpanded ? "expanded" : "not-expanded"
+      }`}
+    >
+      <div className="med-search-resource-top-container">
+        <a href={newLink !== "/" ? newLink : "/"} target="_blank">
+          <div className="med-search-resource-left-container">
+            {searchResource.image && (
+              <img
+                src={searchResource.image}
+                alt="Resource"
+                className="med-search-resource-image"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                }}
+              />
+            )}
+          </div>
+        </a>
+        <div className="med-search-resource-right-container">
+          <Card.Body space={"0"}>
+            <a href={newLink !== "/" ? newLink : "/"} target="_blank">
+              <SearchCardType type={type()} />
+              <Card.Title>{searchResource.title}</Card.Title>
+              <Card.Text>
+                {searchResource.editors && searchResource.editors[0]}
+              </Card.Text>
+            </a>
+          </Card.Body>
+          <Card.Footer>
+            <div
+              className="med-footer-details"
+              role="button"
+              onClick={toggleExpand}
+              onKeyDown={() => {}}
+              tabIndex={0}
+            >
+              <InfoOutlinedIcon className="med-footer-icon med-info-icon" />
+              {t("mediacentre.description.button")}
+              {isExpanded ? (
+                <KeyboardArrowDownIcon className="med-footer-icon" />
+              ) : (
+                <KeyboardArrowRight className="med-footer-icon" />
               )}
             </div>
-          </a>
-          <div className="med-search-resource-right-container">
-            <Card.Body space={"0"}>
-              <a href={newLink !== "/" ? newLink : "/"} target="_blank">
-                <SearchCardType type={type()} />
-                <Card.Title>{searchResource.title}</Card.Title>
-                <Card.Text>
-                  {searchResource.editors && searchResource.editors[0]}
-                </Card.Text>
-              </a>
-            </Card.Body>
-            <Card.Footer>
-              <div
-                className="med-footer-details"
-                role="button"
-                onClick={toggleExpand}
-                onKeyDown={() => {}}
-                tabIndex={0}
-              >
-                <InfoOutlinedIcon className="med-footer-icon" />
-                {t("mediacentre.description.button")}
-                {isExpanded ? (
-                  <KeyboardArrowDownIcon className="med-footer-icon" />
+            <div className="med-footer-svg">
+              <Tooltip message={t("mediacentre.card.copy")} placement="top">
+                <ContentCopyIcon className="med-link" onClick={() => copy()} />
+              </Tooltip>
+              {searchResource.source !=
+              "fr.openent.mediacentre.source.GlobalResource" ? (
+                searchResource.favorite ? (
+                  <Tooltip
+                    message={t("mediacentre.card.unfavorite")}
+                    placement="top"
+                  >
+                    <StarIcon className="med-star" onClick={() => unfav()} />
+                  </Tooltip>
                 ) : (
-                  <KeyboardArrowRight className="med-footer-icon" />
-                )}
-              </div>
-              <div className="med-footer-svg">
-                <Tooltip message={t("mediacentre.card.copy")} placement="top">
-                  <ContentCopyIcon
-                    className="med-link"
-                    onClick={() => copy()}
-                  />
-                </Tooltip>
-                {searchResource.source !=
-                "fr.openent.mediacentre.source.GlobalResource" ? (
-                  searchResource.favorite ? (
-                    <Tooltip
-                      message={t("mediacentre.card.unfavorite")}
-                      placement="top"
-                    >
-                      <StarIcon className="med-star" onClick={() => unfav()} />
-                    </Tooltip>
-                  ) : (
-                    <Tooltip
-                      message={t("mediacentre.card.favorite")}
-                      placement="top"
-                    >
-                      <StarBorderIcon
-                        className="med-star"
-                        onClick={() => fav()}
-                      />
-                    </Tooltip>
-                  )
-                ) : null}
-              </div>
-            </Card.Footer>
-          </div>
-        </div>
-        <div className={`med-search-resource-bottom-container`}>
-          {searchResource.description && (
-            <SearchCardDescription searchResource={searchResource} />
-          )}
-          <SearchCardDetails searchResource={searchResource} />
-        </div>
-      </Card>
-    );
-  }
-  //case of mobile screen
-  else {
-    return (
-      <Card
-        isSelectable={false}
-        isClickable={false}
-        className={`med-search-resource-card ${
-          isExpanded ? "expanded" : "not-expanded"
-        }`}
-      >
-        <div className="med-search-resource-top-container">
-          <a href={newLink !== "/" ? newLink : "/"} target="_blank">
-            <div className="med-search-resource-left-container">
-              {searchResource.image && (
-                <img
-                  src={searchResource.image}
-                  alt="Resource"
-                  className="med-search-resource-image"
-                  onError={({ currentTarget }) => {
-                    currentTarget.onerror = null;
-                    currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
-                  }}
-                />
-              )}
+                  <Tooltip
+                    message={t("mediacentre.card.favorite")}
+                    placement="top"
+                  >
+                    <StarBorderIcon
+                      className="med-star"
+                      onClick={() => fav()}
+                    />
+                  </Tooltip>
+                )
+              ) : null}
             </div>
-          </a>
-          <div className="med-search-resource-right-container">
-            <Card.Body space={"0"}>
-              <a href={newLink !== "/" ? newLink : "/"} target="_blank">
-                <SearchCardType type={type()} />
-                <Card.Title>{searchResource.title}</Card.Title>
-                <Card.Text>
-                  {searchResource.editors && searchResource.editors[0]}
-                </Card.Text>
-              </a>
-            </Card.Body>
-            <Card.Footer>
-              <div className="med-footer-svg">
-                <Tooltip message={t("mediacentre.card.copy")} placement="top">
-                  <ContentCopyIcon
-                    className="med-link"
-                    onClick={() => copy()}
-                  />
-                </Tooltip>
-                {searchResource.source !=
-                "fr.openent.mediacentre.source.GlobalResource" ? (
-                  searchResource.favorite ? (
-                    <Tooltip
-                      message={t("mediacentre.card.unfavorite")}
-                      placement="top"
-                    >
-                      <StarIcon className="med-star" onClick={() => unfav()} />
-                    </Tooltip>
-                  ) : (
-                    <Tooltip
-                      message={t("mediacentre.card.favorite")}
-                      placement="top"
-                    >
-                      <StarBorderIcon
-                        className="med-star"
-                        onClick={() => fav()}
-                      />
-                    </Tooltip>
-                  )
-                ) : null}
-              </div>
-              <div
-                className="med-footer-details"
-                role="button"
-                onClick={toggleExpand}
-                onKeyDown={() => {}}
-                tabIndex={0}
-              >
-                {/* <InfoOutlinedIcon className="med-footer-icon" /> */}
-                {t("mediacentre.description.button")}
-                {isExpanded ? (
-                  <KeyboardArrowDownIcon className="med-footer-icon" />
-                ) : (
-                  <KeyboardArrowRight className="med-footer-icon" />
-                )}
-              </div>
-            </Card.Footer>
-          </div>
+          </Card.Footer>
         </div>
-        <div className={`med-search-resource-bottom-container`}>
-          {searchResource.description && (
-            <SearchCardDescription searchResource={searchResource} />
-          )}
-          <SearchCardDetails searchResource={searchResource} />
-        </div>
-      </Card>
-    );
-  }
+      </div>
+      <div className={`med-search-resource-bottom-container`}>
+        {searchResource.description && (
+          <SearchCardDescription searchResource={searchResource} />
+        )}
+        <SearchCardDetails searchResource={searchResource} />
+      </div>
+    </Card>
+  );
 };

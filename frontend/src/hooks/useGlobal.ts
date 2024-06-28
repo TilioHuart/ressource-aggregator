@@ -7,7 +7,7 @@ import { Favorite } from "~/model/Favorite.model";
 
 export const useGlobal = () => {
   const { data: global, error, isLoading } = useGetGlobalQuery(null);
-  const [globals, setGlobals] = useState<GlobalResource[]>([]);
+  const [globals, setGlobals] = useState<GlobalResource[] | null>(null);
   const { favorites } = useFavorite();
   const [disciplines, setDisciplines] = useState<string[]>([]);
   const [levels, setLevels] = useState<string[]>([]);

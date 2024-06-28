@@ -7,12 +7,12 @@ import { useTranslation } from "react-i18next";
 import { SearchResultData } from "~/model/SearchResultData.model";
 
 interface FilterLayoutProps {
-  resources: SearchResultData;
+  resources: SearchResultData | null;
   disciplines: string[];
   levels: string[];
   types: string[];
   setAllResourcesDisplayed: React.Dispatch<
-    React.SetStateAction<SearchResultData>
+    React.SetStateAction<SearchResultData | null>
   >;
   refetchSearch: () => void;
 }
@@ -26,13 +26,13 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
 }) => {
   const { t } = useTranslation();
   const [checkboxResource, setCheckboxResource] = useState<boolean>(
-    resources?.externals_resources?.length > 0 ?? false,
+    resources ? resources?.external_resources?.length > 0 ?? false : false,
   );
   const [checkboxSignet, setCheckboxSignet] = useState<boolean>(
-    resources?.signets?.length > 0 ?? false,
+    resources ? resources?.signets?.length > 0 ?? false : false,
   );
   const [checkboxMoodle, setCheckboxMoodle] = useState<boolean>(
-    resources?.moodle?.length > 0 ?? false,
+    resources ? resources?.moodle?.length > 0 ?? false : false,
   );
   const [selectedCheckboxesLevels, setSelectedCheckboxesLevels] =
     useState<string[]>(levels);
@@ -66,19 +66,22 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   }, [checkboxResource]);
 
   const fetchFilters = useCallback(() => {
+    if (!resources) {
+      return;
+    }
     const filteredResources: SearchResultData = {
       signets: [],
-      externals_resources: [],
+      external_resources: [],
       moodle: [],
     };
     if (checkboxResource) {
-      filteredResources.externals_resources = resources.externals_resources;
+      filteredResources.external_resources = resources?.external_resources;
     }
     if (checkboxSignet) {
-      filteredResources.signets = resources.signets;
+      filteredResources.signets = resources?.signets;
     }
     if (checkboxMoodle) {
-      filteredResources.moodle = resources.moodle;
+      filteredResources.moodle = resources?.moodle;
     }
 
     const filterByCriteria = (
@@ -103,8 +106,8 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
       });
     };
     if (isGarSelected()) {
-      filteredResources.externals_resources = filterByCriteria(
-        filteredResources.externals_resources,
+      filteredResources.external_resources = filterByCriteria(
+        filteredResources.external_resources,
         selectedCheckboxesDiscipline,
         selectedCheckboxesLevels,
         selectedCheckboxesTypes,
@@ -145,14 +148,18 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
 
   const resourcesNotEmpty = useCallback(() => {
     return (
-      resources?.externals_resources?.length > 0 ||
-      resources?.signets?.length > 0 ||
-      resources?.moodle?.length > 0
+      resources &&
+      (resources?.external_resources?.length > 0 ||
+        resources?.signets?.length > 0 ||
+        resources?.moodle?.length > 0)
     );
   }, [resources]);
 
   useEffect(() => {
-    if (resources?.externals_resources?.length > 0) {
+    if (!resources) {
+      return;
+    }
+    if (resources?.external_resources?.length > 0) {
       setCheckboxResource(true);
     } else {
       setCheckboxResource(false);
@@ -174,7 +181,7 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
 
   useEffect(() => {
     fetchFilters();
-  }, [fetchFilters]);
+  }, [fetchFilters, resources]);
 
   return (
     <>

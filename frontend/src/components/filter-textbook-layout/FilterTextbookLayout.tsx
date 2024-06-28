@@ -8,11 +8,11 @@ import { SearchResultData } from "~/model/SearchResultData.model";
 import { Textbook } from "~/model/Textbook.model";
 
 interface FilterTextbookLayoutProps {
-  resources: Textbook[];
+  resources: Textbook[] | null;
   disciplines: string[];
   levels: string[];
   setAllResourcesDisplayed: React.Dispatch<
-    React.SetStateAction<SearchResultData>
+    React.SetStateAction<SearchResultData | null>
   >;
 }
 
@@ -49,9 +49,12 @@ export const FilterTextbookLayout: React.FC<FilterTextbookLayoutProps> = ({
   };
 
   const fetchFilters = useCallback(() => {
+    if (!resources) {
+      return;
+    }
     const filteredResources: SearchResultData = {
       signets: [],
-      externals_resources: resources,
+      external_resources: resources,
       moodle: [],
     };
     const filterByCriteria = (
@@ -71,8 +74,8 @@ export const FilterTextbookLayout: React.FC<FilterTextbookLayoutProps> = ({
         return matchesDiscipline || matchesLevel;
       });
     };
-    filteredResources.externals_resources = filterByCriteria(
-      filteredResources.externals_resources,
+    filteredResources.external_resources = filterByCriteria(
+      filteredResources.external_resources,
       selectedCheckboxesDiscipline,
       selectedCheckboxesLevels,
     );
@@ -91,26 +94,21 @@ export const FilterTextbookLayout: React.FC<FilterTextbookLayoutProps> = ({
   const countDisciplines = selectedCheckboxesDiscipline.length;
 
   useEffect(() => {
+    if (!resources) {
+      return;
+    }
     setSelectedCheckboxesDiscipline(disciplines);
     setSelectedCheckboxesLevels(levels);
     setAllResourcesDisplayed({
       signets: [],
       moodle: [],
-      externals_resources: resources,
+      external_resources: resources,
     });
   }, [resources, disciplines, levels, setAllResourcesDisplayed]);
 
   useEffect(() => {
     fetchFilters();
-  }, [fetchFilters]);
-
-  useEffect(() => {
-    setAllResourcesDisplayed({
-      signets: [],
-      moodle: [],
-      externals_resources: resources,
-    });
-  }, [resources, setAllResourcesDisplayed]);
+  }, [fetchFilters, resources]);
 
   return (
     <>

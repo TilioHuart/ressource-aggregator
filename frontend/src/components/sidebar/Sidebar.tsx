@@ -8,7 +8,7 @@ import LaptopIcon from "@mui/icons-material/Laptop";
 import SchoolIcon from "@mui/icons-material/School";
 import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { SidebarIcon } from "../sidebar-icon/SidebarIcon";
 import { useActions } from "~/services/queries";
@@ -22,6 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
   toggleSidebar,
 }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -49,14 +50,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className={`sidebar ${sidebarOpen ? "open" : ""}`} ref={sidebarRef}>
       <div className="icons-container">
-        <a href="/mediacentre">
-          <SidebarIcon
-            action={() => {}}
-            icon={<HomeIcon />}
-            name={`${t("mediacentre.sidebar.home")}`}
-            selected={location.pathname === "/"}
-          />
-        </a>
+        <SidebarIcon
+          action={() => navigate("/")}
+          icon={<HomeIcon />}
+          name={`${t("mediacentre.sidebar.home")}`}
+          selected={location.pathname === "/"}
+        />
         <a href="/mediacentre?view=angular#/favorite">
           <SidebarIcon
             action={() => {}}
@@ -65,22 +64,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
             selected={location.pathname === "/favorites"}
           />
         </a>
-        <a href="/mediacentre#/textbook">
-          <SidebarIcon
-            action={() => {}}
-            icon={<SchoolIcon />}
-            name={`${t("mediacentre.sidebar.textbooks")}`}
-            selected={location.pathname === "/textbook"}
-          />
-        </a>
-        <a href="/mediacentre#/resources">
-          <SidebarIcon
-            action={() => {}}
-            icon={<LaptopIcon />}
-            name={`${t("mediacentre.sidebar.resources")}`}
-            selected={location.pathname === "/resources"}
-          />
-        </a>
+        <SidebarIcon
+          action={() => navigate("/textbook")}
+          icon={<SchoolIcon />}
+          name={`${t("mediacentre.sidebar.textbooks")}`}
+          selected={location.pathname === "/textbook"}
+        />
+        <SidebarIcon
+          action={() => navigate("/resources")}
+          icon={<LaptopIcon />}
+          name={`${t("mediacentre.sidebar.resources")}`}
+          selected={location.pathname === "/resources"}
+        />
         {canAccessSignet && (
           <a href="/mediacentre?view=angular#/signet">
             <SidebarIcon

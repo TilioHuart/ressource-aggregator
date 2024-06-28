@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Alert, AlertTypes } from "@edifice-ui/react";
+import { Alert, AlertTypes, LoadingScreen } from "@edifice-ui/react";
 import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
@@ -47,19 +47,17 @@ export const Search: React.FC = () => {
     createSearchBody(searchQuery),
   );
   const [allResourcesDisplayed, setAllResourcesDisplayed] =
-    useState<SearchResultData>(allResources); // all resources after the filters
-  const [visibleResources, setVisibleResources] = useState<SearchResultData>({
-    externals_resources: [],
-    signets: [],
-    moodle: [],
-  }); // resources visible (load more with infinite scroll)
+    useState<SearchResultData | null>(null); // all resources after the filters
+  const [visibleResources, setVisibleResources] =
+    useState<SearchResultData | null>(null); // resources visible (load more with infinite scroll)
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [limit, setLimit] = useState(0);
   const loaderRef = useRef(null);
   const navigate = useNavigate();
 
   const flattenResources = (resources: SearchResultData) => [
-    ...resources.externals_resources,
+    ...resources.external_resources,
     ...resources.signets,
     ...resources.moodle,
   ];
@@ -69,18 +67,18 @@ export const Search: React.FC = () => {
     allResourcesDisplayed: SearchResultData,
   ): SearchResultData => {
     const newVisibleResources: SearchResultData = {
-      externals_resources: [],
+      external_resources: [],
       signets: [],
       moodle: [],
     };
 
     items.forEach((item) => {
       if (
-        allResourcesDisplayed.externals_resources.some(
+        allResourcesDisplayed.external_resources.some(
           (resource: ExternalResource) => resource.id === item.id,
         )
       ) {
-        newVisibleResources.externals_resources.push(item as ExternalResource);
+        newVisibleResources.external_resources.push(item as ExternalResource);
       } else if (
         allResourcesDisplayed.signets.some(
           (resource: Signet) => resource.id === item.id,
@@ -100,9 +98,18 @@ export const Search: React.FC = () => {
   };
 
   const loadMoreResources = useCallback(() => {
-    setLoading(true);
-    const limit = 10; // items to load per scroll
+    if (!allResourcesDisplayed) {
+      return;
+    }
     setVisibleResources((prevVisibleResources) => {
+      if (!prevVisibleResources) {
+        prevVisibleResources = {
+          external_resources: [],
+          signets: [],
+          moodle: [],
+        };
+      }
+      setLimit((prevLimit) => prevLimit + 10); // add 10 items each scroll
       const prevItems = flattenResources(prevVisibleResources);
       const allItems = flattenResources(allResourcesDisplayed);
 
@@ -121,8 +128,8 @@ export const Search: React.FC = () => {
 
       return redistributeResources(newItems, allResourcesDisplayed);
     });
-    setLoading(false);
-  }, [allResourcesDisplayed]);
+    setIsLoading(false);
+  }, [allResourcesDisplayed, limit]);
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -149,11 +156,7 @@ export const Search: React.FC = () => {
   }, [handleObserver]); // for infinite scroll
 
   useEffect(() => {
-    setVisibleResources({
-      externals_resources: [],
-      signets: [],
-      moodle: [],
-    }); // reset visible resources when use filters
+    setIsLoading(true);
     loadMoreResources();
   }, [allResourcesDisplayed, loadMoreResources]);
 
@@ -177,7 +180,7 @@ export const Search: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <div className="med-container">
+      <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">
             <div className="med-search-page-title">
@@ -197,32 +200,41 @@ export const Search: React.FC = () => {
               types={types}
               refetchSearch={refetchSearch}
             />
-            {visibleResources &&
-            (visibleResources.externals_resources.length !== 0 ||
-              visibleResources.signets.length !== 0 ||
-              visibleResources.moodle.length !== 0) ? (
-              <ListCard
-                scrollable={false}
-                type={CardTypeEnum.search}
-                components={[
-                  ...visibleResources.externals_resources,
-                  ...visibleResources.signets,
-                  ...visibleResources.moodle,
-                ].map((searchResource: any) => (
-                  <SearchCard
-                    searchResource={searchResource}
-                    link={searchResource.link ?? searchResource.url ?? "/"}
-                    setAlertText={setAlertText}
-                    refetchSearch={refetchSearch}
-                  />
-                ))}
-                redirectLink={() => navigate("/search")}
-              />
+            {isLoading ? (
+              <LoadingScreen position={false} />
             ) : (
-              <EmptyState title="mediacentre.search.empty" />
+              <>
+                {visibleResources &&
+                (visibleResources.external_resources.length !== 0 ||
+                  visibleResources.signets.length !== 0 ||
+                  visibleResources.moodle.length !== 0) ? (
+                  <>
+                    <ListCard
+                      scrollable={false}
+                      type={CardTypeEnum.search}
+                      components={[
+                        ...visibleResources.external_resources,
+                        ...visibleResources.signets,
+                        ...visibleResources.moodle,
+                      ].map((searchResource: any) => (
+                        <SearchCard
+                          searchResource={searchResource}
+                          link={
+                            searchResource.link ?? searchResource.url ?? "/"
+                          }
+                          setAlertText={setAlertText}
+                          refetchSearch={refetchSearch}
+                        />
+                      ))}
+                      redirectLink={() => navigate("/search")}
+                    />
+                  </>
+                ) : (
+                  <EmptyState title="mediacentre.search.empty" />
+                )}
+              </>
             )}
             <div ref={loaderRef} />
-            {loading && <p>{t("mediacentre.load.more.items")}</p>}
           </div>
         </div>
       </div>

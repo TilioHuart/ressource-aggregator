@@ -22,10 +22,13 @@ export const useSignet = () => {
     error: mySignetError,
     isLoading: mySignetIsLoading,
   } = useGetMySignetsQuery(null);
-  const [homeSignets, setHomeSignets] = useState<Signet[]>([]);
+  const [homeSignets, setHomeSignets] = useState<Signet[] | null>(null);
   const { favorites } = useFavorite();
 
   const getHomeSignets = useCallback(() => {
+    if (!publicSignets || !mySignets) {
+      return null;
+    }
     const publicSignetsData: Signet[] =
       publicSignets?.data?.signets?.resources ?? [];
     const mySignetsData: Signet[] = mySignets
@@ -50,14 +53,16 @@ export const useSignet = () => {
       ...updatedPublicSignetsData,
       ...updatedMySignetsData,
     ];
-    signetsData = signetsData.map((signet: Signet) => ({
-      ...signet,
-      favorite: favorites.some((fav: Favorite) =>
-        signet?.id
-          ? fav?.id?.toString() === signet?.id
-          : fav?.id?.toString() === signet?._id,
-      ),
-    }));
+    if (favorites) {
+      signetsData = signetsData.map((signet: Signet) => ({
+        ...signet,
+        favorite: favorites.some((fav: Favorite) =>
+          signet?.id
+            ? fav?.id?.toString() === signet?.id
+            : fav?.id?.toString() === signet?._id,
+        ),
+      }));
+    }
     return signetsData;
   }, [favorites, mySignets, publicSignets, user?.userId]);
 

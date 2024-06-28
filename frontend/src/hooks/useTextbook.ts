@@ -14,7 +14,7 @@ export const useTextbook = () => {
     isLoading,
     refetch: refetchTextbooks,
   } = useGetTextbooksQuery(null);
-  const [textbooks, setTextbooks] = useState<Textbook[]>([]);
+  const [textbooks, setTextbooks] = useState<Textbook[] | null>(null);
   const { favorites } = useFavorite();
 
   const selectDisciplines = (textbooks: Textbook[]) => {

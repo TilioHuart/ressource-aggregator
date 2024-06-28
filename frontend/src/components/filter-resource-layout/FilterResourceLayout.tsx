@@ -8,12 +8,12 @@ import { ExternalResource } from "~/model/ExternalResource.model";
 import { SearchResultData } from "~/model/SearchResultData.model";
 
 interface FilterResourceLayoutProps {
-  resources: ExternalResource[];
+  resources: ExternalResource[] | null;
   disciplines: string[];
   levels: string[];
   types: string[];
   setAllResourcesDisplayed: React.Dispatch<
-    React.SetStateAction<SearchResultData>
+    React.SetStateAction<SearchResultData | null>
   >;
 }
 
@@ -53,9 +53,12 @@ export const FilterResourceLayout: React.FC<FilterResourceLayoutProps> = ({
   };
 
   const fetchFilters = useCallback(() => {
+    if (!resources) {
+      return;
+    }
     const filteredResources: SearchResultData = {
       signets: [],
-      externals_resources: resources,
+      external_resources: resources,
       moodle: [],
     };
     const filterByCriteria = (
@@ -79,8 +82,8 @@ export const FilterResourceLayout: React.FC<FilterResourceLayoutProps> = ({
         return matchesDiscipline || matchesLevel || matchesType;
       });
     };
-    filteredResources.externals_resources = filterByCriteria(
-      filteredResources.externals_resources,
+    filteredResources.external_resources = filterByCriteria(
+      filteredResources.external_resources,
       selectedCheckboxesDiscipline,
       selectedCheckboxesLevels,
       selectedCheckboxesTypes,
@@ -103,6 +106,9 @@ export const FilterResourceLayout: React.FC<FilterResourceLayoutProps> = ({
   const countType = selectedCheckboxesTypes.length;
 
   useEffect(() => {
+    if (!resources) {
+      return;
+    }
     setSelectedCheckboxesDiscipline(disciplines);
     setSelectedCheckboxesLevels(levels);
     setSelectedCheckboxesTypes(types);
@@ -110,7 +116,7 @@ export const FilterResourceLayout: React.FC<FilterResourceLayoutProps> = ({
 
   useEffect(() => {
     fetchFilters();
-  }, [fetchFilters]);
+  }, [fetchFilters, resources]);
 
   return (
     <>

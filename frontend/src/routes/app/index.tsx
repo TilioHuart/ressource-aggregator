@@ -3,12 +3,11 @@ import { useState, useEffect, useReducer, useCallback } from "react";
 import { Alert, AlertTypes, useUser } from "@edifice-ui/react";
 import { ID } from "edifice-ts-client";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
-import { HomeBookMarksList } from "~/components/home-lists/HomeBookMarksList";
-import { HomeExternalResourcesList } from "~/components/home-lists/HomeExternalResourcesList";
-import { HomeFavoritesList } from "~/components/home-lists/HomeFavoritesList";
-import { HomeManualsList } from "~/components/home-lists/HomeManualsList";
+import { HomeList } from "~/components/home-lists/HomeList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
+import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useGlobal } from "~/hooks/useGlobal";
@@ -33,8 +32,8 @@ export interface AppProps {
 }
 
 export const App = () => {
+  const location = useLocation();
   const { user } = useUser();
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [alertText, setAlertText] = useState<string>("");
   const [alertType, setAlertType] = useState<AlertTypes>("success");
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -45,43 +44,38 @@ export const App = () => {
   const { externalResources, setExternalResources, refetchSearch } =
     useExternalResource();
   const { globals } = useGlobal();
-  const [externalsResourcesData, setExternalResourcesData] = useState<
-    ExternalResource[] | GlobalResource[]
-  >([]);
-  const [textbooksData, setTextbooksData] = useState<Textbook[]>([]);
+  const [externalResourcesData, setExternalResourcesData] = useState<
+    (ExternalResource | GlobalResource)[] | null
+  >(null);
+  const [textbooksData, setTextbooksData] = useState<Textbook[] | null>(null);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [alertText]);
 
   useEffect(() => {
     let newExternalResourcesData: ExternalResource[] = [];
     if (user?.type.length === 1 && user.type.includes("Relative")) {
       if (globals) {
         newExternalResourcesData = globals;
+      } else {
+        return;
       }
     } else {
-      newExternalResourcesData = externalResources;
+      if (externalResources) {
+        newExternalResourcesData = externalResources;
+      } else {
+        return;
+      }
     }
 
     // Avoid unnecessary state update to prevent infinite loop
     if (
       JSON.stringify(newExternalResourcesData) !==
-      JSON.stringify(externalsResourcesData)
+      JSON.stringify(externalResourcesData)
     ) {
       setExternalResourcesData(newExternalResourcesData);
     }
-  }, [user, externalResources, globals, externalsResourcesData]);
+  }, [user, externalResources, globals, externalResourcesData]);
 
-  const fetchFavoriteTextbook = useCallback(() => {
+  const fetchFavoriteTextbook: () => Textbook[] | null = useCallback(() => {
     if (textbooks && favorites) {
       return textbooks.map((textbook: Textbook) => {
         const favorite = favorites.find(
@@ -98,7 +92,7 @@ export const App = () => {
   }, [textbooks, favorites]);
 
   useEffect(() => {
-    const updated: Textbook[] = fetchFavoriteTextbook();
+    const updated: Textbook[] | null = fetchFavoriteTextbook();
     setTextbooksData(updated);
   }, [textbooks, fetchFavoriteTextbook]);
 
@@ -124,312 +118,181 @@ export const App = () => {
     setExternalResourcesData(updated);
   }, [externalResources, fetchFavoriteExternalResource]);
 
-  const handleAddFavorite = (resource: any) => {
-    setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
-    refetchAll();
-    resource.favorite = true;
-  };
+    const handleAddFavorite = (resource: any) => {
+        setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
+        refetchAll();
+        resource.favorite = true;
+    };
 
-  const refetchAll = () => {
+    const refetchAll = () => {
+        refetchFavorite();
+        refetchTextbooks();
+        refetchSearch();
+    };
+
+  useEffect(() => {
     refetchFavorite();
-    refetchTextbooks();
-    refetchSearch();
-  };
+  }, [location, refetchFavorite]);
 
   const handleRemoveFavorite = (id: string | number) => {
-    setFavorites((prevFavorites: Favorite[]) =>
-      prevFavorites.filter((fav) => fav.id != id),
-    );
+    setFavorites((prevFavorites: Favorite[] | null) => {
+      if (!prevFavorites) {
+        return null;
+      }
+      return prevFavorites.filter((fav) => fav.id != id);
+    });
     updateFavoriteStatus(id, false);
   };
 
   const updateFavoriteStatus = (id: string | number, isFavorite: boolean) => {
-    let newSignets: Signet[] = [...homeSignets];
-    newSignets = newSignets.map((signet: Signet) =>
-      signet?.id?.toString() == id.toString()
-        ? { ...signet, favorite: isFavorite }
-        : signet,
-    );
-    setHomeSignets(newSignets);
-    let newTextbooks: Textbook[] = [...textbooks];
-    newTextbooks = newTextbooks.map((textbook: Textbook) =>
-      textbook?.id?.toString() == id.toString()
-        ? { ...textbook, favorite: isFavorite }
-        : textbook,
-    );
-    setTextbooks(newTextbooks);
-    let newExternalResources: ExternalResource[] | GlobalResource[] = [
-      ...externalsResourcesData,
-    ];
-    newExternalResources = newExternalResources.map(
-      (externalResource: ExternalResource | GlobalResource) =>
-        externalResource?.id?.toString() == id.toString()
-          ? { ...externalResource, favorite: isFavorite }
-          : externalResource,
-    );
-    setExternalResources(newExternalResources);
+    if (homeSignets) {
+      let newSignets: Signet[] = [...homeSignets];
+      newSignets = newSignets.map((signet: Signet) =>
+        signet?.id?.toString() == id.toString()
+          ? { ...signet, favorite: isFavorite }
+          : signet,
+      );
+      setHomeSignets(newSignets);
+    }
+    if (textbooks) {
+      let newTextbooks: Textbook[] = [...textbooks];
+      newTextbooks = newTextbooks.map((textbook: Textbook) =>
+        textbook?.id?.toString() == id.toString()
+          ? { ...textbook, favorite: isFavorite }
+          : textbook,
+      );
+      setTextbooks(newTextbooks);
+    }
+    if (externalResourcesData) {
+      let newExternalResources: ExternalResource[] | GlobalResource[] = [
+        ...externalResourcesData,
+      ];
+      newExternalResources = newExternalResources.map(
+        (externalResource: ExternalResource | GlobalResource) =>
+          externalResource?.id?.toString() == id.toString()
+            ? { ...externalResource, favorite: isFavorite }
+            : externalResource,
+      );
+      setExternalResources(newExternalResources);
+    }
     forceUpdate(); // List are not re-rendering without this
   };
 
-  function isArrayEmpty(arr: any[]) {
-    return !(arr && arr.length > 0);
-  }
+  const isTextbooksEmpty = () => textbooksData?.length === 0 ?? 0;
 
-  const leftContainer = () => {
-    // case 1: textbooks and externalResourcesData are empty and homeSignets is not empty
+  const isExternalResourcesEmpty = () =>
+    externalResourcesData?.length === 0 ?? 0;
+
+  const isHomeSignetsEmpty = () => homeSignets?.length === 0 ?? 0;
+
+  /*
+    return the type and the resource of resources to displayed
+    examples:
+    - [] -> case of all lists are empty
+    - [{CardTypeEnum.manuals, textbooksData}] -> case of just one list is not empty
+    - [{CardTypeEnum.manuals, textbooksData}, {CardTypeEnum.book_mark, homeSignets}] -> case of at least two lists are not empty
+  */
+  const resourcesList = () => {
+    const listToReturn = [];
+    // particular case of all lists are not empty
     if (
-      isArrayEmpty(textbooks) &&
-      isArrayEmpty(externalsResourcesData) &&
-      !isArrayEmpty(homeSignets)
+      !isTextbooksEmpty() &&
+      !isExternalResourcesEmpty() &&
+      !isHomeSignetsEmpty()
     ) {
-      return (
-        <HomeBookMarksList
-          homeSignets={homeSignets}
-          setAlertText={setAlertText}
-          setAlertType={setAlertType}
-          handleAddFavorite={handleAddFavorite}
-          handleRemoveFavorite={handleRemoveFavorite}
-          double={true}
-        />
-      );
+      listToReturn.push({
+        type: CardTypeEnum.manuals,
+        resource: textbooksData,
+      });
+      listToReturn.push({
+        type: CardTypeEnum.book_mark,
+        resource: homeSignets,
+      });
+      return listToReturn;
     }
-    // case 2: textbooks and homeSignets are empty and externalResources is not empty
-    else if (
-      isArrayEmpty(textbooks) &&
-      isArrayEmpty(homeSignets) &&
-      !isArrayEmpty(externalsResourcesData)
-    ) {
-      return (
-        <HomeExternalResourcesList
-          externalResources={externalsResourcesData}
-          setAlertText={setAlertText}
-          setAlertType={setAlertType}
-          handleAddFavorite={handleAddFavorite}
-          handleRemoveFavorite={handleRemoveFavorite}
-          double={true}
-        />
-      );
+    // global case follow the logic of priority of lists (1:textbooks, 2:externalResources, 3:homeSignets)
+    // one list is empty
+    if (!isTextbooksEmpty()) {
+      listToReturn.push({
+        type: CardTypeEnum.manuals,
+        resource: textbooksData,
+      });
     }
-    // case 3: externalResources and homeSignets are empty and textbooks is not empty
-    else if (
-      isArrayEmpty(externalsResourcesData) &&
-      isArrayEmpty(homeSignets) &&
-      !isArrayEmpty(textbooks)
-    ) {
-      return (
-        <HomeManualsList
-          textbooks={textbooksData}
-          setAlertText={setAlertText}
-          setAlertType={setAlertType}
-          handleAddFavorite={handleAddFavorite}
-          handleRemoveFavorite={handleRemoveFavorite}
-          double={true}
-        />
-      );
+    if (!isExternalResourcesEmpty()) {
+      listToReturn.push({
+        type: CardTypeEnum.external_resources,
+        resource: externalResourcesData,
+      });
     }
-    // case 4: all lists are empty
-    else if (
-      isArrayEmpty(textbooks) &&
-      isArrayEmpty(homeSignets) &&
-      isArrayEmpty(externalsResourcesData)
-    ) {
-      return (
-        <div className="empty-state">
-          <img
-            src="/mediacentre/public/img/empty-state.png"
-            alt="empty-state"
-            className="empty-state-img"
-          />
-          <span className="empty-state-text">
-            {t("mediacentre.ressources.empty")}
-          </span>
-        </div>
-      );
+    if (!isHomeSignetsEmpty()) {
+      listToReturn.push({
+        type: CardTypeEnum.book_mark,
+        resource: homeSignets,
+      });
     }
-    // case 5: there at least two lists with data
-    else {
-      // case 5.1: textbooks is empty
-      if (isArrayEmpty(textbooks)) {
-        return (
-          <>
-            <div className="bottom-left-container">
-              <HomeExternalResourcesList
-                externalResources={externalsResourcesData}
-                setAlertText={setAlertText}
-                setAlertType={setAlertType}
-                handleAddFavorite={handleAddFavorite}
-                handleRemoveFavorite={handleRemoveFavorite}
-              />
-            </div>
-            <div className="bottom-right-container">
-              <HomeBookMarksList
-                homeSignets={homeSignets}
-                setAlertText={setAlertText}
-                setAlertType={setAlertType}
-                handleAddFavorite={handleAddFavorite}
-                handleRemoveFavorite={handleRemoveFavorite}
-              />
-            </div>
-          </>
-        );
-      }
-      // case 5.2: bookmarks is empty
-      else if (isArrayEmpty(homeSignets)) {
-        return (
-          <>
-            <div className="bottom-left-container">
-              <HomeManualsList
-                textbooks={textbooksData}
-                setAlertText={setAlertText}
-                setAlertType={setAlertType}
-                handleAddFavorite={handleAddFavorite}
-                handleRemoveFavorite={handleRemoveFavorite}
-              />
-            </div>
-            <div className="bottom-right-container">
-              <HomeExternalResourcesList
-                externalResources={externalsResourcesData}
-                setAlertText={setAlertText}
-                setAlertType={setAlertType}
-                handleAddFavorite={handleAddFavorite}
-                handleRemoveFavorite={handleRemoveFavorite}
-              />
-            </div>
-          </>
-        );
-      }
-      // case 5.3: externalResources is empty or all lists have data
-      else {
-        return (
-          <>
-            <div className="bottom-left-container">
-              <HomeManualsList
-                textbooks={textbooksData}
-                setAlertText={setAlertText}
-                setAlertType={setAlertType}
-                handleAddFavorite={handleAddFavorite}
-                handleRemoveFavorite={handleRemoveFavorite}
-              />
-            </div>
-            <div className="bottom-right-container">
-              <HomeBookMarksList
-                homeSignets={homeSignets}
-                setAlertText={setAlertText}
-                setAlertType={setAlertType}
-                handleAddFavorite={handleAddFavorite}
-                handleRemoveFavorite={handleRemoveFavorite}
-              />
-            </div>
-          </>
-        );
-      }
-    }
+    return listToReturn;
   };
 
-  if (windowWidth >= 1280) {
-    return (
-      <>
-        <MainLayout />
-        {alertText !== "" && (
-          <Alert
-            autoClose
-            autoCloseDelay={3000}
-            isDismissible
-            isToast
-            onClose={() => {
-              setAlertText("");
-              setAlertType("success");
-            }}
-            position="top-right"
-            type={alertType}
-            className="med-alert"
-          >
-            {alertText}
-          </Alert>
-        )}
-        <div className="med-container">
-          <div className="list-container">
-            <div className="left-container">
-              <div className="bottom-container">{leftContainer()}</div>
-            </div>
-            <div className="right-container">
-              {favorites && (
-                <HomeFavoritesList
-                  favorites={favorites}
-                  setAlertText={setAlertText}
-                  setAlertType={setAlertType}
-                  handleAddFavorite={handleAddFavorite}
-                  handleRemoveFavorite={handleRemoveFavorite}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  } else if (windowWidth >= 992) {
-    return (
-      <>
-        <MainLayout />
-        {alertText !== "" && (
-          <Alert
-            autoClose
-            autoCloseDelay={3000}
-            isDismissible
-            isToast
-            onClose={() => setAlertText("")}
-            position="top-right"
-            type="success"
-            className="med-alert"
-          >
-            {alertText}
-          </Alert>
-        )}
-        <div className="med-container">
-          <HomeFavoritesList
-            favorites={favorites}
+  const double = () => {
+    return resourcesList().length === 1;
+  };
+
+  return (
+    <>
+      <MainLayout />
+      {alertText !== "" && (
+        <Alert
+          autoClose
+          autoCloseDelay={3000}
+          isDismissible
+          isToast
+          onClose={() => setAlertText("")}
+          position="top-right"
+          type={alertType}
+          className="med-alert"
+        >
+          {alertText}
+        </Alert>
+      )}
+      <div className="med-container">
+        <div className="med-fav-container">
+          <HomeList
+            resources={favorites}
+            type={CardTypeEnum.favorites}
             setAlertText={setAlertText}
             setAlertType={setAlertType}
             handleAddFavorite={handleAddFavorite}
             handleRemoveFavorite={handleRemoveFavorite}
           />
-          <div className="list-container">
-            <div className="left-container">
-              <div className="bottom-container">{leftContainer()}</div>
+        </div>
+        <div className="med-resources-container">
+          {resourcesList().length === 0 ? (
+            // empty state
+            <div className="empty-state">
+              <img
+                src="/mediacentre/public/img/empty-state.png"
+                alt="empty-state"
+                className="empty-state-img"
+              />
+              <span className="empty-state-text">
+                {t("mediacentre.ressources.empty")}
+              </span>
             </div>
-          </div>
+          ) : (
+            resourcesList().map((resource) => (
+              <HomeList
+                resources={resource.resource}
+                type={resource.type}
+                setAlertText={setAlertText}
+                setAlertType={setAlertType}
+                handleAddFavorite={handleAddFavorite}
+                handleRemoveFavorite={handleRemoveFavorite}
+                double={double()}
+              />
+            ))
+          )}
         </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <MainLayout />
-        {alertText !== "" && (
-          <Alert
-            autoClose
-            autoCloseDelay={3000}
-            isDismissible
-            isToast
-            onClose={() => setAlertText("")}
-            position="top-right"
-            type="success"
-            className="med-alert"
-          >
-            {alertText}
-          </Alert>
-        )}
-        <div className="med-container">
-          <HomeFavoritesList
-            favorites={favorites}
-            setAlertText={setAlertText}
-            setAlertType={setAlertType}
-            handleAddFavorite={handleAddFavorite}
-            handleRemoveFavorite={handleRemoveFavorite}
-          />
-          {leftContainer()}
-        </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 };
