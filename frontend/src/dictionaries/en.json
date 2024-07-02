@@ -168,5 +168,20 @@
   "mediacentre.search.card.book.mark": "Signet",
   "mediacentre.search.card.moodle": "Parcours Moodle",
   "mediacentre.search.card.external.resources": "Ressource",
-  "mediacentre.load.more.items": "Chargement des éléments"
+  "mediacentre.load.more.items": "Chargement des éléments",
+
+  "mediacentre.modal.explorer.title": "L'appli Médiacentre fait peau neuve !",
+  "mediacentre.modal.explorer.prev": "Retour",
+  "mediacentre.modal.explorer.next": "Suivant",
+  "mediacentre.modal.explorer.trash.later": "Plus tard",
+  "mediacentre.modal.explorer.close": "Fermer",
+
+  "mediacentre.modal.explorer.screen1.alt": "Image écran 1",
+  "mediacentre.modal.explorer.screen1.text": "Votre application s’est refait une beauté ! L’interface de Médiacentre a changé, la navigation a été améliorée, les interactions ont été facilitées, tout ça pour apporter une expérience plus intuitive et agréable.",
+
+  "mediacentre.modal.explorer.screen2.alt": "Image écran 2",
+  "mediacentre.modal.explorer.screen2.text": "Une navigation pratique et épurée ! Elle a été pensée pour vous offrir un accès plus rapide et facile à toutes vos fonctionnalités préférées. Retrouvez tout ce dont vous avez besoin en un clin d'œil !",
+
+  "mediacentre.modal.explorer.screen3.alt": "Image écran 3",
+  "mediacentre.modal.explorer.screen3.text": "Retrouvez les ressources mises en avant par les documentalistes de votre établissement et votre collectivité !"
 }

@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 
 import { HomeList } from "~/components/home-lists/HomeList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
+import { ModalExplorer } from "~/components/modal-explorer/ModalExplorer";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
@@ -240,6 +241,7 @@ export const App = () => {
   return (
     <>
       <MainLayout />
+      <ModalExplorer />
       {alertText !== "" && (
         <Alert
           autoClose
