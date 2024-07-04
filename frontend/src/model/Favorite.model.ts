@@ -23,4 +23,5 @@ export interface Favorite extends Resource {
   orientation?: boolean;
   published?: boolean;
   collab?: boolean;
+  is_textbook?: boolean;
 } // fav can be any resource

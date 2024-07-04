@@ -375,23 +375,35 @@ public class GAR implements Source {
 
     @Override
     public JsonObject format(JsonObject resource) {
-        return new JsonObject()
-                .put("title", resource.getString("nomRessource"))
-                .put("editors", new JsonArray().add(resource.getString("nomEditeur")))
-                .put("authors", new JsonArray())
-                .put("image", resource.getString("urlVignette"))
-                .put("disciplines", getNames("domaineEnseignement", resource))
-                .put("levels", getNames("niveauEducatif", resource))
-                .put("document_types", getNames("typologieDocument", resource))
-                .put("link", resource.getString("urlAccesRessource"))
-                .put("source", GAR.class.getName())
-                .put("plain_text", createPlainText(resource))
-                .put("id", resource.getString("idRessource"))
-                .put("favorite", false)
-                .put("date", System.currentTimeMillis())
-                .put("structure_name", resource.getString("structure_name"))
-                .put("structure_uai", resource.getString("structure_uai"));
+        String pattern = queryPattern(config.getJsonArray("textbook_typology", new JsonArray()));
+        Pattern regexp = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        JsonObject type = resource.getJsonObject("typePresentation");
+        Matcher matcher = regexp.matcher(type.getString("code"));
+
+        JsonObject formattedResource = new JsonObject()
+            .put("title", resource.getString("nomRessource"))
+            .put("editors", new JsonArray().add(resource.getString("nomEditeur")))
+            .put("authors", new JsonArray())
+            .put("image", resource.getString("urlVignette"))
+            .put("disciplines", getNames("domaineEnseignement", resource))
+            .put("levels", getNames("niveauEducatif", resource))
+            .put("document_types", getNames("typologieDocument", resource))
+            .put("link", resource.getString("urlAccesRessource"))
+            .put("source", GAR.class.getName())
+            .put("plain_text", createPlainText(resource))
+            .put("id", resource.getString("idRessource"))
+            .put("favorite", false)
+            .put("date", System.currentTimeMillis())
+            .put("structure_name", resource.getString("structure_name"))
+            .put("structure_uai", resource.getString("structure_uai"));
+
+        if (matcher.find()) {
+            formattedResource.put("is_textbook", true);
+        }
+
+        return formattedResource;
     }
+
 
     private String createPlainText(JsonObject resource) {
         StringBuilder plain = new StringBuilder();

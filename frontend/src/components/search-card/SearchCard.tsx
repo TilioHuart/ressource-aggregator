@@ -47,7 +47,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         case "fr.openent.mediacentre.source.Signet":
           return SearchCardTypeEnum.book_mark;
         case "fr.openent.mediacentre.source.GAR":
-          if (searchResource?.document_types?.includes("livre numérique")) {
+          if (searchResource?.is_textbook) {
             return SearchCardTypeEnum.manuals;
           }
           return SearchCardTypeEnum.external_resources;

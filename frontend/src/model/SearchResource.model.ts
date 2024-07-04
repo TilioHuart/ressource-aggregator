@@ -18,4 +18,5 @@ export interface SearchResource {
   favoriteId?: string;
   structure_name?: string;
   structure_uai?: string;
+  is_textbook?: boolean;
 }

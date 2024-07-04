@@ -8,6 +8,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useTranslation } from "react-i18next";
 
+import { ResourceTitle } from "./resource-title/ResourceTitle";
 import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
@@ -137,7 +138,9 @@ export const Resource: React.FC<ResourceProps> = ({
         href={newLink !== "/" ? newLink : "/"}
         target="_blank"
       >
-        {!isBookMark() && <Card.Title>{title}</Card.Title>}
+        {!isBookMark() && (
+          <ResourceTitle type={type} title={title} resource={resource} />
+        )}
         {!isBookMark() && !isFavorite() && <Card.Text>{subtitle}</Card.Text>}
         <Card.Body space={"0"}>
           {image ? (

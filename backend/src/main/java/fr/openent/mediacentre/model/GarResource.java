@@ -8,6 +8,7 @@ public class GarResource extends Resource implements IModel<GarResource> {
     private String id;
     private String structureUai;
     private String structureName;
+    private Boolean isTextbook;
 
     public GarResource() {
         super();
@@ -18,6 +19,7 @@ public class GarResource extends Resource implements IModel<GarResource> {
         this.id = resource.getString(Field.ID, null);
         this.structureUai = resource.getString(Field.STRUCTURE_UAI, null);
         this.structureName = resource.getString(Field.STRUCTURE_NAME, null);
+        this.isTextbook = resource.getBoolean(Field.IS_TEXTBOOK, false);
     }
 
 
@@ -35,6 +37,10 @@ public class GarResource extends Resource implements IModel<GarResource> {
         return structureName;
     }
 
+    public Boolean getIsTextbook() {
+        return isTextbook;
+    }
+
 
     // Setter
 
@@ -50,6 +56,11 @@ public class GarResource extends Resource implements IModel<GarResource> {
 
     public GarResource setStructureName(String structureName) {
         this.structureName = structureName;
+        return this;
+    }
+
+    public GarResource setIsTextbook(Boolean isTextbook) {
+        this.isTextbook = isTextbook;
         return this;
     }
 

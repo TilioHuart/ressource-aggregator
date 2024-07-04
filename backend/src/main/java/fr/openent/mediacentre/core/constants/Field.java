@@ -32,6 +32,7 @@ public class Field {
     public static final String KO = "ko";
     public static final String ERROR = "error";
     public static final String EVENT = "event";
+    public static final String IS_TEXTBOOK = "is_textbook";
     public static final String TEXTBOOKS = "textbooks";
     public static final String TEXTBOOKS_RESULT = "textbooks_Result";
     public static final String STRUCTURE_UAI = "structure_uai";
