@@ -2,6 +2,7 @@ package fr.openent.mediacentre.service.impl;
 
 import com.mongodb.QueryBuilder;
 import fr.openent.mediacentre.core.constants.Field;
+import fr.openent.mediacentre.core.constants.MongoConstant;
 import fr.openent.mediacentre.core.constants.SourceConstant;
 import fr.openent.mediacentre.enums.Profile;
 import fr.openent.mediacentre.helper.FutureHelper;
@@ -99,7 +100,7 @@ public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implement
     public Future<Optional<GlobalResource>> updateGlobalChannel(String id, JsonObject resource) {
         Promise<Optional<GlobalResource>> promise = Promise.promise();
         JsonObject query = new JsonObject().put(Field._ID, id);
-        JsonObject update = new JsonObject().put(Field.MONGO_SET, resource);
+        JsonObject update = new JsonObject().put(MongoConstant.MONGO_SET, resource);
         mongo.update(collection, query, update, MongoDbResult.validResultHandler(IModelHelper.uniqueResultToIModel(promise, GlobalResource.class)));
         return promise.future();
     }
@@ -110,10 +111,10 @@ public class GlobalResourceServiceMongoImpl extends MongoDbCrudService implement
         JsonObject matcher = new JsonObject().put(SOURCE, SourceConstant.GLOBAL);
         JsonObject group = new JsonObject()
                 .put(_ID, (String) null)
-                .put(CAMEL_MAX_VALUE, new JsonObject().put(MONGO_MAX, MONGO_ID));
+                .put(CAMEL_MAX_VALUE, new JsonObject().put(MongoConstant.MONGO_MAX, MongoConstant.MONGO_ID));
         JsonArray pipeline = new JsonArray()
-                .add(new JsonObject().put(MONGO_MATCH, matcher))
-                .add(new JsonObject().put(MONGO_GROUP, group));
+                .add(new JsonObject().put(MongoConstant.MONGO_MATCH, matcher))
+                .add(new JsonObject().put(MongoConstant.MONGO_GROUP, group));
         JsonObject request = new JsonObject()
                 .put(AGGREGATE, collection)
                 .put(CAMEL_ALLOW_DISK_USE, true)

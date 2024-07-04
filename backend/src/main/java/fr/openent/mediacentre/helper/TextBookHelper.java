@@ -55,7 +55,7 @@ public class TextBookHelper {
         });
     }
 
-    private Future<JsonArray> getTextBooks(String userId) {
+    public Future<JsonArray> getTextBooks(String userId) {
         Promise<JsonArray> promise = Promise.promise();
         textBookService.get(userId, FutureHelper.handlerJsonArray(promise));
         return promise.future();

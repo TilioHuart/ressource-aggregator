@@ -13,13 +13,6 @@ public class Field {
     public static final String MEDIACENTRE_URL = "/mediacentre";
     public static final String UNIVERSALIS_ARK = "ark:/34885/wr0000001";
 
-    // Mongo fields
-    public static final String MONGO_SET = "$set";
-    public static final String MONGO_MATCH = "$match";
-    public static final String MONGO_GROUP = "$group";
-    public static final String MONGO_MAX = "$max";
-    public static final String MONGO_ID = "$id";
-
     // Other fields
     public static final String URL = "url";
     public static final String MEDIACENTREUPDATEFREQUENCY = "mediacentreUpdateFrequency";
@@ -30,6 +23,7 @@ public class Field {
     public static final String USER_ID = "user_id";
     public static final String SOURCE = "source";
     public static final String SOURCES = "sources";
+    public static final String QUERY = "query";
     public static final String JSONDATA = "jsondata";
     public static final String DATA = "data";
     public static final String STATE = "state";
@@ -42,12 +36,16 @@ public class Field {
     public static final String TEXTBOOKS_RESULT = "textbooks_Result";
     public static final String STRUCTURE_UAI = "structure_uai";
     public static final String STRUCTURE_NAME = "structure_name";
+    public static final String STRUCTUREIDS = "structureIds";
     public static final String LINK = "link";
     public static final String FAVORITE = "favorite";
     public static final String FAVORITEID = "favoriteId";
     public static final String RESOURCES = "resources";
     public static final String MESSAGE = "message";
     public static final String GLOBAL_COLLECTION = "mediacentre.global";
+    public static final String PINS_COLLECTION = "mediacentre.pins";
+    public static final String IDSTRUCTURE = "idStructure";
+    public static final String IDPIN = "idPin";
     public static final String TITLE = "title";
     public static final String PLAIN_TEXT = "plain_text";
     public static final String DATE = "date";
@@ -58,11 +56,18 @@ public class Field {
     public static final String LEVELS = "levels";
     public static final String DOCUMENT_TYPES = "document_types";
     public static final String DESCRIPTION = "description";
+    public static final String STRUCTURE_OWNER = "structure_owner";
+    public static final String STRUCTURES_CHILDREN = "structures_children";
+    public static final String PINNED_TITLE = "pinned_title";
+    public static final String PINNED_DESCRIPTION = "pinned_description";
     public static final String DOCUMENT_TYPES_GLOBAL = "Global";
     public static final String PROFILES = "profiles";
     public static final String GLOBAL_RESULT = "global_Result";
+    public static final String PINNED_RESULT = "pinned_result";
     public static final String GET = "get";
+    public static final String POST = "post";
     public static final String GLOBAL = "global";
+    public static final String PINNED = "pinned";
     public static final String PREPARED = "prepared";
     public static final String ACTION = "action";
     public static final String STATEMENT = "statement";

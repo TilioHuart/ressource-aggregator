@@ -6,8 +6,6 @@ import fr.openent.mediacentre.source.Source;
 import fr.openent.mediacentre.tasks.AmassTask;
 import fr.wseduc.cron.CronTrigger;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import org.entcore.common.http.BaseServer;
 import org.entcore.common.service.impl.SqlCrudService;
@@ -25,6 +23,8 @@ public class Mediacentre extends BaseServer {
     public static final String VIEW_RIGHT = "mediacentre.view";
     public static final String CREATION_RIGHT = "mediacentre.signets.creation";
     public static final String SIGNET_RIGHT = "mediacentre.signets";
+    public static final String PIN_VIEW_RIGHT = "mediacentre.pins.view";
+    public static final String PIN_CREATION_RIGHT = "mediacentre.pins.creation";
     public static final String GAR_RIGHT = "mediacentre.gar_ressources";
     public static String mediacentreSchema;
     public static JsonObject mediacentreConfig;
@@ -91,6 +91,7 @@ public class Mediacentre extends BaseServer {
         addController(new SearchController(eb, sources));
         addController(new TextBooksController(eb, sources));
         addController(new GlobalResourceController(eb));
+        addController(new PinsController(eb, sources));
         addController(signetController);
 
         if (this.config.getBoolean("elasticsearch", false)) {

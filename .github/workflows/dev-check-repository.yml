@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Run npm install
+      - name: Run pnpm install
         working-directory: ./frontend
         run: pnpm install
       - name: Check Quality Code
@@ -32,7 +32,7 @@ jobs:
         run: node_modules/gulp/bin/gulp.js build
       - name: Run test
         working-directory: ./angularJS
-        run: pnpm test
+        run: yarn test
 
   build-gradle-test:
     runs-on: ubuntu-latest
