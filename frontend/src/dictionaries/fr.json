@@ -167,7 +167,7 @@
   "mediacentre.search.card.moodle": "Parcours Moodle",
   "mediacentre.search.card.external.resources": "Ressource",
   "mediacentre.notification.copy": "Le lien a bien été copié dans le presse-papier.",
-  "mediacentre.notification.addFavorite": "La ressource a été ajouté aux favoris.",
-  "mediacentre.notification.removeFavorite": "La ressource a été retiré des favoris.",
+  "mediacentre.notification.addFavorite": "La ressource a été ajoutée aux favoris.",
+  "mediacentre.notification.removeFavorite": "La ressource a été retirée des favoris.",
   "mediacentre.load.more.items": "Chargement des éléments"
 }

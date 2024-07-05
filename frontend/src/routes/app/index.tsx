@@ -42,7 +42,8 @@ export const App = () => {
   const { homeSignets, setHomeSignets } = useSignet();
 
   const { textbooks, setTextbooks, refetchTextbooks } = useTextbook();
-  const { externalResources, setExternalResources } = useExternalResource();
+  const { externalResources, setExternalResources, refetchSearch } =
+    useExternalResource();
   const { globals } = useGlobal();
   const [externalsResourcesData, setExternalResourcesData] = useState<
     ExternalResource[] | GlobalResource[]
@@ -101,15 +102,38 @@ export const App = () => {
     setTextbooksData(updated);
   }, [textbooks, fetchFavoriteTextbook]);
 
+  const fetchFavoriteExternalResource = useCallback(() => {
+    if (externalResources && favorites) {
+      return externalResources.map((externalResource: ExternalResource) => {
+        const favorite = favorites.find(
+          (fav: Favorite) => fav.id === externalResource.id,
+        );
+        if (favorite) {
+          return { ...externalResource, favoriteId: favorite._id };
+        }
+        return externalResource;
+      });
+    } else {
+      return externalResources;
+    }
+  }, [externalResources, favorites]);
+
+  useEffect(() => {
+    const updated: ExternalResource[] | GlobalResource[] =
+      fetchFavoriteExternalResource();
+    setExternalResourcesData(updated);
+  }, [externalResources, fetchFavoriteExternalResource]);
+
   const handleAddFavorite = (resource: any) => {
-    resource.favorite = true;
     setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
     refetchAll();
+    resource.favorite = true;
   };
 
   const refetchAll = () => {
     refetchFavorite();
     refetchTextbooks();
+    refetchSearch();
   };
 
   const handleRemoveFavorite = (id: string | number) => {
