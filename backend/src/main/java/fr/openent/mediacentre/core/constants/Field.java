@@ -25,6 +25,7 @@ public class Field {
     public static final String MEDIACENTREUPDATEFREQUENCY = "mediacentreUpdateFrequency";
     public static final String _ID = "_id";
     public static final String ID = "id";
+    public static final String ID_RESSOURCE = "idRessource";
     public static final String USER = "user";
     public static final String USER_ID = "user_id";
     public static final String SOURCE = "source";
