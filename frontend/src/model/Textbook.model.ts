@@ -8,5 +8,4 @@ export interface Textbook extends Resource {
   structure_name: string;
   structure_uai: string;
   user?: string;
-  is_textbook: boolean;
 }
