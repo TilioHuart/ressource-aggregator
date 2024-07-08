@@ -1,14 +1,14 @@
 {
-  "name": "App",
-  "version": "1.0.0",
-  "description": "ENT App starting pack module.",
-  "homepage": "https://github.com/CGI-OPEN-ENT-NG/module-starting-pack-react#readme",
+  "name": "Mediacentre",
+  "version": "4.0.2",
+  "description": "Mediacentre",
+  "homepage": "https://github.com/OPEN-ENT-NG/ressource-aggregator#readme",
   "bugs": {
-    "url": "https://github.com/CGI-OPEN-ENT-NG/module-starting-pack-react/issues"
+    "url": "https://github.com/OPEN-ENT-NG/ressource-aggregator/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/CGI-OPEN-ENT-NG/module-starting-pack-react"
+    "url": "https://github.com/OPEN-ENT-NG/ressource-aggregator.git"
   },
   "license": "GPL-3.0",
   "type": "module",
