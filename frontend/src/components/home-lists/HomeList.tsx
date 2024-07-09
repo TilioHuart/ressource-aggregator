@@ -46,7 +46,7 @@ export const HomeList: React.FC<HomeListProps> = ({
       return "/mediacentre#/resources";
     }
     if (type === CardTypeEnum.favorites) {
-      return "/mediacentre?view=angular#/favorite";
+      return "/mediacentre#/favorites";
     }
     if (type === CardTypeEnum.book_mark) {
       return "/mediacentre?view=angular#/signet";

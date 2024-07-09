@@ -13,14 +13,14 @@ interface InfiniteScrollListProps {
   redirectLink: string;
   allResourcesDisplayed: Resource[] | null;
   setAlertText: (alertText: string) => void;
-  refetchSearch: () => void;
+  refetchData: () => void;
 }
 
 export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
   redirectLink,
   allResourcesDisplayed,
   setAlertText,
-  refetchSearch,
+  refetchData,
 }) => {
   const loaderRef = useRef(null);
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
                     searchResource={searchResource}
                     link={searchResource.link ?? searchResource.url ?? "/"}
                     setAlertText={setAlertText}
-                    refetchSearch={refetchSearch}
+                    refetchData={refetchData}
                   />
                 ))}
                 redirectLink={() => navigate(redirectLink)}

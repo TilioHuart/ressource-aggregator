@@ -38,6 +38,22 @@ const routes = [
     ],
   },
   {
+    path: "/favorites",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { FavoritePage } = await import("./favorites");
+          return {
+            Component: FavoritePage,
+          };
+        },
+      },
+    ],
+  },
+  {
     path: "/textbook",
     element: <Root />,
     errorElement: <ErrorPage />,

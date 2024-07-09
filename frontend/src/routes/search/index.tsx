@@ -103,7 +103,7 @@ export const Search: React.FC = () => {
               redirectLink="/search"
               allResourcesDisplayed={allResourcesDisplayed}
               setAlertText={setAlertText}
-              refetchSearch={refetchSearch}
+              refetchData={refetchSearch}
             />
           </div>
         </div>

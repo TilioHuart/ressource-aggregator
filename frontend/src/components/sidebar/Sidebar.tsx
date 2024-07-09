@@ -56,14 +56,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           name={`${t("mediacentre.sidebar.home")}`}
           selected={location.pathname === "/"}
         />
-        <a href="/mediacentre?view=angular#/favorite">
-          <SidebarIcon
-            action={() => {}}
-            icon={<StarIcon />}
-            name={`${t("mediacentre.sidebar.favorite")}`}
-            selected={location.pathname === "/favorites"}
-          />
-        </a>
+        <SidebarIcon
+          action={() => navigate("/favorites")}
+          icon={<StarIcon />}
+          name={`${t("mediacentre.sidebar.favorite")}`}
+          selected={location.pathname === "/favorites"}
+        />
         <SidebarIcon
           action={() => navigate("/textbook")}
           icon={<SchoolIcon />}

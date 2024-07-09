@@ -135,7 +135,7 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   return (
     <>
       <div className="med-filters">
-        {(page === "/search" || page === "/favorite") && (
+        {(page === "/search" || page === "/favorites") && (
           <>
             <Checkbox
               checked={checkboxTextbook}
@@ -171,7 +171,7 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
           checkboxOptions={disciplines ?? []}
           label="Disciplines"
         />
-        {(page === "/search" || page === "/favorite") && (
+        {(page === "/search" || page === "/favorites") && (
           <>
             <Checkbox
               checked={checkboxSignet}

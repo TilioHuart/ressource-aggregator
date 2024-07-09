@@ -88,7 +88,7 @@ export const ResourcePage: React.FC = () => {
               redirectLink="/resources"
               allResourcesDisplayed={allResourcesDisplayed}
               setAlertText={setAlertText}
-              refetchSearch={refetchSearch}
+              refetchData={refetchSearch}
             />
           </div>
         </div>

@@ -103,7 +103,7 @@ export const TextbookPage: React.FC = () => {
               redirectLink="/textbook"
               allResourcesDisplayed={allResourcesDisplayed}
               setAlertText={setAlertText}
-              refetchSearch={() => {
+              refetchData={() => {
                 refetchFavorite();
                 refetchTextbooks();
               }}

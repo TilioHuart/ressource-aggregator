@@ -119,17 +119,17 @@ export const App = () => {
     setExternalResourcesData(updated);
   }, [externalResources, fetchFavoriteExternalResource]);
 
-    const handleAddFavorite = (resource: any) => {
-        setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
-        refetchAll();
-        resource.favorite = true;
-    };
+  const handleAddFavorite = (resource: any) => {
+    setFavorites((prevFavorites: Favorite[]) => [...prevFavorites, resource]);
+    refetchAll();
+    resource.favorite = true;
+  };
 
-    const refetchAll = () => {
-        refetchFavorite();
-        refetchTextbooks();
-        refetchSearch();
-    };
+  const refetchAll = () => {
+    refetchFavorite();
+    refetchTextbooks();
+    refetchSearch();
+  };
 
   useEffect(() => {
     refetchFavorite();
