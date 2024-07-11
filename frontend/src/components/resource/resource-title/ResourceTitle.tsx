@@ -5,7 +5,7 @@ import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { SearchCardTypeEnum } from "~/core/enum/search-card-type.enum";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
-import { GlobalResource } from "~/model/GlobalResource";
+import { GlobalResource } from "~/model/GlobalResource.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 
@@ -30,14 +30,25 @@ export const ResourceTitle: React.FC<ResourceTitleProps> = ({
       }
       return IconMapping[SearchCardTypeEnum.external_resources];
     }
-    return IconMapping[type];
+    if (resource.source === "fr.openent.mediacentre.source.Signet") {
+      return IconMapping[SearchCardTypeEnum.book_mark];
+    }
   };
 
   const IconComponent = getIconComponent();
 
   return (
     <Card.Title>
-      {isFavorite && <IconComponent className="med-fav-title-icon" />}
+      {isFavorite &&
+        (resource.source === "fr.openent.mediacentre.source.Moodle" ? (
+          <img
+            src={IconMapping[SearchCardTypeEnum.moodle]}
+            alt={"mooodle"}
+            className="med-fav-title-icon"
+          />
+        ) : (
+          <IconComponent className="med-fav-title-icon" />
+        ))}
       {title}
     </Card.Title>
   );

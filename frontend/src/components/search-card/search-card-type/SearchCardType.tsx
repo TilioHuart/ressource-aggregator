@@ -18,7 +18,7 @@ export const SearchCardType: React.FC<SearchCardTypeProps> = ({ type }) => {
       {type === SearchCardTypeEnum.moodle ? (
         <img
           src={IconMapping[type]}
-          alt={t(`mediacentre.advanced.name.moodle`)}
+          alt={"moodle"}
           className="med-search-resource-icon"
         />
       ) : (
