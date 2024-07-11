@@ -24,14 +24,14 @@ interface SearchResourceProps {
   searchResource: SearchResource;
   link: string;
   setAlertText: (arg: string, type: AlertTypes) => void;
-  refetchSearch: () => void;
+  refetchData: () => void;
 }
 
 export const SearchCard: React.FC<SearchResourceProps> = ({
   searchResource,
   link,
   setAlertText,
-  refetchSearch,
+  refetchData,
 }) => {
   const [newLink, setNewLink] = useState<string>("");
   const { t } = useTranslation();
@@ -96,7 +96,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         });
       }
       setAlertText(t("mediacentre.notification.addFavorite"), "success");
-      refetchSearch();
+      refetchData();
     } catch (e) {
       console.error(e);
     }
@@ -122,7 +122,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         });
       }
       setAlertText(t("mediacentre.notification.removeFavorite"), "success");
-      refetchSearch();
+      refetchData();
     } catch (e) {
       console.error(e);
     }
