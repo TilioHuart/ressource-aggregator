@@ -151,6 +151,7 @@
   "mediacentre.card.unfavorite": "Retirer des favoris",
   "mediacentre.card.pin": "Epingler",
   "mediacentre.card.copy": "Copier le lien",
+  "mediacentre.card.offered.by.the.region": "Offert par la région",
   "mediacentre.sidebar.home": "Accueil",
   "mediacentre.sidebar.favorite": "Favoris",
   "mediacentre.sidebar.textbooks": "Manuels",
@@ -183,5 +184,6 @@
   "mediacentre.modal.explorer.screen2.text": "Une navigation pratique et épurée ! Elle a été pensée pour vous offrir un accès plus rapide et facile à toutes vos fonctionnalités préférées. Retrouvez tout ce dont vous avez besoin en un clin d'œil !",
 
   "mediacentre.modal.explorer.screen3.alt": "Image écran 3",
-  "mediacentre.modal.explorer.screen3.text": "Retrouvez les ressources mises en avant par les documentalistes de votre établissement et votre collectivité !"
+  "mediacentre.modal.explorer.screen3.text": "Retrouvez les ressources mises en avant par les documentalistes de votre établissement et votre collectivité !",
+  "mediacentre.pins.carousel.title": "Découvrez ces ressources !"
 }

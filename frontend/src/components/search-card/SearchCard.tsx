@@ -162,7 +162,8 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
                 className="med-search-resource-image"
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null;
-                  currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                  currentTarget.src =
+                    "/mediacentre/public/img/no-image-resource.png";
                 }}
               />
             )}

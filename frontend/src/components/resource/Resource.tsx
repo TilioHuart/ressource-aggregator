@@ -13,6 +13,7 @@ import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
 import { GlobalResource } from "~/model/GlobalResource.model";
+import { PinResource } from "~/model/PinResource.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 import {
@@ -21,7 +22,13 @@ import {
 } from "~/services/api/favorite.service";
 
 interface ResourceProps {
-  resource: Signet | Favorite | Textbook | ExternalResource | GlobalResource;
+  resource:
+    | Signet
+    | Favorite
+    | Textbook
+    | ExternalResource
+    | GlobalResource
+    | PinResource;
   id: string | number;
   image: string;
   title: string;
@@ -150,12 +157,13 @@ export const Resource: React.FC<ResourceProps> = ({
               className="med-resource-image"
               onError={({ currentTarget }) => {
                 currentTarget.onerror = null;
-                currentTarget.src = "/mediacentre/public/img/no-avatar.svg";
+                currentTarget.src =
+                  "/mediacentre/public/img/no-image-resource.png";
               }}
             />
           ) : (
             <img
-              src="/mediacentre/public/img/no-avatar.svg"
+              src="/mediacentre/public/img/no-image-resource.png"
               alt="Resource"
               className="med-resource-image"
             />

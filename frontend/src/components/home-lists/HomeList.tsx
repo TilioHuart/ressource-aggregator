@@ -25,7 +25,8 @@ interface HomeListProps {
   setAlertType: (arg: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
   handleRemoveFavorite: (id: string | number) => void;
-  double?: boolean;
+  isDouble?: boolean;
+  isPinsEmpty: boolean;
 }
 
 export const HomeList: React.FC<HomeListProps> = ({
@@ -35,7 +36,8 @@ export const HomeList: React.FC<HomeListProps> = ({
   setAlertType,
   handleAddFavorite,
   handleRemoveFavorite,
-  double,
+  isDouble,
+  isPinsEmpty,
 }) => {
   const { t } = useTranslation();
   const redirectLink = () => {
@@ -65,7 +67,9 @@ export const HomeList: React.FC<HomeListProps> = ({
   return (
     <div
       className={
-        double || type === CardTypeEnum.favorites ? "" : "med-double-list"
+        isDouble || type === CardTypeEnum.favorites
+          ? "med-simple-list"
+          : "med-double-list"
       }
     >
       <ListCard
@@ -83,7 +87,10 @@ export const HomeList: React.FC<HomeListProps> = ({
             <Resource
               id={resource?.id ?? ""}
               key={resource.id}
-              image={resource?.image ?? "/mediacentre/public/img/no-avatar.svg"}
+              image={
+                resource?.image ??
+                "/mediacentre/public/img/no-image-resource.png"
+              }
               title={resource?.title}
               subtitle={
                 type === CardTypeEnum.favorites
@@ -124,7 +131,8 @@ export const HomeList: React.FC<HomeListProps> = ({
           ),
         )}
         redirectLink={redirectLink()}
-        homeDouble={double}
+        homeDouble={isDouble}
+        isPinsEmpty={isPinsEmpty}
       />
     </div>
   );

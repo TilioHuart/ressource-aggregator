@@ -29,6 +29,7 @@ interface ListCardProps {
   components?: any[];
   redirectLink: string | NavigateFunction;
   homeDouble?: boolean;
+  isPinsEmpty?: boolean;
 }
 
 export const ListCard: React.FC<ListCardProps> = ({
@@ -37,6 +38,7 @@ export const ListCard: React.FC<ListCardProps> = ({
   components,
   redirectLink,
   homeDouble = false,
+  isPinsEmpty = true,
 }) => {
   const { t } = useTranslation();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -61,7 +63,7 @@ export const ListCard: React.FC<ListCardProps> = ({
     if (windowWidth < breakpoints.md) return nbComponent.sm * double;
     if (windowWidth < breakpoints.lg) return nbComponent.md * double;
     if (windowWidth < breakpoints.xl) return nbComponent.lg * double;
-    return nbComponent.xl * double;
+    return (nbComponent.xl - (isPinsEmpty ? 0 : 2)) * double; // we remove 2 components if pins are not empty
   };
 
   const NbColumns = (windowWidth: number) => {

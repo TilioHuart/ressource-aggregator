@@ -5,6 +5,7 @@ import { ID } from "edifice-ts-client";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
+import { PinsCarousel } from "../../components/pins-carousel/PinsCarousel";
 import { HomeList } from "~/components/home-lists/HomeList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { ModalExplorer } from "~/components/modal-explorer/ModalExplorer";
@@ -12,6 +13,7 @@ import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useGlobal } from "~/hooks/useGlobal";
+import { usePin } from "~/hooks/usePin.ts";
 import { useSignet } from "~/hooks/useSignet";
 import { useTextbook } from "~/hooks/useTextbook";
 import { ExternalResource } from "~/model/ExternalResource.model";
@@ -45,11 +47,19 @@ export const App = () => {
   const { externalResources, setExternalResources, refetchSearch } =
     useExternalResource();
   const { globals } = useGlobal();
+  const { pins } = usePin(
+    (user?.structures.length ? user?.structures[0] : "") ?? "",
+  ); // first structure
+  const [pinsEmpty, setPinsEmpty] = useState<boolean>(true);
   const [externalResourcesData, setExternalResourcesData] = useState<
     (ExternalResource | GlobalResource)[] | null
   >(null);
   const [textbooksData, setTextbooksData] = useState<Textbook[] | null>(null);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    setPinsEmpty(!pins || pins.length === 0);
+  }, [pins]);
 
   useEffect(() => {
     let newExternalResourcesData: ExternalResource[] = [];
@@ -257,7 +267,8 @@ export const App = () => {
         </Alert>
       )}
       <div className="med-container">
-        <div className="med-fav-container">
+        <div id="pinId">{!pinsEmpty && <PinsCarousel pins={pins} />}</div>
+        <div id="favoriteId">
           <HomeList
             resources={favorites}
             type={CardTypeEnum.favorites}
@@ -265,9 +276,13 @@ export const App = () => {
             setAlertType={setAlertType}
             handleAddFavorite={handleAddFavorite}
             handleRemoveFavorite={handleRemoveFavorite}
+            isPinsEmpty={true}
           />
         </div>
-        <div className="med-resources-container">
+        <div
+          className="med-resources-container"
+          id={pinsEmpty ? "resourcesId" : "resourcesWithPinsId"}
+        >
           {resourcesList().length === 0 ? (
             // empty state
             <div className="empty-state">
@@ -289,7 +304,8 @@ export const App = () => {
                 setAlertType={setAlertType}
                 handleAddFavorite={handleAddFavorite}
                 handleRemoveFavorite={handleRemoveFavorite}
-                double={double()}
+                isDouble={double()}
+                isPinsEmpty={pinsEmpty}
               />
             ))
           )}

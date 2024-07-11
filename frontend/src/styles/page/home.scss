@@ -21,16 +21,30 @@ main {
   margin-left: 75px;
   padding: 0 15px;
   background-color: $med-light-gray;
-  display: flex;
-  flex-direction: column;
-  @media (min-width: $xl) {
-    flex-direction: row-reverse;
-  }
+  display: grid;
+  grid-template-columns: 100%;
 
-  .med-fav-container {
-    width: 100%;
-    @media (min-width: $xl) {
-      width: 30%;
+  @media (min-width: $xl) {
+    grid-template-columns: 70% 30%;
+    grid-template-rows: 300px 600px;
+    #pinId {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
+    #favoriteId {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    #resourcesId {
+      grid-row: 1;
+      grid-column: 1;
+    }
+
+    #resourcesWithPinsId {
+      grid-row: 2;
+      grid-column: 1;
     }
   }
 
@@ -38,9 +52,6 @@ main {
     width: 100%;
     display: flex;
     justify-content: center;
-    @media (min-width: $xl) {
-      width: 70%;
-    }
     @media (max-width: $lg) {
       flex-direction: column;
     }

@@ -1,0 +1,58 @@
+@import "../../styles/_colors.scss";
+@import "../../styles/breakpoints.scss";
+
+.med-carousel {
+  width: calc(100% - 20px);
+  background-color: $med-white;
+  padding: 10px;
+  margin: 10px 10px 0 10px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 3px 0px #0000001f;
+
+  .title {
+    margin-bottom: 10px;
+  }
+
+  .med-splide-track {
+    margin: 0 4rem;
+    padding-bottom: 3rem;
+
+    @media (max-width: $md) {
+      padding-bottom: 5rem;
+    }
+
+    .splide__slide {
+      padding: 5px; // to see shadow
+    }
+  }
+
+  .med-carousel-arrow {
+    height: 3.5rem;
+    width: 3.5rem;
+    color: $med-blue;
+    background: none;
+
+    &:hover {
+      background: $med-light-gray;
+    }
+  }
+  .splide__arrow--prev {
+    left: 0px;
+  }
+
+  .splide__arrow--next {
+    right: 0px;
+  }
+
+  .med-pagination {
+    margin: 2rem 0 0 0;
+  }
+
+  .splide__pagination__page {
+    background: #d9d9d9;
+
+    &.is-active {
+      background: $med-blue;
+    }
+  }
+}

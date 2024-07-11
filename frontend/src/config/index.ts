@@ -14,3 +14,7 @@ export const rights = {
     right: "fr-cgi-todoapp-controllers-TodoappController|delete",
   },
 };
+
+export const hatStructures = {
+  crna: "8df49fdb-faf4-4f7f-8425-414a6d5f25ff",
+};

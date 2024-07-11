@@ -54,6 +54,7 @@
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@reduxjs/toolkit": "^2.0.1",
+    "@splidejs/react-splide": "^0.7.8",
     "dayjs": "1.11.10",
     "i18next": "23.5.1",
     "i18next-http-backend": "2.2.2",
