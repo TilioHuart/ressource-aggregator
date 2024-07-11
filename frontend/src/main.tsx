@@ -12,6 +12,8 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 
+import { AlertProvider } from "./providers/AlertProvider";
+import { ModalProvider } from "./providers/ModalsProvider";
 import { router } from "./routes";
 import { setupStore } from "./store";
 
@@ -50,7 +52,11 @@ root.render(
         }}
       >
         <ThemeProvider>
-          <RouterProvider router={router} />
+          <AlertProvider>
+            <ModalProvider>
+              <RouterProvider router={router} />
+            </ModalProvider>
+          </AlertProvider>
         </ThemeProvider>
       </OdeClientProvider>
     </Provider>

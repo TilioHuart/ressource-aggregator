@@ -1,4 +1,4 @@
-import { useGetPinsQuery } from "../services/api/pin.service.ts";
+import { useGetPinsQuery } from "../services/api/pin.service";
 
 export const usePin = (idStructure: string) => {
   const {

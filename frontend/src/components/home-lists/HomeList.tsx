@@ -1,4 +1,4 @@
-import { AlertTypes, LoadingScreen } from "@edifice-ui/react";
+import { LoadingScreen } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 
 import { ListCard } from "../list-card/ListCard";
@@ -21,8 +21,6 @@ interface HomeListProps {
     | Signet[]
     | null;
   type: CardTypeEnum;
-  setAlertText: (arg: string) => void;
-  setAlertType: (arg: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
   handleRemoveFavorite: (id: string | number) => void;
   isDouble?: boolean;
@@ -32,8 +30,6 @@ interface HomeListProps {
 export const HomeList: React.FC<HomeListProps> = ({
   resources,
   type,
-  setAlertText,
-  setAlertType,
   handleAddFavorite,
   handleRemoveFavorite,
   isDouble,
@@ -108,10 +104,6 @@ export const HomeList: React.FC<HomeListProps> = ({
               }
               favorite={resource.favorite}
               link={resource?.link ?? resource?.url ?? "/"}
-              setAlertText={(arg: string, type: AlertTypes) => {
-                setAlertText(arg);
-                setAlertType(type);
-              }}
               {...(type === CardTypeEnum.book_mark && {
                 shared: (resource as Signet).shared ?? false,
                 footerImage: (resource as Signet).owner_id

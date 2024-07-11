@@ -10,10 +10,10 @@ import { useTranslation } from "react-i18next";
 import { PinsCarouselCard } from "./pins-carousel-card/PinsCarouselCard";
 import "@splidejs/react-splide/css";
 import "./PinsCarousel.scss";
-import { PinResource } from "~/model/PinResource.model";
+import { Pin } from "~/model/Pin.model";
 
 interface PinsCarouselProps {
-  pins: PinResource[];
+  pins: Pin[];
 }
 
 export const PinsCarousel: React.FC<PinsCarouselProps> = ({ pins }) => {
@@ -50,7 +50,7 @@ export const PinsCarousel: React.FC<PinsCarouselProps> = ({ pins }) => {
         <SplideTrack className="med-splide-track">
           {pins.map((pin, index) => (
             <SplideSlide key={index} className="">
-              <PinsCarouselCard pin={pin} />
+              <PinsCarouselCard pin={pin} link={pin?.link ?? pin?.url ?? ""} />
             </SplideSlide>
           ))}
         </SplideTrack>

@@ -1,0 +1,35 @@
+@import "../../styles/_colors.scss";
+
+.med-modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  .med-modal-image {
+    width: 25%;
+    padding: 0 1rem;
+  }
+
+  .med-modal-content {
+    width: 75%;
+
+    div:not(:first-child) {
+      margin-top: 1rem;
+    }
+
+    .med-red {
+      color: red;
+      font-weight: 700;
+    }
+
+    .med-optional {
+      color: $med-secondary-gray;
+      font-style: italic;
+    }
+  }
+}
+
+.med-delete-pin {
+  margin-right: auto;
+}

@@ -4,6 +4,7 @@ import "./Resource.scss";
 import { AlertTypes, Card } from "@edifice-ui/react";
 import { Tooltip } from "@edifice-ui/react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import PinIcon from "@mui/icons-material/PushPin";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useTranslation } from "react-i18next";
@@ -13,9 +14,12 @@ import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
 import { GlobalResource } from "~/model/GlobalResource.model";
-import { PinResource } from "~/model/PinResource.model";
+import { Pin } from "~/model/Pin.model";
+import { SearchResource } from "~/model/SearchResource.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
+import { useAlertProvider } from "~/providers/AlertProvider";
+import { useModalProvider } from "~/providers/ModalsProvider";
 import {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
@@ -28,7 +32,7 @@ interface ResourceProps {
     | Textbook
     | ExternalResource
     | GlobalResource
-    | PinResource;
+    | Pin;
   id: string | number;
   image: string;
   title: string;
@@ -39,7 +43,6 @@ interface ResourceProps {
   link: string;
   footerImage?: string;
   shared?: boolean;
-  setAlertText: (arg: string, type: AlertTypes) => void;
   handleAddFavorite: (resource: any) => void;
   handleRemoveFavorite: (id: string | number) => void;
 }
@@ -56,7 +59,6 @@ export const Resource: React.FC<ResourceProps> = ({
   shared = false,
   link,
   footerImage,
-  setAlertText,
   handleAddFavorite,
   handleRemoveFavorite,
 }) => {
@@ -64,14 +66,23 @@ export const Resource: React.FC<ResourceProps> = ({
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const { t } = useTranslation();
+  const { setAlertText, setAlertType } = useAlertProvider();
+  const { setModalResource, setIsCreatedOpen } = useModalProvider();
+
+  const notify = (message: string, type: AlertTypes) => {
+    setAlertText(message);
+    setAlertType(type);
+  };
+
   const copy = () => {
     if (navigator?.clipboard) {
       navigator.clipboard.writeText(link);
     } else {
       console.error("Clipboard not available");
     }
-    setAlertText(t("mediacentre.notification.copy"), "success");
+    notify(t("mediacentre.notification.copy"), "success");
   };
+
   const fav = async () => {
     try {
       if (
@@ -87,12 +98,13 @@ export const Resource: React.FC<ResourceProps> = ({
       } else {
         await addFavorite({ id: resource._id, resource });
       }
-      setAlertText(t("mediacentre.notification.addFavorite"), "success");
+      notify(t("mediacentre.notification.addFavorite"), "success");
       handleAddFavorite(resource);
     } catch (e) {
       console.error(e);
     }
   };
+
   const unfav = async () => {
     try {
       if (
@@ -112,10 +124,17 @@ export const Resource: React.FC<ResourceProps> = ({
           source: resource?.source,
         });
       }
-      setAlertText(t("mediacentre.notification.removeFavorite"), "success");
+      notify(t("mediacentre.notification.removeFavorite"), "success");
       handleRemoveFavorite(id);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const pin = () => {
+    if (resource && type !== CardTypeEnum.favorites) {
+      setModalResource(resource as SearchResource);
+      setIsCreatedOpen(true);
     }
   };
 
@@ -186,7 +205,7 @@ export const Resource: React.FC<ResourceProps> = ({
                 className="med-resource-footer-image"
               />
               <span className="med-footer-text-text">
-                Signet de la plateforme
+                {t("mediacentre.signets.platform")}
               </span>
             </div>
           ) : (
@@ -205,6 +224,11 @@ export const Resource: React.FC<ResourceProps> = ({
           )
         ) : null}
         <div className="med-footer-svg">
+          {type !== CardTypeEnum.favorites && (
+            <Tooltip message={t("mediacentre.card.pin")} placement="top">
+              <PinIcon className="med-pin" onClick={() => pin()} />
+            </Tooltip>
+          )}
           <Tooltip message={t("mediacentre.card.copy")} placement="top">
             <ContentCopyIcon className="med-link" onClick={() => copy()} />
           </Tooltip>

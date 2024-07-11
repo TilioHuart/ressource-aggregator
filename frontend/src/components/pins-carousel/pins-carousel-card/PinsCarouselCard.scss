@@ -4,9 +4,15 @@
   display: flex;
   padding: 10px 10px 5px 10px;
   height: auto;
+
+  .med-link-card-pin {
+    color: currentColor;
+  }
+
   .card-title {
     margin: 0px;
   }
+
   .card-text {
     line-height: 1.5rem;
     display: -webkit-box;
@@ -21,6 +27,7 @@
     justify-content: center;
     align-items: center;
     height: 100px;
+
     .med-pin-image {
       padding: 2px;
       max-width: 100%;

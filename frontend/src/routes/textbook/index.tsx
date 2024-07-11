@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { Alert, AlertTypes } from "@edifice-ui/react";
+import { Alert } from "@edifice-ui/react";
 import SchoolIcon from "@mui/icons-material/School";
 import { useTranslation } from "react-i18next";
 
@@ -8,16 +8,17 @@ import { FilterLayout } from "~/components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
+import { CreatePins } from "~/components/modals/create-pins/CreatePins";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useTextbook } from "~/hooks/useTextbook";
 import { Favorite } from "~/model/Favorite.model";
 import { Resource } from "~/model/Resource.model";
 import { Textbook } from "~/model/Textbook.model";
+import { useAlertProvider } from "~/providers/AlertProvider";
 
 export const TextbookPage: React.FC = () => {
   const { t } = useTranslation();
-  const [alertText, setAlertText] = useState<string>("");
-  const [alertType, setAlertType] = useState<AlertTypes>("success");
+  const { alertType, alertText, setAlertText } = useAlertProvider();
   const { textbooks, refetchTextbooks } = useTextbook();
   const [textbooksData, setTextbooksData] = useState<Resource[] | null>(null);
   const { favorites, refetchFavorite } = useFavorite();
@@ -73,10 +74,7 @@ export const TextbookPage: React.FC = () => {
           autoCloseDelay={3000}
           isDismissible
           isToast
-          onClose={() => {
-            setAlertText("");
-            setAlertType("success");
-          }}
+          onClose={() => setAlertText("")}
           position="top-right"
           type={alertType}
           className="med-alert"
@@ -84,6 +82,7 @@ export const TextbookPage: React.FC = () => {
           {alertText}
         </Alert>
       )}
+      <CreatePins refetch={() => {}} />
       <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">
@@ -102,7 +101,6 @@ export const TextbookPage: React.FC = () => {
             <InfiniteScrollList
               redirectLink="/textbook"
               allResourcesDisplayed={allResourcesDisplayed}
-              setAlertText={setAlertText}
               refetchData={() => {
                 refetchFavorite();
                 refetchTextbooks();
