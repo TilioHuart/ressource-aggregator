@@ -10,6 +10,8 @@ import {
 // import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PushPinIcon from "@mui/icons-material/PushPin";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
 
 import { Pin } from "~/model/Pin.model";
@@ -55,6 +57,54 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
       console.error("Clipboard not available");
     }
     notify(t("mediacentre.notification.copy"), "success");
+  };
+
+  const fav = async () => {
+    try {
+      if (
+        pin.source === "fr.openent.mediacentre.source.Signet" ||
+        pin.source === "fr.openent.mediacentre.source.GlobalResource"
+      ) {
+        const newId = parseInt(pin.id as string);
+        const newPinResource = {
+          ...pin,
+          id: newId,
+        };
+        await addFavorite({ id: newId, resource: newPinResource });
+      } else {
+        await addFavorite({ id: undefined, resource: pin });
+      }
+      notify(t("mediacentre.notification.addFavorite"), "success");
+      handleAddFavorite(pin);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const unfav = async () => {
+    try {
+      if (
+        pin.source === "fr.openent.mediacentre.source.Signet" ||
+        pin.source === "fr.openent.mediacentre.source.GlobalResource"
+      ) {
+        const newId = pin.id
+          ? parseInt(pin.id.toString())
+          : pin.id;
+        await removeFavorite({
+          id: newId,
+          source: pin?.source,
+        });
+      } else {
+        await removeFavorite({
+          id: pin.favoriteId ?? pin._id,
+          source: pin?.source,
+        });
+      }
+      notify(t("mediacentre.notification.removeFavorite"), "success");
+      handleRemoveFavorite(pin.id);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const edit = () => {
@@ -122,6 +172,21 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
           <Tooltip message={t("mediacentre.card.copy")} placement="top">
             <ContentCopyIcon className="med-link" onClick={() => copy()} />
           </Tooltip>
+          {pin.source !==
+          "fr.openent.mediacentre.source.GlobalResource" ? (
+            pin.favorite ? (
+              <Tooltip
+                message={t("mediacentre.card.unfavorite")}
+                placement="top"
+              >
+                <StarIcon className="med-star" onClick={() => unfav()} />
+              </Tooltip>
+            ) : (
+              <Tooltip message={t("mediacentre.card.favorite")} placement="top">
+                <StarBorderIcon className="med-star" onClick={() => fav()} />
+              </Tooltip>
+            )
+          ) : null}
         </div>
       </Card.Footer>
     </Card>

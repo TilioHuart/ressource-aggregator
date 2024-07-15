@@ -10,7 +10,9 @@ import fr.openent.mediacentre.model.PinResource;
 import fr.openent.mediacentre.model.SignetResource;
 import fr.openent.mediacentre.service.PinsService;
 import fr.openent.mediacentre.service.SignetService;
+import fr.openent.mediacentre.service.FavoriteService;
 import fr.openent.mediacentre.source.Source;
+import fr.openent.mediacentre.source.GAR;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Future;
@@ -37,10 +39,12 @@ public class DefaultPinsService implements PinsService {
     private final MongoDb mongo;
     private static final Logger log = LoggerFactory.getLogger(DefaultPinsService.class);
     private final SignetService signetService;
+    private final FavoriteService favoriteService = new DefaultFavoriteService();
 
     private final TextBookHelper textBookHelper = new TextBookHelper();
     private final SearchHelper searchHelper = new SearchHelper();
     private final SignetHelper signetHelper = new SignetHelper();
+    private final FavoriteHelper favoriteHelper = new FavoriteHelper();
 
     public DefaultPinsService(String collection) {
         this.collection = collection;
@@ -160,6 +164,8 @@ public class DefaultPinsService implements PinsService {
         JsonArray data = new JsonArray();
         JsonArray searchSources = new JsonArray().add(SourceConstant.MOODLE).add(SourceConstant.GAR);
         JsonObject searchQuery = new JsonObject().put(Field.QUERY, ".*");
+        Future<JsonArray> getFavoritesResourcesFuture = getFavorite(GAR.class.getName(), user.getUserId());
+        System.out.println("Get favorites resources future: " + getFavoritesResourcesFuture);
         textBookHelper.getTextBooks(user.getUserId())
             .recover(error -> {
                 log.error("Error while retrieving GAR resources: " + error.getMessage());
@@ -201,8 +207,22 @@ public class DefaultPinsService implements PinsService {
                 }
                 return enrichResources(resources, data);
             })
+            .compose(enrichedResources -> {
+                if (enrichedResources != null && !enrichedResources.isEmpty()) {
+                    System.out.println("Enriched resources: " + enrichedResources);
+                    favoriteHelper.matchFavorite(getFavoritesResourcesFuture, enrichedResources);
+                    System.out.println("Enriched resources after favorite: " + enrichedResources);
+                }
+                return Future.succeededFuture(enrichedResources);
+            })
             .onSuccess(promise::complete)
             .onFailure(error -> promise.fail(error.getMessage()));
+        return promise.future();
+    }
+
+    private Future<JsonArray> getFavorite(String source, String userId) {
+        Promise<JsonArray> promise = Promise.promise();
+        favoriteService.get(source.getClass().getName(), userId, FutureHelper.handlerJsonArray(promise));
         return promise.future();
     }
 

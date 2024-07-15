@@ -22,6 +22,8 @@ public class FavoriteHelper {
     public void matchFavorite(Future<JsonArray> favoritesResourcesFuture, JsonArray resourcesArray) {
         for (int i = 0; i < resourcesArray.size(); i++) {
             for (int j = 0; j < favoritesResourcesFuture.result().size(); j++) {
+                System.out.println(resourcesArray.getJsonObject(i).getString("id"));
+                System.out.println(favoritesResourcesFuture.result().getJsonObject(j).getString("id"));
                 if (resourcesArray.getJsonObject(i).getString("id")
                         .equals(favoritesResourcesFuture.result().getJsonObject(j).getString("id"))) {
                     resourcesArray.getJsonObject(i).put("favorite", true);

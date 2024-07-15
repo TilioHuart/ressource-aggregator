@@ -9,6 +9,7 @@ export interface Pin {
   link?: string;
   url?: string;
   image?: string;
+  favorite?: boolean;
   is_textbook?: boolean;
   is_pinned?: boolean;
 }

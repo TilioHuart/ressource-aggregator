@@ -140,10 +140,12 @@ export const App = () => {
     refetchFavorite();
     refetchTextbooks();
     refetchSearch();
+    refetchPins();
   };
 
   useEffect(() => {
     refetchFavorite();
+    refetchPins();
   }, [location, refetchFavorite]);
 
   const handleRemoveFavorite = (id: string | number) => {
