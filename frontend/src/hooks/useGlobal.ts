@@ -14,12 +14,14 @@ export const useGlobal = () => {
   const { favorites } = useFavorite();
 
   useEffect(() => {
+    let globalData: GlobalResource[] = global?.data?.global ?? [];
     if (favorites && global) {
-      let globalData: GlobalResource[] = global?.data?.global ?? [];
       globalData = globalData.map((global: GlobalResource) => ({
         ...global,
         favorite: favorites.some((fav: Favorite) => fav._id === global._id),
       }));
+    }
+    if (pins) {
       globalData = globalData.map((global: GlobalResource) => ({
         ...global,
         is_pinned: pins.some(
@@ -28,8 +30,8 @@ export const useGlobal = () => {
             pin.source === "fr.openent.mediacentre.source.GAR",
         ),
       }));
-      setGlobals(globalData);
     }
+    setGlobals(globalData);
   }, [global, favorites, pins]);
 
   return { globals, setGlobals, error, isLoading };

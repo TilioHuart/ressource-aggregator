@@ -19,13 +19,14 @@ export const useTextbook = () => {
   const { favorites } = useFavorite();
 
   useEffect(() => {
+    let textbookData: Textbook[] = textbook?.data?.textbooks ?? [];
     if (favorites) {
-      let textbookData: Textbook[] = textbook?.data?.textbooks ?? [];
       textbookData = textbookData.map((textbook: Textbook) => ({
         ...textbook,
         favorite: favorites.some((fav: Favorite) => fav.id === textbook.id),
       }));
-
+    }
+    if (pins) {
       textbookData = textbookData.map((textbook: Textbook) => ({
         ...textbook,
         is_pinned: pins.some(
@@ -34,8 +35,8 @@ export const useTextbook = () => {
             pin.source === "fr.openent.mediacentre.source.GAR",
         ),
       }));
-      setTextbooks(textbookData);
     }
+    setTextbooks(textbookData);
   }, [textbook, favorites, pins]);
 
   return {
