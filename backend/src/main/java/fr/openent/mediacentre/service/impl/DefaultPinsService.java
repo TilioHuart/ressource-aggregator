@@ -11,11 +11,14 @@ import fr.openent.mediacentre.model.SignetResource;
 import fr.openent.mediacentre.service.PinsService;
 import fr.openent.mediacentre.service.SignetService;
 import fr.openent.mediacentre.service.FavoriteService;
+import fr.openent.mediacentre.service.impl.DefaultFavoriteService;
 import fr.openent.mediacentre.source.Source;
 import fr.openent.mediacentre.source.GAR;
+import fr.openent.mediacentre.source.Signet;
 import fr.wseduc.mongodb.MongoDb;
 import fr.wseduc.webutils.Either;
 import io.vertx.core.Future;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerRequest;
@@ -164,8 +167,7 @@ public class DefaultPinsService implements PinsService {
         JsonArray data = new JsonArray();
         JsonArray searchSources = new JsonArray().add(SourceConstant.MOODLE).add(SourceConstant.GAR);
         JsonObject searchQuery = new JsonObject().put(Field.QUERY, ".*");
-        Future<JsonArray> getFavoritesResourcesFuture = getFavorite(GAR.class.getName(), user.getUserId());
-        System.out.println("Get favorites resources future: " + getFavoritesResourcesFuture);
+        Future<JsonArray> getFavoritesResourcesFuture = getAllFavorites(user.getUserId());
         textBookHelper.getTextBooks(user.getUserId())
             .recover(error -> {
                 log.error("Error while retrieving GAR resources: " + error.getMessage());
@@ -209,9 +211,7 @@ public class DefaultPinsService implements PinsService {
             })
             .compose(enrichedResources -> {
                 if (enrichedResources != null && !enrichedResources.isEmpty()) {
-                    System.out.println("Enriched resources: " + enrichedResources);
                     favoriteHelper.matchFavorite(getFavoritesResourcesFuture, enrichedResources);
-                    System.out.println("Enriched resources after favorite: " + enrichedResources);
                 }
                 return Future.succeededFuture(enrichedResources);
             })
@@ -220,10 +220,21 @@ public class DefaultPinsService implements PinsService {
         return promise.future();
     }
 
-    private Future<JsonArray> getFavorite(String source, String userId) {
+    private Future<JsonArray> getFavoritesFromSource(String source, String userId) {
         Promise<JsonArray> promise = Promise.promise();
-        favoriteService.get(source.getClass().getName(), userId, FutureHelper.handlerJsonArray(promise));
+        favoriteService.get(source, userId, FutureHelper.handlerJsonArray(promise));
         return promise.future();
+    }
+
+    private Future<JsonArray> getAllFavorites(String userId) {
+        Future<JsonArray> garFavorites = getFavoritesFromSource(GAR.class.getName(), userId);
+        Future<JsonArray> signetFavorites = getFavoritesFromSource(Signet.class.getName(), userId);
+        return CompositeFuture.all(garFavorites, signetFavorites).map(composite -> {
+            JsonArray combinedArray = new JsonArray();
+            combinedArray.addAll(garFavorites.result());
+            combinedArray.addAll(signetFavorites.result());
+            return combinedArray;
+        });
     }
 
     private Future<JsonArray> retrieveMySignets(UserInfos user) {
