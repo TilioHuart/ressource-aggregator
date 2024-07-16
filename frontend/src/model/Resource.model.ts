@@ -10,4 +10,5 @@ export interface Resource {
   source: string;
   title: string;
   is_textbook?: boolean;
+  is_pinned?: boolean;
 }

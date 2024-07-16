@@ -13,10 +13,12 @@ import { useExternalResource } from "~/hooks/useExternalResource";
 import { useGlobal } from "~/hooks/useGlobal";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const ResourcePage: React.FC = () => {
   const { user } = useUser();
   const { t } = useTranslation();
+  const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
 
   const { globals } = useGlobal();
@@ -68,7 +70,7 @@ export const ResourcePage: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <CreatePins refetch={() => {}} />
+      <CreatePins refetch={refetchPins} />
       <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">

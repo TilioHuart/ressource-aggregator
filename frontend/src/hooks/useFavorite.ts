@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 
 import { Favorite } from "./../model/Favorite.model";
 import { useGetFavoriteQuery } from "./../services/api/favorite.service";
+import { Pin } from "~/model/Pin.model";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const useFavorite = () => {
+  const { pins } = usePinProvider();
   const {
     data: favorite,
     error,
@@ -20,9 +23,18 @@ export const useFavorite = () => {
         ...favorite,
         favorite: true,
       }));
+      if (pins) {
+        favoriteData = favoriteData.map((favorite: Favorite) => ({
+          ...favorite,
+          is_pinned: pins.some(
+            (pin: Pin) =>
+              pin?.id == favorite?.id && pin.source === favorite?.source,
+          ),
+        }));
+      }
       setFavorites(favoriteData);
     }
-  }, [favorite]);
+  }, [favorite, pins]);
 
   return { favorites, setFavorites, refetchFavorite, error, isLoading };
 };

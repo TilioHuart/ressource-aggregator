@@ -1,12 +1,18 @@
 import "./SearchCard.scss";
 import React, { useEffect, useState } from "react";
 
-import { AlertTypes, Card, Tooltip } from "@edifice-ui/react";
+import {
+  AlertTypes,
+  Card,
+  isActionAvailable,
+  Tooltip,
+} from "@edifice-ui/react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import PinIcon from "@mui/icons-material/PushPin";
+import UnPinIcon from "@mui/icons-material/PushPinOutlined";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useTranslation } from "react-i18next";
@@ -22,6 +28,7 @@ import {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
 } from "~/services/api/favorite.service";
+import { useActions } from "~/services/queries";
 
 interface SearchResourceProps {
   searchResource: SearchResource;
@@ -41,6 +48,10 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const { setModalResource, setIsCreatedOpen } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
+
+  // used to check if the user has the right to pin a resource
+  const { data: actions } = useActions();
+  const hasPinRight = isActionAvailable("pins", actions);
 
   const type = (): SearchCardTypeEnum => {
     if (searchResource?.source) {
@@ -137,8 +148,10 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   };
 
   const pin = () => {
-    setModalResource(searchResource);
-    setIsCreatedOpen(true);
+    if (searchResource) {
+      setModalResource(searchResource);
+      setIsCreatedOpen(true);
+    }
   };
 
   const toggleExpand = () => {
@@ -209,9 +222,19 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
               )}
             </div>
             <div className="med-footer-svg">
-              <Tooltip message={t("mediacentre.card.pin")} placement="top">
-                <PinIcon className="med-pin" onClick={() => pin()} />
-              </Tooltip>
+              {hasPinRight &&
+                (searchResource?.is_pinned ? (
+                  <Tooltip
+                    message={t("mediacentre.card.already.pinned")}
+                    placement="top"
+                  >
+                    <PinIcon className="med-pin" />
+                  </Tooltip>
+                ) : (
+                  <Tooltip message={t("mediacentre.card.pin")} placement="top">
+                    <UnPinIcon className="med-pin" onClick={() => pin()} />
+                  </Tooltip>
+                ))}
               <Tooltip message={t("mediacentre.card.copy")} placement="top">
                 <ContentCopyIcon className="med-link" onClick={() => copy()} />
               </Tooltip>

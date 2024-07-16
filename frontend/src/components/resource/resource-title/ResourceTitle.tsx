@@ -6,6 +6,7 @@ import { SearchCardTypeEnum } from "~/core/enum/search-card-type.enum";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
 import { GlobalResource } from "~/model/GlobalResource.model";
+import { Pin } from "~/model/Pin.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 
@@ -14,7 +15,13 @@ import "./ResourceTitle.scss";
 interface ResourceTitleProps {
   type: CardTypeEnum;
   title: string;
-  resource: Signet | Favorite | Textbook | ExternalResource | GlobalResource;
+  resource:
+    | Signet
+    | Favorite
+    | Textbook
+    | ExternalResource
+    | GlobalResource
+    | Pin;
 }
 
 export const ResourceTitle: React.FC<ResourceTitleProps> = ({

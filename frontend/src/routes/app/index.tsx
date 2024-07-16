@@ -17,7 +17,6 @@ import { CardTypeEnum } from "~/core/enum/card-type.enum";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useGlobal } from "~/hooks/useGlobal";
-import { usePin } from "~/hooks/usePin.ts";
 import { useSignet } from "~/hooks/useSignet";
 import { useTextbook } from "~/hooks/useTextbook";
 import { ExternalResource } from "~/model/ExternalResource.model";
@@ -26,6 +25,7 @@ import { GlobalResource } from "~/model/GlobalResource.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export interface AppProps {
   _id: string;
@@ -44,16 +44,13 @@ export const App = () => {
   const { user } = useUser();
   const { alertType, alertText, setAlertText } = useAlertProvider();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const { pins, refetchPins } = usePinProvider();
   const { favorites, setFavorites, refetchFavorite } = useFavorite();
   const { homeSignets, setHomeSignets } = useSignet();
-
   const { textbooks, setTextbooks, refetchTextbooks } = useTextbook();
   const { externalResources, setExternalResources, refetchSearch } =
     useExternalResource();
   const { globals } = useGlobal();
-  const { pins, refetchPins } = usePin(
-    (user?.structures.length ? user?.structures[0] : "") ?? "",
-  ); // first structure
   const [pinsEmpty, setPinsEmpty] = useState<boolean>(true);
   const [externalResourcesData, setExternalResourcesData] = useState<
     (ExternalResource | GlobalResource)[] | null
@@ -274,7 +271,7 @@ export const App = () => {
       <EditPins refetch={refetchPins} />
       <ConfirmDelete refetch={refetchPins} />
       <div className="med-container">
-        <div id="pinId">{!pinsEmpty && <PinsCarousel pins={pins} />}</div>
+        <div id="pinId">{!pinsEmpty && <PinsCarousel />}</div>
         <div id="favoriteId">
           <HomeList
             resources={favorites}

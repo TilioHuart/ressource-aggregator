@@ -11,12 +11,12 @@ import { workflows } from "~/config";
  */
 // const { actions } = getAppParams();
 export const useActions = () => {
-  const { signets } = workflows;
+  const { signets, pins } = workflows;
 
   return useQuery<Record<string, boolean>, Error, IAction[]>({
     queryKey: ["actions"],
     queryFn: async () => {
-      const availableRights = await sessionHasWorkflowRights([signets]);
+      const availableRights = await sessionHasWorkflowRights([signets, pins]);
       return availableRights;
     },
     select: (data) => {
@@ -24,12 +24,15 @@ export const useActions = () => {
         {
           id: "signets",
           workflow: signets,
+          available: data[signets] || false,
+        },
+        {
+          id: "pins",
+          workflow: pins,
+          available: data[pins] || false,
         },
       ];
-      return actions.map((action) => ({
-        ...action,
-        available: data[action.workflow],
-      }));
+      return actions;
     },
   });
 };

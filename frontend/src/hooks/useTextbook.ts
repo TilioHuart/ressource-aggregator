@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 import { useFavorite } from "./useFavorite";
 import { useGetTextbooksQuery } from "../services/api/textbook.service";
 import { Favorite } from "~/model/Favorite.model";
+import { Pin } from "~/model/Pin.model";
 import { Textbook } from "~/model/Textbook.model";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const useTextbook = () => {
+  const { pins } = usePinProvider();
   const {
     data: textbook,
     error,
@@ -23,9 +26,17 @@ export const useTextbook = () => {
         favorite: favorites.some((fav: Favorite) => fav.id === textbook.id),
       }));
 
+      textbookData = textbookData.map((textbook: Textbook) => ({
+        ...textbook,
+        is_pinned: pins.some(
+          (pin: Pin) =>
+            pin?.id === textbook?.id &&
+            pin.source === "fr.openent.mediacentre.source.GAR",
+        ),
+      }));
       setTextbooks(textbookData);
     }
-  }, [textbook, favorites]);
+  }, [textbook, favorites, pins]);
 
   return {
     textbooks,

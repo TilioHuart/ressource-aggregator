@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 
-import { AlertTypes, Card, Tooltip } from "@edifice-ui/react";
+import {
+  AlertTypes,
+  Card,
+  isActionAvailable,
+  Tooltip,
+} from "@edifice-ui/react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PushPinIcon from "@mui/icons-material/PushPin";
@@ -10,6 +15,7 @@ import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
 import "./PinsCarouselCard.scss";
+import { useActions } from "~/services/queries";
 
 interface PinsCarouselCardProps {
   pin: Pin;
@@ -23,6 +29,10 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
   const [newLink, setNewLink] = useState<string>("");
   const { setAlertText, setAlertType } = useAlertProvider();
   const { setModalResource, setIsEditOpen } = useModalProvider();
+
+  // used to check if the user has the right to pin a resource
+  const { data: actions } = useActions();
+  const hasPinRight = isActionAvailable("pins", actions);
 
   const { t } = useTranslation();
 
@@ -95,9 +105,11 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
           </span>
         </div>
         <div className="med-footer-svg">
-          <Tooltip message={t("mediacentre.card.edit.pin")} placement="top">
-            <PushPinIcon className="med-pin" onClick={() => edit()} />
-          </Tooltip>
+          {hasPinRight && (
+            <Tooltip message={t("mediacentre.card.edit.pin")} placement="top">
+              <PushPinIcon className="med-pin" onClick={() => edit()} />
+            </Tooltip>
+          )}
           <Tooltip message={t("mediacentre.card.copy")} placement="top">
             <ContentCopyIcon className="med-link" onClick={() => copy()} />
           </Tooltip>

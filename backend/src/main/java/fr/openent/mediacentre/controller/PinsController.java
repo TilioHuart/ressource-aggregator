@@ -4,12 +4,14 @@ import fr.openent.mediacentre.Mediacentre;
 import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.helper.IModelHelper;
 import fr.openent.mediacentre.security.ViewRight;
+import fr.openent.mediacentre.security.PinRight;
 import fr.openent.mediacentre.service.PinsService;
 import fr.openent.mediacentre.service.UserService;
 import fr.openent.mediacentre.service.impl.DefaultPinsService;
 import fr.openent.mediacentre.service.impl.DefaultUserService;
 import fr.openent.mediacentre.source.Source;
 import fr.wseduc.rs.*;
+import fr.wseduc.security.ActionType;
 import fr.wseduc.security.SecuredAction;
 import fr.wseduc.webutils.http.Renders;
 import fr.wseduc.webutils.request.RequestUtils;
@@ -39,7 +41,7 @@ public class PinsController extends ControllerHelper {
     @Get("/structures/:idStructure/pins")
     @ApiDoc("List all pinned resources for a structure")
     @ResourceFilter(ViewRight.class)
-    @SecuredAction(Mediacentre.PIN_VIEW_RIGHT)
+    @SecuredAction(value="", type=ActionType.RESOURCE)
     public void getResources(HttpServerRequest request) {
         UserUtils.getUserInfos(eb, request, user -> pinsService.list(request.getParam(Field.IDSTRUCTURE))
             .compose(resources -> pinsService.getData(resources, user, sources))
@@ -55,8 +57,8 @@ public class PinsController extends ControllerHelper {
 
     @Post("/structures/:idStructure/pins")
     @ApiDoc("Create a pinned resource for a structure")
-    @ResourceFilter(ViewRight.class)
-    @SecuredAction(Mediacentre.PIN_CREATION_RIGHT)
+    @ResourceFilter(PinRight.class)
+    @SecuredAction(value="", type=ActionType.RESOURCE)
     public void createResource(HttpServerRequest request) {
         String idStructure = request.getParam(Field.IDSTRUCTURE);
         RequestUtils.bodyToJson(request, pinned -> pinsService.checkPinDontExist(pinned, idStructure)
@@ -83,8 +85,8 @@ public class PinsController extends ControllerHelper {
 
     @Put("/structures/:idStructure/pins/:idPin")
     @ApiDoc("Update a pinned resource")
-    @ResourceFilter(ViewRight.class)
-    @SecuredAction(Mediacentre.PIN_CREATION_RIGHT)
+    @ResourceFilter(PinRight.class)
+    @SecuredAction(value="", type=ActionType.RESOURCE)
     public void updateResource(HttpServerRequest request) {
         String idStructure = request.getParam(Field.IDSTRUCTURE);
         String idPin = request.getParam(Field.IDPIN);
@@ -101,8 +103,8 @@ public class PinsController extends ControllerHelper {
 
     @Delete("/structures/:idStructure/pins/:idPin")
     @ApiDoc("Delete a pinned resource")
-    @ResourceFilter(ViewRight.class)
-    @SecuredAction(Mediacentre.PIN_CREATION_RIGHT)
+    @ResourceFilter(PinRight.class)
+    @SecuredAction(value="", type=ActionType.RESOURCE)
     public void deleteResource(HttpServerRequest request) {
         String idPinned = request.getParam(Field.IDPIN);
         pinsService.delete(idPinned)

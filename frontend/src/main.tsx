@@ -14,6 +14,7 @@ import { RouterProvider } from "react-router-dom";
 
 import { AlertProvider } from "./providers/AlertProvider";
 import { ModalProvider } from "./providers/ModalsProvider";
+import { PinProvider } from "./providers/PinProvider";
 import { router } from "./routes";
 import { setupStore } from "./store";
 
@@ -53,9 +54,11 @@ root.render(
       >
         <ThemeProvider>
           <AlertProvider>
-            <ModalProvider>
-              <RouterProvider router={router} />
-            </ModalProvider>
+            <PinProvider>
+              <ModalProvider>
+                <RouterProvider router={router} />
+              </ModalProvider>
+            </PinProvider>
           </AlertProvider>
         </ThemeProvider>
       </OdeClientProvider>

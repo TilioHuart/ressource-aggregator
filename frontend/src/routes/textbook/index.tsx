@@ -15,9 +15,11 @@ import { Favorite } from "~/model/Favorite.model";
 import { Resource } from "~/model/Resource.model";
 import { Textbook } from "~/model/Textbook.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const TextbookPage: React.FC = () => {
   const { t } = useTranslation();
+  const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
   const { textbooks, refetchTextbooks } = useTextbook();
   const [textbooksData, setTextbooksData] = useState<Resource[] | null>(null);
@@ -82,7 +84,7 @@ export const TextbookPage: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <CreatePins refetch={() => {}} />
+      <CreatePins refetch={refetchPins} />
       <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">

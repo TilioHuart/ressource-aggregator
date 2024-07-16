@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 
 import { useFavorite } from "./useFavorite";
 import { useSearchQuery } from "../services/api/search.service";
+import { Pin } from "~/model/Pin.model";
 import { Resource } from "~/model/Resource.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const useSearch = (query: any) => {
+  const { pins } = usePinProvider();
   const [allResources, setAllResources] = useState<Resource[] | null>(null);
   const { favorites } = useFavorite();
   const {
@@ -30,9 +33,37 @@ export const useSearch = (query: any) => {
       const gar = searchResult?.find(
         (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
       );
-      const signetResources = signets?.data?.resources || [];
-      const moodleResources = moodle?.data?.resources || [];
-      const garResources = gar?.data?.resources || [];
+      let signetResources = signets?.data?.resources || [];
+      let moodleResources = moodle?.data?.resources || [];
+      let garResources = gar?.data?.resources || [];
+
+      // map with pins
+      if (pins) {
+        signetResources = signetResources.map((signetResource: Resource) => ({
+          ...signetResource,
+          is_pinned: pins.some(
+            (pin: Pin) =>
+              pin?.id == signetResource?.id &&
+              pin.source === "fr.openent.mediacentre.source.Signet",
+          ),
+        }));
+        moodleResources = moodleResources.map((moodleResource: Resource) => ({
+          ...moodleResource,
+          is_pinned: pins.some(
+            (pin: Pin) =>
+              pin?.id == moodleResource?.id &&
+              pin.source === "fr.openent.mediacentre.source.Moodle",
+          ),
+        }));
+        garResources = garResources.map((garResource: Resource) => ({
+          ...garResource,
+          is_pinned: pins.some(
+            (pin: Pin) =>
+              pin?.id == garResource?.id &&
+              pin.source === "fr.openent.mediacentre.source.GAR",
+          ),
+        }));
+      }
 
       setAllResources([
         ...signetResources,
@@ -40,7 +71,7 @@ export const useSearch = (query: any) => {
         ...garResources,
       ]);
     }
-  }, [data, isLoading, favorites]);
+  }, [data, isLoading, favorites, pins]);
 
   return {
     allResources,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Alert, AlertTypes } from "@edifice-ui/react";
+import { Alert } from "@edifice-ui/react";
 import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
 
@@ -8,13 +8,16 @@ import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
+import { CreatePins } from "~/components/modals/create-pins/CreatePins";
 import { useFavorite } from "~/hooks/useFavorite";
 import { Resource } from "~/model/Resource.model";
+import { useAlertProvider } from "~/providers/AlertProvider";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const FavoritePage: React.FC = () => {
   const { t } = useTranslation();
-  const [alertText, setAlertText] = useState<string>("");
-  const [alertType, setAlertType] = useState<AlertTypes>("success");
+  const { refetchPins } = usePinProvider();
+  const { alertType, alertText, setAlertText } = useAlertProvider();
 
   const { favorites, refetchFavorite } = useFavorite();
   const [allResourcesDisplayed, setAllResourcesDisplayed] = useState<
@@ -49,10 +52,7 @@ export const FavoritePage: React.FC = () => {
           autoCloseDelay={3000}
           isDismissible
           isToast
-          onClose={() => {
-            setAlertText("");
-            setAlertType("success");
-          }}
+          onClose={() => setAlertText("")}
           position="top-right"
           type={alertType}
           className="med-alert"
@@ -60,6 +60,7 @@ export const FavoritePage: React.FC = () => {
           {alertText}
         </Alert>
       )}
+      <CreatePins refetch={refetchPins} />
       <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">
@@ -78,7 +79,6 @@ export const FavoritePage: React.FC = () => {
             <InfiniteScrollList
               redirectLink="/favorites"
               allResourcesDisplayed={allResourcesDisplayed}
-              setAlertText={setAlertText}
               refetchData={refetchFavorite}
             />
           </div>

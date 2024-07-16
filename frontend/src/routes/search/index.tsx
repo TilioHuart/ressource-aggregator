@@ -13,9 +13,11 @@ import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
+  const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
   const location = useLocation();
   const searchBody = location.state?.searchBody;
@@ -81,7 +83,7 @@ export const Search: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <CreatePins refetch={() => {}} />
+      <CreatePins refetch={refetchPins} />
       <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">

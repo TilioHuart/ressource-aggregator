@@ -1,9 +1,18 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
 import { AlertTypes } from "@edifice-ui/react";
+import {
+  FetchArgs,
+  QueryActionCreatorResult,
+  QueryDefinition,
+  BaseQueryFn,
+  FetchBaseQueryMeta,
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query";
 
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Moodle } from "~/model/Moodle.model";
+import { Pin } from "~/model/Pin.model";
 import { SearchResource } from "~/model/SearchResource.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
@@ -42,4 +51,28 @@ export type AlertProviderContextType = {
   setAlertText: Dispatch<SetStateAction<string>>;
   alertType: AlertTypes;
   setAlertType: Dispatch<SetStateAction<AlertTypes>>;
+};
+
+export interface PinProviderProviderProps {
+  children: ReactNode;
+}
+
+export type PinProviderContextType = {
+  pins: Pin[] | null;
+  setPins: Dispatch<SetStateAction<Pin[] | null>>;
+  refetchPins: () => QueryActionCreatorResult<
+    QueryDefinition<
+      string,
+      BaseQueryFn<
+        string | FetchArgs,
+        unknown,
+        FetchBaseQueryError,
+        {},
+        FetchBaseQueryMeta
+      >,
+      never,
+      any,
+      "api"
+    >
+  >;
 };

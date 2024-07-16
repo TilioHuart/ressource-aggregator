@@ -12,6 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import "../Modal.scss";
+import { links } from "~/core/const/links.const";
 import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
@@ -105,8 +106,7 @@ export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
               className="med-image"
               onError={({ currentTarget }) => {
                 currentTarget.onerror = null;
-                currentTarget.src =
-                  "/mediacentre/public/img/no-image-resource.svg";
+                currentTarget.src = links.IMAGE_NO_RESOURCE;
               }}
             />
           </div>

@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 
 import { useSearchQuery } from "../services/api/search.service";
 import { ExternalResource } from "~/model/ExternalResource.model";
+import { Pin } from "~/model/Pin.model";
 import { Resource } from "~/model/Resource.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const useExternalResource = () => {
+  const { pins } = usePinProvider();
   const query = {
     state: "PLAIN_TEXT",
     data: {
@@ -33,12 +36,24 @@ export const useExternalResource = () => {
         (result) => result?.data?.source == "fr.openent.mediacentre.source.GAR",
       );
       const garResources: Resource[] = garResult?.data?.resources ?? [];
-      const externalResourcesData = garResources.filter(
+      let externalResourcesData = garResources.filter(
         (resource) => !resource?.is_textbook ?? true,
       ) as ExternalResource[];
+      if (pins) {
+        externalResourcesData = externalResourcesData.map(
+          (externalResource: ExternalResource) => ({
+            ...externalResource,
+            is_pinned: pins.some(
+              (pin: Pin) =>
+                pin?.id == externalResource?.id &&
+                pin.source === "fr.openent.mediacentre.source.GAR",
+            ),
+          }),
+        );
+      }
       setExternalResources(externalResourcesData);
     }
-  }, [data]);
+  }, [data, pins]);
 
   return {
     externalResources,

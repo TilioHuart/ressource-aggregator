@@ -23,8 +23,7 @@ public class Mediacentre extends BaseServer {
     public static final String VIEW_RIGHT = "mediacentre.view";
     public static final String CREATION_RIGHT = "mediacentre.signets.creation";
     public static final String SIGNET_RIGHT = "mediacentre.signets";
-    public static final String PIN_VIEW_RIGHT = "mediacentre.pins.view";
-    public static final String PIN_CREATION_RIGHT = "mediacentre.pins.creation";
+    public static final String PIN_MANAGER_RIGHT = "mediacentre.pins.manager";
     public static final String GAR_RIGHT = "mediacentre.gar_ressources";
     public static String mediacentreSchema;
     public static JsonObject mediacentreConfig;

@@ -185,4 +185,8 @@ public class MediacentreController extends ControllerHelper {
     @SecuredAction(Mediacentre.GAR_RIGHT)
     public void initGarResourceRight() {
     }
+
+    @SecuredAction(Mediacentre.PIN_MANAGER_RIGHT)
+    public void initPinManagerResourceRight() {
+    }
 }

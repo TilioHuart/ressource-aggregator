@@ -9,9 +9,12 @@ import {
 } from "./../services/api/signet.service";
 import { useFavorite } from "./useFavorite";
 import { Favorite } from "~/model/Favorite.model";
+import { Pin } from "~/model/Pin.model";
+import { usePinProvider } from "~/providers/PinProvider";
 
 export const useSignet = () => {
   const { user } = useUser();
+  const { pins } = usePinProvider();
   const {
     data: publicSignets,
     error: publicSignetError,
@@ -63,11 +66,21 @@ export const useSignet = () => {
         ),
       }));
     }
+    if (pins) {
+      signetsData = signetsData.map((signet: Signet) => ({
+        ...signet,
+        is_pinned: pins.some(
+          (pin: Pin) =>
+            pin?.id == signet?.id &&
+            pin.source === "fr.openent.mediacentre.source.Signet",
+        ),
+      }));
+    }
     return signetsData;
-  }, [favorites, mySignets, publicSignets, user?.userId]);
+  }, [favorites, mySignets, publicSignets, user?.userId, pins]);
 
   useEffect(() => {
-    if (favorites) {
+    if (favorites && pins) {
       const signetsData = getHomeSignets();
       setHomeSignets(signetsData);
     }
@@ -76,6 +89,7 @@ export const useSignet = () => {
     mySignets,
     user?.userId,
     favorites,
+    pins,
     setHomeSignets,
     getHomeSignets,
   ]);

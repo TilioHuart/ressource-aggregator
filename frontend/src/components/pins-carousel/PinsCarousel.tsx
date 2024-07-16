@@ -10,17 +10,18 @@ import { useTranslation } from "react-i18next";
 import { PinsCarouselCard } from "./pins-carousel-card/PinsCarouselCard";
 import "@splidejs/react-splide/css";
 import "./PinsCarousel.scss";
-import { Pin } from "~/model/Pin.model";
+import { usePinProvider } from "~/providers/PinProvider";
 
-interface PinsCarouselProps {
-  pins: Pin[];
-}
+interface PinsCarouselProps {}
 
-export const PinsCarousel: React.FC<PinsCarouselProps> = ({ pins }) => {
+export const PinsCarousel: React.FC<PinsCarouselProps> = () => {
   const { t } = useTranslation();
+  const { pins } = usePinProvider();
+
   if (!pins) {
     return <LoadingScreen />;
   }
+
   return (
     <div className="med-carousel">
       <div className="title">

@@ -11,6 +11,7 @@ import {
 } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 
+import { links } from "~/core/const/links.const";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
 import { useCreatePinMutation } from "~/services/api/pin.service";
@@ -101,8 +102,7 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
               className="med-image"
               onError={({ currentTarget }) => {
                 currentTarget.onerror = null;
-                currentTarget.src =
-                  "/mediacentre/public/img/no-image-resource.svg";
+                currentTarget.src = links.IMAGE_NO_RESOURCE;
               }}
             />
           </div>
