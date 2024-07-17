@@ -44,7 +44,7 @@ export const App = () => {
   const { user } = useUser();
   const { alertType, alertText, setAlertText } = useAlertProvider();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const { pins, refetchPins } = usePinProvider();
+  const { pins, setPins, refetchPins } = usePinProvider();
   const { favorites, setFavorites, refetchFavorite } = useFavorite();
   const { homeSignets, setHomeSignets } = useSignet();
   const { textbooks, setTextbooks, refetchTextbooks } = useTextbook();
@@ -154,6 +154,7 @@ export const App = () => {
       return prevFavorites.filter((fav) => fav.id != id);
     });
     updateFavoriteStatus(id, false);
+    refetchAll();
   };
 
   const updateFavoriteStatus = (id: string | number, isFavorite: boolean) => {
@@ -186,6 +187,15 @@ export const App = () => {
             : externalResource,
       );
       setExternalResources(newExternalResources);
+    }
+    if (pins) {
+      let newPins = [...pins];
+      newPins = newPins.map((pin) =>
+        pin?.id?.toString() == id.toString()
+          ? { ...pin, favorite: isFavorite }
+          : pin,
+      );
+      setPins(newPins);
     }
     forceUpdate(); // List are not re-rendering without this
   };

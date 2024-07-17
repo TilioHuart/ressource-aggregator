@@ -5,6 +5,7 @@ import {
   Card,
   isActionAvailable,
   Tooltip,
+  useUser,
 } from "@edifice-ui/react";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -29,10 +30,16 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
   const [newLink, setNewLink] = useState<string>("");
   const { setAlertText, setAlertType } = useAlertProvider();
   const { setModalResource, setIsEditOpen } = useModalProvider();
+  const { user } = useUser();
 
   // used to check if the user has the right to pin a resource
   const { data: actions } = useActions();
-  const hasPinRight = isActionAvailable("pins", actions);
+  const idStructure =
+    (user?.structures && user.structures.length > 0
+      ? user?.structures[0]
+      : "") ?? "";
+  const hasPinRight =
+    isActionAvailable("pins", actions) && idStructure === pin.structure_owner;
 
   const { t } = useTranslation();
 
