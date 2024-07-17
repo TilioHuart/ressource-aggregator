@@ -51,7 +51,7 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
       const payload = {
         pinned_title: title,
         pinned_description: description,
-        id: modalResource?.id,
+        id: modalResource?.id ? String(modalResource.id) : undefined,
         source: modalResource?.source,
       };
       const idStructure =
