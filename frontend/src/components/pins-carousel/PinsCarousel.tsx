@@ -12,9 +12,14 @@ import "@splidejs/react-splide/css";
 import "./PinsCarousel.scss";
 import { usePinProvider } from "~/providers/PinProvider";
 
-interface PinsCarouselProps {}
+interface PinsCarouselProps {
+  handleAddFavorite: (resource: any) => void;
+  handleRemoveFavorite: (id: string | number) => void;
+}
 
-export const PinsCarousel: React.FC<PinsCarouselProps> = () => {
+export const PinsCarousel: React.FC<PinsCarouselProps> = (
+  handleAddFavorite, handleRemoveFavorite
+) => {
   const { t } = useTranslation();
   const { pins } = usePinProvider();
 
@@ -52,7 +57,7 @@ export const PinsCarousel: React.FC<PinsCarouselProps> = () => {
         <SplideTrack className="med-splide-track">
           {pins.map((pin, index) => (
             <SplideSlide key={index} className="">
-              <PinsCarouselCard pin={pin} link={pin?.link ?? pin?.url ?? ""} />
+              <PinsCarouselCard pin={pin} link={pin?.link ?? pin?.url ?? ""} handleAddFavorite={handleAddFavorite} handleRemoveFavorite={handleRemoveFavorite}/>
             </SplideSlide>
           ))}
         </SplideTrack>

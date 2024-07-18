@@ -140,12 +140,12 @@ export const App = () => {
     refetchFavorite();
     refetchTextbooks();
     refetchSearch();
-    refetchPins();
+    pins ? refetchPins() : null;
   };
 
   useEffect(() => {
     refetchFavorite();
-    refetchPins();
+    pins ? refetchPins() : null;
   }, [location, refetchFavorite]);
 
   const handleRemoveFavorite = (id: string | number) => {
@@ -283,7 +283,7 @@ export const App = () => {
       <EditPins refetch={refetchPins} />
       <ConfirmDelete refetch={refetchPins} />
       <div className="med-container">
-        <div id="pinId">{!pinsEmpty && <PinsCarousel />}</div>
+        <div id="pinId">{!pinsEmpty && <PinsCarousel handleAddFavorite={handleAddFavorite} handleRemoveFavorite={handleRemoveFavorite} />}</div>
         <div id="favoriteId">
           <HomeList
             resources={favorites}

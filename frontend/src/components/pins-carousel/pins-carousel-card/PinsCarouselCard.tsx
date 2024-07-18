@@ -19,20 +19,27 @@ import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
 import "./PinsCarouselCard.scss";
 import { useActions } from "~/services/queries";
+import { useAddFavoriteMutation, useRemoveFavoriteMutation } from "~/services/api/favorite.service";
 
 interface PinsCarouselCardProps {
   pin: Pin;
   link: string;
+  handleAddFavorite: (resource: any) => void;
+  handleRemoveFavorite: (id: string | number) => void;
 }
 
 export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
   pin,
   link,
+  handleAddFavorite,
+  handleRemoveFavorite,
 }) => {
   const [newLink, setNewLink] = useState<string>("");
   const { setAlertText, setAlertType } = useAlertProvider();
   const { setModalResource, setIsEditOpen } = useModalProvider();
   const { user } = useUser();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeFavorite] = useRemoveFavoriteMutation();
 
   // used to check if the user has the right to pin a resource
   const { data: actions } = useActions();

@@ -163,11 +163,13 @@ public class DefaultPinsService implements PinsService {
     }
 
     public Future<JsonArray> getData(List<PinResource> resources, UserInfos user, List<Source> sources) {
+        System.out.println("je suis la \n");
         Promise<JsonArray> promise = Promise.promise();
         JsonArray data = new JsonArray();
         JsonArray searchSources = new JsonArray().add(SourceConstant.MOODLE).add(SourceConstant.GAR);
         JsonObject searchQuery = new JsonObject().put(Field.QUERY, ".*");
-        Future<JsonArray> getFavoritesResourcesFuture = getAllFavorites(user.getUserId());
+        // Future<JsonArray> getFavoritesResourcesFuture = getAllFavorites(user.getUserId());
+        System.out.println("pins resources =>: " + resources + "\n");
         textBookHelper.getTextBooks(user.getUserId())
             .recover(error -> {
                 log.error("Error while retrieving GAR resources: " + error.getMessage());
@@ -209,12 +211,12 @@ public class DefaultPinsService implements PinsService {
                 }
                 return enrichResources(resources, data);
             })
-            .compose(enrichedResources -> {
-                if (enrichedResources != null && !enrichedResources.isEmpty()) {
-                    favoriteHelper.matchFavorite(getFavoritesResourcesFuture, enrichedResources);
-                }
-                return Future.succeededFuture(enrichedResources);
-            })
+            // .compose(enrichedResources -> {
+            //     if (enrichedResources != null && !enrichedResources.isEmpty()) {
+            //         favoriteHelper.matchFavorite(getFavoritesResourcesFuture, enrichedResources);
+            //     }
+            //     return Future.succeededFuture(enrichedResources);
+            // })
             .onSuccess(promise::complete)
             .onFailure(error -> promise.fail(error.getMessage()));
         return promise.future();
