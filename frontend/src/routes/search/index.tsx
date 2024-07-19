@@ -84,7 +84,7 @@ export const Search: React.FC = () => {
         <Alert
           autoClose
           autoCloseDelay={3000}
-          isDismissible
+          isDismissible={false}
           isToast
           onClose={() => setAlertText("")}
           position="top-right"

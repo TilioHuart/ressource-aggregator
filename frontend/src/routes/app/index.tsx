@@ -267,7 +267,7 @@ export const App = () => {
         <Alert
           autoClose
           autoCloseDelay={3000}
-          isDismissible
+          isDismissible={false}
           isToast
           onClose={() => setAlertText("")}
           position="top-right"

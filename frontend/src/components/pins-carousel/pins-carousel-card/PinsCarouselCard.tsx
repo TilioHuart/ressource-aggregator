@@ -82,26 +82,28 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
         target="_blank"
       >
         <Card.Title>{pin.pinned_title}</Card.Title>
-        <Card.Text>{pin.pinned_description}</Card.Text>
         <Card.Body space={"0"}>
-          {pin.image ? (
-            <img
-              src={pin.image}
-              alt={pin.pinned_title}
-              className="med-pin-image"
-              onError={({ currentTarget }) => {
-                currentTarget.onerror = null;
-                currentTarget.src =
-                  "/mediacentre/public/img/no-image-resource.png";
-              }}
-            />
-          ) : (
-            <img
-              src="/mediacentre/public/img/no-image-resource.png"
-              alt="Resource"
-              className="med-pin-image"
-            />
-          )}
+          <span className="med-pin-description">{pin.pinned_description}</span>
+          <div className="med-pin-image-container">
+            {pin.image ? (
+              <img
+                src={pin.image}
+                alt={pin.pinned_title}
+                className="med-pin-image"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src =
+                    "/mediacentre/public/img/no-image-resource.png";
+                }}
+              />
+            ) : (
+              <img
+                src="/mediacentre/public/img/no-image-resource.png"
+                alt="Resource"
+                className="med-pin-image"
+              />
+            )}
+          </div>
         </Card.Body>
       </a>
       <Card.Footer>

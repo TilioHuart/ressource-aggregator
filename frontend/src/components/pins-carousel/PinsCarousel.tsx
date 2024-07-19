@@ -32,6 +32,7 @@ export const PinsCarousel: React.FC<PinsCarouselProps> = () => {
         aria-label="med-carousel"
         hasTrack={false}
         options={{
+          rewind: true,
           perPage: 4,
           arrows: pins.length > 4,
           gap: "20px",
