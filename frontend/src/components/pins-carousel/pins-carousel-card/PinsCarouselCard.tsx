@@ -7,7 +7,7 @@ import {
   Tooltip,
   useUser,
 } from "@edifice-ui/react";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+// import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useTranslation } from "react-i18next";
@@ -108,10 +108,10 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
       </a>
       <Card.Footer>
         <div className="med-left-footer">
-          <AutoAwesomeIcon />
+          {/* <AutoAwesomeIcon />
           <span className="med-text-footer">
             {t("mediacentre.card.offered.by.the.region")}
-          </span>
+          </span> */}
         </div>
         <div className="med-footer-svg">
           {hasPinRight && (
