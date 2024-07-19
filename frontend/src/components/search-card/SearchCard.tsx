@@ -33,13 +33,13 @@ import { useActions } from "~/services/queries";
 interface SearchResourceProps {
   searchResource: SearchResource;
   link: string;
-  refetchData: () => void;
+  setIsRemoveResource: (value: boolean) => void;
 }
 
 export const SearchCard: React.FC<SearchResourceProps> = ({
   searchResource,
   link,
-  refetchData,
+  setIsRemoveResource,
 }) => {
   const [newLink, setNewLink] = useState<string>("");
   const { t } = useTranslation();
@@ -115,7 +115,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         });
       }
       notify(t("mediacentre.notification.addFavorite"), "success");
-      refetchData();
+      searchResource.favorite = true;
     } catch (e) {
       console.error(e);
     }
@@ -141,7 +141,8 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
         });
       }
       notify(t("mediacentre.notification.removeFavorite"), "success");
-      refetchData();
+      searchResource.favorite = false;
+      setIsRemoveResource(true);
     } catch (e) {
       console.error(e);
     }

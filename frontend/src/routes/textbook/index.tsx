@@ -16,6 +16,7 @@ import { Resource } from "~/model/Resource.model";
 import { Textbook } from "~/model/Textbook.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { sortByAlphabet } from "~/utils/sortResources.util";
 
 export const TextbookPage: React.FC = () => {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export const TextbookPage: React.FC = () => {
 
   useEffect(() => {
     if (textbooksData) {
-      setAllResourcesDisplayed(textbooksData);
+      setAllResourcesDisplayed(sortByAlphabet(textbooksData));
     }
   }, [textbooksData]);
 
@@ -103,10 +104,6 @@ export const TextbookPage: React.FC = () => {
             <InfiniteScrollList
               redirectLink="/textbook"
               allResourcesDisplayed={allResourcesDisplayed}
-              refetchData={() => {
-                refetchFavorite();
-                refetchTextbooks();
-              }}
             />
           </div>
         </div>

@@ -9,11 +9,13 @@ import { FilterLayout } from "../../components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
+import { useResourceListInfo } from "~/hooks/useResourceListInfo";
 import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { sortByAlphabet } from "~/utils/sortResources.util";
 
 export const Search: React.FC = () => {
   const { t } = useTranslation();
@@ -51,6 +53,9 @@ export const Search: React.FC = () => {
   >(null);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
+  const { textbooks, externalResources, signets, moodle } =
+    useResourceListInfo(searchResourcesData);
+
   useEffect(() => {
     if (!allResources) return;
     if (!initialLoadDone) {
@@ -62,7 +67,13 @@ export const Search: React.FC = () => {
 
   useEffect(() => {
     if (searchResourcesData) {
-      setAllResourcesDisplayed(searchResourcesData);
+      const sortedSearchResources = [
+        ...sortByAlphabet(textbooks),
+        ...sortByAlphabet(externalResources),
+        ...sortByAlphabet(signets),
+        ...sortByAlphabet(moodle),
+      ];
+      setAllResourcesDisplayed(sortedSearchResources);
     }
   }, [searchResourcesData]);
 
@@ -103,7 +114,6 @@ export const Search: React.FC = () => {
             <InfiniteScrollList
               redirectLink="/search"
               allResourcesDisplayed={allResourcesDisplayed}
-              refetchData={refetchSearch}
             />
           </div>
         </div>

@@ -12,57 +12,49 @@ import { Resource } from "~/model/Resource.model";
 interface InfiniteScrollListProps {
   redirectLink: string;
   allResourcesDisplayed: Resource[] | null;
-  refetchData: () => void;
 }
 
 export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
   redirectLink,
   allResourcesDisplayed,
-  refetchData,
 }) => {
   const loaderRef = useRef(null);
   const navigate = useNavigate();
+  const [indexVisibleResources, setIndexVisibleResources] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [visibleResources, setVisibleResources] = useState<Resource[] | null>(
     null,
   ); // resources visible (load more with infinite scroll)
+  const [isRemoveResource, setIsRemoveResource] = useState(false); // only used to remove a resource (when unfav) on favorite page
 
   const loadMoreResources = useCallback(() => {
     if (!allResourcesDisplayed) return;
     if (
-      allResourcesDisplayed &&
-      JSON.stringify(visibleResources) !== JSON.stringify(allResourcesDisplayed)
-    ) {
-      const nbVisibleResources = visibleResources?.length ?? 0;
-      setVisibleResources((prevVisibleResources) => {
-        let previtems = prevVisibleResources ?? [];
-        if (
-          JSON.stringify(prevVisibleResources) !==
-          JSON.stringify(allResourcesDisplayed.slice(0, nbVisibleResources))
-        ) {
-          previtems = allResourcesDisplayed.slice(0, nbVisibleResources);
-        }
-        return [
-          ...previtems,
-          ...allResourcesDisplayed.slice(
-            nbVisibleResources,
-            nbVisibleResources + 10,
-          ),
-        ];
-      });
+      JSON.stringify(visibleResources) === JSON.stringify(allResourcesDisplayed)
+    )
+      return;
+    setIndexVisibleResources(indexVisibleResources + 1);
+    if (redirectLink === "/favorites") {
+      setVisibleResources(
+        allResourcesDisplayed
+          .filter((resource) => resource.favorite)
+          .slice(0, indexVisibleResources * 10),
+      );
+    } else {
+      setVisibleResources(
+        allResourcesDisplayed.slice(0, indexVisibleResources * 10),
+      );
     }
-    setIsLoading(false);
-  }, [allResourcesDisplayed, visibleResources]);
+  }, [visibleResources]);
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       const target = entries[0];
-      if (target.isIntersecting && !isLoading) {
-        setIsLoading(true);
+      if (target.isIntersecting) {
         loadMoreResources();
       }
     },
-    [isLoading, loadMoreResources],
+    [loadMoreResources],
   ); // for infinite scroll
 
   useEffect(() => {
@@ -80,10 +72,23 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
   }, [handleObserver]); // for infinite scroll
 
   useEffect(() => {
-    setIsLoading(true);
-    loadMoreResources();
+    if (allResourcesDisplayed) {
+      if (redirectLink === "/favorites") {
+        setVisibleResources(
+          allResourcesDisplayed
+            .filter((resource) => resource.favorite)
+            .slice(0, indexVisibleResources * 10),
+        );
+      } else {
+        setVisibleResources(
+          allResourcesDisplayed.slice(0, indexVisibleResources * 10),
+        );
+      }
+      setIsLoading(false);
+      setIsRemoveResource(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allResourcesDisplayed]);
+  }, [allResourcesDisplayed, isRemoveResource]);
 
   return (
     <>
@@ -91,7 +96,7 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
         <LoadingScreen position={false} />
       ) : (
         <>
-          {visibleResources && visibleResources.length !== 0 ? (
+          {visibleResources?.length ? (
             <>
               <ListCard
                 scrollable={false}
@@ -100,7 +105,7 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
                   <SearchCard
                     searchResource={searchResource}
                     link={searchResource.link ?? searchResource.url ?? "/"}
-                    refetchData={refetchData}
+                    setIsRemoveResource={setIsRemoveResource}
                   />
                 ))}
                 redirectLink={() => navigate(redirectLink)}

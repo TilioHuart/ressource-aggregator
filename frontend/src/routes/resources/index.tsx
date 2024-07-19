@@ -14,6 +14,7 @@ import { useGlobal } from "~/hooks/useGlobal";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { sortByAlphabet } from "~/utils/sortResources.util";
 
 export const ResourcePage: React.FC = () => {
   const { user } = useUser();
@@ -49,7 +50,7 @@ export const ResourcePage: React.FC = () => {
 
   useEffect(() => {
     if (externalResourcesData) {
-      setAllResourcesDisplayed(externalResourcesData);
+      setAllResourcesDisplayed(sortByAlphabet(externalResourcesData));
     }
   }, [externalResourcesData]);
 
@@ -89,7 +90,6 @@ export const ResourcePage: React.FC = () => {
             <InfiniteScrollList
               redirectLink="/resources"
               allResourcesDisplayed={allResourcesDisplayed}
-              refetchData={refetchSearch}
             />
           </div>
         </div>

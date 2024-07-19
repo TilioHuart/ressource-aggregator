@@ -7,6 +7,7 @@ import { DropDown } from "../drop-down/DropDown";
 import { useResourceListInfo } from "~/hooks/useResourceListInfo";
 import { Resource } from "~/model/Resource.model";
 import "./FilterLayout.scss";
+import { sortByAlphabet } from "~/utils/sortResources.util";
 
 interface FilterLayoutProps {
   resources: Resource[] | null;
@@ -56,16 +57,19 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
     let filteredResources: Resource[] = [];
     // first part we filter by single check (textbook, external resource, signet, moodle)
     if (checkboxTextbook) {
-      filteredResources = [...filteredResources, ...textbooks];
+      filteredResources = [...filteredResources, ...sortByAlphabet(textbooks)];
     }
     if (checkboxExternalResource) {
-      filteredResources = [...filteredResources, ...externalResources];
+      filteredResources = [
+        ...filteredResources,
+        ...sortByAlphabet(externalResources),
+      ];
     }
     if (checkboxSignet) {
-      filteredResources = [...filteredResources, ...signets];
+      filteredResources = [...filteredResources, ...sortByAlphabet(signets)];
     }
     if (checkboxMoodle) {
-      filteredResources = [...filteredResources, ...moodle];
+      filteredResources = [...filteredResources, ...sortByAlphabet(moodle)];
     }
     // second part we filter by multiple check (discipline, level, type)
     filteredResources = filteredResources.filter((resource) => {

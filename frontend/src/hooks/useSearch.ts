@@ -66,9 +66,9 @@ export const useSearch = (query: any) => {
       }
 
       setAllResources([
+        ...garResources,
         ...signetResources,
         ...moodleResources,
-        ...garResources,
       ]);
     }
   }, [data, isLoading, favorites, pins]);

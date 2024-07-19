@@ -13,6 +13,7 @@ import { useFavorite } from "~/hooks/useFavorite";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { sortByAlphabet } from "~/utils/sortResources.util";
 
 export const FavoritePage: React.FC = () => {
   const { t } = useTranslation();
@@ -39,7 +40,7 @@ export const FavoritePage: React.FC = () => {
 
   useEffect(() => {
     if (favoriteResourcesData) {
-      setAllResourcesDisplayed(favoriteResourcesData);
+      setAllResourcesDisplayed(sortByAlphabet(favoriteResourcesData));
     }
   }, [favoriteResourcesData]);
 
@@ -79,7 +80,6 @@ export const FavoritePage: React.FC = () => {
             <InfiniteScrollList
               redirectLink="/favorites"
               allResourcesDisplayed={allResourcesDisplayed}
-              refetchData={refetchFavorite}
             />
           </div>
         </div>
