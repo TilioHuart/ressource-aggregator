@@ -114,7 +114,7 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
                 size="md"
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value.trimStart())}
               />
             </FormControl>
             <FormControl id="create-pin-description">
@@ -129,7 +129,7 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
                 size="md"
                 type="text"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value.trimStart())}
               />
             </FormControl>
           </div>
@@ -142,7 +142,7 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
         <Button
           color="primary"
           type="submit"
-          disabled={title == ""}
+          disabled={!title}
           onClick={onSubmit}
         >
           {t("mediacentre.pin")}

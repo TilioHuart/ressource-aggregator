@@ -97,7 +97,7 @@ public class DefaultPinsService implements PinsService {
         JsonObject resourceUpdated = new JsonObject(); // update only title and description
         if (resource.containsKey(Field.PINNED_TITLE) && !resource.getString(Field.PINNED_TITLE).isEmpty())
             resourceUpdated.put(Field.PINNED_TITLE, resource.getString(Field.PINNED_TITLE));
-        if (resource.containsKey(Field.PINNED_DESCRIPTION) && !resource.getString(Field.PINNED_DESCRIPTION).isEmpty())
+        if (resource.containsKey(Field.PINNED_DESCRIPTION))
             resourceUpdated.put(Field.PINNED_DESCRIPTION, resource.getString(Field.PINNED_DESCRIPTION));
         JsonObject update = new JsonObject().put(MongoConstant.MONGO_SET, resourceUpdated);
         mongo.update(collection, query, update, MongoDbResult.validResultHandler(IModelHelper.uniqueResultToIModel(promise, PinResource.class)));
