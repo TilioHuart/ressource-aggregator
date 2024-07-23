@@ -205,5 +205,8 @@
   "mediacentre.signets.platform": "Signet de la plateforme",
   "mediacentre.pins.carousel.title": "Découvrez ces ressources !",
   "mediacentre.pins.modal.delete.title": "Suppression de l'épingle",
-  "mediacentre.pins.modal.delete.subtitle": "Attention, l'épingle sera supprimée définitivement, êtes-vous sûr ?"
+  "mediacentre.pins.modal.delete.subtitle": "Attention, l'épingle sera supprimée définitivement, êtes-vous sûr ?",
+
+  "mediacentre.signets.themes.orientation": "Orientation et décourvertes des métiers",
+  "mediacentre.signets.without.theme": "Sans thématique"
 }

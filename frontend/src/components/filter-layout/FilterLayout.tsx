@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Checkbox } from "@edifice-ui/react";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
 import { DropDown } from "../drop-down/DropDown";
@@ -35,6 +36,7 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
   } = useResourceListInfo(resources);
 
   const page = useLocation().pathname;
+  const { t } = useTranslation();
   // these useStates are used to store the state of the checkboxes
   const [checkboxTextbook, setCheckboxTextbook] =
     useState<boolean>(containTextbook);
@@ -42,6 +44,14 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
     useState<boolean>(containExternalResource);
   const [checkboxSignet, setCheckboxSignet] = useState<boolean>(containSignet);
   const [checkboxMoodle, setCheckboxMoodle] = useState<boolean>(containMoodle);
+  // themes is used for the signets page
+  const themes = [
+    t("mediacentre.signets.themes.orientation"),
+    t("mediacentre.signets.without.theme"),
+  ];
+  const [selectedCheckboxesThemes, setSelectedCheckboxesThemes] =
+    useState<string[]>(themes);
+
   const [selectedCheckboxesLevels, setSelectedCheckboxesLevels] =
     useState<string[]>(levels);
   const [selectedCheckboxesTypes, setSelectedCheckboxesTypes] =
@@ -91,7 +101,21 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
         selectedCheckboxesTypes.some((type) =>
           resource.document_types.includes(type),
         );
-      return matchesDiscipline || matchesLevel || matchesType;
+      const matchesTheme =
+        resource?.document_types &&
+        selectedCheckboxesThemes.length > 0 &&
+        selectedCheckboxesThemes.some((type) => {
+          const containOrientation = selectedCheckboxesThemes.includes(
+            t("mediacentre.signets.themes.orientation"),
+          );
+          return (
+            (type === t("mediacentre.signets.themes.orientation") &&
+              containOrientation) ||
+            (type === t("mediacentre.signets.without.theme") &&
+              !containOrientation)
+          );
+        });
+      return matchesDiscipline || matchesLevel || matchesType || matchesTheme;
     });
     setAllResourcesDisplayed(filteredResources);
   }, [
@@ -161,6 +185,14 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
             setSelectedCheckboxes={setSelectedCheckboxesTypes}
             checkboxOptions={types ?? []}
             label="Type"
+          />
+        )}
+        {page === "/signets" && (
+          <DropDown
+            selectedCheckboxes={selectedCheckboxesThemes}
+            setSelectedCheckboxes={setSelectedCheckboxesThemes}
+            checkboxOptions={themes ?? []}
+            label="Thématiques"
           />
         )}
         <DropDown

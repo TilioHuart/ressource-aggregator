@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
 import "./Sidebar.scss";
-import { isActionAvailable } from "@edifice-ui/react";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import HomeIcon from "@mui/icons-material/Home";
 import LaptopIcon from "@mui/icons-material/Laptop";
@@ -11,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { SidebarIcon } from "../sidebar-icon/SidebarIcon";
-import { useActions } from "~/services/queries";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -26,9 +24,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const { t } = useTranslation();
   const sidebarRef = useRef<HTMLDivElement>(null);
-
-  const { data: actions } = useActions();
-  const canAccessSignet = isActionAvailable("signets", actions);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -74,16 +69,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           name={`${t("mediacentre.sidebar.resources")}`}
           selected={location.pathname === "/resources"}
         />
-        {canAccessSignet && (
-          <a href="/mediacentre?view=angular#/signet">
-            <SidebarIcon
-              action={() => {}}
-              icon={<BookmarkIcon />}
-              name={`${t("mediacentre.sidebar.signets")}`}
-              selected={location.pathname === "/signet"}
-            />
-          </a>
-        )}
+        <SidebarIcon
+          action={() => navigate("/signets")}
+          icon={<BookmarkIcon />}
+          name={`${t("mediacentre.sidebar.signets")}`}
+          selected={location.pathname === "/signets"}
+        />
       </div>
     </div>
   );

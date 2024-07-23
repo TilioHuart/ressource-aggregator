@@ -85,6 +85,22 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/signets",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        async lazy() {
+          const { SignetPage } = await import("./signets");
+          return {
+            Component: SignetPage,
+          };
+        },
+      },
+    ],
+  },
 ];
 
 // add # before roots to distinguish front roots (#/search) from back roots (/search)
