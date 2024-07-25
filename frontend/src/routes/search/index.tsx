@@ -53,8 +53,7 @@ export const Search: React.FC = () => {
   >(null);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
-  const { textbooks, externalResources, signets, moodle } =
-    useResourceListInfo(searchResourcesData);
+  const { resourcesMap } = useResourceListInfo(allResources);
 
   useEffect(() => {
     if (!allResources) return;
@@ -62,20 +61,15 @@ export const Search: React.FC = () => {
       refetchSearch();
       setInitialLoadDone(true);
     }
-    setSearchResourcesData(allResources);
-  }, [allResources, refetchSearch, initialLoadDone]);
-
-  useEffect(() => {
-    if (searchResourcesData) {
-      const sortedSearchResources = [
-        ...sortByAlphabet(textbooks),
-        ...sortByAlphabet(externalResources),
-        ...sortByAlphabet(signets),
-        ...sortByAlphabet(moodle),
-      ];
-      setAllResourcesDisplayed(sortedSearchResources);
-    }
-  }, [searchResourcesData]);
+    const sortedSearchResources = [
+      ...sortByAlphabet(resourcesMap.textbooks),
+      ...sortByAlphabet(resourcesMap.externalResources),
+      ...sortByAlphabet(resourcesMap.signets),
+      ...sortByAlphabet(resourcesMap.moodle),
+    ];
+    setSearchResourcesData(sortedSearchResources);
+    setAllResourcesDisplayed(sortedSearchResources);
+  }, [allResources, refetchSearch, initialLoadDone, resourcesMap]);
 
   return (
     <>
@@ -108,7 +102,8 @@ export const Search: React.FC = () => {
           </div>
           <div className="med-search-page-content-body">
             <FilterLayout
-              resources={allResources}
+              resources={searchResourcesData}
+              allResourcesDisplayed={allResourcesDisplayed}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
             />
             <InfiniteScrollList

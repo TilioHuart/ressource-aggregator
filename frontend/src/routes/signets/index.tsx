@@ -80,6 +80,7 @@ export const SignetPage: React.FC = () => {
             <div className="med-search-page-content-body">
               <FilterLayout
                 resources={signetResourcesData}
+                allResourcesDisplayed={allResourcesDisplayed}
                 setAllResourcesDisplayed={setAllResourcesDisplayed}
               />
               <InfiniteScrollList

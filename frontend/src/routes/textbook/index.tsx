@@ -99,6 +99,7 @@ export const TextbookPage: React.FC = () => {
           <div className="med-search-page-content-body">
             <FilterLayout
               resources={textbooksData}
+              allResourcesDisplayed={allResourcesDisplayed}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
             />
             <InfiniteScrollList

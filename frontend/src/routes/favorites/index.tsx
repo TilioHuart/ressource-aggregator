@@ -10,6 +10,7 @@ import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
 import { useFavorite } from "~/hooks/useFavorite";
+import { useResourceListInfo } from "~/hooks/useResourceListInfo";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
@@ -29,20 +30,23 @@ export const FavoritePage: React.FC = () => {
   >(null);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
+  const { resourcesMap } = useResourceListInfo(favorites);
+
   useEffect(() => {
     if (!favorites) return;
     if (!initialLoadDone) {
       refetchFavorite();
       setInitialLoadDone(true);
     }
-    setFavoriteResourcesData(favorites);
-  }, [favorites, refetchFavorite, initialLoadDone]);
-
-  useEffect(() => {
-    if (favoriteResourcesData) {
-      setAllResourcesDisplayed(sortByAlphabet(favoriteResourcesData));
-    }
-  }, [favoriteResourcesData]);
+    const sortedFavoriteResources = [
+      ...sortByAlphabet(resourcesMap.textbooks),
+      ...sortByAlphabet(resourcesMap.externalResources),
+      ...sortByAlphabet(resourcesMap.signets),
+      ...sortByAlphabet(resourcesMap.moodle),
+    ];
+    setFavoriteResourcesData(sortedFavoriteResources);
+    setAllResourcesDisplayed(sortedFavoriteResources);
+  }, [favorites, refetchFavorite, initialLoadDone, resourcesMap]);
 
   return (
     <>
@@ -75,6 +79,7 @@ export const FavoritePage: React.FC = () => {
           <div className="med-search-page-content-body">
             <FilterLayout
               resources={favoriteResourcesData}
+              allResourcesDisplayed={allResourcesDisplayed}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
             />
             <InfiniteScrollList

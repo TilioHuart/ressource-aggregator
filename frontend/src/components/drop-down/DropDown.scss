@@ -1,0 +1,7 @@
+@import "../../styles/_colors.scss";
+
+.dropdown-item-disabled {
+  pointer-events: none;
+  color: $med-secondary-gray;
+  cursor: not-allowed;
+}

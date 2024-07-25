@@ -85,6 +85,7 @@ export const ResourcePage: React.FC = () => {
           <div className="med-search-page-content-body">
             <FilterLayout
               resources={externalResourcesData}
+              allResourcesDisplayed={allResourcesDisplayed}
               setAllResourcesDisplayed={setAllResourcesDisplayed}
             />
             <InfiniteScrollList

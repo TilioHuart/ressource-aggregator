@@ -1,10 +1,11 @@
 import { Dropdown } from "@edifice-ui/react";
+import "./DropDown.scss";
 import { useTranslation } from "react-i18next";
 
 interface DropDownProps {
   checkboxOptions: string[];
   selectedCheckboxes: string[];
-  setSelectedCheckboxes: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedCheckboxes: (value: string[]) => void;
   label: string;
 }
 export const DropDown: React.FC<DropDownProps> = ({
@@ -17,7 +18,7 @@ export const DropDown: React.FC<DropDownProps> = ({
 
   const handleMultiCheckbox = (
     selectedCheckboxes: string[],
-    setSelectedCheckboxes: React.Dispatch<React.SetStateAction<string[]>>,
+    setSelectedCheckboxes: (value: string[]) => void,
     value: string,
   ) => {
     let checked = [...selectedCheckboxes];
@@ -42,18 +43,16 @@ export const DropDown: React.FC<DropDownProps> = ({
         badgeContent={selectedCheckboxes.length || 0}
       />
       <Dropdown.Menu>
-        <Dropdown.Item
-          key={`all-selected-${label}`}
-          onClick={() =>
-            selectedCheckboxes.length === checkboxOptions.length
-              ? setSelectedCheckboxes([])
-              : setSelectedCheckboxes(checkboxOptions)
-          }
+        <div
+          className={!selectedCheckboxes.length ? "dropdown-item-disabled" : ""}
         >
-          {selectedCheckboxes.length === checkboxOptions.length
-            ? t("mediacentre.combo.deselectAll")
-            : t("mediacentre.combo.selectAll")}
-        </Dropdown.Item>
+          <Dropdown.Item
+            key={`reset-filter-${label}`}
+            onClick={() => setSelectedCheckboxes([])}
+          >
+            {t("mediacentre.filter.reset")}
+          </Dropdown.Item>
+        </div>
         <Dropdown.Separator />
         {checkboxOptions.map((option, index) => (
           <Dropdown.CheckboxItem
