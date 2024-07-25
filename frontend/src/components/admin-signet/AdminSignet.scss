@@ -1,0 +1,45 @@
+@import "../../styles/_colors.scss";
+@import "../../styles/_breakpoints.scss";
+
+.med-signets-admin-list {
+  margin-top: 6rem;
+  margin-right: 1rem;
+
+  .med-signets-admin-box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 0.6rem;
+    cursor: pointer;
+
+    @media (max-width: $md) {
+      width: fit-content;
+    }
+
+    &:hover {
+      background-color: $med-secondary-light-blue;
+
+      .med-signets-admin-box-text {
+        font-weight: 600;
+      }
+    }
+
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+
+    &.active {
+      background-color: $med-secondary-light-blue;
+    }
+
+    .med-signets-admin-box-text {
+      margin-left: 10px;
+      text-wrap: nowrap;
+
+      @media (max-width: $md) {
+        display: none;
+      }
+    }
+  }
+}

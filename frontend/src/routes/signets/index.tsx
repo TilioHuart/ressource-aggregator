@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { Alert } from "@edifice-ui/react";
+import { Alert, Button, isActionAvailable } from "@edifice-ui/react";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useTranslation } from "react-i18next";
 
+import { AdminSignet } from "~/components/admin-signet/AdminSignet";
 import { FilterLayout } from "~/components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -12,9 +13,9 @@ import { useSignet } from "~/hooks/useSignet";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
-// import { useActions } from "~/services/queries";
+import { useActions } from "~/services/queries";
 import { sortByAlphabet } from "~/utils/sortResources.util";
-
+import "~/styles/page/signet.scss";
 import "~/styles/page/search.scss";
 
 export const SignetPage: React.FC = () => {
@@ -22,8 +23,9 @@ export const SignetPage: React.FC = () => {
   const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
 
-  // const { data: actions } = useActions(); // POUR LA SUITE
-  // const canAccessSignet = isActionAvailable("signets", actions); // POUR LA SUITE
+  // RIGHTS
+  const { data: actions } = useActions();
+  const canAccessSignet = isActionAvailable("signets", actions);
 
   const { homeSignets } = useSignet();
   const [allResourcesDisplayed, setAllResourcesDisplayed] = useState<
@@ -33,6 +35,8 @@ export const SignetPage: React.FC = () => {
     Resource[] | null
   >(null);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
+
+  const canAccess = () => (canAccessSignet ? "signets" : "search");
 
   useEffect(() => {
     if (!homeSignets) return;
@@ -67,26 +71,41 @@ export const SignetPage: React.FC = () => {
           </Alert>
         )}
         <CreatePins refetch={refetchPins} />
-        <div className="med-search-container">
-          <div className="med-search-page-content">
-            <div className="med-search-page-header">
-              <div className="med-search-page-title">
-                <BookmarkIcon className="med-search-icon" />
-                <h1 className="med-search-title">
-                  {t("mediacentre.sidebar.signets")}
-                </h1>
+        <div className="med-root-container">
+          <div className={`med-${canAccess()}-container`}>
+            {canAccessSignet && (
+              <div className="med-signets-admin-container">
+                <AdminSignet />
               </div>
-            </div>
-            <div className="med-search-page-content-body">
-              <FilterLayout
-                resources={signetResourcesData}
-                allResourcesDisplayed={allResourcesDisplayed}
-                setAllResourcesDisplayed={setAllResourcesDisplayed}
-              />
-              <InfiniteScrollList
-                redirectLink="/signets"
-                allResourcesDisplayed={allResourcesDisplayed}
-              />
+            )}
+            <div className={`med-${canAccess()}-page-content`}>
+              <div className={`med-${canAccess()}-page-header`}>
+                <div className={`med-${canAccess()}-page-title`}>
+                  <BookmarkIcon className={`med-${canAccess()}-icon`} />
+                  <h1 className={`med-${canAccess()}-title`}>
+                    {t("mediacentre.sidebar.signets")}
+                  </h1>
+                </div>
+                {canAccessSignet && (
+                  <Button
+                    color="primary"
+                    type="button"
+                    className="med-signets-create-button"
+                  >
+                    {t("mediacentre.signet.create.button")}
+                  </Button>
+                )}
+              </div>
+              <div className={`med-${canAccess()}-page-content-body`}>
+                <FilterLayout
+                  resources={signetResourcesData}
+                  setAllResourcesDisplayed={setAllResourcesDisplayed}
+                />
+                <InfiniteScrollList
+                  redirectLink="/signets"
+                  allResourcesDisplayed={allResourcesDisplayed}
+                />
+              </div>
             </div>
           </div>
         </div>

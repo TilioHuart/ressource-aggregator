@@ -45,7 +45,13 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
         allResourcesDisplayed.slice(0, indexVisibleResources * 10),
       );
     }
-  }, [visibleResources]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    visibleResources,
+    allResourcesDisplayed,
+    indexVisibleResources,
+    redirectLink,
+  ]);
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
