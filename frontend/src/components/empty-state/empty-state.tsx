@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
 
 interface EmptyStateProps {
+  imgSource?: string;
   title: string;
   description?: string;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
+  imgSource,
   title,
   description,
 }) => {
@@ -13,7 +15,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div className="empty-state">
       <img
-        src="/mediacentre/public/img/empty-state.png"
+        src={`/mediacentre/public/img/${imgSource || "empty-state.png"}`}
         alt="empty-state"
         className="empty-state-img"
       />

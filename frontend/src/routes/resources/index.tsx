@@ -4,6 +4,7 @@ import { Alert, useUser } from "@edifice-ui/react";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import { useTranslation } from "react-i18next";
 
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { FilterLayout } from "~/components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -83,15 +84,28 @@ export const ResourcePage: React.FC = () => {
             </div>
           </div>
           <div className="med-search-page-content-body">
-            <FilterLayout
-              resources={externalResourcesData}
-              allResourcesDisplayed={allResourcesDisplayed}
-              setAllResourcesDisplayed={setAllResourcesDisplayed}
-            />
-            <InfiniteScrollList
-              redirectLink="/resources"
-              allResourcesDisplayed={allResourcesDisplayed}
-            />
+            {externalResourcesData && !externalResourcesData.length ? (
+              <EmptyState
+                imgSource="empty-state-resources.png"
+                title="mediacentre.empty.state.resources"
+              />
+            ) : (
+              <>
+                <FilterLayout
+                  resources={externalResourcesData}
+                  allResourcesDisplayed={allResourcesDisplayed}
+                  setAllResourcesDisplayed={setAllResourcesDisplayed}
+                />
+                {allResourcesDisplayed && !allResourcesDisplayed.length ? (
+                  <EmptyState title="mediacentre.empty.state.filter" />
+                ) : (
+                  <InfiniteScrollList
+                    redirectLink="/resources"
+                    allResourcesDisplayed={allResourcesDisplayed}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -218,5 +218,12 @@
   "mediacentre.filter.levels": "Niveaux",
   "mediacentre.filter.discipline": "Discipline",
   "mediacentre.filter.disciplines": "Disciplines",
-  "mediacentre.filter.reset": "Réinitialiser les filtres"
+  "mediacentre.filter.reset": "Réinitialiser les filtres",
+
+  "mediacentre.empty.state.filter": "Aucune ressource ne correspond à vos critères de recherche. Modifiez les critères et tentez à nouveau !",
+  "mediacentre.empty.state.search": "Aucune ressource ne correspond à votre recherche. Modifiez les critères et tentez à nouveau !",
+  "mediacentre.empty.state.signets": "Aucun signet n'a été publié ou partagé avec vous.",
+  "mediacentre.empty.state.favorites": "Aucune ressource n'a été ajoutée aux favoris.",
+  "mediacentre.empty.state.textbooks": "Aucun manuel ne vous a été affecté pour le moment.",
+  "mediacentre.empty.state.resources": "Aucune ressource ne vous a été affecté pour le moment."
 }

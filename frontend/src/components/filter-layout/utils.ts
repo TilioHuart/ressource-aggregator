@@ -80,7 +80,7 @@ const filterByTypes = (resources: Resource[], types: string[]) => {
   }
   return resources.filter((resource) => {
     if (resource.source !== GAR || resource.is_textbook) {
-      return true;
+      return false;
     } // we filter only external resources
     return types.some((type) => resource.document_types.includes(type));
   });

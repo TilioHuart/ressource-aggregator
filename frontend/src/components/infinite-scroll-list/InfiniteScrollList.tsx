@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { LoadingScreen } from "@edifice-ui/react";
 import { useNavigate } from "react-router-dom";
 
-import { EmptyState } from "../empty-state/empty-state";
 import { ListCard } from "../list-card/ListCard";
 import { SearchCard } from "../search-card/SearchCard";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
@@ -103,25 +102,19 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
         <LoadingScreen position={false} />
       ) : (
         <>
-          {visibleResources?.length ? (
-            <>
-              <ListCard
-                scrollable={false}
-                type={CardTypeEnum.search}
-                components={visibleResources.map((searchResource: any) => (
-                  <SearchCard
-                    searchResource={searchResource}
-                    link={searchResource.link ?? searchResource.url ?? "/"}
-                    setIsRemoveResource={setIsRemoveResource}
-                  />
-                ))}
-                redirectLink={() => navigate(redirectLink)}
+          <ListCard
+            scrollable={false}
+            type={CardTypeEnum.search}
+            components={visibleResources?.map((searchResource: any) => (
+              <SearchCard
+                searchResource={searchResource}
+                link={searchResource.link ?? searchResource.url ?? "/"}
+                setIsRemoveResource={setIsRemoveResource}
               />
-              <div ref={loaderRef} />
-            </>
-          ) : (
-            <EmptyState title="mediacentre.search.empty" />
-          )}
+            ))}
+            redirectLink={() => navigate(redirectLink)}
+          />
+          <div ref={loaderRef} />
         </>
       )}
     </>

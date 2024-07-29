@@ -4,6 +4,7 @@ import { Alert } from "@edifice-ui/react";
 import SchoolIcon from "@mui/icons-material/School";
 import { useTranslation } from "react-i18next";
 
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { FilterLayout } from "~/components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -97,15 +98,28 @@ export const TextbookPage: React.FC = () => {
             </div>
           </div>
           <div className="med-search-page-content-body">
-            <FilterLayout
-              resources={textbooksData}
-              allResourcesDisplayed={allResourcesDisplayed}
-              setAllResourcesDisplayed={setAllResourcesDisplayed}
-            />
-            <InfiniteScrollList
-              redirectLink="/textbook"
-              allResourcesDisplayed={allResourcesDisplayed}
-            />
+            {textbooksData && !textbooksData.length ? (
+              <EmptyState
+                imgSource="empty-state-textbooks.png"
+                title="mediacentre.empty.state.textbooks"
+              />
+            ) : (
+              <>
+                <FilterLayout
+                  resources={textbooksData}
+                  allResourcesDisplayed={allResourcesDisplayed}
+                  setAllResourcesDisplayed={setAllResourcesDisplayed}
+                />
+                {allResourcesDisplayed && !allResourcesDisplayed.length ? (
+                  <EmptyState title="mediacentre.empty.state.filter" />
+                ) : (
+                  <InfiniteScrollList
+                    redirectLink="/textbook"
+                    allResourcesDisplayed={allResourcesDisplayed}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

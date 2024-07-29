@@ -5,6 +5,7 @@ import StarIcon from "@mui/icons-material/Star";
 import { useTranslation } from "react-i18next";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
@@ -77,15 +78,28 @@ export const FavoritePage: React.FC = () => {
             </div>
           </div>
           <div className="med-search-page-content-body">
-            <FilterLayout
-              resources={favoriteResourcesData}
-              allResourcesDisplayed={allResourcesDisplayed}
-              setAllResourcesDisplayed={setAllResourcesDisplayed}
-            />
-            <InfiniteScrollList
-              redirectLink="/favorites"
-              allResourcesDisplayed={allResourcesDisplayed}
-            />
+            {favoriteResourcesData && !favoriteResourcesData.length ? (
+              <EmptyState
+                imgSource="empty-state-favorites.png"
+                title="mediacentre.empty.state.favorites"
+              />
+            ) : (
+              <>
+                <FilterLayout
+                  resources={favoriteResourcesData}
+                  allResourcesDisplayed={allResourcesDisplayed}
+                  setAllResourcesDisplayed={setAllResourcesDisplayed}
+                />
+                {allResourcesDisplayed && !allResourcesDisplayed.length ? (
+                  <EmptyState title="mediacentre.empty.state.filter" />
+                ) : (
+                  <InfiniteScrollList
+                    redirectLink="/favorites"
+                    allResourcesDisplayed={allResourcesDisplayed}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

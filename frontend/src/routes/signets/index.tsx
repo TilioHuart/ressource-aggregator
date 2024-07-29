@@ -5,6 +5,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useTranslation } from "react-i18next";
 
 import { AdminSignet } from "~/components/admin-signet/AdminSignet";
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { FilterLayout } from "~/components/filter-layout/FilterLayout";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
@@ -97,14 +98,28 @@ export const SignetPage: React.FC = () => {
                 )}
               </div>
               <div className={`med-${canAccess()}-page-content-body`}>
-                <FilterLayout
-                  resources={signetResourcesData}
-                  setAllResourcesDisplayed={setAllResourcesDisplayed}
-                />
-                <InfiniteScrollList
-                  redirectLink="/signets"
-                  allResourcesDisplayed={allResourcesDisplayed}
-                />
+                {signetResourcesData && !signetResourcesData.length ? (
+                  <EmptyState
+                    imgSource="empty-state-signets.png"
+                    title="mediacentre.empty.state.signets"
+                  />
+                ) : (
+                  <>
+                    <FilterLayout
+                      resources={signetResourcesData}
+                      allResourcesDisplayed={allResourcesDisplayed}
+                      setAllResourcesDisplayed={setAllResourcesDisplayed}
+                    />
+                    {allResourcesDisplayed && !allResourcesDisplayed.length ? (
+                      <EmptyState title="mediacentre.empty.state.filter" />
+                    ) : (
+                      <InfiniteScrollList
+                        redirectLink="/signets"
+                        allResourcesDisplayed={allResourcesDisplayed}
+                      />
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>

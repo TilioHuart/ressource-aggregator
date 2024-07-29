@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useSearchParams } from "react-router-dom";
 
 import { FilterLayout } from "../../components/filter-layout/FilterLayout";
+import { EmptyState } from "~/components/empty-state/empty-state";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
@@ -101,15 +102,28 @@ export const Search: React.FC = () => {
             </div>
           </div>
           <div className="med-search-page-content-body">
-            <FilterLayout
-              resources={searchResourcesData}
-              allResourcesDisplayed={allResourcesDisplayed}
-              setAllResourcesDisplayed={setAllResourcesDisplayed}
-            />
-            <InfiniteScrollList
-              redirectLink="/search"
-              allResourcesDisplayed={allResourcesDisplayed}
-            />
+            {searchResourcesData && !searchResourcesData.length ? (
+              <EmptyState
+                imgSource="empty-state-search.png"
+                title="mediacentre.empty.state.search"
+              />
+            ) : (
+              <>
+                <FilterLayout
+                  resources={searchResourcesData}
+                  allResourcesDisplayed={allResourcesDisplayed}
+                  setAllResourcesDisplayed={setAllResourcesDisplayed}
+                />
+                {allResourcesDisplayed && !allResourcesDisplayed.length ? (
+                  <EmptyState title="mediacentre.empty.state.filter" />
+                ) : (
+                  <InfiniteScrollList
+                    redirectLink="/search"
+                    allResourcesDisplayed={allResourcesDisplayed}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
