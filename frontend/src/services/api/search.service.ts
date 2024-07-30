@@ -3,8 +3,10 @@ import { emptySplitApi } from "./emptySplitApi.service";
 export const searchApi = emptySplitApi.injectEndpoints({
   endpoints: (builder) => ({
     search: builder.query({
-      query: (query) => ({
-        url: `search?jsondata=${encodeURI(JSON.stringify(query))}`,
+      query: ({ jsondata, idStructure }) => ({
+        url: `search?jsondata=${encodeURI(
+          JSON.stringify(jsondata),
+        )}&structureIds=${encodeURI(JSON.stringify(idStructure))}`,
       }),
     }),
   }),

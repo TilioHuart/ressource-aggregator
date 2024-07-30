@@ -7,8 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import { useUser } from "@edifice-ui/react";
-
+import { useSelectedStructureProvider } from "./SelectedStructureProvider";
 import { PinProviderContextType, PinProviderProviderProps } from "./types";
 import { useGetPinsQuery } from "../services/api/pin.service";
 import { Pin } from "~/model/Pin.model";
@@ -25,11 +24,10 @@ export const usePinProvider = () => {
 
 export const PinProvider: FC<PinProviderProviderProps> = ({ children }) => {
   const [pins, setPins] = useState<Pin[] | null>(null);
-  const { user } = useUser();
+  const { idSelectedStructure } = useSelectedStructureProvider();
 
-  const { data: fetchedPins, refetch: refetchPins } = useGetPinsQuery(
-    (user?.structures.length ? user?.structures[0] : "") ?? "",
-  );
+  const { currentData: fetchedPins, refetch: refetchPins } =
+    useGetPinsQuery(idSelectedStructure);
 
   useEffect(() => {
     if (fetchedPins) {

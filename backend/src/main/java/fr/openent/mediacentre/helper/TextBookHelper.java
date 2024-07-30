@@ -27,7 +27,7 @@ public class TextBookHelper {
     private final Logger log = LoggerFactory.getLogger(TextBookHelper.class);
     private final FavoriteHelper favoriteHelper = new FavoriteHelper();
 
-    public void retrieveTextBooks(String state, UserInfos user, List<Source> sources, ResponseHandlerHelper answer) {
+    public void retrieveTextBooks(String state, UserInfos user, List<Source> sources, List<String> idStructures, ResponseHandlerHelper answer) {
         Future<JsonArray> getTextBookFuture = getTextBooks(user.getUserId());
         Future<JsonArray> getFavoritesResourcesFuture = getFavorite(GAR.class.getName(), user.getUserId());
 
@@ -43,7 +43,7 @@ public class TextBookHelper {
 
 
             if (textBooks.isEmpty()) {
-                initUserTextBooks(state, user, sources, answer);
+                initUserTextBooks(state, user, sources, idStructures, answer);
             } else {
                 answer.answerSuccess(HelperUtils.frameLoad(
                         Field.TEXTBOOKS_RESULT,
@@ -67,7 +67,7 @@ public class TextBookHelper {
         return promise.future();
     }
 
-    public void initUserTextBooks(String state, UserInfos user, List<Source> sources, ResponseHandlerHelper answer) {
+    public void initUserTextBooks(String state, UserInfos user, List<Source> sources, List<String> idStructures, ResponseHandlerHelper answer) {
         sources = sources.stream().filter(source -> source instanceof GAR).collect(Collectors.toList());
         if (sources.isEmpty()) {
             answer.answerFailure(HelperUtils.frameLoad(
@@ -77,12 +77,12 @@ public class TextBookHelper {
                     new JsonObject().put(Field.ERROR, "[TextBookHelper] Failed to retrieve GAR textbooks")
             ).encode());
         } else {
-            retrieveUserTextbooks(state, user, sources.get(0), answer);
+            retrieveUserTextbooks(state, user, sources.get(0), idStructures, answer);
         }
     }
 
-    private void retrieveUserTextbooks(String state, UserInfos user, Source source, ResponseHandlerHelper answer) {
-        ((GAR) source).initTextBooks(user, event -> {
+    private void retrieveUserTextbooks(String state, UserInfos user, Source source, List<String> idStructures, ResponseHandlerHelper answer) {
+        ((GAR) source).initTextBooks(user, idStructures, event -> {
             if (event.isLeft()) {
                 log.error("[TextBookHelper] Failed to retrieve GAR textbooks", event.left().getValue());
                 answer.answerSuccess(new JsonObject().put("error", "Failed to retrieve GAR textbooks").put("status", "ko").encode());
@@ -118,7 +118,7 @@ public class TextBookHelper {
         });
     }
 
-    public void refreshTextBooks(String state,List<Source> sources, UserInfos user, ResponseHandlerHelper answer) {
+    public void refreshTextBooks(String state,List<Source> sources, UserInfos user, List<String> idStructures, ResponseHandlerHelper answer) {
         textBookService.delete(user.getUserId(), event -> {
             if (event.isLeft()) {
                 log.error("[TextBookHelper@refreshTextBooks] Failed to delete user textbooks");
@@ -127,7 +127,7 @@ public class TextBookHelper {
                         .put(Field.STATUS, Field.KO).encode());
                 return;
             }
-            retrieveTextBooks(state, user, sources, answer);
+            retrieveTextBooks(state, user, sources, idStructures, answer);
         });
     }
 }

@@ -7,7 +7,7 @@ import { Resource } from "~/model/Resource.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
 import { usePinProvider } from "~/providers/PinProvider";
 
-export const useSearch = (query: any) => {
+export const useSearch = (query: any, idStructure: string) => {
   const { pins } = usePinProvider();
   const [allResources, setAllResources] = useState<Resource[] | null>(null);
   const { favorites } = useFavorite();
@@ -16,7 +16,7 @@ export const useSearch = (query: any) => {
     error,
     isLoading,
     refetch: refetchSearch,
-  } = useSearchQuery(query);
+  } = useSearchQuery({ jsondata: query, idStructure });
 
   useEffect(() => {
     if (!isLoading) {

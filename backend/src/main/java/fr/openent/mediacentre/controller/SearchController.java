@@ -20,6 +20,8 @@ import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserUtils;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class SearchController extends ControllerHelper {
@@ -37,6 +39,8 @@ public class SearchController extends ControllerHelper {
     @ApiDoc("Retrieve books from basic search")
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getSearch(HttpServerRequest request) {
+        String listIdStructuresParam = request.getParam(Field.STRUCTUREIDS);
+        final List<String> listIdStructures = listIdStructuresParam != null ? Arrays.asList(listIdStructuresParam.split(",")) : new ArrayList<>();
         UserUtils.getUserInfos(eb, request, user -> {
             if (user == null) {
                 log.error("User not found in session.");
@@ -78,7 +82,7 @@ public class SearchController extends ControllerHelper {
                     )
                     .collect(Collectors.toList()));
             JsonObject data = jsondata.getJsonObject(Field.DATA);
-            searchHelper.search(state, sources, expectedSources, data, user, new APIHelper(request));
+            searchHelper.search(state, sources, expectedSources, data, user, listIdStructures, new APIHelper(request));
         });
 
     }

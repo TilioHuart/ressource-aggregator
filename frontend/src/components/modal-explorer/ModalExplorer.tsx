@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
+import { PREF_EXPLORER_MODAL } from "~/core/const/preferences.const";
 import { useOnboardingModal } from "~/hooks/useOnboardingModal";
 
 import "./ModalExplorer.scss";
@@ -17,7 +18,7 @@ export const ModalExplorer: React.FC<ModalExplorerProps> = () => {
   const [swiperInstance, setSwiperInstance] = useState<any>();
   const [swiperProgress, setSwiperprogress] = useState<number>(0);
   const { isOpen, isOnboarding, setIsOpen, handleSavePreference } =
-    useOnboardingModal("showOnboardingMediacentre");
+    useOnboardingModal(PREF_EXPLORER_MODAL);
   const items = [
     {
       src: "/mediacentre/public/img/modal-explorer-first.svg",

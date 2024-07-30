@@ -7,13 +7,13 @@ import {
   Input,
   Label,
   Modal,
-  useUser,
 } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 
 import { links } from "~/core/const/links.const";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 import { useCreatePinMutation } from "~/services/api/pin.service";
 import "../Modal.scss";
 
@@ -22,8 +22,8 @@ interface CreatePinsProps {
 }
 
 export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
-  const { user } = useUser();
   const { t } = useTranslation();
+  const { idSelectedStructure } = useSelectedStructureProvider();
   const { modalResource, isCreatedOpen, setIsCreatedOpen } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
   const [createPin] = useCreatePinMutation();
@@ -54,11 +54,10 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
         id: modalResource?.id ? String(modalResource.id) : undefined,
         source: modalResource?.source,
       };
-      const idStructure =
-        (user?.structures && user.structures.length > 0
-          ? user?.structures[0]
-          : "") ?? "";
-      const response = await createPin({ idStructure, payload });
+      const response = await createPin({
+        idStructure: idSelectedStructure,
+        payload,
+      });
 
       if (response?.error) {
         notify(t("mediacentre.error.pin"), "danger");

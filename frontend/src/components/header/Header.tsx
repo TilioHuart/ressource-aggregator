@@ -1,10 +1,11 @@
 import React from "react";
 
-import { Breadcrumb, SearchBar } from "@edifice-ui/react";
+import { Breadcrumb, Dropdown, SearchBar, useUser } from "@edifice-ui/react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 
 import "./Header.scss";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -17,6 +18,11 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const search = () => {
     navigate("/search?query=" + searchValue);
   };
+
+  const { user } = useUser();
+
+  const { nameSelectedStructure, setNameSelectedStructure } =
+    useSelectedStructureProvider();
 
   return (
     <div className="med-header">
@@ -37,6 +43,28 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             }}
           />
         </a>
+        {user && user.structures.length > 1 ? (
+          <Dropdown>
+            <Dropdown.Trigger
+              className="dropdown-toggle med-header-structure"
+              label={nameSelectedStructure}
+            />
+            <Dropdown.Menu>
+              {[...user.structureNames].sort().map((structureName, index) => (
+                <Dropdown.Item
+                  key={index}
+                  onClick={() => {
+                    setNameSelectedStructure(structureName);
+                  }}
+                >
+                  {structureName}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        ) : (
+          <div className="med-header-structure">{nameSelectedStructure}</div>
+        )}
       </div>
       <div
         role="button"

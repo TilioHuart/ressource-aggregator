@@ -77,7 +77,6 @@ export const InfiniteScrollList: React.FC<InfiniteScrollListProps> = ({
   }, [handleObserver]); // for infinite scroll
 
   useEffect(() => {
-    console.log("allResourcesDisplayed", allResourcesDisplayed);
     if (allResourcesDisplayed) {
       if (redirectLink === "/favorites") {
         setVisibleResources(

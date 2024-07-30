@@ -23,6 +23,7 @@ public class SearchHelper extends ControllerHelper {
                                              List<Source> sources,
                                              JsonObject data,
                                              String state,
+                                             List<String> idStructures,
                                              Handler<Either<JsonObject, JsonObject>> handler) {
 
         if (expectedSources.isEmpty()) {
@@ -33,7 +34,7 @@ public class SearchHelper extends ControllerHelper {
         if (SearchState.PLAIN_TEXT.toString().equals(state)) {
             String query = data.getString("query");
             for (Source source : sources) {
-                if (expectedSources.contains(source.getClass().getName())) source.plainTextSearch(query, user, handler);
+                if (expectedSources.contains(source.getClass().getName())) source.plainTextSearch(query, user, idStructures, handler);
             }
         } else if (SearchState.ADVANCED.toString().equals(state)) {
             for (Source source : sources) {
@@ -48,6 +49,7 @@ public class SearchHelper extends ControllerHelper {
                             JsonArray expectedSources,
                             JsonObject data,
                             UserInfos user,
+                            List<String> idStructures,
                             ResponseHandlerHelper answer
     ) {
         Handler<Either<JsonObject, JsonObject>> handler = event -> {
@@ -65,7 +67,7 @@ public class SearchHelper extends ControllerHelper {
             }
         };
         if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state)){
-            searchRetrieve(user, expectedSources, sources, data, state, handler);
+            searchRetrieve(user, expectedSources, sources, data, state, idStructures, handler);
         }
         else
             answer.answerFailure(new JsonObject().put("error", "Unknown search type").put("status", "ko").encode());
@@ -75,7 +77,8 @@ public class SearchHelper extends ControllerHelper {
                                     List<Source> sources,
                                     JsonArray expectedSources,
                                     JsonObject data,
-                                    UserInfos user
+                                    UserInfos user,
+                                    List<String> idStructures
     ) {
         Promise<JsonArray> promise = Promise.promise();
         JsonArray combinedResults = new JsonArray();
@@ -96,7 +99,7 @@ public class SearchHelper extends ControllerHelper {
         };
 
         if (SearchState.PLAIN_TEXT.toString().equals(state) || SearchState.ADVANCED.toString().equals(state)){
-            searchRetrieve(user, expectedSources, sources, data, state, handler);
+            searchRetrieve(user, expectedSources, sources, data, state, idStructures, handler);
         }
 
         return promise.future();

@@ -1,11 +1,12 @@
 import React from "react";
 
-import { AlertTypes, Button, Modal, useUser } from "@edifice-ui/react";
+import { AlertTypes, Button, Modal } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 
 import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 import { useDeletePinMutation } from "~/services/api/pin.service";
 import "../Modal.scss";
 
@@ -14,8 +15,8 @@ interface ConfirmDeleteProps {
 }
 
 export const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ refetch }) => {
-  const { user } = useUser();
   const { t } = useTranslation();
+  const { idSelectedStructure } = useSelectedStructureProvider();
   const { modalResource, isDeleteOpen, setIsDeleteOpen } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
   const [deletePin] = useDeletePinMutation();
@@ -32,11 +33,10 @@ export const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ refetch }) => {
   const onSubmitDelete = async () => {
     try {
       const idResource = (modalResource as Pin)?._id;
-      const idStructure =
-        (user?.structures && user.structures.length > 0
-          ? user?.structures[0]
-          : "") ?? "";
-      const response = await deletePin({ idStructure, idResource });
+      const response = await deletePin({
+        idStructure: idSelectedStructure,
+        idResource,
+      });
 
       if (response?.error) {
         notify(t("mediacentre.error.pin"), "danger");

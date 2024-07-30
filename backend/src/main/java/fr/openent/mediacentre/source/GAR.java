@@ -129,8 +129,9 @@ public class GAR implements Source {
      * @param futures Future list
      * @param handler Function handler returning data
      */
-    private void getStructuresData(UserInfos user, List<Future> futures, Handler<AsyncResult<CompositeFuture>> handler) {
-        List<String> structures = user.getStructures();
+    private void getStructuresData(UserInfos user, List<String> idStructures, List<Future> futures, Handler<AsyncResult<CompositeFuture>> handler) {
+        List<String> structures = idStructures == null || idStructures.isEmpty() ? user.getStructures() : idStructures;
+
         for (String structure : structures) {
             Future<JsonArray> future = Future.future();
             futures.add(future);
@@ -142,8 +143,13 @@ public class GAR implements Source {
 
     @Override
     public void plainTextSearch(String query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
+        plainTextSearch(query, user, null, handler);
+    }
+
+    @Override
+    public void plainTextSearch(String query, UserInfos user, List<String> idStructures, Handler<Either<JsonObject, JsonObject>> handler) {
         List<Future> futures = new ArrayList<>();
-        getStructuresData(user, futures, event -> {
+        getStructuresData(user, idStructures, futures, event -> {
             JsonArray resources = new JsonArray();
             for (Future future : futures) {
                 if (future.succeeded()) {
@@ -258,7 +264,7 @@ public class GAR implements Source {
     public void advancedSearch(JsonObject query, UserInfos user, Handler<Either<JsonObject, JsonObject>> handler) {
         List<String> fields = Arrays.asList("title", "authors", "editors", "disciplines", "levels");
         List<Future> futures = new ArrayList<>();
-        getStructuresData(user, futures, event -> {
+        getStructuresData(user, null, futures, event -> {
             JsonArray resources = new JsonArray();
             for (Future future : futures) {
                 if (future.succeeded()) {
@@ -448,9 +454,9 @@ public class GAR implements Source {
         this.config = config;
     }
 
-    public void initTextBooks(UserInfos user, Handler<Either<String, JsonArray>> handler) {
+    public void initTextBooks(UserInfos user, List<String> idStructures, Handler<Either<String, JsonArray>> handler) {
         List<Future> futures = new ArrayList<>();
-        List<String> structures = user.getStructures();
+        List<String> structures = idStructures == null || idStructures.isEmpty() ? user.getStructures() : idStructures;
         for (String structure : structures) {
             Future<JsonArray> future = Future.future();
             futures.add(future);

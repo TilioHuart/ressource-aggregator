@@ -169,7 +169,7 @@ public class DefaultPinsService implements PinsService {
                 if (resourcesGar != null && !resourcesGar.isEmpty()) {
                     data.addAll(resourcesGar);  // get GAR
                 }
-                return searchHelper.search("PLAIN_TEXT", sources, searchSources, searchQuery, user);
+                return searchHelper.search("PLAIN_TEXT", sources, searchSources, searchQuery, user, new ArrayList<>());
             })
             .recover(error -> {
                 log.error("Error while retrieving search resources: " + error.getMessage());

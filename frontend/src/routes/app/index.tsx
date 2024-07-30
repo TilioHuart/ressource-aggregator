@@ -26,6 +26,7 @@ import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 
 export interface AppProps {
   _id: string;
@@ -42,14 +43,16 @@ export interface AppProps {
 export const App = () => {
   const location = useLocation();
   const { user } = useUser();
+  const { idSelectedStructure } = useSelectedStructureProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const { pins, setPins, refetchPins } = usePinProvider();
   const { favorites, setFavorites, refetchFavorite } = useFavorite();
   const { homeSignets, setHomeSignets } = useSignet();
-  const { textbooks, setTextbooks, refetchTextbooks } = useTextbook();
+  const { textbooks, setTextbooks, refetchTextbooks } =
+    useTextbook(idSelectedStructure);
   const { externalResources, setExternalResources, refetchSearch } =
-    useExternalResource();
+    useExternalResource(idSelectedStructure);
   const { globals } = useGlobal();
   const [pinsEmpty, setPinsEmpty] = useState<boolean>(true);
   const [externalResourcesData, setExternalResourcesData] = useState<

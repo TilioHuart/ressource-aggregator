@@ -7,7 +7,6 @@ import {
   Input,
   Label,
   Modal,
-  useUser,
 } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +15,7 @@ import { links } from "~/core/const/links.const";
 import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 import { useUpdatePinMutation } from "~/services/api/pin.service";
 
 interface EditPinsProps {
@@ -23,8 +23,8 @@ interface EditPinsProps {
 }
 
 export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
-  const { user } = useUser();
   const { t } = useTranslation();
+  const { idSelectedStructure } = useSelectedStructureProvider();
   const { modalResource, isEditOpen, setIsEditOpen, setIsDeleteOpen } =
     useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
@@ -58,15 +58,15 @@ export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
   const onSubmit = async () => {
     try {
       const idResource = (modalResource as Pin)?._id;
-      const idStructure =
-        (user?.structures && user.structures.length > 0
-          ? user?.structures[0]
-          : "") ?? "";
       const payload = {
         pinned_title: title,
         pinned_description: description,
       };
-      const response = await updatePin({ idStructure, idResource, payload });
+      const response = await updatePin({
+        idStructure: idSelectedStructure,
+        idResource,
+        payload,
+      });
 
       if (response?.error) {
         notify(t("mediacentre.error.pin"), "danger");

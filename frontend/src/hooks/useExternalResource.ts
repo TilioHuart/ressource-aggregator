@@ -7,7 +7,7 @@ import { Resource } from "~/model/Resource.model";
 import { SearchResultCategory } from "~/model/SearchResultCategory";
 import { usePinProvider } from "~/providers/PinProvider";
 
-export const useExternalResource = () => {
+export const useExternalResource = (idStructure: string) => {
   const { pins } = usePinProvider();
   const query = {
     state: "PLAIN_TEXT",
@@ -23,7 +23,7 @@ export const useExternalResource = () => {
     error,
     isLoading,
     refetch: refetchSearch,
-  } = useSearchQuery(query);
+  } = useSearchQuery({ jsondata: query, idStructure });
 
   const [externalResources, setExternalResources] = useState<
     ExternalResource[] | null

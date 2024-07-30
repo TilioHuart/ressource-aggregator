@@ -1,5 +1,6 @@
 package fr.openent.mediacentre.controller;
 
+import fr.openent.mediacentre.core.constants.Field;
 import fr.openent.mediacentre.helper.APIHelper;
 import fr.openent.mediacentre.helper.TextBookHelper;
 import fr.openent.mediacentre.security.ViewRight;
@@ -13,6 +14,8 @@ import org.entcore.common.controller.ControllerHelper;
 import org.entcore.common.http.filter.ResourceFilter;
 import org.entcore.common.user.UserUtils;
 
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TextBooksController extends ControllerHelper {
@@ -28,8 +31,11 @@ public class TextBooksController extends ControllerHelper {
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void getGar(HttpServerRequest request) {
+        String listIdStructuresParam = request.getParam(Field.STRUCTUREIDS);
+        final List<String> listIdStructures = listIdStructuresParam != null ? Arrays.asList(listIdStructuresParam.split(",")) : new ArrayList<>();
+
         UserUtils.getUserInfos(eb, request, user -> {
-            textBookHelper.retrieveTextBooks("get", user, sources, new APIHelper(request));
+            textBookHelper.retrieveTextBooks("get", user, sources, listIdStructures, new APIHelper(request));
         });
     }
 
@@ -37,8 +43,11 @@ public class TextBooksController extends ControllerHelper {
     @ResourceFilter(ViewRight.class)
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void refreshGar(HttpServerRequest request) {
+        String listIdStructuresParam = request.getParam(Field.STRUCTUREIDS);
+        final List<String> listIdStructures = listIdStructuresParam != null ? Arrays.asList(listIdStructuresParam.split(",")) : new ArrayList<>();
+
         UserUtils.getUserInfos(eb, request, user -> {
-            textBookHelper.refreshTextBooks("refresh", sources, user, new APIHelper(request));
+            textBookHelper.refreshTextBooks("refresh", sources, user, listIdStructures, new APIHelper(request));
         });
     }
 }

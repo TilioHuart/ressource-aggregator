@@ -7,14 +7,14 @@ import { Pin } from "~/model/Pin.model";
 import { Textbook } from "~/model/Textbook.model";
 import { usePinProvider } from "~/providers/PinProvider";
 
-export const useTextbook = () => {
+export const useTextbook = (idStructure: string) => {
   const { pins } = usePinProvider();
   const {
     data: textbook,
     error,
     isLoading,
     refetch: refetchTextbooks,
-  } = useGetTextbooksQuery(null);
+  } = useGetTextbooksQuery(idStructure);
   const [textbooks, setTextbooks] = useState<Textbook[] | null>(null);
   const { favorites } = useFavorite();
 

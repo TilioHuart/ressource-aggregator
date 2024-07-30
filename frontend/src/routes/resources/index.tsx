@@ -15,16 +15,19 @@ import { useGlobal } from "~/hooks/useGlobal";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 import { sortByAlphabet } from "~/utils/sortResources.util";
 
 export const ResourcePage: React.FC = () => {
   const { user } = useUser();
   const { t } = useTranslation();
+  const { idSelectedStructure } = useSelectedStructureProvider();
   const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
 
   const { globals } = useGlobal();
-  const { externalResources, refetchSearch } = useExternalResource();
+  const { externalResources, refetchSearch } =
+    useExternalResource(idSelectedStructure);
 
   const [externalResourcesData, setExternalResourcesData] = useState<
     Resource[] | null
