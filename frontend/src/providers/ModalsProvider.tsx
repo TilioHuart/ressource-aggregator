@@ -26,22 +26,25 @@ export const ModalProvider: FC<ModalProviderProviderProps> = ({ children }) => {
   const [modalResource, setModalResource] = useState<
     Textbook | Signet | ExternalResource | Moodle | SearchResource | Pin | null
   >(null);
-  const [isCreatedOpen, setIsCreatedOpen] = useState<boolean>(false);
-  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<string | null>(null);
+
+  const openSpecificModal = (modalType: string) => {
+    setOpenModal(modalType);
+  };
+
+  const closeAllModals = () => {
+    setOpenModal(null);
+  };
 
   const value = useMemo<ModalProviderContextType>(
     () => ({
       modalResource,
       setModalResource,
-      isCreatedOpen,
-      setIsCreatedOpen,
-      isEditOpen,
-      setIsEditOpen,
-      isDeleteOpen,
-      setIsDeleteOpen,
+      openModal,
+      openSpecificModal,
+      closeAllModals,
     }),
-    [modalResource, isCreatedOpen, isEditOpen, isDeleteOpen],
+    [modalResource, openModal],
   );
 
   return (

@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import { SearchCardDescription } from "./search-card-description/SearchCardDescription";
 import { SearchCardDetails } from "./search-card-details/SearchCardDetails";
 import { SearchCardType } from "./search-card-type/SearchCardType";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { SearchCardTypeEnum } from "~/core/enum/search-card-type.enum";
 import { SearchResource } from "~/model/SearchResource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
@@ -46,7 +47,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
   const [isExpanded, setIsExpanded] = useState(false);
-  const { setModalResource, setIsCreatedOpen } = useModalProvider();
+  const { setModalResource, openSpecificModal } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
 
   // used to check if the user has the right to pin a resource
@@ -151,7 +152,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   const pin = () => {
     if (searchResource) {
       setModalResource(searchResource);
-      setIsCreatedOpen(true);
+      openSpecificModal(ModalEnum.CREATE_PIN);
     }
   };
 

@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { ResourceTitle } from "./resource-title/ResourceTitle";
 import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { ExternalResource } from "~/model/ExternalResource.model";
 import { Favorite } from "~/model/Favorite.model";
 import { GlobalResource } from "~/model/GlobalResource.model";
@@ -69,7 +70,7 @@ export const Resource: React.FC<ResourceProps> = ({
   const [removeFavorite] = useRemoveFavoriteMutation();
   const { t } = useTranslation();
   const { setAlertText, setAlertType } = useAlertProvider();
-  const { setModalResource, setIsCreatedOpen } = useModalProvider();
+  const { setModalResource, openSpecificModal } = useModalProvider();
 
   // used to check if the user has the right to pin a resource
   const { data: actions } = useActions();
@@ -140,7 +141,7 @@ export const Resource: React.FC<ResourceProps> = ({
   const pin = () => {
     if (resource) {
       setModalResource(resource as SearchResource);
-      setIsCreatedOpen(true);
+      openSpecificModal(ModalEnum.CREATE_PIN);
     }
   };
 

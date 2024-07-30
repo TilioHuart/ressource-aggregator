@@ -34,12 +34,9 @@ export type ModalProviderContextType = {
       Textbook | Signet | ExternalResource | Moodle | SearchResource | null
     >
   >;
-  isCreatedOpen: boolean;
-  setIsCreatedOpen: Dispatch<SetStateAction<boolean>>;
-  isEditOpen: boolean;
-  setIsEditOpen: Dispatch<SetStateAction<boolean>>;
-  isDeleteOpen: boolean;
-  setIsDeleteOpen: Dispatch<SetStateAction<boolean>>;
+  openModal: string | null;
+  openSpecificModal: (modal: string) => void;
+  closeAllModals: () => void;
 };
 
 export interface AlertProviderProviderProps {

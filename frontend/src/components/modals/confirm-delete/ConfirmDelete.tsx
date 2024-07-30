@@ -17,12 +17,12 @@ interface ConfirmDeleteProps {
 export const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ refetch }) => {
   const { t } = useTranslation();
   const { idSelectedStructure } = useSelectedStructureProvider();
-  const { modalResource, isDeleteOpen, setIsDeleteOpen } = useModalProvider();
+  const { modalResource, openModal, closeAllModals } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
   const [deletePin] = useDeletePinMutation();
 
   const handleCloseModal = () => {
-    setIsDeleteOpen(false);
+    closeAllModals();
   };
 
   const notify = (message: string, type: AlertTypes) => {
@@ -51,16 +51,12 @@ export const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({ refetch }) => {
     }
   };
 
-  if (!modalResource || !isDeleteOpen) {
+  if (!modalResource || openModal !== ModalEnum.CONFIRM_DELETE_PIN) {
     return null;
   }
 
   return (
-    <Modal
-      onModalClose={handleCloseModal}
-      isOpen={isDeleteOpen}
-      id="delete-pins"
-    >
+    <Modal onModalClose={handleCloseModal} isOpen={true} id="delete-pins">
       <Modal.Header onModalClose={handleCloseModal}>
         {t("mediacentre.pins.modal.delete.title")}
       </Modal.Header>

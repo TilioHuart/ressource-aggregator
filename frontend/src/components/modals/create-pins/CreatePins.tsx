@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { links } from "~/core/const/links.const";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
 import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
@@ -24,7 +25,7 @@ interface CreatePinsProps {
 export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
   const { t } = useTranslation();
   const { idSelectedStructure } = useSelectedStructureProvider();
-  const { modalResource, isCreatedOpen, setIsCreatedOpen } = useModalProvider();
+  const { modalResource, openModal, closeAllModals } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
   const [createPin] = useCreatePinMutation();
   const [title, setTitle] = useState<string>(modalResource?.title ?? "");
@@ -33,7 +34,7 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
   );
 
   const handleCloseModal = () => {
-    setIsCreatedOpen(false);
+    closeAllModals();
   };
 
   const resetFields = () => {
@@ -78,16 +79,12 @@ export const CreatePins: React.FC<CreatePinsProps> = ({ refetch }) => {
     setDescription((modalResource as any)?.description ?? "");
   }, [modalResource]);
 
-  if (!modalResource || !isCreatedOpen) {
+  if (!modalResource || openModal !== ModalEnum.CREATE_PIN) {
     return null;
   }
 
   return (
-    <Modal
-      onModalClose={handleCloseModal}
-      isOpen={isCreatedOpen}
-      id="create-pins"
-    >
+    <Modal onModalClose={handleCloseModal} isOpen={true} id="create-pins">
       <Modal.Header onModalClose={handleCloseModal}>
         {t("mediacentre.pins.modal.create.title")}
       </Modal.Header>

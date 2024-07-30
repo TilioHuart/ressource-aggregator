@@ -15,6 +15,7 @@ import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";
 import { Resource } from "~/model/Resource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
+import { useModalProvider } from "~/providers/ModalsProvider";
 import { usePinProvider } from "~/providers/PinProvider";
 import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 import { sortByAlphabet } from "~/utils/sortResources.util";
@@ -24,6 +25,8 @@ export const Search: React.FC = () => {
   const { idSelectedStructure } = useSelectedStructureProvider();
   const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
+  const { openModal } = useModalProvider();
+
   const location = useLocation();
   const searchBody = location.state?.searchBody;
   const [searchParams] = useSearchParams();
@@ -92,7 +95,9 @@ export const Search: React.FC = () => {
           {alertText}
         </Alert>
       )}
-      <CreatePins refetch={refetchPins} />
+      {openModal === ModalEnum.CREATE_PIN && (
+        <CreatePins refetch={refetchPins} />
+      )}
       <div className="med-search-container">
         <div className="med-search-page-content">
           <div className="med-search-page-header">

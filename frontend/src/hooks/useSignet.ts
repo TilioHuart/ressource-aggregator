@@ -19,11 +19,13 @@ export const useSignet = () => {
     data: publicSignets,
     error: publicSignetError,
     isLoading: publicSignetIsLoading,
+    refetch: refetchPublicSignet,
   } = useGetPublishedSignetsQuery(null);
   const {
     data: mySignets,
     error: mySignetError,
     isLoading: mySignetIsLoading,
+    refetch: refetchMySignet,
   } = useGetMySignetsQuery(null);
   const [homeSignets, setHomeSignets] = useState<Signet[] | null>(null);
   const { favorites } = useFavorite();
@@ -79,20 +81,18 @@ export const useSignet = () => {
     return signetsData;
   }, [favorites, mySignets, publicSignets, user?.userId, pins]);
 
+  const refetchSignet = async () => {
+    await refetchPublicSignet();
+    await refetchMySignet();
+  };
+
   useEffect(() => {
     if (favorites && pins) {
       const signetsData = getHomeSignets();
       setHomeSignets(signetsData);
     }
-  }, [
-    publicSignets,
-    mySignets,
-    user?.userId,
-    favorites,
-    pins,
-    setHomeSignets,
-    getHomeSignets,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicSignets, mySignets, user?.userId, favorites, pins]);
 
   return {
     homeSignets,
@@ -102,5 +102,6 @@ export const useSignet = () => {
     publicSignetIsLoading,
     mySignetError,
     mySignetIsLoading,
+    refetchSignet,
   };
 };

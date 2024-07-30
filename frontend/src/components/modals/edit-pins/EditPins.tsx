@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import "../Modal.scss";
 import { links } from "~/core/const/links.const";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
@@ -25,7 +26,7 @@ interface EditPinsProps {
 export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
   const { t } = useTranslation();
   const { idSelectedStructure } = useSelectedStructureProvider();
-  const { modalResource, isEditOpen, setIsEditOpen, setIsDeleteOpen } =
+  const { modalResource, openModal, closeAllModals, openSpecificModal } =
     useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
   const [updatePin] = useUpdatePinMutation();
@@ -37,7 +38,7 @@ export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
   );
 
   const handleCloseModal = () => {
-    setIsEditOpen(false);
+    closeAllModals();
   };
 
   const resetFields = () => {
@@ -51,8 +52,7 @@ export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
   };
 
   const onSubmitDelete = async () => {
-    setIsDeleteOpen(true);
-    handleCloseModal();
+    openSpecificModal(ModalEnum.CONFIRM_DELETE_PIN);
   };
 
   const onSubmit = async () => {
@@ -87,12 +87,12 @@ export const EditPins: React.FC<EditPinsProps> = ({ refetch }) => {
     setDescription((modalResource as Pin)?.pinned_description ?? "");
   }, [modalResource]);
 
-  if (!modalResource || !isEditOpen) {
+  if (!modalResource || openModal !== ModalEnum.EDIT_PIN) {
     return null;
   }
 
   return (
-    <Modal onModalClose={handleCloseModal} isOpen={isEditOpen} id="create-pins">
+    <Modal onModalClose={handleCloseModal} isOpen={true} id="create-pins">
       <Modal.Header onModalClose={handleCloseModal}>
         {t("mediacentre.pins.modal.edit.title")}
       </Modal.Header>

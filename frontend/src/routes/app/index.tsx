@@ -14,6 +14,7 @@ import { ConfirmDelete } from "~/components/modals/confirm-delete/ConfirmDelete"
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
 import { EditPins } from "~/components/modals/edit-pins/EditPins";
 import { CardTypeEnum } from "~/core/enum/card-type.enum";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useGlobal } from "~/hooks/useGlobal";
@@ -25,6 +26,7 @@ import { GlobalResource } from "~/model/GlobalResource.model";
 import { Signet } from "~/model/Signet.model";
 import { Textbook } from "~/model/Textbook.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
+import { useModalProvider } from "~/providers/ModalsProvider";
 import { usePinProvider } from "~/providers/PinProvider";
 import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 
@@ -60,6 +62,7 @@ export const App = () => {
   >(null);
   const [textbooksData, setTextbooksData] = useState<Textbook[] | null>(null);
   const { t } = useTranslation();
+  const { openModal } = useModalProvider();
 
   useEffect(() => {
     setPinsEmpty(!pins || pins.length === 0);
@@ -280,9 +283,13 @@ export const App = () => {
           {alertText}
         </Alert>
       )}
-      <CreatePins refetch={refetchPins} />
-      <EditPins refetch={refetchPins} />
-      <ConfirmDelete refetch={refetchPins} />
+      {openModal === ModalEnum.CREATE_PIN && (
+        <CreatePins refetch={refetchPins} />
+      )}
+      {openModal === ModalEnum.EDIT_PIN && <EditPins refetch={refetchPins} />}
+      {openModal === ModalEnum.CONFIRM_DELETE_PIN && (
+        <ConfirmDelete refetch={refetchPins} />
+      )}
       <div className="med-container">
         <div id="pinId">{!pinsEmpty && <PinsCarousel />}</div>
         <div id="favoriteId">

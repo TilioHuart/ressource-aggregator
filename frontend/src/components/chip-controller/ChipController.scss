@@ -1,0 +1,15 @@
+.med-chip-controller {
+  width: 100%;
+
+  &.med-chip-dropdown {
+    margin-top: 10px;
+  }
+
+  .med-chip {
+    margin: 2px 5px;
+  }
+
+  span {
+    font-size: 1.2rem;
+  }
+}

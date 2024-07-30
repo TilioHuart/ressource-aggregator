@@ -8,7 +8,18 @@ export const signetsApi = emptySplitApi.injectEndpoints({
     getMySignets: builder.query({
       query: () => "mysignets",
     }),
+    createSignet: builder.mutation({
+      query: ({ payload }) => ({
+        url: `signets`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
-export const { useGetPublishedSignetsQuery, useGetMySignetsQuery } = signetsApi;
+export const {
+  useGetPublishedSignetsQuery,
+  useGetMySignetsQuery,
+  useCreateSignetMutation,
+} = signetsApi;
