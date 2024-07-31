@@ -3,14 +3,7 @@
 
 .med-search-resource-card {
   overflow: hidden;
-  transition: max-height 1s ease-in-out;
-
-  &.not-expanded {
-    max-height: 177px;
-  }
-  &.expanded {
-    max-height: 1000px;
-  }
+  height: 177px;
 
   .med-search-resource-top-container {
     height: 177px;

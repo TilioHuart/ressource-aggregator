@@ -3,10 +3,10 @@ import React, {
   useEffect,
   MouseEventHandler,
   KeyboardEventHandler,
+  ReactNode,
 } from "react";
 
 import { Grid } from "@edifice-ui/react";
-import { isActionAvailable } from "@edifice-ui/react";
 import Brightness1Icon from "@mui/icons-material/Brightness1";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -21,12 +21,11 @@ import {
   NbComponentsListCard,
 } from "~/core/const/home-element-list-sizes.const";
 import { CardTypeEnum } from "~/core/enum/card-type.enum.ts";
-import { useActions } from "~/services/queries";
 
 interface ListCardProps {
   scrollable: boolean;
   type?: CardTypeEnum;
-  components?: any[];
+  components?: ReactNode[];
   redirectLink: string | NavigateFunction;
   homeDouble?: boolean;
   isPinsEmpty?: boolean;
@@ -42,8 +41,6 @@ export const ListCard: React.FC<ListCardProps> = ({
 }) => {
   const { t } = useTranslation();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { data: actions } = useActions();
-  const canAccessSignet = isActionAvailable("signets", actions);
 
   useEffect(() => {
     const handleResize = () => {
@@ -94,10 +91,9 @@ export const ListCard: React.FC<ListCardProps> = ({
             <ListCardTitle type={type} />
             {components &&
               tooMuchComponents(components) &&
-              (type !== CardTypeEnum.book_mark || canAccessSignet) &&
               (typeof redirectLink === "string" ? (
                 <a href={redirectLink as string} className="right-button">
-                  Voir plus
+                  {t("mediacentre.list.card.see.more")}
                 </a>
               ) : (
                 <button
@@ -105,7 +101,7 @@ export const ListCard: React.FC<ListCardProps> = ({
                   onKeyDown={redirectLink as KeyboardEventHandler}
                   className="right-button list-card-button"
                 >
-                  Voir plus
+                  {t("mediacentre.list.card.see.more")}
                 </button>
               ))}
           </div>
