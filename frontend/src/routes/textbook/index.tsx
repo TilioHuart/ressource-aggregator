@@ -10,6 +10,7 @@ import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteSc
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useTextbook } from "~/hooks/useTextbook";
 import { Favorite } from "~/model/Favorite.model";
@@ -18,6 +19,7 @@ import { Textbook } from "~/model/Textbook.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
 import { usePinProvider } from "~/providers/PinProvider";
+import { useSelectedStructureProvider } from "~/providers/SelectedStructureProvider";
 import { sortByAlphabet } from "~/utils/sortResources.util";
 
 export const TextbookPage: React.FC = () => {
@@ -25,8 +27,9 @@ export const TextbookPage: React.FC = () => {
   const { refetchPins } = usePinProvider();
   const { alertType, alertText, setAlertText } = useAlertProvider();
   const { openModal } = useModalProvider();
+  const { idSelectedStructure } = useSelectedStructureProvider();
 
-  const { textbooks, refetchTextbooks } = useTextbook();
+  const { textbooks, refetchTextbooks } = useTextbook(idSelectedStructure);
   const [textbooksData, setTextbooksData] = useState<Resource[] | null>(null);
   const { favorites, refetchFavorite } = useFavorite();
   const [allResourcesDisplayed, setAllResourcesDisplayed] = useState<

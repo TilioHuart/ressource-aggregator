@@ -74,10 +74,18 @@ export const FilterLayout: React.FC<FilterLayoutProps> = ({
     if (!resources) {
       return;
     }
-    setAllResourcesDisplayed(
-      filterByAllDropdowns(resourcesMap, selectedCheckboxes, SOURCES, THEMES),
+    const filteredResources = filterByAllDropdowns(
+      resourcesMap,
+      selectedCheckboxes,
+      SOURCES,
+      THEMES,
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (
+      JSON.stringify(filteredResources) !==
+      JSON.stringify(allResourcesDisplayed)
+    ) {
+      setAllResourcesDisplayed(filteredResources);
+    }
   }, [selectedCheckboxes, resourcesMap, resources]);
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteSc
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { useExternalResource } from "~/hooks/useExternalResource";
 import { useGlobal } from "~/hooks/useGlobal";
 import { Resource } from "~/model/Resource.model";
@@ -92,10 +93,7 @@ export const ResourcePage: React.FC = () => {
           </div>
           <div className="med-search-page-content-body">
             {externalResourcesData && !externalResourcesData.length ? (
-              <EmptyState
-                imgSource="empty-state-resources.png"
-                title="mediacentre.empty.state.resources"
-              />
+              <EmptyState title="mediacentre.empty.state.resources" />
             ) : (
               <>
                 <FilterLayout

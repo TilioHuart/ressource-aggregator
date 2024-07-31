@@ -121,7 +121,7 @@ export const ListCard: React.FC<ListCardProps> = ({
           type === CardTypeEnum.favorites && (
             <div className="favorite-empty-state">
               <img
-                src={"empty-state.png"}
+                src={"/mediacentre/public/img/empty-state.png"}
                 alt="empty-state"
                 className="empty-state-img"
               />

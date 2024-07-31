@@ -10,6 +10,7 @@ import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteSc
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import "~/styles/page/search.scss";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { useFavorite } from "~/hooks/useFavorite";
 import { useResourceListInfo } from "~/hooks/useResourceListInfo";
 import { Resource } from "~/model/Resource.model";

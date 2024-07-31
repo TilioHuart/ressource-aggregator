@@ -10,6 +10,7 @@ import { EmptyState } from "~/components/empty-state/empty-state";
 import { InfiniteScrollList } from "~/components/infinite-scroll-list/InfiniteScrollList";
 import { MainLayout } from "~/components/main-layout/MainLayout";
 import { CreatePins } from "~/components/modals/create-pins/CreatePins";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { useResourceListInfo } from "~/hooks/useResourceListInfo";
 import { useSearch } from "~/hooks/useSearch";
 import "~/styles/page/search.scss";

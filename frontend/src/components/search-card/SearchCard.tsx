@@ -15,13 +15,16 @@ import PinIcon from "@mui/icons-material/PushPin";
 import UnPinIcon from "@mui/icons-material/PushPinOutlined";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import anime from "animejs";
 import { useTranslation } from "react-i18next";
 
 import { SearchCardDescription } from "./search-card-description/SearchCardDescription";
 import { SearchCardDetails } from "./search-card-details/SearchCardDetails";
+import { SearchCardSubtitle } from "./search-card-subtitle/SearchCardSubtitle";
 import { SearchCardType } from "./search-card-type/SearchCardType";
 import { ModalEnum } from "~/core/enum/modal.enum";
 import { SearchCardTypeEnum } from "~/core/enum/search-card-type.enum";
+import { Resource } from "~/model/Resource.model";
 import { SearchResource } from "~/model/SearchResource.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
@@ -35,18 +38,21 @@ interface SearchResourceProps {
   searchResource: SearchResource;
   link: string;
   setIsRemoveResource: (value: boolean) => void;
+  allResourcesDisplayed?: Resource[] | null;
 }
 
 export const SearchCard: React.FC<SearchResourceProps> = ({
   searchResource,
   link,
   setIsRemoveResource,
+  allResourcesDisplayed,
 }) => {
   const [newLink, setNewLink] = useState<string>("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const cardRef = React.useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
-  const [isExpanded, setIsExpanded] = useState(false);
   const { setModalResource, openSpecificModal } = useModalProvider();
   const { setAlertText, setAlertType } = useAlertProvider();
 
@@ -157,8 +163,33 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
   };
 
   const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+    const cardElement = cardRef.current;
+
+    if (cardElement) {
+      const targetHeight = isExpanded
+        ? "177px"
+        : cardElement.scrollHeight + "px";
+      anime({
+        targets: cardElement,
+        height: targetHeight,
+        duration: 700,
+        easing: "easeInOutQuad",
+        complete: () => {
+          cardElement.style.height = targetHeight;
+        },
+      });
+
+      setIsExpanded(!isExpanded);
+    }
   };
+
+  useEffect(() => {
+    const cardElement = cardRef.current;
+    if (cardElement) {
+      cardElement.style.height = "177px";
+    }
+    setIsExpanded(false);
+  }, [allResourcesDisplayed]);
 
   useEffect(() => {
     if (
@@ -179,6 +210,7 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
       className={`med-search-resource-card ${
         isExpanded ? "expanded" : "not-expanded"
       }`}
+      ref={cardRef}
     >
       <div className="med-search-resource-top-container">
         <a href={newLink !== "/" ? newLink : "/"} target="_blank">
@@ -198,15 +230,16 @@ export const SearchCard: React.FC<SearchResourceProps> = ({
           </div>
         </a>
         <div className="med-search-resource-right-container">
-          <Card.Body space={"0"}>
-            <a href={newLink !== "/" ? newLink : "/"} target="_blank">
+          <a href={newLink !== "/" ? newLink : "/"} target="_blank">
+            <Card.Body space={"0"}>
               <SearchCardType type={type()} />
               <Card.Title>{searchResource.title}</Card.Title>
-              <Card.Text>
-                {searchResource.editors && searchResource.editors[0]}
-              </Card.Text>
-            </a>
-          </Card.Body>
+              <SearchCardSubtitle
+                type={type()}
+                searchResource={searchResource}
+              />
+            </Card.Body>
+          </a>
           <Card.Footer>
             <div
               className="med-footer-details"
