@@ -52,6 +52,15 @@ public class FavoriteController extends ControllerHelper {
     @SecuredAction(value = "", type = ActionType.RESOURCE)
     public void createFavorites(final HttpServerRequest request) {
         RequestUtils.bodyToJson(request, favorite -> {
+            if (!favorite.containsKey(ID)) {
+                badRequest(request);
+                return;
+            }
+            Object value = favorite.getValue(ID);
+            if (value instanceof Number && Double.isNaN(((Number) value).doubleValue())) {
+                badRequest(request);
+                return;
+            }
             UserUtils.getAuthenticatedUserInfos(eb, request)
                 .compose(user -> {
                     favorite.put(USER, user.getUserId());
