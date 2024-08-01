@@ -64,10 +64,10 @@ const filterByThemes = (
         return true;
       } // we filter only signets
       if (themes[0] === THEMES.ORIENTATION) {
-        return resource.document_types.includes("Orientation");
+        return resource.document_types?.includes("Orientation");
       }
       if (themes[0] === THEMES.WITHOUT_THEME) {
-        return !resource.document_types.includes("Orientation");
+        return !resource.document_types?.includes("Orientation");
       }
     });
   }
@@ -82,7 +82,7 @@ const filterByTypes = (resources: Resource[], types: string[]) => {
     if (resource.source !== GAR || resource.is_textbook) {
       return false;
     } // we filter only external resources
-    return types.some((type) => resource.document_types.includes(type));
+    return types.some((type) => resource.document_types?.includes(type));
   });
 };
 
@@ -91,7 +91,7 @@ const filterByLevels = (resources: Resource[], levels: string[]) => {
     return resources;
   }
   return resources.filter((resource) =>
-    levels.some((level) => resource.levels.includes(level)),
+    levels.some((level) => resource.levels?.includes(level)),
   );
 };
 
@@ -100,7 +100,9 @@ const filterByDisciplines = (resources: Resource[], disciplines: string[]) => {
     return resources;
   }
   return resources.filter((resource) =>
-    disciplines.some((discipline) => resource.disciplines.includes(discipline)),
+    disciplines.some(
+      (discipline) => resource.disciplines?.includes(discipline),
+    ),
   );
 };
 
