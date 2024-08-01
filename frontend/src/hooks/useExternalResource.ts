@@ -25,6 +25,10 @@ export const useExternalResource = (idStructure: string) => {
     refetch: refetchSearch,
   } = useSearchQuery({ jsondata: query, idStructure });
 
+  useEffect(() => {
+    refetchSearch();
+  }, [idStructure]);
+
   const [externalResources, setExternalResources] = useState<
     ExternalResource[] | null
   >(null);

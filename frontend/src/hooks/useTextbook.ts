@@ -19,6 +19,10 @@ export const useTextbook = (idStructure: string) => {
   const { favorites } = useFavorite();
 
   useEffect(() => {
+    refetchTextbooks();
+  }, [idStructure]);
+
+  useEffect(() => {
     let textbookData: Textbook[] = textbook?.data?.textbooks ?? [];
     if (favorites) {
       textbookData = textbookData.map((textbook: Textbook) => ({

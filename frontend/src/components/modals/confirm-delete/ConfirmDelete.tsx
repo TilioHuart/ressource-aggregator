@@ -3,6 +3,7 @@ import React from "react";
 import { AlertTypes, Button, Modal } from "@edifice-ui/react";
 import { useTranslation } from "react-i18next";
 
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";

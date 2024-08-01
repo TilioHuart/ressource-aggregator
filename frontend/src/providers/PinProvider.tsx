@@ -30,6 +30,10 @@ export const PinProvider: FC<PinProviderProviderProps> = ({ children }) => {
     useGetPinsQuery(idSelectedStructure);
 
   useEffect(() => {
+    refetchPins();
+  }, [idSelectedStructure]);
+
+  useEffect(() => {
     if (fetchedPins) {
       const updatedPins = fetchedPins.map((pin: Pin) => ({
         ...pin,

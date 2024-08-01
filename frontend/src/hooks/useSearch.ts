@@ -19,6 +19,10 @@ export const useSearch = (query: any, idStructure: string) => {
   } = useSearchQuery({ jsondata: query, idStructure });
 
   useEffect(() => {
+    refetchSearch();
+  }, [idStructure]);
+
+  useEffect(() => {
     if (!isLoading) {
       const searchResult: SearchResultCategory[] = data;
 

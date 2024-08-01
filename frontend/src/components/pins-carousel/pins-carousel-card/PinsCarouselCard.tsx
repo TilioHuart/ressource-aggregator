@@ -11,6 +11,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useTranslation } from "react-i18next";
 
+import { ModalEnum } from "~/core/enum/modal.enum";
 import { Pin } from "~/model/Pin.model";
 import { useAlertProvider } from "~/providers/AlertProvider";
 import { useModalProvider } from "~/providers/ModalsProvider";
@@ -29,7 +30,7 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
 }) => {
   const [newLink, setNewLink] = useState<string>("");
   const { setAlertText, setAlertType } = useAlertProvider();
-  const { setModalResource, setIsEditOpen } = useModalProvider();
+  const { setModalResource, openSpecificModal } = useModalProvider();
 
   // used to check if the user has the right to pin a resource
   const { data: actions } = useActions();
@@ -56,7 +57,7 @@ export const PinsCarouselCard: React.FC<PinsCarouselCardProps> = ({
 
   const edit = () => {
     setModalResource(pin);
-    setIsEditOpen(true);
+    openSpecificModal(ModalEnum.EDIT_PIN);
   };
 
   useEffect(() => {

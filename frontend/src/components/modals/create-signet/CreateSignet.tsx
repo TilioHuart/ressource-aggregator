@@ -16,6 +16,7 @@ import { ChipController } from "~/components/chip-controller/ChipController";
 import { DropDown } from "~/components/drop-down/DropDown";
 import UniqueImagePicker from "~/components/unique-image-picker/UniqueImagePicker";
 import { breakpoints } from "~/core/const/breakpoints";
+import { ModalEnum } from "~/core/enum/modal.enum";
 import useImageHandler from "~/hooks/useImageHandler";
 import useWindowDimensions from "~/hooks/useWindowDimensions";
 import { SignetPayload } from "~/model/payloads/SignetPayload";
