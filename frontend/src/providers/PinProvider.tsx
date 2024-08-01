@@ -26,11 +26,17 @@ export const PinProvider: FC<PinProviderProviderProps> = ({ children }) => {
   const [pins, setPins] = useState<Pin[] | null>(null);
   const { idSelectedStructure } = useSelectedStructureProvider();
 
-  const { currentData: fetchedPins, refetch: refetchPins } =
-    useGetPinsQuery(idSelectedStructure);
+  const { currentData: fetchedPins, refetch: refetchPins } = useGetPinsQuery(
+    idSelectedStructure!,
+    {
+      skip: !idSelectedStructure, // Skip the query if idSelectedStructure is null
+    },
+  );
 
   useEffect(() => {
-    refetchPins();
+    if (idSelectedStructure) {
+      refetchPins();
+    }
   }, [idSelectedStructure]);
 
   useEffect(() => {

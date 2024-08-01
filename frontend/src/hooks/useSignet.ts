@@ -8,6 +8,7 @@ import {
   useGetMySignetsQuery,
 } from "./../services/api/signet.service";
 import { useFavorite } from "./useFavorite";
+import { SIGNET } from "~/core/const/sources.const";
 import { Favorite } from "~/model/Favorite.model";
 import { Pin } from "~/model/Pin.model";
 import { usePinProvider } from "~/providers/PinProvider";
@@ -42,6 +43,7 @@ export const useSignet = () => {
     const updatedMySignetsData: Signet[] = mySignetsData.map(
       (signet: Signet) => ({
         ...signet,
+        source: SIGNET,
         shared: false,
       }),
     );
