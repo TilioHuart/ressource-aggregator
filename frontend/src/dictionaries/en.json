@@ -180,7 +180,7 @@
   "mediacentre.search.card.book.mark": "Signet",
   "mediacentre.search.card.moodle": "Parcours Moodle",
   "mediacentre.search.card.external.resources": "Ressource",
-  "mediacentre.search.card.orientation": "ORIENTATION ET DECOURVERTE",
+  "mediacentre.search.card.orientation": "ORIENTATION ET DECOUVERTE",
   "mediacentre.load.more.items": "Chargement des éléments",
 
   "mediacentre.modal.explorer.title": "L'appli Médiacentre fait peau neuve !",
@@ -210,7 +210,7 @@
   "mediacentre.pins.modal.delete.title": "Suppression de l'épingle",
   "mediacentre.pins.modal.delete.subtitle": "Attention, l'épingle sera supprimée définitivement, êtes-vous sûr ?",
 
-  "mediacentre.signets.themes.orientation": "Orientation et décourvertes des métiers",
+  "mediacentre.signets.themes.orientation": "Orientation et découvertes des métiers",
   "mediacentre.signets.without.theme": "Sans thématique",
 
   "mediacentre.filter.source": "Source",

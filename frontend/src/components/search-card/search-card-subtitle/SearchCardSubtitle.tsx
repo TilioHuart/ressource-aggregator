@@ -21,7 +21,8 @@ export const SearchCardSubtitle: React.FC<SearchCardSubtitleProps> = ({
         if (
           searchResource?.document_types?.some((type) =>
             type.toLowerCase().includes("orientation"),
-          )
+          ) ||
+          searchResource?.orientation
         ) {
           return t("mediacentre.search.card.orientation");
         }
