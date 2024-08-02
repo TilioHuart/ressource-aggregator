@@ -1,6 +1,7 @@
 import { GAR, SIGNET } from "~/core/const/sources.const";
 import { Resource } from "~/model/Resource.model";
 import { ResourcesMap } from "~/model/ResourcesMap";
+import { Signet } from "~/model/Signet.model";
 import { sortByAlphabet } from "~/utils/sortResources.util";
 
 const filterBySources = (
@@ -60,15 +61,19 @@ const filterByThemes = (
   if (themes.length === 1) {
     // we filter only if one theme is selected
     return resources.filter((resource) => {
-      if (resource.source !== SIGNET) {
-        return true;
-      } // we filter only signets
-      if (themes[0] === THEMES.ORIENTATION) {
-        return resource.document_types?.includes("Orientation");
+      if (resource.source === SIGNET) {
+        const signet = resource as Signet;
+        if (themes[0] === THEMES.ORIENTATION)
+          return (
+            signet.document_types?.includes("Orientation") || signet.orientation
+          );
+        if (themes[0] === THEMES.WITHOUT_THEME)
+          return (
+            !signet.document_types?.includes("Orientation") &&
+            !signet.orientation
+          );
       }
-      if (themes[0] === THEMES.WITHOUT_THEME) {
-        return !resource.document_types?.includes("Orientation");
-      }
+      return true;
     });
   }
   return resources;

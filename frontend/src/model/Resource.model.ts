@@ -1,11 +1,11 @@
 export interface Resource {
   authors: string[];
-  disciplines: string[];
+  disciplines: string[] | [number, string][];
   document_types: string[];
   editors: string[];
   favorite: boolean;
   image: string;
-  levels: string[];
+  levels: string[] | [number, string][];
   plain_text: string[] | string;
   source: string;
   title: string;
