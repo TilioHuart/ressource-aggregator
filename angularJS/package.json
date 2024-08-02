@@ -1,6 +1,6 @@
 {
   "name": "Mediacentre",
-  "version": "3.4.1",
+  "version": "4.2.0",
   "description": "Mediacentre",
   "main": "gulpfile.js",
   "scripts": {
